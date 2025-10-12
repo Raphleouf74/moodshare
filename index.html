@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoodShare</title>
+    <link rel="stylesheet" href="/styles/main.css">
+</head>
+
+<body>
+    <header>
+        <h1>MoodShare 💭</h1>
+        <button id="postMoodBtn">Exprime ton mood</button>
+    </header>
+
+    <main id="moodWall">
+        <!-- Les posts apparaîtront ici -->
+    </main>
+
+    <footer>
+        <p>Partage ton humeur. Sans jugement. 💙</p>
+    </footer>
+
+    <!-- Modal pour poster -->
+    <div id="postModal" class="hidden">
+        <textarea id="moodInput" maxlength="100" placeholder="Comment tu te sens ?"></textarea>
+        <div class="mood-options">
+            <input type="color" id="moodColor" value="#ffb6c1">
+            <select id="moodEmoji">
+                <option>😊</option>
+                <option>😢</option>
+                <option>😡</option>
+                <option>💖</option>
+                <option>😴</option>
+            </select>
+        </div>
+        <button id="submitMood">Partager</button>
+    </div>
+</body>
+<script src="scripts/app.js"></script>
+<script src="server/server.js"></script>
+<script src="server/database.js"></script>
+</html>
