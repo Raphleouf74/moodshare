@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MoodShare</title>
     <link rel="stylesheet" href="/styles/main.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" />
 </head>
 
 <body>
@@ -13,6 +14,13 @@
         <h1>MoodShare 💭</h1>
         <button id="postMoodBtn">Exprime ton mood</button>
     </header>
+    <nav>
+        <a href="/"><button id="Home" class="active"><span class="material-symbols-rounded">home</span>Accueil</button></a>
+        <a href="/posts"><button id="Posts" ><span class="material-symbols-rounded">post</span>Posts</button></a>
+        <a href="/create"><button id="Create" ><span class="material-symbols-rounded">add_circle</span>Créer</button></a>
+        <a href="/popular"><button id="Popular" ><span class="material-symbols-rounded">mode_heat</span>Populaire</button></a>
+        <a href="/profil"><button id="Profile" ><span class="material-symbols-rounded">account_circle</span>Profil</button></a>
+    </nav>
 
     <main id="moodWall">
         <!-- Les posts apparaîtront ici -->
@@ -42,4 +50,5 @@
 <script src="scripts/app.js"></script>
 <script src="server/server.js"></script>
 <script src="server/database.js"></script>
+
 </html>
