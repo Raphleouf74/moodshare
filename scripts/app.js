@@ -18,7 +18,7 @@ submitBtn.addEventListener("click", async () => {
     displayMood(newMood);
 
     // Envoi au backend
-    await fetch("https://ton-backend.onrender.com/api/moods", {
+    await fetch("https://moodshare-7dd7.onrender.com/api/moods", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newMood)
@@ -38,7 +38,7 @@ function displayMood(mood) {
 
 // Chargement initial
 (async () => {
-    const res = await fetch("https://ton-backend.onrender.com/api/moods");
+    const res = await fetch("https://moodshare-7dd7.onrender.com/api/moods");
     const moods = await res.json();
     moods.reverse().forEach(displayMood);
 })();
