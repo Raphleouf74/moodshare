@@ -66,3 +66,17 @@ tabs.forEach(tab => {
         });
     });
 });
+const header = document.querySelector('header');
+const section = document.querySelector(".tab h1");
+window.addEventListener('scroll', () => {
+
+    if (window.scrollY > 30) {
+        header.classList.add('scrolled');
+        section.classList.add('scrolled');
+
+
+    } else {
+        header.classList.remove('scrolled');
+        section.classList.remove('scrolled');
+    }
+});
