@@ -13,10 +13,28 @@ body {
 header {
     text-align: center;
     padding: 1rem;
+    height: 75px;
     background: white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.logo {
+    gap: -10px;
+    height: 100%;
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.logo h1 {
+    margin-bottom: -5px;
 }
 
 #moodWall {
@@ -98,23 +116,23 @@ nav button span {
     transition: all 0.2s ease-in-out;
 }
 
-nav button#Create:hover span {
+nav button#createTab:hover span {
     transform: rotate(90deg) scale(1.5);
 }
 
-nav button#Popular:hover span {
+nav button#popularTab:hover span {
     transform: scale(1.5) rotate(-30deg);
     font-weight: 300;
     color: red;
 }
 
-nav button#Profile:hover span {
+nav button#profileTab:hover span {
     transform: scale(1.5) rotate(365deg);
     font-weight: 300;
     color: blue;
 }
 
-nav button#Posts:hover span {
+nav button#postsTab:hover span {
     animation: scroll 0.5s forwards;
 }
 
@@ -134,7 +152,7 @@ nav button#Posts:hover span {
         transform: translateY(-10px);
     }
 
-    75%{
+    75% {
         opacity: 0.4;
     }
 
@@ -142,4 +160,20 @@ nav button#Posts:hover span {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+section.tab {
+    display: none;
+}
+
+section.tab.active {
+    display: block;
+}
+
+section.hidden {
+    display: none !important;
+}
+
+section {
+    padding: 15px;
 }

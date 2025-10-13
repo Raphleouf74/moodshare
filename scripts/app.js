@@ -3,7 +3,6 @@ const postBtn = document.getElementById("postMoodBtn");
 const modal = document.getElementById("postModal");
 const submitBtn = document.getElementById("submitMood");
 
-postBtn.addEventListener("click", () => modal.classList.toggle("hidden"));
 
 submitBtn.addEventListener("click", async () => {
     const text = document.getElementById("moodInput").value.trim();
@@ -42,3 +41,28 @@ function displayMood(mood) {
     const moods = await res.json();
     moods.reverse().forEach(displayMood);
 })();
+const tabs = document.querySelectorAll("nav button");
+const sections = document.querySelectorAll(".tab");
+
+tabs.forEach(tab => {
+    tab.addEventListener("click", (e) => {
+        // Supprime la classe active de tous les boutons
+        tabs.forEach(btn => btn.classList.remove("active"));
+        // Ajoute la classe active au bouton cliqué
+        tab.classList.add("active");
+
+        // Récupère l'ID du bouton (ex: "Home", "Posts", etc.)
+        const tabId = tab.id;
+
+        // Affiche la section correspondante
+        sections.forEach(section => {
+            if (section.id.startsWith(tabId)) {
+                section.classList.add("active");
+                section.classList.remove("hidden");
+            } else {
+                section.classList.remove("active");
+                section.classList.add("hidden");
+            }
+        });
+    });
+});

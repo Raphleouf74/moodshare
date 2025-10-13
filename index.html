@@ -11,41 +11,60 @@
 
 <body>
     <header>
-        <h1>MoodShare 💭</h1>
-        <button id="postMoodBtn">Exprime ton mood</button>
+        <div class="logo">
+            <h1>MoodShare</h1>
+            Exprime ton mood
+        </div>
+        <button><a href="https://github.com/Raphleouf74/moodshare">Accéder au GitHub</a></button>
     </header>
     <nav>
-        <a href="/"><button id="Home" class="active"><span class="material-symbols-rounded">home</span>Accueil</button></a>
-        <a href="/posts"><button id="Posts" ><span class="material-symbols-rounded">post</span>Posts</button></a>
-        <a href="/create"><button id="Create" ><span class="material-symbols-rounded">add_circle</span>Créer</button></a>
-        <a href="/popular"><button id="Popular" ><span class="material-symbols-rounded">mode_heat</span>Populaire</button></a>
-        <a href="/profil"><button id="Profile" ><span class="material-symbols-rounded">account_circle</span>Profil</button></a>
+        <button id="homeTab" class="active"><span class="material-symbols-rounded">home</span>Accueil</button>
+        <button id="postsTab"><span class="material-symbols-rounded">post</span>Posts</button>
+        <button id="createTab"><span class="material-symbols-rounded">add_circle</span>Créer</button>
+        <button id="popularTab"><span class="material-symbols-rounded">mode_heat</span>Populaire</button>
+        <button id="profileTab"><span class="material-symbols-rounded">account_circle</span>Profil</button>
     </nav>
+    <section id="homeTab" class="tab active">
+        <h1>Accueil</h2>
+    </section>
 
-    <main id="moodWall">
+    <section id="postsTab" class="tab hidden">
+        <h1>Posts</h2>
+        <div id="moodWall"></div>
         <!-- Les posts apparaîtront ici -->
     </main>
+    </section>
 
-    <footer>
-        <p>Partage ton humeur. Sans jugement. 💙</p>
-    </footer>
+    <section id="createTab" class="tab hidden">
+        <h1>Créer un Mood</h2>
+        <button id="openModalBtn">Nouveau mood</button>
 
-    <!-- Modal pour poster -->
-    <div id="postModal" class="hidden">
-        <textarea id="moodInput" maxlength="100" placeholder="Comment tu te sens ?"></textarea>
-        <div class="mood-options">
-            <input type="color" id="moodColor" value="#ffb6c1">
-            <select id="moodEmoji">
-                <option>😊</option>
-                <option>😢</option>
-                <option>😡</option>
-                <option>💖</option>
-                <option>😴</option>
-            </select>
+        <div id="postModal">
+            <textarea id="moodInput" maxlength="100" placeholder="Comment tu te sens ?"></textarea>
+            <div class="mood-options">
+                <input type="color" id="moodColor" value="#ffb6c1">
+                <select id="moodEmoji">
+                    <option>😊</option>
+                    <option>😢</option>
+                    <option>😡</option>
+                    <option>💖</option>
+                    <option>😴</option>
+                </select>
+            </div>
+            <button id="submitMood">Partager</button>
         </div>
-        <button id="submitMood">Partager</button>
-    </div>
-    <a href="https://github.com/Raphleouf74/moodshare"><button>Accéder au GitHub</button></a>
+    </section>
+
+    <section id="popularTab" class="tab hidden">
+        <h1>Posts populaires</h2>
+    </section>
+
+    <section id="profileTab" class="tab hidden">
+        <h1>Mon profil</h2>
+    </section>
+    <!-- Modal pour poster -->
+
+    
 </body>
 <script src="scripts/app.js"></script>
 <script src="server/server.js"></script>
