@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MoodShare</title>
+    <link rel="icon" href="/assets/icons/Logo.jpg">
     <link rel="stylesheet" href="/styles/main.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" />
 </head>
@@ -17,14 +18,15 @@
         </div>
     </header>
     <nav>
-        <button id="homeTab" class="active"><span class="material-symbols-rounded">home</span>Accueil</button>
-        <button id="postsTab"><span class="material-symbols-rounded">post</span>Posts</button>
-        <button id="createTab"><span class="material-symbols-rounded">add_circle</span>Créer</button>
-        <button id="popularTab"><span class="material-symbols-rounded">mode_heat</span>Populaire</button>
-        <button id="profileTab"><span class="material-symbols-rounded">account_circle</span>Profil</button>
+        <button id="homeTab" class="active"><span
+                class="material-symbols-rounded">home</span><!--<p>Accueil</p>--></button>
+        <button id="postsTab"><span class="material-symbols-rounded">post</span><!--<p>Accueil</p>--></button>
+        <button id="createTab"><span class="material-symbols-rounded">add_circle</span><!--<p>Accueil</p>--></button>
+        <button id="popularTab"><span class="material-symbols-rounded">mode_heat</span><!--<p>Accueil</p>--></button>
+        <button id="profileTab"><span
+                class="material-symbols-rounded">account_circle</span><!--<p>Accueil</p>--></button>
     </nav>
     <section id="homeTab" class="tab active">
-        <h1>Accueil</h1>
         <div class="stories">
             <h2>Stories</h2>
             <div class="stories-list">
@@ -60,38 +62,52 @@
     </section>
 
     <section id="postsTab" class="tab hidden">
-        <h1>Posts</h2>
-            <div id="moodWall"></div>
-            <!-- Les posts apparaîtront ici -->
-            </main>
+        <div id="moodWall"></div>
+        <!-- Les posts apparaîtront ici -->
+        </main>
     </section>
 
     <section id="createTab" class="tab hidden">
-        <h1>Créer un Mood</h2>
-            <button id="openModalBtn">Nouveau mood</button>
 
-            <div id="postModal">
-                <textarea id="moodInput" maxlength="100" placeholder="Comment tu te sens ?"></textarea>
-                <div class="mood-options">
-                    <input type="color" id="moodColor" value="#ffb6c1">
-                    <select id="moodEmoji">
-                        <option>😊</option>
-                        <option>😢</option>
-                        <option>😡</option>
-                        <option>💖</option>
-                        <option>😴</option>
-                    </select>
-                </div>
-                <button id="submitMood">Partager</button>
+        <button id="openModalBtn">Nouveau mood</button>
+
+        <div id="postModal">
+            <textarea id="moodInput" maxlength="100" placeholder="Comment tu te sens ?"></textarea>
+            <div class="mood-options">
+                <input type="color" id="moodColor" value="#ffb6c1">
+                <select id="moodEmoji">
+                    <option>😊</option>
+                    <option>😢</option>
+                    <option>😡</option>
+                    <option>💖</option>
+                    <option>😴</option>
+                </select>
             </div>
+            <button id="submitMood">Partager</button>
+        </div>
     </section>
 
     <section id="popularTab" class="tab hidden">
-        <h1>Posts populaires</h2>
+        
     </section>
 
     <section id="profileTab" class="tab hidden">
-        <h1>Mon profil</h2>
+
+        <div id="accountinfo">
+            <img src="/assets/icons/logo_cropped.jpg" alt="AccountAvatar" id="accountavatar">
+            <p>Votre avatar</p>
+            <button><span class="material-symbols-rounded">edit</span>Modifier</button>
+            <div class="accountname">
+                <input placeholder="Votre pseudo" disabled>
+                <input placeholder="Votre nom" disabled>
+            </div>
+            <div class="plusinfos">
+                <h4>Informations complémentaires</h4>
+                <input placeholder="votre@email.com" disabled>
+                <input placeholder="Votre numéro de téléphone" disabled>
+                <input placeholder="Votre*mot*de*passe" type="password" disabled>
+            </div>
+        </div>
     </section>
     <!-- Modal pour poster -->
 
