@@ -7,7 +7,7 @@ const submitBtn = document.getElementById("submitMood");
 submitBtn.addEventListener("click", async () => {
     const text = document.getElementById("moodInput").value.trim();
     const color = document.getElementById("moodColor").value;
-    const emoji = document.getElementById("moodEmoji").value;
+    const emoji = document.querySelector(".moodEmoji").value;
 
     if (!text) return alert("Écris quelque chose !");
 
@@ -80,3 +80,39 @@ window.addEventListener('scroll', () => {
         nav.classList.remove('scrolled');
     }
 });
+const editBtn = document.getElementById('editEmojiBtn');
+const pickerContainer = document.getElementById('emojiPickerContainer');
+editBtn.addEventListener('click', () => {
+    pickerContainer.classList.toggle('shown');
+});
+document.querySelector('emoji-picker').addEventListener('emoji-click', event => {
+    document.querySelector('.moodEmoji').value = event.detail.unicode;
+    pickerContainer.classList.toggle('shown');
+});
+
+// ...existing code...
+
+const previewMood = document.getElementById('previewMood');
+const previewEmoji = document.getElementById('previewEmoji');
+const previewText = document.getElementById('previewText');
+const moodInput = document.getElementById('moodInput');
+const moodColor = document.getElementById('moodColor');
+const moodEmoji = document.querySelector('.moodEmoji');
+
+// Fonction de mise à jour de l'aperçu
+function updatePreview() {
+    previewMood.style.background = moodColor.value;
+    previewEmoji.textContent = moodEmoji.value;
+    previewText.textContent = moodInput.value;
+}
+
+// Mise à jour en direct sur chaque changement
+moodInput.addEventListener('input', updatePreview);
+moodColor.addEventListener('input', updatePreview);
+moodEmoji.addEventListener('input', updatePreview);
+
+// Mise à jour aussi après sélection d'un emoji
+document.querySelector('emoji-picker').addEventListener('emoji-click', updatePreview);
+
+// Initialisation à l'ouverture
+updatePreview();

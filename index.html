@@ -8,6 +8,7 @@
     <link rel="icon" href="/assets/icons/Logo.jpg">
     <link rel="stylesheet" href="/styles/main.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
 </head>
 
 <body>
@@ -69,26 +70,30 @@
 
     <section id="createTab" class="tab hidden">
 
-        <button id="openModalBtn">Nouveau mood</button>
 
         <div id="postModal">
             <textarea id="moodInput" maxlength="100" placeholder="Comment tu te sens ?"></textarea>
             <div class="mood-options">
-                <input type="color" id="moodColor" value="#ffb6c1">
-                <select id="moodEmoji">
-                    <option>😊</option>
-                    <option>😢</option>
-                    <option>😡</option>
-                    <option>💖</option>
-                    <option>😴</option>
-                </select>
+                <input type="color" id="moodColor" value="#ffffff">
+                <input type="text" class="moodEmoji" id="editEmojiBtn" readonly
+                    style="font-size:2rem; width:3rem; text-align:center;">
+                <div id="emojiPickerContainer">
+                    <emoji-picker id="emojiPicker"></emoji-picker>
+                </div>
             </div>
-            <button id="submitMood">Partager</button>
+            <!-- Aperçu du post -->
+            <p>Aperçu de votre poste</p>
+            <div id="previewMood" class="mood-card" style="margin-top:1rem; min-height:60px;">
+                <span id="previewEmoji" style="font-size:2rem;"></span>
+                <span id="previewText"></span>
+            </div>
+            <button id="submitMood"><span class="material-symbols-rounded">upload</span>Partager</button>
+
         </div>
     </section>
 
     <section id="popularTab" class="tab hidden">
-        
+
     </section>
 
     <section id="profileTab" class="tab hidden">
@@ -109,9 +114,6 @@
             </div>
         </div>
     </section>
-    <!-- Modal pour poster -->
-
-
 </body>
 <script src="scripts/app.js"></script>
 <script src="server/server.js"></script>
