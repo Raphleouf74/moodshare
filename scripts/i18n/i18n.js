@@ -48,3 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
 function changeLanguage(locale) {
   i18n.setLocale(locale);
 }
+
+export function setupLocalization() {
+  document.addEventListener('DOMContentLoaded', () => {
+    i18n.updateText();
+  });
+}
+
+// Exporter aussi l'objet i18n
+export default i18n;

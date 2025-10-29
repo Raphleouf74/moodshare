@@ -41,3 +41,23 @@ if (toggle) {
     document.body.classList.toggle("dark-mode");
   });
 }
+// ...existing code...
+
+// Remplacer les event listeners directs par :
+document.addEventListener('DOMContentLoaded', () => {
+  const highContrastBtn = document.getElementById('highContrastBtn');
+  const increaseFontBtn = document.getElementById('increaseFontBtn');
+  const decreaseFontBtn = document.getElementById('decreaseFontBtn');
+  const readContentBtn = document.getElementById('readContentBtn');
+  const themeToggle = document.getElementById("themeToggle");
+
+  if (highContrastBtn) highContrastBtn.addEventListener('click', toggleHighContrast);
+  if (increaseFontBtn) increaseFontBtn.addEventListener('click', increaseFontSize);
+  if (decreaseFontBtn) decreaseFontBtn.addEventListener('click', decreaseFontSize);
+  if (readContentBtn) readContentBtn.addEventListener('click', readContent);
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+    });
+  }
+});
