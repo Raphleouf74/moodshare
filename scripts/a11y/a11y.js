@@ -33,3 +33,10 @@ document.getElementById('highContrastBtn').addEventListener('click', toggleHighC
 document.getElementById('increaseFontBtn').addEventListener('click', increaseFontSize);
 document.getElementById('decreaseFontBtn').addEventListener('click', decreaseFontSize);
 document.getElementById('readContentBtn').addEventListener('click', readContent);
+
+const toggle = document.getElementById('themeToggle');
+if (toggle) {
+  toggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+  });
+}
