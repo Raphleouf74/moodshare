@@ -1,11 +1,17 @@
 // File: /MoodShare/MoodShare/scripts/social/interactions.js
 
 const interactions = (() => {
-    const likePost = (postId) => {
+    const addLike = (postId) => {
         // Logic to like a post
         console.log(`Post ${postId} liked.`);
         // Update the UI accordingly
     };
+
+    const removeLike = (postId) => {
+        // Logic to unlike a post
+        console.log(`Like removed from post ${postId}.`);
+        // Update the UI accordingly
+    }
 
     const sharePost = (postId) => {
         // Logic to share a post
@@ -26,7 +32,8 @@ const interactions = (() => {
     };
 
     return {
-        likePost,
+        addLike,
+        removeLike,
         sharePost,
         commentOnPost,
         reportPost

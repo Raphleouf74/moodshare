@@ -3,7 +3,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 
 import postsRoutes from "./routes/posts.js";
-import usersRoutes from "./routes/users.js";
+// import usersRoutes from "./routes/users.js";
 import interactionsRoutes from "./routes/interactions.js";
 
 const app = express();
