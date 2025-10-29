@@ -1,4 +1,4 @@
-const express = require('express');
+import express from "express";
 const router = express.Router();
 const User = require('../models/User'); // Assurez-vous d'avoir un modèle User défini
 
