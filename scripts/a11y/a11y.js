@@ -34,9 +34,10 @@ document.getElementById('increaseFontBtn').addEventListener('click', increaseFon
 document.getElementById('decreaseFontBtn').addEventListener('click', decreaseFontSize);
 document.getElementById('readContentBtn').addEventListener('click', readContent);
 
-const toggle = document.getElementById('themeToggle');
+
+const toggle = document.getElementById("themeToggle");
 if (toggle) {
-  toggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
+  toggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
   });
 }

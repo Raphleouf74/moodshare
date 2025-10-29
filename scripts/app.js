@@ -1,16 +1,11 @@
 // scripts/app.js
 import './social/feed.js';
-import { registerServiceWorker } from './offline/sw-register.js';
 import { setupLocalization } from './i18n/i18n.js';
-import { setupAccessibility } from './a11y/a11y.js';
 import { initializeStorage } from './utils/storage.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize storage for offline capabilities
     initializeStorage();
-
-    // Register service worker for offline functionality
-    registerServiceWorker();
 
     // Initialize social features
     initializeSocialFeatures();
@@ -18,8 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Setup localization for multilingual support
     setupLocalization();
 
-    // Setup accessibility features
-    setupAccessibility();
 });
 
 const wall = document.getElementById("moodWall");
