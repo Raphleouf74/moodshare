@@ -1,4 +1,5 @@
-const express = require('express');
+import express from "express";
+import cors from "cors";
 const bodyParser = require('body-parser');
 const postsRoutes = require('./routes/posts');
 const usersRoutes = require('./routes/users');
@@ -17,7 +18,6 @@ app.use('/api/interactions', interactionsRoutes);
 
 
 
-import cors from "cors";
 
 const app = express();
 app.use(cors());
