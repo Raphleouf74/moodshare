@@ -1,27 +1,22 @@
 import express from "express";
 import cors from "cors";
-const bodyParser = require('body-parser');
-const postsRoutes = require('./routes/posts');
-const usersRoutes = require('./routes/users');
-const interactionsRoutes = require('./routes/interactions');
+import bodyParser from "body-parser";
 
+import postsRoutes from "./routes/posts.js";
+import usersRoutes from "./routes/users.js";
+import interactionsRoutes from "./routes/interactions.js";
 
+const app = express();
 
 // Middleware
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/posts', postsRoutes);
-app.use('/api/users', usersRoutes);
-app.use('/api/interactions', interactionsRoutes);
-
-
-
-
-const app = express();
-app.use(cors());
-app.use(express.json());
+app.use("/api/posts", postsRoutes);
+app.use("/api/users", usersRoutes);
+app.use("/api/interactions", interactionsRoutes);
 
 // Exemple de base de données temporaire (en mémoire)
 let posts = [
