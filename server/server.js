@@ -46,8 +46,6 @@ app.post("/api/posts", (req, res) => {
 });
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`✅ MoodShare API running on port ${PORT}`));
-import express from 'express';
-const router = express.Router();
 
 router.get('/posts', async (req, res) => {
     try {
