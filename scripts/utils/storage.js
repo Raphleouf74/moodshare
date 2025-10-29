@@ -12,6 +12,14 @@ export function saveToLocalStorage(data) {
     }
 }
 
+export function initializeStorage() {
+  console.log("Local storage initialized!");
+  if (!localStorage.getItem("moods")) {
+    localStorage.setItem("moods", JSON.stringify([]));
+  }
+}
+
+
 // Fonction pour récupérer des données du stockage local
 export function loadFromLocalStorage() {
     try {
