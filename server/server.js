@@ -44,25 +44,6 @@ app.post("/api/posts", (req, res) => {
   posts.push(newPost);
   res.status(201).json(newPost);
 });
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`✅ MoodShare API running on port ${PORT}`));
-
-router.get('/posts', async (req, res) => {
-    try {
-        const posts = await Post.find(); // Récupérer les posts de la base de données
-        res.json(posts);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-router.get('/moods', async (req, res) => {
-    try {
-        const moods = await Mood.find(); // Récupérer les moods de la base de données
-        res.json(moods);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-export default router;
