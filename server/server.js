@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
 app.use("/api/posts", postsRoutes);
-app.use("/api/users", usersRoutes);
+// app.use("/api/users", usersRoutes);
 app.use("/api/interactions", interactionsRoutes);
 
 // Exemple de base de données temporaire (en mémoire)
