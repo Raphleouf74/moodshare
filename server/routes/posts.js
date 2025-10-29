@@ -49,7 +49,7 @@ router.delete('/:id', async (req, res) => {
 module.exports = router;
 
 // server/routes/posts.js
-import express from "express";
+
 
 let posts = [
   { id: 1, username: "Raph", content: "Bienvenue sur MoodShare 💙", emoji: "😊", likes: 5, date: new Date() },
