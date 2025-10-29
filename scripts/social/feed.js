@@ -3,23 +3,30 @@
 const feedContainer = document.getElementById('moodWall');
 
 // Function to load posts from the server
+export function initializeSocialFeatures() {
+    // Initialisation des fonctionnalités sociales
+    console.log('Fonctionnalités sociales initialisées');
+    loadPosts();
+}
+
 async function loadPosts() {
     try {
-        const response = await fetch('https://moodshare-7dd7.onrender.com/api/posts');
-
+        const response = await fetch('/api/posts');
         const posts = await response.json();
         displayPosts(posts);
     } catch (error) {
-        console.error('Error loading posts:', error);
+        console.error('Erreur chargement posts:', error);
     }
 }
 
-// Function to display posts in the feed
 function displayPosts(posts) {
-    feedContainer.innerHTML = ''; // Clear existing posts
+    const wall = document.getElementById('moodWall');
+    if (!wall) return;
+    
     posts.forEach(post => {
+        // Affichage de chaque post
         const postElement = createPostElement(post);
-        feedContainer.appendChild(postElement);
+        wall.appendChild(postElement);
     });
 }
 

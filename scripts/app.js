@@ -1,14 +1,21 @@
 // scripts/app.js
 import './social/feed.js';
 import { setupLocalization } from './i18n/i18n.js';
-import { initializeStorage } from './utils/storage.js';
+import { initializeSocialFeatures } from './social/feed.js';
+
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        await initializeSocialFeatures();
+    } catch (error) {
+        console.error('Erreur initialisation:', error);
+    }
+});
+
+// ...existing code...
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize storage for offline capabilities
     initializeStorage();
-
-    // Initialize social features
-    initializeSocialFeatures();
 
     // Setup localization for multilingual support
     setupLocalization();
