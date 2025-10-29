@@ -1,7 +1,6 @@
 import express from "express";
 const router = express.Router();
-const { getPosts, createPost, updatePost, deletePost } = require('../controllers/postsController');
-
+import { getPosts, createPost, updatePost, deletePost } from '../controllers/postsController.js';
 // Route pour obtenir tous les posts
 router.get('/', async (req, res) => {
     try {
@@ -46,30 +45,5 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
-module.exports = router;
-
-// server/routes/posts.js
-
-
-let posts = [
-  { id: 1, username: "Raph", content: "Bienvenue sur MoodShare 💙", emoji: "😊", likes: 5, date: new Date() },
-  { id: 2, username: "Alex", content: "J'adore ce projet !", emoji: "🔥", likes: 3, date: new Date() }
-];
-
-router.get("/", (req, res) => res.json(posts));
-
-router.post("/", (req, res) => {
-  const { username, content, emoji } = req.body;
-  const newPost = { id: posts.length + 1, username, content, emoji, likes: 0, date: new Date() };
-  posts.push(newPost);
-  res.status(201).json(newPost);
-});
-
-router.post("/:id/like", (req, res) => {
-  const post = posts.find(p => p.id === parseInt(req.params.id));
-  if (!post) return res.status(404).json({ message: "Post not found" });
-  post.likes++;
-  res.json(post);
-});
 
 export default router;
