@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
-import interactions from '../../scripts/social/interactions.js';
+import { addLike, removeLike, sharePost } from '../../scripts/social/interactions.js';
+
 // Route to like a post
 router.post('/like/:postId', async (req, res) => {
     try {
