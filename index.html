@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MoodShare</title>
+    <link rel="icon" href="/assets/icons/logo_cropped.jpg" />
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+    />
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"
+    ></script>
+  </head>
+
+  <body>
+    <header>
+      <div class="logo">
+        <h1>MoodShare</h1>
+        <p>Exprime ton mood</p>
+      </div>
+    </header>
+    <nav>
+      <div id="buttons">
+        <button id="homeTab" class="active">
+          <span class="material-symbols-rounded">home</span
+          ><!--<p>Accueil</p>-->
+        </button>
+        <button id="postsTab">
+          <span class="material-symbols-rounded">post</span
+          ><!--<p>Accueil</p>-->
+        </button>
+        <button id="createTab">
+          <span class="material-symbols-rounded">add_circle</span
+          ><!--<p>Accueil</p>-->
+        </button>
+        <button id="popularTab">
+          <span class="material-symbols-rounded">mode_heat</span
+          ><!--<p>Accueil</p>-->
+        </button>
+        <button id="profileTab">
+          <span class="material-symbols-rounded">account_circle</span
+          ><!--<p>Accueil</p>-->
+        </button>
+      </div>
+    </nav>
+    <section id="homeTab" class="tab active">
+      <div class="stories">
+        <h2>Stories</h2>
+        <div class="stories-list">
+          <div class="story skeleton"></div>
+          <div class="story skeleton"></div>
+          <div class="story skeleton"></div>
+          <div class="story skeleton"></div>
+          <div class="story skeleton"></div>
+        </div>
+      </div>
+
+      <div class="posts-section">
+        <h2>Posts récents</h2>
+        <div class="post skeleton"></div>
+        <div class="post skeleton"></div>
+        <div class="post skeleton"></div>
+      </div>
+
+      <div class="suggested-accounts">
+        <h2>Comptes à suivre</h2>
+        <div class="accounts-list">
+          <div class="account skeleton"></div>
+          <div class="account skeleton"></div>
+          <div class="account skeleton"></div>
+        </div>
+      </div>
+
+      <div class="posts-section">
+        <h2>Plus de posts</h2>
+        <div class="post skeleton"></div>
+        <div class="post skeleton"></div>
+      </div>
+    </section>
+
+    <section id="postsTab" class="tab hidden">
+      <div id="moodWall"></div>
+      <!-- Les posts apparaîtront ici -->
+    </section>
+
+    <section id="createTab" class="tab hidden">
+      <div id="postModal">
+        <textarea
+          id="moodInput"
+          maxlength="100"
+          placeholder="Comment tu te sens ?"
+        ></textarea>
+        <div class="mood-options">
+          <input type="color" id="moodColor" value="#ffffff" />
+          <input
+            type="text"
+            class="moodEmoji"
+            id="editEmojiBtn"
+            readonly
+            style="font-size: 2rem; width: 3rem; text-align: center"
+          />
+          <div id="emojiPickerContainer">
+            <emoji-picker id="emojiPicker"></emoji-picker>
+          </div>
+        </div>
+        <!-- Aperçu du post -->
+        <p>Aperçu de votre poste</p>
+        <div
+          id="previewMood"
+          class="mood-card"
+          style="margin-top: 1rem; min-height: 60px"
+        >
+          <span id="previewEmoji" style="font-size: 2rem"></span>
+          <span id="previewText"></span>
+        </div>
+        <button id="submitMood">
+          <span class="material-symbols-rounded">upload</span>Partager
+        </button>
+      </div>
+    </section>
+
+    <section id="popularTab" class="tab hidden"></section>
+
+    <section id="profileTab" class="tab hidden">
+      <div id="accountinfo">
+        <img src="./assets/icons/" alt="AccountAvatar" id="accountavatar" />
+        <p>Votre avatar</p>
+        <button>
+          <span class="material-symbols-rounded">edit</span>Modifier
+        </button>
+        <div class="accountname">
+          <input placeholder="Votre pseudo" disabled />
+          <input placeholder="Votre nom" disabled />
+        </div>
+        <div class="plusinfos">
+          <h4>Informations complémentaires</h4>
+          <input placeholder="votre@email.com" disabled />
+          <input placeholder="Votre numéro de téléphone" disabled />
+          <input placeholder="Votre*mot*de*passe" type="password" disabled />
+        </div>
+      </div>
+      <div id="MoreAccSettings">
+        <p><b>Paramètres supplémentaires</b></p>
+        <a href="https://github.com/Raphleouf74/moodshare"
+          ><button>Accéder au GitHub</button></a
+        >
+        <button>Conditions Générales du Service</button>
+        <button>Politique de confidentialité</button>
+        <button>Se déconnecter</button>
+        <p><b>Paramètres supplémentaires à propos du compte</b></p>
+        <button>Modifier les informations du compte</button>
+        <button>Désactiver le compte</button>
+        <button>Supprimer le contenu du compte</button>
+        <button>Supprimer le compte</button>
+      </div>
+    </section>
+  </body>
+  <script type="module" src="scripts/app.js"></script>
+  <script type="module" src="scripts/social/feed.js"></script>
+  <script type="module" src="scripts/social/interactions.js"></script>
+  <script defer src="scripts/offline/sw-register.js"></script>
+  <script defer src="scripts/a11y/a11y.js"></script>
+</html>

@@ -1,0 +1,36 @@
+{
+  "greeting": "Welcome to MoodShare!",
+  "home": {
+    "title": "Home",
+    "description": "Explore the latest moods and posts."
+  },
+  "posts": {
+    "title": "Posts",
+    "create": "Create a new post",
+    "noPosts": "No posts available."
+  },
+  "create": {
+    "title": "Create Post",
+    "placeholder": "How are you feeling?",
+    "share": "Share"
+  },
+  "profile": {
+    "title": "Profile",
+    "edit": "Edit Profile",
+    "logout": "Logout"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "errors": {
+    "network": "Network error. Please try again later.",
+    "notFound": "Page not found."
+  },
+  "footer": {
+    "contact": "Contact Us",
+    "about": "About MoodShare"
+  }
+}

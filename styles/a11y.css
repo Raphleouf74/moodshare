@@ -1,0 +1,71 @@
+body {
+    background-color: #f9f9f9;
+    color: #333;
+    font-family: Arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:focus, a:hover {
+    text-decoration: underline;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+button:focus {
+    outline: 2px solid #0056b3;
+}
+
+input[type="text"], input[type="email"], input[type="password"], textarea {
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input[type="color"] {
+    width: auto;
+}
+
+.mood-card {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.skeleton {
+    background-color: #e0e0e0;
+    border-radius: 4px;
+}
+
+.hidden {
+    display: none;
+}
+
+.tab {
+    padding: 20px;
+}
+
+@media (max-width: 600px) {
+    body {
+        font-size: 14px;
+    }
+
+    button {
+        width: 100%;
+    }
+}
