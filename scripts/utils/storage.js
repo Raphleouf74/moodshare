@@ -13,10 +13,14 @@ export function saveToLocalStorage(data) {
 }
 
 export function initializeStorage() {
-  console.log("Local storage initialized!");
-  if (!localStorage.getItem("moods")) {
-    localStorage.setItem("moods", JSON.stringify([]));
-  }
+    try {
+        localStorage.setItem('moodshare_initialized', 'true');
+        console.log('Storage initialized successfully');
+        return true;
+    } catch (error) {
+        console.error('Erreur initialisation storage:', error);
+        return false;
+    }
 }
 
 

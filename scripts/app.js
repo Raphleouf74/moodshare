@@ -11,8 +11,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// ...existing code...
+import { initializeSocialFeatures } from './social/feed.js';
+import { initializeStorage } from './storage/storage.js';
 
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Initialiser le stockage avant les fonctionnalités sociales
+        if (await initializeStorage()) {
+            await initializeSocialFeatures();
+        }
+    } catch (error) {
+        console.error('Erreur initialisation:', error);
+    }
+});
+
+// ...existing code...
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize storage for offline capabilities
     initializeStorage();

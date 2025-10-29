@@ -49,3 +49,17 @@ self.addEventListener('activate', (event) => {
     })
   );
 });
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js', {
+            scope: '/'
+        })
+        .then(registration => {
+            console.log('SW enregistré:', registration);
+        })
+        .catch(error => {
+            console.error('Erreur SW:', error);
+        });
+    });
+}
