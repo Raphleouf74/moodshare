@@ -1,5 +1,5 @@
 // scripts/app.js
-import { initializeSocialFeatures } from './social/feed.js';
+import './social/feed.js';
 import { registerServiceWorker } from './offline/sw-register.js';
 import { setupLocalization } from './i18n/i18n.js';
 import { setupAccessibility } from './a11y/a11y.js';
@@ -28,28 +28,33 @@ const modal = document.getElementById("postModal");
 const submitBtn = document.getElementById("submitMood");
 
 
-submitBtn.addEventListener("click", async () => {
-    const text = document.getElementById("moodInput").value.trim();
-    const color = document.getElementById("moodColor").value;
-    const emoji = document.querySelector(".moodEmoji").value;
+if (submitBtn) {
+    submitBtn.addEventListener("click", async () => {
 
-    if (!text) return alert("Écris quelque chose !");
 
-    const newMood = { text, color, emoji, date: Date.now() };
 
-    // Affichage instantané
-    displayMood(newMood);
+        const text = document.getElementById("moodInput").value.trim();
+        const color = document.getElementById("moodColor").value;
+        const emoji = document.querySelector(".moodEmoji").value;
 
-    // Envoi au backend
-    await fetch("https://moodshare-7dd7.onrender.com/api/moods", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newMood)
+        if (!text) return alert("Écris quelque chose !");
+
+        const newMood = { text, color, emoji, date: Date.now() };
+
+        // Affichage instantané
+        displayMood(newMood);
+
+        // Envoi au backend
+        await fetch("https://moodshare-7dd7.onrender.com/api/moods", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newMood)
+        });
+
+        modal.classList.add("hidden");
+        document.getElementById("moodInput").value = "";
     });
-
-    modal.classList.add("hidden");
-    document.getElementById("moodInput").value = "";
-});
+}
 
 function displayMood(mood) {
     const div = document.createElement("div");
