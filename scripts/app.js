@@ -1,3 +1,64 @@
+// ----- Vérification de version -----
+// ----- Vérification de version -----
+async function checkSiteVersion() {
+    const siteVersion = document.getElementById("SiteVersion");
+    const buildVersion = document.getElementById("BuildVersion");
+    
+    try {
+        const res = await fetch('/version.json', { 
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        const data = await res.json();
+        const latest = data.version;
+        const latestBuild = data.build;
+        
+        const current = localStorage.getItem('siteVersion');
+        const currentBuild = localStorage.getItem('buildVersion');
+
+        // Mise à jour de l'affichage
+        if (siteVersion) siteVersion.innerText = latest;
+        if (buildVersion) buildVersion.innerText = latestBuild;
+
+        // Vérification des mises à jour
+        if (current && current !== latest) {
+            showUpdateNotification();
+        }
+        if (currentBuild && currentBuild !== latestBuild) {
+            showUpdateNotification();
+        }
+
+        // Sauvegarde des nouvelles versions
+        localStorage.setItem('siteVersion', latest);
+        localStorage.setItem('buildVersion', latestBuild);
+
+        console.log('Ancienne version/build :','V:', latest,'B:',latestBuild);
+        console.log('Version/build actuel :','V:', current,'B:', currentBuild);
+    } catch (error) {
+        console.error('Erreur lors de la vérification de la version du site:', error);
+    }
+}
+
+function showUpdateNotification() {
+    const notif = document.createElement('div');
+    notif.className = 'update-notification';
+    notif.innerHTML = `
+        <p>Une nouvelle version du site est en ligne, cliquez sur le bouton pour recharger la page et la mettre à jour</p>
+        <button onclick="location.reload()">Recharger la page</button>
+    `;
+    document.body.appendChild(notif);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    checkSiteVersion();
+});
 // scripts/app.js
 import './social/feed.js';
 // Supprimer les imports en double et restructurer
@@ -12,7 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             setupLocalization();
         }
     } catch (error) {
-        console.error('Erreur initialisation:', error);
+        console.log('Erreur initialisation:', error);
     }
 });
 
@@ -73,7 +134,7 @@ function displayMood(mood) {
 
 // Chargement initial
 (async () => {
-    const res = await fetch("https://moodshare-7dd7.onrender.com/api/moods");
+    const res = await fetch("https://moodshare-7dd7.onrender.com/api/posts");
     const moods = await res.json();
     moods.reverse().forEach(displayMood);
 })();
@@ -152,3 +213,4 @@ document.querySelector('emoji-picker').addEventListener('emoji-click', updatePre
 
 // Initialisation à l'ouverture
 updatePreview();
+
