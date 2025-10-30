@@ -3,15 +3,15 @@
 async function checkSiteVersion() {
     const siteVersion = document.getElementById("SiteVersion");
     const buildVersion = document.getElementById("BuildVersion");
-    
+
     try {
-        const res = await fetch('/version.json', { 
+        const res = await fetch('/version.json', {
             cache: 'no-cache',
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-        
+
         if (!res.ok) {
             throw new Error(`HTTP error! status: ${res.status}`);
         }
@@ -19,7 +19,7 @@ async function checkSiteVersion() {
         const data = await res.json();
         const latest = data.version;
         const latestBuild = data.build;
-        
+
         const current = localStorage.getItem('siteVersion');
         const currentBuild = localStorage.getItem('buildVersion');
 
@@ -39,8 +39,8 @@ async function checkSiteVersion() {
         localStorage.setItem('siteVersion', latest);
         localStorage.setItem('buildVersion', latestBuild);
 
-        console.log('Ancienne version/build :','V:', latest,'B:',latestBuild);
-        console.log('Version/build actuel :','V:', current,'B:', currentBuild);
+        console.log('Ancienne version/build :', 'V:', latest, 'B:', latestBuild);
+        console.log('Version/build actuel :', 'V:', current, 'B:', currentBuild);
     } catch (error) {
         console.error('Erreur lors de la vérification de la version du site:', error);
     }
@@ -113,7 +113,7 @@ if (submitBtn) {
         displayMood(newMood);
 
         // Envoi au backend
-        await fetch("https://moodshare-7dd7.onrender.com/api/moods", {
+        await fetch("https://moodshare-7dd7.onrender.com/api/posts", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(newMood)
@@ -125,11 +125,19 @@ if (submitBtn) {
 }
 
 function displayMood(mood) {
-    const div = document.createElement("div");
-    div.className = "mood-card";
-    div.style.background = mood.color;
-    div.innerHTML = `${mood.emoji} ${mood.text}`;
-    wall.prepend(div);
+    const moodcard = document.createElement("div");
+    moodcard.className = "post";
+    moodcard.style.background = mood.color;
+    wall.prepend(moodcard);
+    moodcard.innerHTML = `${mood.emoji} ${mood.text} 
+    <div id="postoptions">
+        <button class="likebtn"><span class="material-symbols-rounded">thumb_up</span></button>
+        <button class="commentbtn"><span class="material-symbols-rounded">comment</span></button>
+        <button class="sharebtn"><span class="material-symbols-rounded">share</span></button>
+        <button class="savebtn"><span class="material-symbols-rounded">bookmark</span></button>
+        <button class="reportbtn"><span class="material-symbols-rounded">report</span></button>
+        <button class="morebtn"><span class="material-symbols-rounded">more_horiz</span></button>
+    </div>`;
 }
 
 // Chargement initial
