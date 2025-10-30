@@ -4,14 +4,17 @@ const feedContainer = document.getElementById('moodWall');
 
 // Function to load posts from the server
 export function initializeSocialFeatures() {
-    // Initialisation des fonctionnalités sociales
-    console.log('Fonctionnalités sociales initialisées');
     loadPosts();
+    setupInteractions();
 }
 
 async function loadPosts() {
     try {
-        const response = await fetch('/api/posts');
+        const API_URL = 'https://moodshare-7dd7.onrender.com/api/posts';
+        const response = await fetch(API_URL);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const posts = await response.json();
         displayPosts(posts);
     } catch (error) {

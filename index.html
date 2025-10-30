@@ -168,11 +168,12 @@
       </div>
     </section>
   </body>
+  <!-- Remplacer les 3 lignes d'import de scripts par : -->
   <script type="module" src="scripts/app.js"></script>
+  <script defer src="scripts/a11y/a11y.js"></script>
   <script type="module" src="scripts/social/feed.js"></script>
   <script type="module" src="scripts/social/interactions.js"></script>
   <script defer src="scripts/offline/sw-register.js"></script>
-  <script defer src="scripts/a11y/a11y.js"></script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {

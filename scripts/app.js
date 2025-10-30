@@ -1,29 +1,23 @@
 // scripts/app.js
 import './social/feed.js';
+// Supprimer les imports en double et restructurer
 import { setupLocalization } from './i18n/i18n.js';
 import { initializeSocialFeatures } from './social/feed.js';
+import { initializeStorage } from './utils/storage.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        await initializeSocialFeatures();
-    } catch (error) {
-        console.error('Erreur initialisation:', error);
-    }
-});
-
-import { initializeSocialFeatures } from './social/feed.js';
-import { initializeStorage } from './storage/storage.js';
-
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        // Initialiser le stockage avant les fonctionnalités sociales
         if (await initializeStorage()) {
             await initializeSocialFeatures();
+            setupLocalization();
         }
     } catch (error) {
         console.error('Erreur initialisation:', error);
     }
 });
+
+
+
 
 // ...existing code...
 document.addEventListener('DOMContentLoaded', () => {
