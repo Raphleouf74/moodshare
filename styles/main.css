@@ -142,7 +142,7 @@ nav button {
 nav button.active {
     background-color: black;
     color: rgb(200, 200, 200);
-    width: 100%;
+    width: 20%;
 }
 
 
@@ -192,6 +192,13 @@ nav button#profileTab:hover span {
 nav button#postsTab:hover span {
     animation: scroll 0.5s forwards;
 }
+
+nav button#settingsTab:hover span {
+    transform: scale(1.5) rotate(-45deg);
+    font-weight: 300;
+    color: grey;
+}
+
 
 @keyframes scroll {
     0% {
@@ -480,14 +487,4 @@ section#profileTab {
     border-top: 1.5px grey solid;
     height: 50px;
     background-color: transparent;
-}
-
-#buttons {
-    width: calc(1500px * (50/100));
-    max-width: x;
-    display: flex;
-    justify-content: space-around;
-    height: 100%;
-    align-items: center;
-    margin: 0 auto;
 }
