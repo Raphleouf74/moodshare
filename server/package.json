@@ -17,7 +17,7 @@
     "express-session": "^1.17.3",
     "passport": "^0.6.0",
     "passport-google-oauth20": "^2.0.0",
-    "passport-instagram": "^1.0.0",
+    "passport-instagram": "^1.0.0"
   },
   "devDependencies": {
     "jest": "^26.6.0",
