@@ -371,9 +371,10 @@ section {
 }
 
 #postoptions:hover {
-    height: 150px;
-    bottom: -55px;
-    background-color: rgb(50, 50, 50, 0.4);
+    background-color: rgb(255,255,255,0.5);
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+    color: black;
 }
 
 @media (max-width: 760px) {
