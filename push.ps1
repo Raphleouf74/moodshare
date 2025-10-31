@@ -33,9 +33,28 @@ else {
     Write-Host "version.json updated to $newVersion (build $newBuild)"
 }
 
-# Git commit & push
-git add .
-git commit -m "V$newVersion (build $newBuild)"
-git push origin main
 
-Write-Host "GitPush completed"
+# Git operations with pull first
+Write-Host "Pulling latest changes..."
+git pull origin main
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "⚠️ Pull failed! Please resolve conflicts manually" -ForegroundColor Red
+    exit 1
+}
+
+git add .
+$commitStatus = git commit -m "V$newVersion (build $newBuild)"
+if ($commitStatus -match "nothing to commit") {
+    Write-Host "No changes to commit" -ForegroundColor Yellow
+} else {
+    Write-Host "Changes committed" -ForegroundColor Green
+}
+
+Write-Host "Pushing changes..."
+git push origin main
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "❌ Push failed!" -ForegroundColor Red
+    exit 1
+}
+
+Write-Host "✅ GitPush completed successfully" -ForegroundColor Green
