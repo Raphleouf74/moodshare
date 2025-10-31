@@ -22,12 +22,12 @@ app.use(bodyParser.json());
 let posts = [
   // Exemple de post
   {
-    id: "1",
-    content: "Bienvenue sur MoodShare !",
-    likes: 0,
-    comments: [],
-    createdAt: new Date().toISOString(),
-    ephemeral: false
+    text: 'Bienvenue dans Moodshare ! Partagez dès maintenant votre mood depuis la section "Créer" !',
+    color: '#00cfeb',
+    emoji: '👋',
+    ephemeral: false,
+    expiresAt: null,
+    id: 1
   }
 ];
 
