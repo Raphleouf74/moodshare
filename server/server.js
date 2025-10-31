@@ -16,7 +16,17 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Stockage en mémoire
-let posts = [];
+let posts = [
+  // Exemple de post
+  {
+    id: "1",
+    content: "Bienvenue sur MoodShare !",
+    likes: 0,
+    comments: [],
+    createdAt: new Date().toISOString(),
+    ephemeral: false
+  }
+];
 
 // Charger les posts au démarrage
 try {
