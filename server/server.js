@@ -43,8 +43,6 @@ app.get("/api/posts", (req, res) => {
   res.json(posts);
 });
 
-// ...existing code...
-
 // Middleware de logging
 app.use((req, res, next) => {
   const start = Date.now();
@@ -126,7 +124,6 @@ app.post("/api/posts", async (req, res) => {
 
   res.status(201).json(newPost);
 });
-// ...existing code...
 
 // Route like
 app.post("/api/posts/:id/like", (req, res) => {
@@ -139,3 +136,22 @@ app.post("/api/posts/:id/like", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`✅ MoodShare API running on port ${PORT}`));
+
+const session = require('express-session');
+const passport = require('./passport');
+const authRoutes = require('./routes/auth');
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 24 * 60 * 60 * 1000 // 24h
+  }
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/auth', authRoutes);

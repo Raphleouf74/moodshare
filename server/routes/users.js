@@ -1,71 +1,22 @@
-// import express from "express";
-// const router = express.Router();
-// import User from '../models/User.js'; // Assurez-vous d'avoir un modèle User défini
+const express = require('express');
+const router = express.Router();
 
-// // Route pour obtenir tous les utilisateurs
-// router.get('/', async (req, res) => {
-//     try {
-//         const users = await User.find();
-//         res.json(users);
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// });
+// retourne l'utilisateur connecté (session)
+router.get('/me', (req, res) => {
+  if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
+  res.json(req.user);
+});
 
-// // Route pour obtenir un utilisateur par ID
-// router.get('/:id', async (req, res) => {
-//     try {
-//         const user = await User.findById(req.params.id);
-//         if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
-//         res.json(user);
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// });
+// met à jour préférences / affichage du profil (stub : persister en DB en prod)
+router.put('/me', express.json(), (req, res) => {
+  if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
+  const updates = req.body || {};
+  const user = Object.assign({}, req.user, updates);
+  // Met à jour la session afin que fetch /api/users/me retourne les nouveaux champs
+  req.login && req.login(user, (err) => {
+    if (err) return res.status(500).json({ error: 'Failed to update session' });
+    return res.json(user);
+  }) || res.json(user);
+});
 
-// // Route pour créer un nouvel utilisateur
-// router.post('/', async (req, res) => {
-//     const user = new User({
-//         username: req.body.username,
-//         email: req.body.email,
-//         password: req.body.password, // Assurez-vous de hacher le mot de passe avant de le sauvegarder
-//     });
-
-//     try {
-//         const newUser = await user.save();
-//         res.status(201).json(newUser);
-//     } catch (error) {
-//         res.status(400).json({ message: error.message });
-//     }
-// });
-
-// // Route pour mettre à jour un utilisateur
-// router.patch('/:id', async (req, res) => {
-//     try {
-//         const user = await User.findById(req.params.id);
-//         if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
-
-//         if (req.body.username) user.username = req.body.username;
-//         if (req.body.email) user.email = req.body.email;
-//         if (req.body.password) user.password = req.body.password; // Assurez-vous de hacher le mot de passe
-
-//         const updatedUser = await user.save();
-//         res.json(updatedUser);
-//     } catch (error) {
-//         res.status(400).json({ message: error.message });
-//     }
-// });
-
-// // Route pour supprimer un utilisateur
-// router.delete('/:id', async (req, res) => {
-//     try {
-//         const user = await User.findById(req.params.id);
-//         if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
-
-//         await user.remove();
-//         res.json({ message: 'Utilisateur supprimé' });
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// });
-// export default router;
+module.exports = router;
