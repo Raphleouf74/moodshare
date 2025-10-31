@@ -103,7 +103,7 @@ const durationPicker = document.getElementById('durationPicker');
 
 // Ajouter la gestion du toggle
 ephemeralToggle.addEventListener('change', () => {
-  durationPicker.style.display = ephemeralToggle.checked ? 'flex' : 'none';
+    durationPicker.style.display = ephemeralToggle.checked ? 'flex' : 'none';
 });
 
 // Modifier la fonction d'envoi du post
@@ -130,12 +130,12 @@ if (submitBtn) {
                 }
             }
 
-            const newMood = { 
-                text, 
-                color, 
+            const newMood = {
+                text,
+                color,
                 emoji,
                 ephemeral: ephemeralToggle.checked,
-                expiresAt 
+                expiresAt
             };
 
             const response = await fetch("https://moodshare-7dd7.onrender.com/api/posts", {
@@ -162,10 +162,35 @@ function displayMood(mood) {
     moodcard.className = "post";
     moodcard.style.background = mood.color;
     wall.prepend(moodcard);
-    moodcard.innerHTML = `${mood.emoji} ${mood.text} 
 
+    // Formatage de la date de création
+    const createdDate = new Date(mood.createdAt).toLocaleString('fr-FR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    // Préparation du texte d'expiration si le post est éphémère
+    let expirationText = '';
+    if (mood.ephemeral && mood.expiresAt) {
+        const expirationDate = new Date(mood.expiresAt).toLocaleString('fr-FR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        expirationText = `<p class="expiration-date">Expire le ${expirationDate}</p>`;
+    }
+
+    moodcard.innerHTML = `${mood.emoji} ${mood.text} 
     <div id="postoptions">
-        <p class="postdate">Posté le ${new Date(mood.date).toLocaleString()}</p>
+        <div class="post-dates">
+            <p class="postdate">Créé le ${createdDate}</p>
+            ${expirationText}
+        </div>
         <div class="buttons">
             <button class="likebtn"><span class="material-symbols-rounded">thumb_up</span></button>
             <button class="commentbtn"><span class="material-symbols-rounded">comment</span></button>

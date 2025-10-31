@@ -688,3 +688,34 @@ body {
   font-size: 0.8rem;
   opacity: 0.8;
 }
+
+.post-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.postdate {
+    margin: 0;
+}
+
+.expiration-date {
+    margin: 0;
+    color: #ff4444;
+    font-weight: 500;
+}
+
+#postoptions {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    padding: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.post:hover #postoptions {
+    opacity: 1;
+}

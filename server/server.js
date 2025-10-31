@@ -1,12 +1,13 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import fs from 'fs/promises';
+import * as fs from 'fs/promises';  // Changement ici
 import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 
 const app = express();
 
@@ -70,6 +71,21 @@ app.post("/api/posts", async (req, res) => {
 
   // Si le post est éphémère, programmer sa suppression
   if (newPost.ephemeral && newPost.expiresAt) {
+    const timeUntilExpiry = new Date(newPost.expiresAt) - new Date();
+    setTimeout(async () => {  // Ajout du async ici
+      posts = posts.filter(p => p.id !== newPost.id);
+      // Sauvegarder après suppression
+      try {
+        await fs.writeFile(  // Utilisation de writeFile au lieu de writeFileSync
+          path.join(__dirname, 'data', 'posts.json'),
+          JSON.stringify(posts, null, 2)
+        );
+        console.log('🗑️ Post éphémère supprimé, ID:', newPost.id);
+      } catch (error) {
+        console.error('❌ Erreur sauvegarde après suppression:', error);
+      }
+    }, timeUntilExpiry);
+  } if (newPost.ephemeral && newPost.expiresAt) {
     const timeUntilExpiry = new Date(newPost.expiresAt) - new Date();
     setTimeout(() => {
       posts = posts.filter(p => p.id !== newPost.id);
