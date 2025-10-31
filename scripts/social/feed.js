@@ -33,26 +33,6 @@ function displayPosts(posts) {
     });
 }
 
-// Function to create a post element
-function createPostElement(post) {
-    const postDiv = document.createElement('div');
-    postDiv.className = 'post';
-    postDiv.innerHTML = `
-        <div class="post-header">
-            <span class="post-username">${post.username}</span>
-            <span class="post-date">${new Date(post.date).toLocaleString()}</span>
-        </div>
-        <div class="post-content">
-            <p>${post.content}</p>
-            <span class="post-emoji">${post.emoji}</span>
-        </div>
-        <div class="post-actions">
-            <button class="like-button" data-id="${post.id}">❤️ ${post.likes}</button>
-            <button class="comment-button" data-id="${post.id}">💬 Commenter</button>
-        </div>
-    `;
-    return postDiv;
-}
 
 // Event listener for the like button
 feedContainer.addEventListener('click', async (event) => {

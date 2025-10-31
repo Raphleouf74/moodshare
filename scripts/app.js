@@ -137,13 +137,17 @@ function displayMood(mood) {
     moodcard.style.background = mood.color;
     wall.prepend(moodcard);
     moodcard.innerHTML = `${mood.emoji} ${mood.text} 
+
     <div id="postoptions">
-        <button class="likebtn"><span class="material-symbols-rounded">thumb_up</span></button>
-        <button class="commentbtn"><span class="material-symbols-rounded">comment</span></button>
-        <button class="sharebtn"><span class="material-symbols-rounded">share</span></button>
-        <button class="savebtn"><span class="material-symbols-rounded">bookmark</span></button>
-        <button class="reportbtn"><span class="material-symbols-rounded">report</span></button>
-        <button class="morebtn"><span class="material-symbols-rounded">more_horiz</span></button>
+        <p class="postdate">Posté le ${new Date(mood.date).toLocaleString()}</p>
+        <div class="buttons">
+            <button class="likebtn"><span class="material-symbols-rounded">thumb_up</span></button>
+            <button class="commentbtn"><span class="material-symbols-rounded">comment</span></button>
+            <button class="sharebtn"><span class="material-symbols-rounded">share</span></button>
+            <button class="savebtn"><span class="material-symbols-rounded">bookmark</span></button>
+            <button class="reportbtn"><span class="material-symbols-rounded">report</span></button>
+            <button class="morebtn"><span class="material-symbols-rounded">more_horiz</span></button>
+        </div>
     </div>`;
 }
 
