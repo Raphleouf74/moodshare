@@ -40,20 +40,4 @@ router.get('/instagram/callback',
     }
 );
 
-// TikTok routes
-router.get('/tiktok', passport.authenticate('tiktok'));
-router.get('/tiktok/callback',
-    passport.authenticate('tiktok', { failureRedirect: '/auth/failure' }),
-    (req, res) => {
-        const user = req.user || {};
-        const payload = JSON.stringify(user).replace(/</g, '\\u003c');
-        res.send(`
-      <script>
-        window.opener.postMessage({ type: 'oauth', user: ${payload} }, window.location.origin);
-        window.close();
-      </script>
-    `);
-    }
-);
-
 module.exports = router;

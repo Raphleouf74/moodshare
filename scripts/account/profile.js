@@ -62,11 +62,9 @@ async function init() {
     // Configuration des boutons de connexion sociale
     const g = document.getElementById('loginGoogle');
     const ig = document.getElementById('loginInstagram');
-    const tt = document.getElementById('loginTikTok');
 
     if (g) g.addEventListener('click', () => openOAuthPopup('/auth/google', 'google-oauth'));
     if (ig) ig.addEventListener('click', () => openOAuthPopup('/auth/instagram', 'instagram-oauth'));
-    if (tt) tt.addEventListener('click', () => openOAuthPopup('/auth/tiktok', 'tiktok-oauth'));
 
     // Configuration du bouton d'édition
     const editBtn = document.getElementById('editProfileBtn');
@@ -106,7 +104,7 @@ async function init() {
 
 document.addEventListener('DOMContentLoaded', init);
 
-const loginButtons = ['loginGoogle', 'loginInstagram', 'loginTikTok'];
+const loginButtons = ['loginGoogle', 'loginInstagram'];
 
 loginButtons.forEach(id => {
     const btn = document.getElementById(id);
