@@ -35,11 +35,26 @@ else {
 
 
 # Git operations with pull first
+# ...existing code...
+
+# Git operations with automated merge message
 Write-Host "Pulling latest changes..."
-git pull origin main
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "⚠️ Pull failed! Please resolve conflicts manually" -ForegroundColor Red
-    exit 1
+$pullResult = git pull origin main 2>&1
+if ($pullResult -match "Automatic merge failed") {
+    # Handle merge conflicts
+    Write-Host "⚠️ Merge conflicts detected! Resolving..." -ForegroundColor Yellow
+    
+    # Set default merge message
+    $mergeMessage = "Merge main branch to sync with remote changes"
+    Set-Content -Path ".git/MERGE_MSG" -Value $mergeMessage
+    
+    git add .
+    git commit -m "$mergeMessage"
+    
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "❌ Merge failed! Please resolve conflicts manually" -ForegroundColor Red
+        exit 1
+    }
 }
 
 git add .
