@@ -4,6 +4,9 @@ import bodyParser from "body-parser";
 import * as fs from 'fs/promises';  // Changement ici
 import path from 'path';
 import { fileURLToPath } from 'url';
+import session from 'express-session';
+import passport from './passport';
+import authRoutes from './routes/auth';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -137,9 +140,7 @@ app.post("/api/posts/:id/like", (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`✅ MoodShare API running on port ${PORT}`));
 
-const session = require('express-session');
-const passport = require('./passport');
-const authRoutes = require('./routes/auth');
+
 
 app.use(session({
   secret: process.env.SESSION_SECRET,

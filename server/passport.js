@@ -1,12 +1,12 @@
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const InstagramStrategy = require('passport-instagram').Strategy;
-const TikTokStrategy = require('passport-tiktok').Strategy;
+import passport from 'passport';
+import GoogleStrategy from ('passport-google-oauth20').Strategy;
+import InstagramStrategy from ('passport-instagram').Strategy;
+import TikTokStrategy from('passport-tiktok').Strategy;
 
 const {
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
-  OAUTH_CALLBACK_BASE = 'http://localhost:3000'
+  OAUTH_CALLBACK_BASE
 } = process.env;
 
 passport.serializeUser((user, done) => {

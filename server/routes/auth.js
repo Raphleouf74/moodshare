@@ -1,6 +1,6 @@
-const express = require('express');
-const router = express.Router();
-const passport = require('../passport');
+import express from 'express';
+import router from express.Router();
+import passport from '../passport';
 
 // Google
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
