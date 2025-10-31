@@ -96,31 +96,38 @@ const modal = document.getElementById("postModal");
 const submitBtn = document.getElementById("submitMood");
 
 
+
+
 if (submitBtn) {
     submitBtn.addEventListener("click", async () => {
+        try {
+            const text = document.getElementById("moodInput").value.trim();
+            const color = document.getElementById("moodColor").value;
+            const emoji = document.querySelector(".moodEmoji").value;
 
+            if (!text) return alert("Écris quelque chose !");
 
+            const newMood = { text, color, emoji, date: Date.now() };
 
-        const text = document.getElementById("moodInput").value.trim();
-        const color = document.getElementById("moodColor").value;
-        const emoji = document.querySelector(".moodEmoji").value;
+            const response = await fetch("https://moodshare-7dd7.onrender.com/api/posts", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newMood)
+            });
 
-        if (!text) return alert("Écris quelque chose !");
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-        const newMood = { text, color, emoji, date: Date.now() };
+            const savedPost = await response.json();
+            displayMood(savedPost);
 
-        // Affichage instantané
-        displayMood(newMood);
-
-        // Envoi au backend
-        await fetch("https://moodshare-7dd7.onrender.com/api/posts", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newMood)
-        });
-
-        modal.classList.add("hidden");
-        document.getElementById("moodInput").value = "";
+            modal.classList.add("hidden");
+            document.getElementById("moodInput").value = "";
+        } catch (error) {
+            console.error('Erreur envoi post:', error);
+            alert('Erreur lors de l\'envoi du post');
+        }
     });
 }
 

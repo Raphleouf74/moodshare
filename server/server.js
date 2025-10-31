@@ -1,48 +1,91 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
+import fs from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-import postsRoutes from "./routes/posts.js";
-// import usersRoutes from "./routes/users.js";
-import interactionsRoutes from "./routes/interactions.js";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+
+// Stockage en mémoire
+let posts = [];
+
+// Charger les posts au démarrage
+try {
+  const data = await fs.readFile(path.join(__dirname, 'data', 'posts.json'), 'utf8');
+  posts = JSON.parse(data);
+  console.log('✅ Posts chargés depuis le fichier');
+} catch (error) {
+  console.log('⚠️ Aucun fichier de posts trouvé, démarrage avec un tableau vide');
+}
 
 // Routes
-app.use("/api/posts", postsRoutes);
-// app.use("/api/users", usersRoutes);
-app.use("/api/interactions", interactionsRoutes);
-
-// Exemple de base de données temporaire (en mémoire)
-let posts = [
-  { id: 1, username: "Raph", content: "Bienvenue sur MoodShare 💙", emoji: "😊", likes: 5, date: new Date() },
-  { id: 2, username: "Alex", content: "J'adore ce projet !", emoji: "🔥", likes: 3, date: new Date() }
-];
-
-// 🟢 Route : récupérer tous les posts
 app.get("/api/posts", (req, res) => {
+  console.log('GET /api/posts');
   res.json(posts);
 });
 
-// ❤️ Route : liker un post
-app.post("/api/posts/:id/like", (req, res) => {
-  const post = posts.find(p => p.id === parseInt(req.params.id));
-  if (!post) return res.status(404).json({ message: "Post not found" });
-  post.likes++;
-  res.json(post);
+// ...existing code...
+
+// Middleware de logging
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log(`📝 ${req.method} ${req.url} - Status: ${res.statusCode} - ${duration}ms`);
+    if (req.method === 'POST') {
+      console.log('📦 Contenu reçu:', req.body);
+    }
+  });
+  next();
 });
 
-// ➕ Route : créer un nouveau post
-app.post("/api/posts", (req, res) => {
-  const { username, content, emoji } = req.body;
-  const newPost = { id: posts.length + 1, username, content, emoji, likes: 0, date: new Date() };
-  posts.push(newPost);
+// Route posts avec logs
+app.post("/api/posts", async (req, res) => {
+  console.log('🆕 Nouveau post reçu:', {
+    timestamp: new Date().toISOString(),
+    content: req.body
+  });
+
+  const newPost = {
+    id: Date.now().toString(),
+    ...req.body,
+    likes: 0,
+    comments: []
+  };
+  posts.unshift(newPost);
+
+  // Sauvegarder dans le fichier
+  try {
+    await fs.mkdir(path.join(__dirname, 'data'), { recursive: true });
+    await fs.writeFile(
+      path.join(__dirname, 'data', 'posts.json'),
+      JSON.stringify(posts, null, 2)
+    );
+    console.log('💾 Post sauvegardé avec succès, ID:', newPost.id);
+  } catch (error) {
+    console.error('❌ Erreur sauvegarde:', error);
+  }
+
   res.status(201).json(newPost);
+});
+
+// ...existing code...
+
+// Route like
+app.post("/api/posts/:id/like", (req, res) => {
+  const post = posts.find(p => p.id === req.params.id);
+  if (!post) return res.status(404).json({ message: "Post non trouvé" });
+
+  post.likes = (post.likes || 0) + 1;
+  res.json(post);
 });
 
 const PORT = process.env.PORT || 3000;
