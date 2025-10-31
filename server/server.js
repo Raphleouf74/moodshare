@@ -48,19 +48,43 @@ app.use((req, res, next) => {
 });
 
 // Route posts avec logs
+// Dans la route de création de post
 app.post("/api/posts", async (req, res) => {
-  console.log('🆕 Nouveau post reçu:', {
-    timestamp: new Date().toISOString(),
-    content: req.body
-  });
+  console.log('🆕 Nouveau post reçu:', req.body);
 
   const newPost = {
     id: Date.now().toString(),
     ...req.body,
     likes: 0,
-    comments: []
+    comments: [],
+    createdAt: new Date().toISOString()
   };
+
   posts.unshift(newPost);
+
+  // Nettoyage des posts expirés
+  posts = posts.filter(post => {
+    if (!post.ephemeral || !post.expiresAt) return true;
+    return new Date(post.expiresAt) > new Date();
+  });
+
+  // Si le post est éphémère, programmer sa suppression
+  if (newPost.ephemeral && newPost.expiresAt) {
+    const timeUntilExpiry = new Date(newPost.expiresAt) - new Date();
+    setTimeout(() => {
+      posts = posts.filter(p => p.id !== newPost.id);
+      // Sauvegarder après suppression
+      try {
+        fs.writeFileSync(
+          path.join(__dirname, 'data', 'posts.json'),
+          JSON.stringify(posts, null, 2)
+        );
+        console.log('🗑️ Post éphémère supprimé, ID:', newPost.id);
+      } catch (error) {
+        console.error('❌ Erreur sauvegarde après suppression:', error);
+      }
+    }, timeUntilExpiry);
+  }
 
   // Sauvegarder dans le fichier
   try {
@@ -76,7 +100,6 @@ app.post("/api/posts", async (req, res) => {
 
   res.status(201).json(newPost);
 });
-
 // ...existing code...
 
 // Route like

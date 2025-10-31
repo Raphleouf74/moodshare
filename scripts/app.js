@@ -97,7 +97,16 @@ const submitBtn = document.getElementById("submitMood");
 
 
 
+// Ajouter après les autres constantes
+const ephemeralToggle = document.getElementById('ephemeralToggle');
+const durationPicker = document.getElementById('durationPicker');
 
+// Ajouter la gestion du toggle
+ephemeralToggle.addEventListener('change', () => {
+  durationPicker.style.display = ephemeralToggle.checked ? 'flex' : 'none';
+});
+
+// Modifier la fonction d'envoi du post
 if (submitBtn) {
     submitBtn.addEventListener("click", async () => {
         try {
@@ -107,7 +116,27 @@ if (submitBtn) {
 
             if (!text) return alert("Écris quelque chose !");
 
-            const newMood = { text, color, emoji, date: Date.now() };
+            // Calcul de la durée si éphémère
+            let expiresAt = null;
+            if (ephemeralToggle.checked) {
+                const days = parseInt(document.getElementById('durationDays').value) || 0;
+                const hours = parseInt(document.getElementById('durationHours').value) || 0;
+                const minutes = parseInt(document.getElementById('durationMinutes').value) || 0;
+                const seconds = parseInt(document.getElementById('durationSeconds').value) || 0;
+
+                const totalMs = ((days * 24 * 60 * 60) + (hours * 60 * 60) + (minutes * 60) + seconds) * 1000;
+                if (totalMs > 0) {
+                    expiresAt = new Date(Date.now() + totalMs).toISOString();
+                }
+            }
+
+            const newMood = { 
+                text, 
+                color, 
+                emoji,
+                ephemeral: ephemeralToggle.checked,
+                expiresAt 
+            };
 
             const response = await fetch("https://moodshare-7dd7.onrender.com/api/posts", {
                 method: "POST",
@@ -115,12 +144,9 @@ if (submitBtn) {
                 body: JSON.stringify(newMood)
             });
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const savedPost = await response.json();
-            displayMood(savedPost);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const savedMood = await response.json();
+            displayMood(savedMood);
 
             modal.classList.add("hidden");
             document.getElementById("moodInput").value = "";
