@@ -1,7 +1,7 @@
 import passport from 'passport';
-import GoogleStrategy from ('passport-google-oauth20').Strategy;
-import InstagramStrategy from ('passport-instagram').Strategy;
-import TikTokStrategy from('passport-tiktok').Strategy;
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import { Strategy as InstagramStrategy } from 'passport-instagram';
+import { Strategy as TikTokStrategy } from 'passport-tiktok';
 
 const {
   GOOGLE_CLIENT_ID,
@@ -97,4 +97,4 @@ if (process.env.TIKTOK_CLIENT_KEY && process.env.TIKTOK_CLIENT_SECRET) {
 }
 
 // Export passport instance
-module.exports = passport;
+export default passport;
