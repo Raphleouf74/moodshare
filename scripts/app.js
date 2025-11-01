@@ -100,10 +100,13 @@ const submitBtn = document.getElementById("submitMood");
 // Ajouter après les autres constantes
 const ephemeralToggle = document.getElementById('ephemeralToggle');
 const durationPicker = document.getElementById('durationPicker');
+const ephemeralpickdiv = document.querySelector('.ephemeral-options');
 
 // Ajouter la gestion du toggle
 ephemeralToggle.addEventListener('change', () => {
     durationPicker.style.display = ephemeralToggle.checked ? 'flex' : 'none';
+    ephemeralpickdiv.style.width = ephemeralToggle.checked ? '400px' : '300px';
+    ephemeralpickdiv.style.height = ephemeralToggle.checked ? '125px' : '50px';
 });
 
 // Modifier la fonction d'envoi du post
@@ -283,4 +286,85 @@ document.querySelector('emoji-picker').addEventListener('emoji-click', updatePre
 
 // Initialisation à l'ouverture
 updatePreview();
+
+// Fonction pour montrer le feedback
+function showFeedback(success, message) {
+    const feedback = document.createElement('div');
+    feedback.className = `upload-feedback ${success ? 'upload-success' : 'upload-error'}`;
+    feedback.innerHTML = `
+    <span class="material-symbols-rounded">
+      ${success ? 'check_circle' : 'error'}
+    </span>
+    ${message}
+  `;
+    document.body.appendChild(feedback);
+
+    // Supprimer après l'animation
+    setTimeout(() => feedback.remove(), 3000);
+}
+
+// Modifier la gestion du submit
+if (submitBtn) {
+    submitBtn.addEventListener("click", async () => {
+        try {
+            const text = document.getElementById("moodInput").value.trim();
+            const color = document.getElementById("moodColor").value;
+            const emoji = document.querySelector(".moodEmoji").value;
+
+            if (!text) {
+                showFeedback(false, "Écris quelque chose !");
+                return;
+            }
+
+            // Ajouter classe pour animation de chargement
+            submitBtn.classList.add('submitting');
+            submitBtn.disabled = true;
+
+            // Calcul de la durée si éphémère
+            let expiresAt = null;
+            if (ephemeralToggle.checked) {
+                const days = parseInt(document.getElementById('durationDays').value) || 0;
+                const hours = parseInt(document.getElementById('durationHours').value) || 0;
+                const minutes = parseInt(document.getElementById('durationMinutes').value) || 0;
+                const seconds = parseInt(document.getElementById('durationSeconds').value) || 0;
+
+                const totalMs = ((days * 24 * 60 * 60) + (hours * 60 * 60) + (minutes * 60) + seconds) * 1000;
+                if (totalMs > 0) {
+                    expiresAt = new Date(Date.now() + totalMs).toISOString();
+                }
+            }
+
+            const newMood = {
+                text,
+                color,
+                emoji,
+                ephemeral: ephemeralToggle.checked,
+                expiresAt
+            };
+
+            const response = await fetch("https://moodshare-7dd7.onrender.com/api/posts", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newMood)
+            });
+
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+            const savedMood = await response.json();
+            displayMood(savedMood);
+            modal.classList.add("hidden");
+            document.getElementById("moodInput").value = "";
+
+            showFeedback(true, "Mood partagé avec succès ! ✨");
+
+        } catch (error) {
+            console.error('Erreur envoi post:', error);
+            showFeedback(false, "Erreur lors de l'envoi du mood 😢");
+        } finally {
+            // Retirer l'animation de chargement
+            submitBtn.classList.remove('submitting');
+            submitBtn.disabled = false;
+        }
+    });
+}
 

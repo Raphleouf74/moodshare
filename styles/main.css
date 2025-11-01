@@ -7,9 +7,21 @@
 body {
     font-family: "Inter", sans-serif;
     margin: 0;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(155, 255, 255, 0.50), #28013793);
+    background-attachment: fixed;
+}
+section {
     width: 100vw;
-    height: 100vh;
     overflow-x: hidden;
+}
+body, section, main {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+html {
+  overflow-y: scroll;
 }
 
 header {
@@ -68,6 +80,8 @@ header.scrolled p {
     color: white;
     font-weight: 600;
     animation: fadeIn 0.2s ease;
+    margin-top: 1rem;
+    min-height: 60px;
 }
 
 @keyframes fadeIn {
@@ -178,6 +192,11 @@ nav button#createTab:hover span {
     transform: rotate(90deg) scale(1.5);
 }
 
+section#createTab {
+    width: 100%;
+    height: 100%;
+}
+
 nav button#popularTab:hover span {
     animation: fire 0.5s forwards;
     font-weight: 300;
@@ -265,7 +284,7 @@ section.hidden {
 
 section {
     background: transparent;
-    width: 100%;
+    width: 100vw;
     padding: 15px;
 }
 
@@ -371,7 +390,7 @@ section {
 }
 
 #postoptions:hover {
-    background-color: rgb(255,255,255,0.5);
+    background-color: rgb(255, 255, 255, 0.5);
     -webkit-backdrop-filter: blur(15px);
     backdrop-filter: blur(15px);
     color: black;
@@ -532,6 +551,7 @@ section#profileTab {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    width: 100vw;
 }
 
 #postModal textarea {
@@ -568,6 +588,10 @@ section#profileTab {
     padding: 1rem;
     color: white;
     font-weight: 600;
+}
+
+#previewEmoji {
+    font-size: 2rem;
 }
 
 #emojiPickerContainer {
@@ -647,54 +671,58 @@ section#profileTab {
     color: grey;
 }
 
-body {
-    background: linear-gradient(135deg, rgba(155, 255, 255, 0.50), #28013793);
-    background-attachment: fixed;
 
-}
 
 .ephemeral-options {
-  margin: 1rem 0;
-  padding: 1rem;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 0.5rem;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 0.5rem;
+    transition: all 0.2s ease-in-out;
+    width: 300px;
+    height: 50px;
+    overflow: hidden;
 }
 
 .ephemeral-toggle {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
 }
 
 .duration-picker {
-  margin-top: 1rem;
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  justify-content: center;
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+}
+
+#durationPicker {
+    display: none;
 }
 
 .duration-input {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
 }
 
 .duration-input input {
-  width: 3rem;
-  padding: 0.5rem;
-  text-align: center;
-  border-radius: 0.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.1);
-  color: inherit;
+    width: 3rem;
+    padding: 0.5rem;
+    text-align: center;
+    border-radius: 0.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: inherit;
 }
 
 .duration-input label {
-  font-size: 0.8rem;
-  opacity: 0.8;
+    font-size: 0.8rem;
+    opacity: 0.8;
 }
 
 .post-dates {
@@ -719,4 +747,140 @@ body {
 
 .post:hover #postoptions {
     opacity: 1;
+}
+
+/* Animations de feedback pour l'upload */
+.upload-feedback {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+}
+
+.upload-success {
+    background: rgba(46, 213, 115, 0.9);
+    animation: slideInOut 3s ease forwards;
+}
+
+.upload-error {
+    background: rgba(255, 71, 87, 0.9);
+    animation: slideInOut 3s ease forwards;
+}
+
+@keyframes slideInOut {
+    0% {
+        transform: translate(-50%, -100%);
+        opacity: 0;
+    }
+
+    15% {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+
+    85% {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, -100%);
+        opacity: 0;
+    }
+}
+
+/* Animation du bouton pendant l'upload */
+.submitting {
+    position: relative;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.submitting::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent);
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(100%);
+    }
+}
+
+#socialLoginLinks {
+    margin-top: 1rem;
+}
+
+#secialStats {
+    margin-top: 1rem;
+    display: none;
+}
+
+.moodEmoji {
+    font-size: 2rem;
+    width: 3rem;
+    text-align: center
+}
+
+/* From Uiverse.io by SelfMadeSystem */
+.container {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.container input {
+    display: none;
+}
+
+.container svg {
+    overflow: visible;
+}
+
+.path {
+    fill: none;
+    stroke: white;
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke-dasharray 0.3s ease, stroke-dashoffset 0.3s ease;
+    stroke-dasharray: 241 9999999;
+    stroke-dashoffset: 0;
+}
+
+.container input:checked~svg .path {
+    stroke-dasharray: 70.5096664428711 9999999;
+    stroke-dashoffset: -262.2723388671875;
+}
+
+input[type="number"] {
+    background: red;
+    font-size: 20px;
 }
