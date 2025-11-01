@@ -106,7 +106,7 @@ const ephemeralpickdiv = document.querySelector('.ephemeral-options');
 ephemeralToggle.addEventListener('change', () => {
     durationPicker.style.display = ephemeralToggle.checked ? 'flex' : 'none';
     ephemeralpickdiv.style.width = ephemeralToggle.checked ? '400px' : '300px';
-    ephemeralpickdiv.style.height = ephemeralToggle.checked ? '125px' : '50px';
+    ephemeralpickdiv.style.height = ephemeralToggle.checked ? '125px' : '30px';
 });
 
 // Modifier la fonction d'envoi du post
