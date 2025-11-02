@@ -1,5 +1,15 @@
-// ----- Vérification de version -----
-// ----- Vérification de version -----
+const header = document.querySelector('header');
+const nav = document.querySelector('nav');
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 30) {
+        header.classList.add('scrolled');
+        nav.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+        nav.classList.remove('scrolled');
+    }
+});
+
 async function checkSiteVersion() {
     const siteVersion = document.getElementById("SiteVersion");
     const buildVersion = document.getElementById("BuildVersion");
@@ -41,8 +51,13 @@ async function checkSiteVersion() {
 
         console.log('Ancienne version/build :', 'V:', latest, 'B:', latestBuild);
         console.log('Version/build actuel :', 'V:', current, 'B:', currentBuild);
+        setTimeout(() => {
+            showFeedback("info", `Version stable du site ${latest} (build ${latestBuild})`);
+        }, 4000);
     } catch (error) {
         console.error('Erreur lors de la vérification de la version du site:', error);
+        showFeedback("error", `Erreur lors de la vérification de la version du site. Voire console.`);
+
     }
 }
 
@@ -109,61 +124,9 @@ ephemeralToggle.addEventListener('change', () => {
     ephemeralpickdiv.style.height = ephemeralToggle.checked ? '125px' : '30px';
 });
 
-// Modifier la fonction d'envoi du post
-if (submitBtn) {
-    submitBtn.addEventListener("click", async () => {
-        try {
-            const text = document.getElementById("moodInput").value.trim();
-            const color = document.getElementById("moodColor").value;
-            const emoji = document.querySelector(".moodEmoji").value;
-
-            if (!text) return alert("Écris quelque chose !");
-
-            // Calcul de la durée si éphémère
-            let expiresAt = null;
-            if (ephemeralToggle.checked) {
-                const days = parseInt(document.getElementById('durationDays').value) || 0;
-                const hours = parseInt(document.getElementById('durationHours').value) || 0;
-                const minutes = parseInt(document.getElementById('durationMinutes').value) || 0;
-                const seconds = parseInt(document.getElementById('durationSeconds').value) || 0;
-
-                const totalMs = ((days * 24 * 60 * 60) + (hours * 60 * 60) + (minutes * 60) + seconds) * 1000;
-                if (totalMs > 0) {
-                    expiresAt = new Date(Date.now() + totalMs).toISOString();
-                }
-            }
-
-            const newMood = {
-                text,
-                color,
-                emoji,
-                ephemeral: ephemeralToggle.checked,
-                expiresAt
-            };
-
-            const response = await fetch("https://moodshare-7dd7.onrender.com/api/posts", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newMood)
-            });
-
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const savedMood = await response.json();
-            displayMood(savedMood);
-
-            modal.classList.add("hidden");
-            document.getElementById("moodInput").value = "";
-        } catch (error) {
-            console.error('Erreur envoi post:', error);
-            alert('Erreur lors de l\'envoi du post');
-        }
-    });
-}
-
 function displayMood(mood) {
     const moodcard = document.createElement("div");
     moodcard.className = "post";
-    moodcard.style.background = mood.color;
     wall.prepend(moodcard);
 
     // Formatage de la date de création
@@ -185,14 +148,14 @@ function displayMood(mood) {
             hour: '2-digit',
             minute: '2-digit'
         });
-        expirationText = `<p class="expiration-date">Expire le ${expirationDate}</p>`;
+        expirationText = `<p class="expiration-date"><span class="material-symbols-rounded">warning</span> Expire le ${expirationDate}</p>`;
     }
 
-    moodcard.innerHTML = `${mood.emoji} ${mood.text} 
+    moodcard.innerHTML = `
+    <div class="post-content" style="background: ${mood.color}">${mood.emoji} ${mood.text} ${expirationText}</div>
     <div id="postoptions">
         <div class="post-dates">
             <p class="postdate">Créé le ${createdDate}</p>
-            ${expirationText}
         </div>
         <div class="buttons">
             <button class="likebtn"><span class="material-symbols-rounded">thumb_up</span></button>
@@ -236,20 +199,7 @@ tabs.forEach(tab => {
         });
     });
 });
-const header = document.querySelector('header');
-const nav = document.querySelector('nav');
-window.addEventListener('scroll', () => {
 
-    if (window.scrollY > 30) {
-        header.classList.add('scrolled');
-        nav.classList.add('scrolled');
-
-
-    } else {
-        header.classList.remove('scrolled');
-        nav.classList.remove('scrolled');
-    }
-});
 const editBtn = document.getElementById('editEmojiBtn');
 const pickerContainer = document.getElementById('emojiPickerContainer');
 editBtn.addEventListener('click', () => {
@@ -288,20 +238,39 @@ document.querySelector('emoji-picker').addEventListener('emoji-click', updatePre
 updatePreview();
 
 // Fonction pour montrer le feedback
-function showFeedback(success, message) {
-    const feedback = document.createElement('div');
-    feedback.className = `upload-feedback ${success ? 'upload-success' : 'upload-error'}`;
+function showFeedback(type, message) {
+    const feedback = document.createElement("div");
+    feedback.className = `upload-feedback feedback-${type}`;
+
+    // Choix des icônes selon le type
+    const icons = {
+        success: "check_circle",
+        error: "error",
+        warning: "warning",
+        info: "info",
+        remark: "chat_bubble",
+        welcome: "celebration",
+    };
+
+    // Icône par défaut
+    const icon = icons[type];
+
     feedback.innerHTML = `
-    <span class="material-symbols-rounded">
-      ${success ? 'check_circle' : 'error'}
-    </span>
+    <span class="material-symbols-rounded">${icon}</span>
     ${message}
   `;
+
     document.body.appendChild(feedback);
 
-    // Supprimer après l'animation
-    setTimeout(() => feedback.remove(), 3000);
+    // Supprimer après animation
+    setTimeout(() => feedback.remove(), 3500);
 }
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    showFeedback("welcome", "Bienvenue !");
+
+});
 
 // Modifier la gestion du submit
 if (submitBtn) {
@@ -312,7 +281,7 @@ if (submitBtn) {
             const emoji = document.querySelector(".moodEmoji").value;
 
             if (!text) {
-                showFeedback(false, "Écris quelque chose !");
+                showFeedback("error", "Écris quelque chose !");
                 return;
             }
 
@@ -355,11 +324,11 @@ if (submitBtn) {
             modal.classList.add("hidden");
             document.getElementById("moodInput").value = "";
 
-            showFeedback(true, "Mood partagé avec succès ! ✨");
+            showFeedback("success", "Mood partagé avec succès !");
 
         } catch (error) {
             console.error('Erreur envoi post:', error);
-            showFeedback(false, "Erreur lors de l'envoi du mood 😢");
+            showFeedback("error", "Erreur lors de l'envoi du mood.");
         } finally {
             // Retirer l'animation de chargement
             submitBtn.classList.remove('submitting');
@@ -367,4 +336,5 @@ if (submitBtn) {
         }
     });
 }
+
 
