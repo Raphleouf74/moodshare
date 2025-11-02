@@ -399,10 +399,10 @@ section {
     align-items: space-around;
     justify-content: space-evenly;
     align-self: center;
-    top: -35px;
+    top: 0;
     right: 0;
-    height: 25px;
-    width: 80%;
+    height: 125px;
+    width: 100%;
     background-color: rgb(225, 175, 255, 0.8);
     padding: 10px;
     border-radius: 10px;
@@ -458,6 +458,16 @@ section {
     transition: all 0.2s ease-in-out;
 }
 
+
+#postoptions button.likebtn, #postoptions button.commentbtn{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    width: auto;
+    min-width: 75px;
+}
+
 .buttons {
     display: flex;
     flex-direction: row;
@@ -480,6 +490,7 @@ section {
 .post:hover #postoptions {
     opacity: 1;
     height: 200px;
+    top: -35px;
     width: 100%;
     pointer-events: all;
 }

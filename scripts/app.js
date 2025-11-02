@@ -158,8 +158,8 @@ function displayMood(mood) {
             <p class="postdate">Créé le ${createdDate}</p>
         </div>
         <div class="buttons">
-            <button class="likebtn"><span class="material-symbols-rounded">thumb_up</span></button>
-            <button class="commentbtn"><span class="material-symbols-rounded">comment</span></button>
+            <button class="likebtn"><span class="material-symbols-rounded">thumb_up</span> <span class="like-count">${mood.likes || 0}</span></button>
+            <button class="commentbtn"><span class="material-symbols-rounded">comment</span> <span class="comment-count">0</span></button>
             <button class="sharebtn"><span class="material-symbols-rounded">share</span></button>
             <button class="savebtn"><span class="material-symbols-rounded">bookmark</span></button>
             <button class="reportbtn"><span class="material-symbols-rounded">report</span></button>
@@ -292,12 +292,14 @@ if (submitBtn) {
             // Calcul de la durée si éphémère
             let expiresAt = null;
             if (ephemeralToggle.checked) {
+                const years = parseInt(document.getElementById('durationYear').value) || 0;
+                const months = parseInt(document.getElementById('durationMonths').value) || 0;
                 const days = parseInt(document.getElementById('durationDays').value) || 0;
                 const hours = parseInt(document.getElementById('durationHours').value) || 0;
                 const minutes = parseInt(document.getElementById('durationMinutes').value) || 0;
                 const seconds = parseInt(document.getElementById('durationSeconds').value) || 0;
 
-                const totalMs = ((days * 24 * 60 * 60) + (hours * 60 * 60) + (minutes * 60) + seconds) * 1000;
+                const totalMs = ((years * 365 * 24 * 60 * 60) + (months * 30 * 24 * 60 * 60) + (days * 24 * 60 * 60) + (hours * 60 * 60) + (minutes * 60) + seconds) * 1000;
                 if (totalMs > 0) {
                     expiresAt = new Date(Date.now() + totalMs).toISOString();
                 }
