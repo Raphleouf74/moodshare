@@ -1,64 +1,3 @@
-
-# Write-Host "Old version : $currentVersion"
-# $newVersion = Read-Host "New version ('', '-' or ' ' to keep $currentVersion)"
-# Write-Host "Old build: $currentBuild"
-# $newBuild = Read-Host "New build ('', '-' or ' ' to keep $currentBuild)"
-
-# if ([string]::IsNullOrWhiteSpace($newVersion) -or $newVersion -eq "-") {
-#     $newVersion = $currentVersion
-#     Write-Host "Unchaged Version: $currentVersion"
-# }
-# if ([string]::IsNullOrWhiteSpace($newBuild) -or $newBuild -eq "-") {
-#     $newBuild = $currentBuild
-#     Write-Host "Unchaged Build: $currentBuild"
-# }
-# else {
-#     $json.version = $newVersion
-#     $json.build = $newBuild
-#     $json | ConvertTo-Json -Depth 10 | Set-Content $versionFile -Encoding UTF8
-#     Write-Host "version.json updated to $newVersion (build $newBuild)"
-# }
-
-
-# Write-Host "Pulling latest changes..."
-# $pullResult = git pull origin main 2>&1
-# if ($pullResult -match "Automatic merge failed") {
-#     Write-Host "⚠️ Merge conflicts detected! Resolving..." -ForegroundColor Yellow
-    
-#     $mergeMessage = "Merge main branch to sync with remote changes"
-#     Set-Content -Path ".git/MERGE_MSG" -Value $mergeMessage
-    
-#     git add .
-#     git commit -m "$mergeMessage"
-    
-#     if ($LASTEXITCODE -ne 0) {
-#         Write-Host "❌ Merge failed! Please resolve conflicts manually" -ForegroundColor Red
-#         exit 1
-#     }
-# }
-
-# git add .
-# $commitStatus = git commit -m "V$newVersion (build $newBuild)"
-# if ($commitStatus -match "nothing to commit") {
-#     Write-Host "No changes to commit" -ForegroundColor Yellow
-# }
-# else {
-#     Write-Host "Changes committed" -ForegroundColor Green
-# }
-
-# Write-Host "Pushing changes..."
-# git push origin main
-# if ($LASTEXITCODE -ne 0) {
-#     Write-Host "❌ Push failed!" -ForegroundColor Red
-#     exit 1
-# }
-
-# Write-Host "✅ GitPush completed successfully" -ForegroundColor Green
-
-
-
-
-
 $versionFile = "version.json"
 if (Test-Path $versionFile) {
     $json = Get-Content $versionFile | ConvertFrom-Json
@@ -156,7 +95,6 @@ if ($mode -eq "release") {
     $tagName = "v$newVersion"
     git tag -a $tagName -m "Release $tagName - $changelog"
     git push origin $tagName
-    Build proper multiline release notes string
     $releaseNotes = @"
  Release $tagName
 Date: $(Get-Date -Format "yyyy-MM-dd HH:mm")

@@ -1,20 +1,21 @@
+/* IMPORTATIONS */
+
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
+
+/* STYLES GLOBAUX */
 * {
     font-family: "Inter";
 }
 
 body {
-  font-family: "Inter", sans-serif;
-  margin: 0;
-  background: linear-gradient(135deg, rgba(155, 255, 255, 0.50), #28013793);
-  background-attachment: fixed;
-  overflow-x: hidden;
+    font-family: "Inter", sans-serif;
+    margin: 0;
+    background: linear-gradient(135deg, rgba(155, 255, 255, 0.50), #28013793);
+    background-attachment: fixed;
+    overflow-x: hidden;
 }
 
-section {
-    width: 100vw;
-}
 
 body,
 main {
@@ -22,32 +23,49 @@ main {
     max-width: 100%;
 }
 
+.update-notification {
+    position: fixed;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.15);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
 
-.tab {
-  height: calc(100vh - 125px); /* pour header + nav */
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    color: #092241;
+    padding: 15px 20px;
+    border-radius: 10px;
+    z-index: 9999;
+    animation: fadeIn 0.3s ease-in-out;
+
+}
+
+.update-notification:hover {
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.25);
+    color: #092241;
+}
+
+.update-notification button {
+    background: #36fa71;
+    color: #092241;
+    border: none;
+    margin-left: 10px;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
 
+/* ========================== */
+/* HEADER + NAVIGATION + TABS */
+/* ========================== */
 
 
-#postModal {
-    max-height: 90vh;
-    overflow-y: auto;
-}
-
-input,
-textarea,
-select {
-    font-size: 16px !important;
-}
-
-input,
-textarea {
-    font-size: 16px !important;
-    transform: scale(0.9);
-    transform-origin: center;
-}
-
+/* header */
 header {
     text-align: center;
     padding: 1rem;
@@ -85,41 +103,7 @@ header.scrolled p {
 }
 
 
-
-#moodWall {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(auto, 1fr));
-    gap: 1rem;
-    left: 0;
-    width: 100%;
-    margin: 0;
-    margin-left: -20px;
-    position: relative;
-    padding: 2rem;
-}
-
-.mood-card {
-    width: auto;
-    border-radius: 1rem;
-    padding: 1rem;
-    color: white;
-    font-weight: 600;
-    animation: fadeIn 0.2s ease;
-    margin-top: 1rem;
-    min-height: 60px;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
+/* Navigation */
 
 @media (min-width: 760px) {
     nav {
@@ -293,6 +277,10 @@ nav button#settingsTab:hover span {
     }
 }
 
+
+
+/* Sections/Tabs */
+
 section.tab {
     display: none;
     margin-top: 75px;
@@ -312,6 +300,82 @@ section {
     width: 100vw;
     padding: 15px;
 }
+
+.tab {
+    height: calc(100vh - 125px);
+    /* pour header + nav */
+}
+
+section#profileTab {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    /* important */
+    align-items: center;
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding-top: 90px;
+    /* ou la hauteur de ton header */
+}
+
+
+
+section {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+
+
+section {
+    width: 100vw;
+}
+
+
+/* ==================== */
+/*     CONTENU TABS     */
+/* ==================== */
+
+
+/* Accueil */
+
+#moodWall {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(auto, 1fr));
+    gap: 1rem;
+    left: 0;
+    width: 100%;
+    margin: 0;
+    margin-left: -20px;
+    position: relative;
+    padding: 2rem;
+}
+
+.mood-card {
+    width: auto;
+    border-radius: 1rem;
+    padding: 1rem;
+    color: white;
+    font-weight: 600;
+    animation: fadeIn 0.2s ease;
+    margin-top: 1rem;
+    min-height: 60px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
 
 .stories {
     margin-bottom: 2rem;
@@ -382,6 +446,7 @@ section {
             transparent 100%);
     pointer-events: none;
 }
+
 .post-content {
     z-index: 120;
     width: 100%;
@@ -392,6 +457,7 @@ section {
     justify-content: center;
     align-items: center;
 }
+
 #postoptions {
     position: absolute;
     display: flex;
@@ -427,7 +493,7 @@ section {
     left: 50%;
     transform: translateX(-50%);
     font-weight: 600;
-    
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -459,7 +525,8 @@ section {
 }
 
 
-#postoptions button.likebtn, #postoptions button.commentbtn{
+#postoptions button.likebtn,
+#postoptions button.commentbtn {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -493,6 +560,36 @@ section {
     top: -35px;
     width: 100%;
     pointer-events: all;
+}
+
+.post:hover #postoptions {
+    opacity: 1;
+}
+
+.post-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+    opacity: 0.8;
+}
+
+.postdate {
+    margin: 0;
+}
+
+.expiration-date {
+    margin: 0;
+    color: #ffa6a6;
+    font-weight: 500;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    font-size: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
 }
 
 .suggested-accounts {
@@ -543,64 +640,26 @@ section {
 
 
 
+/* Posts */
 
-section#profileTab {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    /* important */
-    align-items: center;
-    min-height: 100vh;
-    box-sizing: border-box;
-    padding-top: 90px;
-    /* ou la hauteur de ton header */
+/* Créer */
+
+#postModal {
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
-#accountinfo {
-    height: auto;
-    width: 70%;
-    border-radius: 20px;
-    background-color: rgb(230, 230, 230);
-    padding: 15px;
-    padding-top: 50px;
-    padding-bottom: 50px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
+input,
+textarea,
+select {
+    font-size: 16px !important;
 }
 
-#accountinfo img {
-    height: 225px;
-    width: 225px;
-    border-radius: 50%;
-    box-shadow: black 0 0 15px 0;
-    margin-bottom: 15px;
-}
-
-#accountinfo input {
-    width: 30%;
-    height: 10px;
-    padding: 15px;
-    border-radius: 10px;
-    border: 3px solid black;
-    background-color: white;
-}
-
-#accountinfo div {
-    display: flex;
-    flex-direction: column;
-    align-self: center;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    width: 100%;
-}
-
-section {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
+input,
+textarea {
+    font-size: 16px !important;
+    transform: scale(0.9);
+    transform-origin: center;
 }
 
 #postModal {
@@ -661,6 +720,7 @@ section {
     position: absolute;
     pointer-events: none;
     bottom: 45px;
+    z-index: 1000;
     left: 50%;
     opacity: 0;
     transform: translateY(-15px);
@@ -673,68 +733,6 @@ section {
     pointer-events: all;
     transform: translateY(0);
 }
-
-#MoreAccSettings {
-    width: 70%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-#MoreAccSettings button {
-    width: 100%;
-    border: none;
-    font-size: 15px;
-    font-weight: 500;
-    border-top: 1.5px grey solid;
-    height: 50px;
-    background-color: transparent;
-}
-
-.update-notification {
-    position: fixed;
-    bottom: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(255, 255, 255, 0.15);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    color: #092241;
-    padding: 15px 20px;
-    border-radius: 10px;
-    z-index: 9999;
-    animation: fadeIn 0.3s ease-in-out;
-
-}
-
-.update-notification:hover {
-    background: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.25);
-    color: #092241;
-}
-
-.update-notification button {
-    background: #36fa71;
-    color: #092241;
-    border: none;
-    margin-left: 10px;
-    padding: 6px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-#profileTab footer {
-    margin-top: 50px;
-    margin-bottom: 20px;
-    color: grey;
-}
-
-
 
 .ephemeral-options {
     margin: 1rem 0;
@@ -760,10 +758,14 @@ section {
     gap: 1rem;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s ease-in-out;
 }
 
 #durationPicker {
-    display: none;
+    display: flex;
+    bottom: 50px;
+    transition: all 0.3s ease-in-out;
+    opacity: 1;
 }
 
 .duration-input {
@@ -771,6 +773,9 @@ section {
     flex-direction: column;
     align-items: center;
     gap: 0.25rem;
+    opacity: 0;
+    transform: translateY(15px);
+    transition: all 0.3s ease-in-out;
 }
 
 .duration-input input {
@@ -786,38 +791,6 @@ section {
 .duration-input label {
     font-size: 0.8rem;
     opacity: 0.8;
-}
-
-.post-dates {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    font-size: 0.85rem;
-    opacity: 0.8;
-}
-
-.postdate {
-    margin: 0;
-}
-
-.expiration-date {
-    margin: 0;
-    color: #ffa6a6;
-    font-weight: 500;
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-    font-size: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-}
-
-
-
-.post:hover #postoptions {
-    opacity: 1;
 }
 
 /* Animations de feedback pour l'upload */
@@ -842,12 +815,10 @@ section {
 
 .upload-success {
     background: rgba(46, 213, 115, 0.9);
-    animation: slideInOut 3s ease forwards;
 }
 
 .upload-error {
     background: rgba(255, 71, 87, 0.9);
-    animation: slideInOut 3s ease forwards;
 }
 
 @keyframes slideInOut {
@@ -901,15 +872,6 @@ section {
     to {
         transform: translateX(100%);
     }
-}
-
-#socialLoginLinks {
-    margin-top: 1rem;
-}
-
-#secialStats {
-    margin-top: 1rem;
-    display: none;
 }
 
 .moodEmoji {
@@ -1005,4 +967,110 @@ input[type="number"] {
 /* Icône */
 .upload-feedback span.material-symbols-rounded {
     font-size: 1.5rem;
+}
+
+
+
+/* Boîte de récéption */
+
+/* Profil */
+
+#socialLoginLinks {
+    margin-top: 1rem;
+}
+
+#socialStats {
+    margin-top: 1rem;
+    display: none;
+}
+
+#accountinfo img {
+    height: 225px;
+    width: 225px;
+    border-radius: 50%;
+    box-shadow: black 0 0 15px 0;
+    margin-bottom: 15px;
+}
+
+#accountinfo input {
+    width: 30%;
+    height: 10px;
+    padding: 15px;
+    border-radius: 10px;
+    border: 3px solid black;
+    background-color: white;
+}
+
+#accountinfo div {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 100%;
+}
+
+#accountinfo {
+    height: auto;
+    width: 70%;
+    border-radius: 20px;
+    background-color: rgb(230, 230, 230);
+    padding: 15px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+#accountinfo footer button {
+    height: 500px;
+}
+
+#MoreAccSettings {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#MoreAccSettings button,
+#MoreAccSettings a {
+    width: 100%;
+    border: none;
+    font-size: 15px;
+    font-weight: 500;
+    border-top: 1.5px grey solid;
+    height: 50px;
+    background-color: transparent;
+}
+
+/* Paramètres */
+section#settingsTab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    /* important */
+    padding-top: 90px;
+    /* ou la hauteur de ton header */
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+section#settingsTab button,
+section#settingsTab a {
+    width: 80%y;
+    border: none;
+    font-size: 15px;
+    font-weight: 500;
+    border-top: 1.5px grey solid;
+    height: 50px;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
 }

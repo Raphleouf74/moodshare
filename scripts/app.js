@@ -116,13 +116,118 @@ const submitBtn = document.getElementById("submitMood");
 const ephemeralToggle = document.getElementById('ephemeralToggle');
 const durationPicker = document.getElementById('durationPicker');
 const ephemeralpickdiv = document.querySelector('.ephemeral-options');
+const durationInputs = document.querySelectorAll('#durationPicker .duration-input');
+const msgDeleteTime = document.getElementById('msgdeletetime');
 
-// Ajouter la gestion du toggle
-ephemeralToggle.addEventListener('change', () => {
-    durationPicker.style.display = ephemeralToggle.checked ? 'flex' : 'none';
-    ephemeralpickdiv.style.width = ephemeralToggle.checked ? '400px' : '300px';
-    ephemeralpickdiv.style.height = ephemeralToggle.checked ? '125px' : '30px';
+// Mise à jour du texte de suppression en fonction des inputs
+// Vérification et mise à jour du temps de suppression
+function updateMsgDeleteTime() {
+
+
+    const years = parseInt(document.getElementById('durationYear')?.value || 0);
+    const months = parseInt(document.getElementById('durationMonths')?.value || 0);
+    const days = parseInt(document.getElementById('durationDays')?.value || 0);
+    const hours = parseInt(document.getElementById('durationHours')?.value || 0);
+    const minutes = parseInt(document.getElementById('durationMinutes')?.value || 0);
+    const seconds = parseInt(document.getElementById('durationSeconds')?.value || 0);
+
+    // ✅ Vérification des valeurs invalides
+    if (years > 5) {
+        showFeedback("error", "Un message éphémère ne peut pas dépasser 5 ans.");
+        document.getElementById('durationYear').value = 5;
+    }
+    if (months >= 12) {
+        showFeedback("error", "Le nombre de mois ne peut pas dépasser 11.");
+        document.getElementById('durationMonths').value = 11;
+    }
+    if (days >= 31) {
+        showFeedback("error", "Le nombre de jours ne peut pas dépasser 30.");
+        document.getElementById('durationDays').value = 30;
+    }
+    if (hours >= 24) {
+        showFeedback("error", "Le nombre d'heures ne peut pas dépasser 23.");
+        document.getElementById('durationHours').value = 23;
+    }
+    if (minutes >= 60) {
+        showFeedback("error", "Le nombre de minutes ne peut pas dépasser 59.");
+        document.getElementById('durationMinutes').value = 59;
+    }
+    if (seconds >= 60) {
+        showFeedback("error", "Le nombre de secondes ne peut pas dépasser 59.");
+        document.getElementById('durationSeconds').value = 59;
+    }
+    if (!ephemeralToggle.checked) {
+        msgDeleteTime.textContent = '---';
+        return;
+    }
+    // Recalcul après correction
+    const totalMs =
+        (((years * 365 + days) * 24 + hours) * 60 + minutes) * 60 * 1000 + (seconds * 1000);
+
+    if (totalMs <= 0) {
+        msgDeleteTime.textContent = '';
+        return;
+    }
+
+    const expirationDate = new Date(Date.now() + totalMs);
+    const formatted = expirationDate.toLocaleString('fr-FR', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+
+    msgDeleteTime.textContent = formatted;
+}
+
+// ✅ Relier correctement la fonction à chaque champ
+durationInputs.forEach(input => {
+    input.addEventListener('input', updateMsgDeleteTime);
 });
+
+// ✅ Réinitialiser quand on (dé)coche
+ephemeralToggle.addEventListener('change', updateMsgDeleteTime);
+
+
+
+
+// Mettre à jour quand on modifie une durée
+durationInputs.forEach(input => {
+    input.addEventListener('input', updateMsgDeleteTime);
+    if (document.getElementById('durationYear') >= 5) {
+        showFeedback("warning", "Un message ephémère à une limite de 5 ans.");
+    }
+
+    if (document.getElementById('durationMonths') >= 12 || document.getElementById('durationDays') >= 31 || document.getElementById('durationHours') >= 24 || document.getElementById('durationMinutes') >= 60 || document.getElementById('durationSeconds') >= 60) {
+        showFeedback("warning", "Veuillez entrer des valeurs valides.");
+    }
+});
+
+// Réinitialiser quand on (dé)coche la case
+ephemeralToggle.addEventListener('change', updateMsgDeleteTime);
+
+// Appel initial
+updateMsgDeleteTime();
+
+// Ajouter des écouteurs d'événements aux inputs de durée
+durationInputs.forEach(input => {
+    input.addEventListener('input', updateMsgDeleteTime);
+});
+
+// Gestion du toggle
+ephemeralToggle.addEventListener('change', () => {
+    durationInputs.forEach((input, index) => {
+        input.style.opacity = ephemeralToggle.checked ? '1' : '0';
+        input.style.transform = ephemeralToggle.checked ? 'translateY(0)' : 'translateY(15px)';
+        input.style.transitionDelay = (index * 0.05) + 's';
+    });
+
+    ephemeralpickdiv.style.width = ephemeralToggle.checked ? '500px' : '300px';
+    ephemeralpickdiv.style.height = ephemeralToggle.checked ? '175px' : '30px';
+});
+
 
 function displayMood(mood) {
     const moodcard = document.createElement("div");
@@ -262,10 +367,22 @@ function showFeedback(type, message) {
 
     document.body.appendChild(feedback);
 
+
     // Supprimer après animation
-    setTimeout(() => feedback.remove(), 3500);
+    if (icon === "warning") {
+        feedback.style.animation = "slideInOut 30s ease forwards";
+        setTimeout(() => {
+            feedback.style.display = "none";
+        }, 30000);
+    } else {
+        feedback.style.animation = "slideInOut 3s ease forwards";
+        setTimeout(() => {
+            feedback.style.display = "none";
+        }, 3000);
+    }
 }
 
+showFeedback("warning", "Votre version de Moodshare n'est pas à jour. Veuillez mettre à jour l'application. <a href='FAQ/downloadlastver.html'>Comment faire ?</a>");
 
 document.addEventListener('DOMContentLoaded', () => {
     showFeedback("welcome", "Bienvenue !");
