@@ -10,15 +10,15 @@ else {
 }
 Write-Host ""
 Write-Host "=============================="
-Write-Host "   🌀 MoodShare Push Manager"
+Write-Host "    MoodShare Push Manager    "
 Write-Host "=============================="
-Write-Host "Current version : $currentVersion"
-Write-Host "Current build   : $currentBuild"
+Write-Host "Version actuelle: $currentVersion"
+Write-Host "Build actuel:       $currentBuild"
 Write-Host ""
-Write-Host "Choose an option:"
-Write-Host "1) New Build (default)"
-Write-Host "2) New Release"
-$choice = Read-Host "Enter choice (1/2)"
+Write-Host "Choisissez une option:"
+Write-Host "1) Nouveau build (Par défaut)"
+Write-Host "2) Nouvelle Release "
+$choice = Read-Host "Entrer le choix (1/2)"
 if ($choice -eq "2") {
     $mode = "release"
 }
@@ -26,47 +26,47 @@ else {
     $mode = "build"
 }
 Write-Host ""
-Write-Host "Mode selected: $mode"
+Write-Host "Mode séléctionné: $mode"
 Write-Host ""
 $newVersion = $currentVersion
 $newBuild = $currentBuild
 if ($mode -eq "release") {
-    $newVersion = Read-Host "Enter new version (e.g. 1.2.0)"
-    $changelog = Read-Host "Enter a short changelog / release notes"
+    $newVersion = Read-Host "Entrez la nouvelle version (ex: 1.2.0)"
+    $changelog = Read-Host "Ecrivez un court changelog"
 }
 else {
-    Write-Host "Old version : $currentVersion"
-    $newVersion = Read-Host "New version ('', '-' or ' ' to keep $currentVersion)"
-    Write-Host "Old build: $currentBuild"
-    $newBuild = Read-Host "New build ('', '-' or ' ' to keep $currentBuild)"
+    Write-Host "Ancienne version : $currentVersion"
+    $newVersion = Read-Host "Nouvelle version ('', '-' ou ' ' pour garder $currentVersion)"
+    Write-Host "Ancien build: $currentBuild"
+    $newBuild = Read-Host "Nouveau build ('', '-' ou ' ' pour garder $currentBuild)"
 
     if ([string]::IsNullOrWhiteSpace($newVersion) -or $newVersion -eq "-") {
         $newVersion = $currentVersion
-        Write-Host "Unchaged Version: $currentVersion"
+        Write-Host "Version inchangée: $currentVersion"
     }
     if ([string]::IsNullOrWhiteSpace($newBuild) -or $newBuild -eq "-") {
         $newBuild = $currentBuild
-        Write-Host "Unchaged Build: $currentBuild"
+        Write-Host "Build inchangé: $currentBuild"
     }
     else {
         $json.version = $newVersion
         $json.build = $newBuild
         $json | ConvertTo-Json -Depth 10 | Set-Content $versionFile -Encoding UTF8
-        Write-Host "version.json updated to $newVersion (build $newBuild)"
+        Write-Host "version.json mis à jour à la version $newVersion (build $newBuild)"
     }
-    Write-Host "Pulling latest changes..."
+    Write-Host "Git pull en gours..."
     $pullResult = git pull origin main 2>&1
-    if ($pullResult -match "Automatic merge failed") {
-        Write-Host "⚠️ Merge conflicts detected! Resolving..." -ForegroundColor Yellow
+    if ($pullResult -match "Merge automatique n'a pas abouti") {
+        Write-Host "⚠️ Des conflits de merge ont été détectés ! Résolution en cours..." -ForegroundColor Yellow
     
-        $mergeMessage = "Merge main branch to sync with remote changes"
+        $mergeMessage = "Merge la branche main pour synchroniser avec les changements à distance"
         Set-Content -Path ".git/MERGE_MSG" -Value $mergeMessage
     
         git add .
         git commit -m "$mergeMessage"
     
         if ($LASTEXITCODE -ne 0) {
-            Write-Host "❌ Merge failed! Please resolve conflicts manually" -ForegroundColor Red
+            Write-Host "❌ Merge échoué! Merci de résoudre les conflits manuellement" -ForegroundColor Red
             exit 1
         }
     }
@@ -75,20 +75,20 @@ else {
 $json.version = $newVersion
 $json.build = $newBuild
 $json | ConvertTo-Json -Depth 10 | Set-Content $versionFile -Encoding UTF8
-Write-Host "version.json updated → v$newVersion (build $newBuild)"
-Write-Host "Pulling latest changes..."
+Write-Host "version.json mis à jour → v$newVersion (build $newBuild)"
+Write-Host "Git Pull les dernieres modifications..."
 git pull origin main
 git add .
 git commit -m "V$newVersion (build $newBuild)" 2>$null
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "Nothing to commit."
+    Write-Host "Rien à commit."
 }
 git push origin main
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "Push failed!"
+    Write-Host "Push échoué!"
     exit 1
 }
-Write-Host "Changes pushed successfully."
+Write-Host "Changements poussés avec succès !."
 if ($mode -eq "release") {
     Write-Host ""
     Write-Host "Creating GitHub release..."
@@ -104,10 +104,10 @@ $changelog
 "@
     $releaseFile = "RELEASE_NOTES_$tagName.txt"
     $releaseNotes | Out-File -Encoding UTF8 $releaseFile
-    Write-Host "Release notes saved to $releaseFile"
+    Write-Host "Release notes enregistré à $releaseFile"
 }
 Write-Host ""
-Write-Host "🎉 Operation completed successfully!"
+Write-Host "🎉 Operation éfféctuée avec succès !"
 Write-Host "=============================="
 Write-Host "Version: $newVersion"
 Write-Host "Build: $newBuild"
