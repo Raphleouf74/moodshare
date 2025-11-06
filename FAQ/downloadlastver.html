@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ MoodShare</title>
+    <link rel="stylesheet" href="faq.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <h1>MoodShare FAQ</h1>
+            <p>Support et Foire aux Questions</p>
+        </div>
+        <a href="../index.html"><button> <span class="material-symbols-rounded">arrow_back_ios</span>Retour au
+                menu</button></a>
+    </header>
+    <main>
+        <section>
+            <h1>Comment télécharger la dernière version de MoodShare ?</h1>
+            <h2>Q: J'ai la bannière "La version de Moodshare n'est pas à jour", que faire ?</h2>
+            <p>Ne vous inquétez pas, pour régler ce soucis, vous avez deux solutions possibles:</p>
+
+            <h3>Solution 1 : Recharger la page grâce au bouton dedié</h3>
+            <p>Quand votre version de Moodshare n'est pas la même que celle définie, vous verrez une bannière apparaitre
+                en bas, cliquez sur le bouton "Rechargez la page", si cela ne change rien et que vous avez toujours la
+                bannière, procédez à l'étape suivante. <i>La bannière est précente ci-dessous</i></p>
+            <img src="medias/icons/reload_banner.png" alt="Bannière de mise à jour de MoodShare">
+            <i>
+                <p>Bannière de rechargement Moodshare</p>
+            </i>
+            <br><br>
+            <h3>Solution 2: Vider manuellement le cache du site et le relancer</h3>
+            <p>Si la solution 1 n'a pas fonctionné, vous pouvez vider le cache du site MoodShare dans les paramètres de
+                votre navigateur. Voici comment faire pour les navigateurs les plus populaires:</p><br>
+            <ul>
+                <li><strong>Navigateurs basés sur Chrome <button onclick="document.getElementById('browserslist').classList.add('show');">i</button></strong> Allez dans les paramètres de la
+                    page et cliquez sur le boutton
+                    "Effacer les données"
+                    <br>1) Cliquez sur :<img src="medias/icons/i_icon.png" alt="I_icon"><br>
+                    2) Cliquez sur <img src="medias/icons/site_settings_btn.png" alt="Site_settings_btn">
+                    <br> 3) Enfin cliquez sur ce bouton: <img src="medias/icons/delete_data_btn.png"
+                        alt="delete_data_btn"><br>
+                    4) Rechargez la page et voilà !
+                </li>
+            </ul>
+
+            <div id="browserslist">
+                <div id="browserslistcontent">
+
+                    <button id="closebrowserslist" onclick="document.getElementById('browserslist').classList.remove('show');"><span class="material-symbols-rounded">close</span></button> 
+                    <h4>Navigateurs basés sur Chrome:</h4>
+                    <ul>
+                        <li>Adventurer</li>
+                        <li>Amazon Silk</li>
+                        <li>Arc</li>
+                        <li>Aspen (Avast)</li>
+                        <li>Avast</li>
+                        <li>Avira Scout</li>
+                        <li>Brave</li>
+                        <li>Cent Browser</li>
+                        <li>Chromodo</li>
+                        <li>Coc coc</li>
+                        <li>Comet </li>
+                        <li>Comodo Dragon</li>
+                        <li>Duck Duck Go</li>
+                        <li>Ecosia</li>
+                        <li>Epic</li>
+                        <li>Falkon</li>
+                        <li>Iridium Browser</li>
+                        <li>Iron</li>
+                        <li>Kiwi Browser</li>
+                        <li>Konqueror</li>
+                        <li>Lilo Browser</li>
+                        <li>Maxthon</li>
+                        <li>Microsoft Edge (V80.0.361.111 et antérieures)</li>
+                        <li>Naver Whale</li>
+                        <li>Opera (v15 et antérieures)</li>
+                        <li>Otter</li>
+                        <li>Puffin</li>
+                        <li>QuteBrowser</li>
+                        <li>RockMelt</li>
+                        <li>Samsung Internet</li>
+                        <li>Sleipnir</li>
+                        <li>SRWare Iron</li>
+                        <li>Supermium</li>
+                        <li>UC Browser</li>
+                        <li>ungoogled-chromium</li>
+                        <li>UR</li>
+                        <li>Vivaldi</li>
+                        <li>Yandex Browser</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+<script src="faq.js"></script>
+</html>

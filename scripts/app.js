@@ -13,6 +13,7 @@ window.addEventListener('scroll', () => {
 async function checkSiteVersion() {
     const siteVersion = document.getElementById("SiteVersion");
     const buildVersion = document.getElementById("BuildVersion");
+    const inboxdiv = document.getElementById("inboxdiv")
 
     try {
         const res = await fetch('/version.json', {
@@ -39,10 +40,31 @@ async function checkSiteVersion() {
 
         // Vérification des mises à jour
         if (current && current !== latest) {
-            showUpdateNotification();
+            showFeedback("warning", "Votre version de Moodshare n'est pas à jour. Veuillez mettre à jour l'application. <a href='../FAQ/downloadlastver.html'>Comment faire ?</a> <button onclick='location.reload()'>Recharger la page</button>");
+            const inboxdivnotif = document.createElement('div');
+            inboxdivnotif.className = 'notificationInbox critical';
+            inboxdivnotif.innerHTML = `
+            <span class="material-symbols-rounded">notifications</span>
+            <div>
+                <h3>Votre version n'est pas à jour !</h3>
+                <p>Veuillez mettre à jour l'application. <a href='../FAQ/downloadlastver.html'>Comment faire ?</a></p>
+                <button onclick="location.reload()">Recharger la page</button>
+            </div>`;
+            inboxdiv.appendChild(inboxdivnotif);
         }
         if (currentBuild && currentBuild !== latestBuild) {
-            showUpdateNotification();
+            showFeedback("warning", "Votre version de Moodshare n'est pas à jour. Veuillez mettre à jour l'application. <a href='../FAQ/downloadlastver.html'>Comment faire ?</a> <button onclick='location.reload()'>Recharger la page</button>");
+            const inboxdivnotif = document.createElement('div');
+            inboxdivnotif.className = 'notificationInbox critical';
+            inboxdivnotif.innerHTML = `
+            <span class="material-symbols-rounded">notifications</span>
+            <div>
+                <h3>Votre version n'est pas à jour !</h3>
+                <p>Veuillez mettre à jour l'application. <a href='../FAQ/downloadlastver.html'>Comment faire ?</a></p>
+                <button onclick="location.reload()">Recharger la page</button>
+            </div>`;
+            inboxdiv.appendChild(inboxdivnotif);
+
         }
 
         // Sauvegarde des nouvelles versions
@@ -59,16 +81,6 @@ async function checkSiteVersion() {
         showFeedback("error", `Erreur lors de la vérification de la version du site. Voire console.`);
 
     }
-}
-
-function showUpdateNotification() {
-    const notif = document.createElement('div');
-    notif.className = 'update-notification';
-    notif.innerHTML = `
-        <p>Une nouvelle version du site est en ligne, cliquez sur le bouton pour recharger la page et la mettre à jour</p>
-        <button onclick="location.reload()">Recharger la page</button>
-    `;
-    document.body.appendChild(notif);
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -382,7 +394,6 @@ function showFeedback(type, message) {
     }
 }
 
-showFeedback("warning", "Votre version de Moodshare n'est pas à jour. Veuillez mettre à jour l'application. <a href='FAQ/downloadlastver.html'>Comment faire ?</a>");
 
 document.addEventListener('DOMContentLoaded', () => {
     showFeedback("welcome", "Bienvenue !");
