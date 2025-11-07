@@ -9,14 +9,19 @@ const urlsToCache = [
 ];
 
 self.addEventListener('install', (event) => {
+    // Supprime tout cache existant lors de l’installation du nouveau SW
     event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => {
-                console.log('Opened cache');
-                return cache.addAll(urlsToCache);
-            })
+        caches.keys().then((cacheNames) => {
+            return Promise.all(cacheNames.map((cache) => caches.delete(cache)));
+        })
     );
+    self.skipWaiting(); // Force l’activation immédiate du nouveau SW
 });
+
+self.addEventListener('activate', (event) => {
+    event.waitUntil(clients.claim()); // Applique instantanément le nouveau SW
+});
+
 
 self.addEventListener('fetch', (event) => {
     event.respondWith(

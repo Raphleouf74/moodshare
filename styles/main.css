@@ -23,6 +23,10 @@ main {
     max-width: 100%;
 }
 
+font-family {
+    font-family:;
+}
+
 /* ========================== */
 /* HEADER + NAVIGATION + TABS */
 /* ========================== */
@@ -68,68 +72,101 @@ header.scrolled p {
 
 /* Navigation */
 
-@media (min-width: 760px) {
-    nav {
-        width: 50%;
-        left: 25%;
-    }
+nav {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 600px;
+    height: 65px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
 
-    nav.scrolled {
-        width: 275px;
-    }
+    border-radius: 25px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    z-index: 2000;
+    transition: all 0.3s ease-in-out;
 }
 
-nav {
+/* Icônes et boutons */
+nav button {
+    all: unset;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    border-radius: 15px 15px 0 0;
-    padding: 2px;
-    min-width: 250px;
-    -webkit-backdrop-filter: blur(15px);
-    backdrop-filter: blur(15px);
-    left: 0;
-    align-self: center;
-    background: rgb(75, 75, 75, 0.5);
-    height: 75px;
-    z-index: 2000;
-    transition: all 0.2s ease-in-out;
+    border-radius: 16px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.8rem;
+    transition: all 0.25s ease-in-out;
+    position: relative;
 }
 
-nav.scrolled {
-    background: transparent;
-    width: 50%;
-    bottom: 0;
-    left: 25%;
-    border: 0 solid rgb(0, 0, 0, 0.4);
-    height: 40px;
-    -webkit-backdrop-filter: blur(0);
-    backdrop-filter: blur(0);
+nav button span {
+    transition: all 0.2s ease;
+    color: black;
 }
 
-nav button {
-    display: flex;
-    text-decoration: none;
-    font-weight: 700;
-    flex-direction: column;
-    justify-content: space-around;
-    width: calc(95% / 7);
-    height: 90%;
-    border-radius: 13px;
-    border: 1px solid black;
-    background: linear-gradient(to bottom right, rgb(150, 100, 200), rgb(0, 0, 100), rgb(0, 0, 0));
-    background-size: 300% 300%;
-    background-position: 0% 0%;
-    transition: all 0.35s ease-in-out;
+/* Effet au hover */
+nav button:hover span {
+    transform: scale(1.25);
 }
 
+/* Bouton actif avec pastille glassy */
 nav button.active {
-    background-position: 100% 100%;
-    color: rgb(200, 200, 200);
-    width: 20%;
+    color: white;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+    transform: translateY(-4px);
+}
+
+/* Animation fluide quand un bouton devient actif */
+nav button.active::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background: #00ffe0;
+    border-radius: 50%;
+    opacity: 0.9;
+    box-shadow: 0 0 12px #00ffe0;
+    animation: pulseGlow 2s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+
+    0%,
+    100% {
+        transform: translateX(-50%) scale(1);
+        opacity: 0.9;
+    }
+
+    50% {
+        transform: translateX(-50%) scale(1.5);
+        opacity: 0.4;
+    }
+}
+
+/* Version desktop : plus fine quand on scrolle */
+@media (min-width: 768px) {
+    nav.scrolled {
+        bottom: 10px;
+        width: 70%;
+        height: 55px;
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 20px;
+    }
 }
 
 
@@ -172,24 +209,55 @@ section#createTab {
 nav button#inboxTab:hover span {
     animation: fire 0.5s forwards;
     font-weight: 300;
-    color: red;
 }
 
 nav button#profileTab:hover span {
     transform: scale(1.5) rotate(15deg);
     font-weight: 300;
-    color: blue;
 }
 
 nav button#postsTab:hover span {
     animation: scroll 0.5s forwards;
 }
 
-nav button#settingsTab:hover span {
-    transform: scale(1.5) rotate(-45deg);
-    font-weight: 300;
-    color: grey;
+nav button#settingsTab span {
+    animation: rotate1 0.5s forwards;
+    transform: scale(1);
 }
+
+nav button#settingsTab:hover span {
+    animation: rotate 0.5s forwards;
+    transform: scale(1.5);
+    font-weight: 300;
+}
+
+@keyframes rotate {
+    0% {
+        rotate: 0;
+    }
+
+    100% {
+        rotate: 360deg;
+    }
+}
+
+@keyframes rotate1 {
+
+    0%,
+    100% {
+        rotate: 0;
+        scale: 1;
+    }
+
+    50% {
+        scale: 1.3;
+    }
+
+    99% {
+        rotate: 360deg;
+    }
+}
+
 
 
 @keyframes scroll {
@@ -388,6 +456,8 @@ section {
 
 /* Animation au hover */
 .post:hover {
+    margin-top: 15px;
+    margin-bottom: 60px;
     transform: translateY(-2px);
     box-shadow:
         0 8px 12px rgba(0, 0, 0, 0.15),
@@ -667,7 +737,17 @@ textarea {
     justify-content: space-around;
     border: 2px solid black;
 }
-
+.mood-options {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+.mood-options div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
 #previewMood {
     border-radius: 1rem;
     padding: 1rem;
@@ -679,20 +759,32 @@ textarea {
     font-size: 2rem;
 }
 
-#emojiPickerContainer {
-    position: absolute;
+.mood-options #emojiPickerContainer {
+    position: fixed;
     pointer-events: none;
-    bottom: 45px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-self: center;
+    background-color: rgb(0, 0, 0, 0.2);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
     z-index: 1000;
-    left: 50%;
     opacity: 0;
     transform: translateY(-15px);
     transition: all 0.2s ease-in-out;
     border-radius: 15px;
 }
 
+#emojiPickerContainer div{
+    border-radius: 15px;
+}
+
 #emojiPickerContainer.shown {
     opacity: 1;
+    z-index: 1000000000000000000000000000000;
     pointer-events: all;
     transform: translateY(0);
 }
@@ -956,6 +1048,7 @@ section#inboxTab {
     height: auto;
     box-sizing: border-box;
 }
+
 #inboxdiv {
     width: 70%;
     padding: 15px;
@@ -966,6 +1059,7 @@ section#inboxTab {
     margin-bottom: 50px;
     background-color: rgb(230, 230, 230);
 }
+
 .notificationInbox {
     width: 97%;
     left: 2.5%;
@@ -981,7 +1075,7 @@ section#inboxTab {
 }
 
 .notificationInbox.critical {
-    background-color: rgb(255,100,100);
+    background-color: rgb(255, 100, 100);
 }
 
 .notificationInbox div {
@@ -1010,8 +1104,15 @@ section#inboxTab {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 

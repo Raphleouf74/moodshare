@@ -11,6 +11,7 @@ window.addEventListener('scroll', () => {
 });
 
 async function checkSiteVersion() {
+    
     const siteVersion = document.getElementById("SiteVersion");
     const buildVersion = document.getElementById("BuildVersion");
     const inboxdiv = document.getElementById("inboxdiv")
@@ -38,44 +39,37 @@ async function checkSiteVersion() {
         if (siteVersion) siteVersion.innerText = latest;
         if (buildVersion) buildVersion.innerText = latestBuild;
 
-        // Vérification des mises à jour
-        if (current && current !== latest) {
-            showFeedback("warning", "Votre version de Moodshare n'est pas à jour. Veuillez mettre à jour l'application. <a href='../FAQ/downloadlastver.html'>Comment faire ?</a> <button onclick='location.reload()'>Recharger la page</button>");
-            const inboxdivnotif = document.createElement('div');
-            inboxdivnotif.className = 'notificationInbox critical';
-            inboxdivnotif.innerHTML = `
-            <span class="material-symbols-rounded">notifications</span>
-            <div>
-                <h3>Votre version n'est pas à jour !</h3>
-                <p>Veuillez mettre à jour l'application. <a href='../FAQ/downloadlastver.html'>Comment faire ?</a></p>
-                <button onclick="location.reload()">Recharger la page</button>
-            </div>`;
-            inboxdiv.appendChild(inboxdivnotif);
-        }
-        if (currentBuild && currentBuild !== latestBuild) {
-            showFeedback("warning", "Votre version de Moodshare n'est pas à jour. Veuillez mettre à jour l'application. <a href='../FAQ/downloadlastver.html'>Comment faire ?</a> <button onclick='location.reload()'>Recharger la page</button>");
-            const inboxdivnotif = document.createElement('div');
-            inboxdivnotif.className = 'notificationInbox critical';
-            inboxdivnotif.innerHTML = `
-            <span class="material-symbols-rounded">notifications</span>
-            <div>
-                <h3>Votre version n'est pas à jour !</h3>
-                <p>Veuillez mettre à jour l'application. <a href='../FAQ/downloadlastver.html'>Comment faire ?</a></p>
-                <button onclick="location.reload()">Recharger la page</button>
-            </div>`;
-            inboxdiv.appendChild(inboxdivnotif);
 
+        // Vérification des mises à jour
+        if (current && current !== latest || currentBuild && currentBuild !== latestBuild) {
+            showFeedback("warning", "Votre version de Moodshare n'est pas à jour. Veuillez mettre à jour l'application. <a href='../FAQ/downloadlastver.html'>Comment faire ?</a> <button onclick='location.reload()'>Recharger la page</button>");
+            const inboxdivnotif = document.createElement('div');
+            inboxdivnotif.className = 'notificationInbox critical';
+            inboxdivnotif.innerHTML = `
+            <span class="material-symbols-rounded">notifications</span>
+            <div>
+                <h3>Votre version n'est pas à jour !</h3>
+                <p>Veuillez mettre à jour l'application. <a href='../FAQ/downloadlastver.html'>Comment faire ?</a></p>
+                <button onclick="location.reload()">Recharger la page</button>
+            </div>`;
+            inboxdiv.appendChild(inboxdivnotif);
+            // Désactive le cache du navigateur et recharge la page proprement
+            caches.keys().then(names => names.forEach(name => caches.delete(name)));
+            localStorage.clear();
+
+            // Recharge après un petit délai
+            setTimeout(() => {
+                window.location.reload(true);
+            }, 1500);
         }
 
         // Sauvegarde des nouvelles versions
         localStorage.setItem('siteVersion', latest);
         localStorage.setItem('buildVersion', latestBuild);
 
-        console.log('Ancienne version/build :', 'V:', latest, 'B:', latestBuild);
-        console.log('Version/build actuel :', 'V:', current, 'B:', currentBuild);
         setTimeout(() => {
             showFeedback("info", `Version stable du site ${latest} (build ${latestBuild})`);
-        }, 4000);
+        }, 1500);
     } catch (error) {
         console.error('Erreur lors de la vérification de la version du site:', error);
         showFeedback("error", `Erreur lors de la vérification de la version du site. Voire console.`);
@@ -88,35 +82,6 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 // scripts/app.js
 import './social/feed.js';
-// Supprimer les imports en double et restructurer
-import { setupLocalization } from './i18n/i18n.js';
-import { initializeSocialFeatures } from './social/feed.js';
-import { initializeStorage } from './utils/storage.js';
-
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        if (await initializeStorage()) {
-            await initializeSocialFeatures();
-            setupLocalization();
-        }
-    } catch (error) {
-        console.log('Erreur initialisation:', error);
-    }
-});
-
-
-
-
-// ...existing code...
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize storage for offline capabilities
-    initializeStorage();
-
-    // Setup localization for multilingual support
-    setupLocalization();
-
-});
-
 const wall = document.getElementById("moodWall");
 const postBtn = document.getElementById("postMoodBtn");
 const modal = document.getElementById("postModal");
@@ -319,13 +284,31 @@ tabs.forEach(tab => {
 
 const editBtn = document.getElementById('editEmojiBtn');
 const pickerContainer = document.getElementById('emojiPickerContainer');
+const pickerContent = document.getElementById('emojiPicker');
+
+// Ouvre/ferme le picker quand on clique sur le bouton
 editBtn.addEventListener('click', () => {
     pickerContainer.classList.toggle('shown');
 });
-document.querySelector('emoji-picker').addEventListener('emoji-click', event => {
-    document.querySelector('.moodEmoji').value = event.detail.unicode;
-    pickerContainer.classList.toggle('shown');
+
+// Ferme le picker quand on clique à l'extérieur
+pickerContainer.addEventListener('click', (e) => {
+    if (e.target === pickerContainer) {
+        pickerContainer.classList.remove('shown');
+    }
 });
+
+// Empêche de fermer quand on clique *dans* le picker
+pickerContent.addEventListener('click', (e) => {
+    e.stopPropagation();
+});
+
+// Quand on sélectionne un emoji
+pickerContent.addEventListener('emoji-click', (event) => {
+    document.querySelector('.moodEmoji').value = event.detail.unicode;
+    pickerContainer.classList.remove('shown');
+});
+
 
 // ...existing code...
 
@@ -337,11 +320,42 @@ const moodColor = document.getElementById('moodColor');
 const moodEmoji = document.querySelector('.moodEmoji');
 
 // Fonction de mise à jour de l'aperçu
+const textColorInput = document.getElementById('textColor');
+let useManualTextColor = false;
+
+textColorInput.addEventListener('input', () => {
+    useManualTextColor = true;
+    updatePreview();
+});
+
 function updatePreview() {
-    previewMood.style.background = moodColor.value;
+    const bgColor = moodColor.value;
+    previewMood.style.background = bgColor;
     previewEmoji.textContent = moodEmoji.value;
     previewText.textContent = moodInput.value;
+
+    if (useManualTextColor) {
+        const color = textColorInput.value;
+        previewText.style.color = color;
+        previewEmoji.style.color = color;
+    } else {
+        const brightness = getBrightness(bgColor);
+        const autoColor = brightness < 128 ? "#FFFFFF" : "#000000";
+        previewText.style.color = autoColor;
+        previewEmoji.style.color = autoColor;
+    }
 }
+
+
+// Fonction utilitaire pour calculer la luminosité perçue
+function getBrightness(hexColor) {
+    const hex = hexColor.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return (r * 299 + g * 587 + b * 114) / 1000;
+}
+
 
 // Mise à jour en direct sur chaque changement
 moodInput.addEventListener('input', updatePreview);
@@ -393,12 +407,6 @@ function showFeedback(type, message) {
         }, 3000);
     }
 }
-
-
-document.addEventListener('DOMContentLoaded', () => {
-    showFeedback("welcome", "Bienvenue !");
-
-});
 
 // Modifier la gestion du submit
 if (submitBtn) {
@@ -468,3 +476,6 @@ if (submitBtn) {
 }
 
 
+
+console.log(`%c⚠ Avertissement: Le site est en développement, des erreurs ou des bugs peuvent survenir !`, "color: yellow; font-size: 25px; font-family: impact");
+console.log(`%c⚠ Attention: Ne rentrez JAMAIS de commande ici sans connaître son but !`, "color: orange; font-size: 25px; font-family: impact");

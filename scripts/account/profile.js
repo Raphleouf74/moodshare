@@ -26,17 +26,6 @@ function listenForOAuthResponse() {
     });
 }
 
-export async function fetchMe() {
-    try {
-        const res = await fetch(API_ME, { credentials: 'same-origin' });
-        if (!res.ok) return null;
-        return await res.json();
-    } catch (e) {
-        console.warn('fetchMe error', e);
-        return null;
-    }
-}
-
 export function populateProfile(user) {
     if (!user) return;
     const avatar = document.getElementById('accountavatar');
@@ -96,10 +85,6 @@ async function init() {
             editBtn.textContent = editing ? 'Enregistrer' : 'Modifier';
         });
     }
-
-    // Chargement initial du profil
-    const me = await fetchMe();
-    if (me) populateProfile(me);
 }
 
 document.addEventListener('DOMContentLoaded', init);

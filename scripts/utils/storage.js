@@ -15,7 +15,6 @@ export function saveToLocalStorage(data) {
 export function initializeStorage() {
     try {
         localStorage.setItem('moodshare_initialized', 'true');
-        console.log('Storage initialized successfully');
         return true;
     } catch (error) {
         console.error('Erreur initialisation storage:', error);

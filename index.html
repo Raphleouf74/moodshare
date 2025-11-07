@@ -20,23 +20,23 @@
   </header>
   <nav>
     <button id="homeTab" class="active">
-      <span class="material-symbols-rounded">home</span><!--<p>Accueil</p>-->
+      <span class="material-symbols-rounded">home</span>
     </button>
     <button id="postsTab">
-      <span class="material-symbols-rounded">post</span><!--<p>Accueil</p>-->
+      <span class="material-symbols-rounded">post</span>
     </button>
     <button id="createTab">
-      <span class="material-symbols-rounded">add_circle</span><!--<p>Accueil</p>-->
+      <span class="material-symbols-rounded">add_circle</span>
     </button>
     <button id="inboxTab">
-      <span class="material-symbols-rounded">inbox</span><!--<p>Accueil</p>-->
+      <span class="material-symbols-rounded">inbox</span>
     </button>
     <button id="profileTab">
-      <span class="material-symbols-rounded">account_circle</span><!--<p>Accueil</p>-->
+      <span class="material-symbols-rounded">account_circle</span>
     </button>
-    <button id="settingsTab">
-      <span class="material-symbols-rounded">settings</span><!--<p>Accueil</p>-->
-    </button>
+    <!-- <button id="settingsTab">
+      <span class="material-symbols-rounded">settings</span>
+    </button> -->
   </nav>
   <section id="homeTab" class="tab active">
     <div class="stories">
@@ -73,14 +73,21 @@
     <div id="postModal">
       <textarea id="moodInput" maxlength="100" placeholder="Comment tu te sens ?"></textarea>
       <div class="mood-options">
-        <input type="color" id="moodColor" value="#ffffff" />
-        <label for="moodColor" class="colorLabel">
-          <span class="material-symbols-rounded">palette</span>
-        </label>
-        <input type="text" class="moodEmoji" id="editEmojiBtn" placeholder="Émoji" readonly />
+        <div class="inputdiv">
+          <input type="color" id="moodColor" value="#ffffff" />
+          <label for="moodColor">Fond</label>
+        </div>
+        <div class="inputdiv">
+          <input type="color" id="textColor" value="#000000" />
+          <label for="textColor">Couleur</label>
+        </div>
+
+        <input type="text" class="moodEmoji" id="editEmojiBtn" placeholder="" readonly />
+
 
         <div id="emojiPickerContainer">
           <emoji-picker id="emojiPicker"></emoji-picker>
+          <p><i>Séléctionnez un emoji ou cliquez autour pour fermer.</i></p>
         </div>
       </div>
       <!-- Aperçu du post -->
@@ -106,27 +113,27 @@
         <div id="durationPicker" class="duration-picker">
           <div class="duration-input">
             <input type="number" id="durationYear" min="0" max="10" placeholder="aa" />
-            <label>Années</label>
+            <label for="durationYear">Années</label>
           </div>
           <div class="duration-input">
             <input type="number" id="durationMonths" min="0" max="11" placeholder="mm" />
-            <label>Mois</label>
+            <label for="durationMonths">Mois</label>
           </div>
           <div class="duration-input">
             <input type="number" id="durationDays" min="0" max="31" placeholder="jj" />
-            <label>Jours</label>
+            <label for="durationDays">Jours</label>
           </div>
           <div class="duration-input">
             <input type="number" id="durationHours" min="0" max="23" placeholder="hh" />
-            <label>Heures</label>
+            <label for="durationHours">Heures</label>
           </div>
           <div class="duration-input">
             <input type="number" id="durationMinutes" min="0" max="59" placeholder="mm" />
-            <label>Minutes</label>
+            <label for="durationMinutes">Minutes</label>
           </div>
           <div class="duration-input">
             <input type="number" id="durationSeconds" min="0" max="59" placeholder="ss" />
-            <label>Secondes</label>
+            <label for="durationSeconds">Secondes</label>
           </div>
         </div>
         <p>Le message disparaîtra le <span id="msgdeletetime"></span></p>
@@ -173,8 +180,16 @@
     <div id="MoreAccSettings">
       <p><b>Paramètres supplémentaires</b></p>
       <a href="https://github.com/Raphleouf74/moodshare"><button>Accéder au GitHub</button></a>
-      <button>Conditions Générales du Service</button>
-      <button>Politique de confidentialité</button>
+      <a href="https://ko-fi.com/moodshare" target="_blank" class="donate-btn">
+        <button>Faire un don</button>
+      </a>
+      <a href="Legal/TERMS_OF_SERVICE.html"><button>
+          Conditions générales du service
+          <span class="material-symbols-rounded">article</span>
+        </button></a>
+      <a href="Legal/PRIVACY_POLICY.html"><button>
+          Politique de confidentialité<span class="material-symbols-rounded">article</span>
+        </button></a>
       <button>Se déconnecter</button>
       <p><b>Paramètres supplémentaires à propos du compte</b></p>
       <button>Modifier les informations du compte</button>
@@ -190,7 +205,7 @@
     </footer>
   </section>
 
-  <section id="settingsTab" class="tab hidden">
+  <!-- <section id="settingsTab" class="tab hidden">
     <div id="appSettings">
       <h3>Paramètres de l'application</h3>
       <label>
@@ -214,10 +229,12 @@
         Thème <span class="material-symbols-rounded">routine</span>
       </button>
       <button id="increaseFontBtn">
-        Augmenter la taille de la police <span class="material-symbols-rounded">text_increase</span>
+        Augmenter la taille de la police
+        <span class="material-symbols-rounded">text_increase</span>
       </button>
       <button id="decreaseFontBtn">
-        Diminuer la taille de la police <span class="material-symbols-rounded">text_decrease</span>
+        Diminuer la taille de la police
+        <span class="material-symbols-rounded">text_decrease</span>
       </button>
       <button id="readContentBtn">
         Lire la page <span class="material-symbols-rounded">volume_up</span>
@@ -226,36 +243,17 @@
         Contraste de la page
         <span class="material-symbols-rounded">contrast</span>
       </button>
-      <a href="Legal/TERMS_OF_SERVICE.html"><button>
-          Conditions générales du service
-          <span class="material-symbols-rounded">article</span>
-        </button></a>
-      <a href="Legal/PRIVACY_POLICY.html"><button>
-          Politique de confidentialité<span class="material-symbols-rounded">article</span>
-        </button></a>
+
+
     </div>
-  </section>
+  </section> -->
 </body>
 <!-- Remplacer les 3 lignes d'import de scripts par : -->
 <script type="module" src="scripts/app.js"></script>
 <script type="module" src="scripts/account/profile.js"></script>
-<script defer src="scripts/a11y/a11y.js"></script>
+<!-- <script defer src="scripts/a11y/a11y.js"></script> -->
 <script type="module" src="scripts/social/feed.js"></script>
 <script type="module" src="scripts/social/interactions.js"></script>
-<script defer src="scripts/offline/sw-register.js"></script>
-<script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker
-        .register("/sw.js")
-        .then((registration) => {
-          console.log("SW enregistré:", registration);
-        })
-        .catch((error) => {
-          console.log("Erreur SW:", error);
-        });
-    });
-  }
-</script>
+<script defer src="scripts/offline/sync.js"></script>
 
 </html>

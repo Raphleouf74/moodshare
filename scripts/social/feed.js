@@ -16,22 +16,11 @@ async function loadPosts() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const posts = await response.json();
-        displayPosts(posts);
     } catch (error) {
         console.error('Erreur chargement posts:', error);
     }
 }
 
-function displayPosts(posts) {
-    const wall = document.getElementById('moodWall');
-    if (!wall) return;
-    
-    posts.forEach(post => {
-        // Affichage de chaque post
-        const postElement = createPostElement(post);
-        wall.appendChild(postElement);
-    });
-}
 
 
 // Event listener for the like button
