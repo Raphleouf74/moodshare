@@ -18,13 +18,19 @@ Write-Host ""
 Write-Host "Choisissez une option:"
 Write-Host "1) Nouveau build (Par défaut)"
 Write-Host "2) Nouvelle Release "
-$choice = Read-Host "Entrer le choix (1/2)"
-if ($choice -eq "2") {
-    $mode = "release"
-}
-else {
+Write-Host "3) Upload NEtlify   "
+$choice = Read-Host "Entrer le choix (1/2/3)"
+if ($choice -eq "1") {
     $mode = "build"
+}if ($choice -eq "2") {
+    $mode = "release"
+}if ($choice -eq "3") {
+    $mode = "netlify"
+} else {
+    Write-Host "Entrez une commande valide la prochaine fois"
+    exit 1
 }
+
 Write-Host ""
 Write-Host "Mode séléctionné: $mode"
 Write-Host ""
@@ -34,7 +40,7 @@ if ($mode -eq "release") {
     $newVersion = Read-Host "Entrez la nouvelle version (ex: 1.2.0)"
     $changelog = Read-Host "Ecrivez un court changelog"
 }
-else {
+if ($mode -eq "build") {
     Write-Host "Ancienne version : $currentVersion"
     $newVersion = Read-Host "Nouvelle version ('', '-' ou ' ' pour garder $currentVersion)"
     Write-Host "Ancien build: $currentBuild"
@@ -71,6 +77,11 @@ else {
         }
     }
 
+}
+
+if ($mode -eq "netlify") {
+    netlify deploy -p
+    Write-Host "Déploiement..."
 }
 $json.version = $newVersion
 $json.build = $newBuild
