@@ -24,12 +24,13 @@ if ($choice -eq "1") {
     $mode = "build"
 }if ($choice -eq "2") {
     $mode = "release"
-}if ($choice -eq "3") {
-    $mode = "netlify"
-} else {
-    Write-Host "Entrez une commande valide la prochaine fois"
-    exit 1
 }
+# }if ($choice -eq "3") {
+#     $mode = "netlify"
+# } else {
+#     Write-Host "Entrez une commande valide la prochaine fois"
+#     exit 1
+# }
 
 Write-Host ""
 Write-Host "Mode selectionne: $mode"
@@ -40,7 +41,7 @@ if ($mode -eq "release") {
     $newVersion = Read-Host "Entrez la nouvelle version (ex: 1.2.0)"
     $changelog = Read-Host "Ecrivez un court changelog"
 }
-if ($mode -eq "build") {
+else {
     Write-Host "Ancienne version : $currentVersion"
     $newVersion = Read-Host "Nouvelle version ('', '-' ou ' ' pour garder $currentVersion)"
     Write-Host "Ancien build: $currentBuild"
@@ -79,10 +80,10 @@ if ($mode -eq "build") {
 
 }
 
-if ($mode -eq "netlify") {
-    netlify deploy -p
-    Write-Host "Deploiement..."
-}
+# if ($mode -eq "netlify") {
+#     netlify deploy -p
+#     exit 1
+# }
 $json.version = $newVersion
 $json.build = $newBuild
 $json | ConvertTo-Json -Depth 10 | Set-Content $versionFile -Encoding UTF8

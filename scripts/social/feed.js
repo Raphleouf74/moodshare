@@ -20,6 +20,11 @@ async function loadPosts() {
         console.error('Erreur chargement posts:', error);
     }
 }
+(async () => {
+  const resStories = await fetch("https://moodshare-7dd7.onrender.com/api/stories");
+  const stories = await resStories.json();
+  stories.forEach(addStoryToList);
+})();
 
 
 

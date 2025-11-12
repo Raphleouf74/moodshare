@@ -1,211 +1,307 @@
 <!DOCTYPE html>
 <html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>MoodShare</title>
+    <link rel="icon" href="/assets/icons/logo_cropped.jpg" />
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+    />
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"
+    ></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>MoodShare</title>
-  <link rel="icon" href="/assets/icons/logo_cropped.jpg" />
-  <link rel="stylesheet" href="/styles/main.css" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" />
-  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
-</head>
-
-<body>
-  <header>
-    <div class="logo">
-      <h1>MoodShare</h1>
-      <p>Exprime ton mood</p>
-    </div>
-  </header>
-  <nav>
-    <button id="homeTab" class="active">
-      <span class="material-symbols-rounded">home</span>
-    </button>
-    <button id="postsTab">
-      <span class="material-symbols-rounded">post</span>
-    </button>
-    <button id="createTab">
-      <span class="material-symbols-rounded">add_circle</span>
-    </button>
-    <button id="inboxTab">
-      <span class="material-symbols-rounded">inbox</span>
-    </button>
-    <button id="profileTab">
-      <span class="material-symbols-rounded">account_circle</span>
-    </button>
-    <!-- <button id="settingsTab">
+  <body>
+    <header>
+      <div class="logo">
+        <h1>MoodShare</h1>
+        <p>Exprime ton mood</p>
+      </div>
+    </header>
+    <nav>
+      <button id="homeTab" class="active">
+        <span class="material-symbols-rounded">home</span>
+      </button>
+      <button id="postsTab">
+        <span class="material-symbols-rounded">post</span>
+      </button>
+      <button id="createTab">
+        <span class="material-symbols-rounded">add_circle</span>
+      </button>
+      <button id="inboxTab">
+        <span class="material-symbols-rounded">inbox</span>
+      </button>
+      <button id="profileTab">
+        <span class="material-symbols-rounded">account_circle</span>
+      </button>
+      <!-- <button id="settingsTab">
       <span class="material-symbols-rounded">settings</span>
     </button> -->
-  </nav>
-  <section id="homeTab" class="tab active">
-    <div class="stories">
-      <h2>Stories</h2>
-      <div class="stories-list">
-        <div class="story skeleton"></div>
-        <div class="story skeleton"></div>
-        <div class="story skeleton"></div>
-        <div class="story skeleton"></div>
-        <div class="story skeleton"></div>
+    </nav>
+    <section id="homeTab" class="tab active">
+      <div class="stories">
+        <h2>Stories</h2>
+        <div class="stories-list">
+          <div class="story add-story" id="addStoryBtn">
+            <span class="material-symbols-rounded">add</span>
+          </div>
+          <div class="story skeleton"></div>
+          <div class="story skeleton"></div>
+        </div>
       </div>
-    </div>
 
-    <div class="posts-section">
-      <h2>Posts récents</h2>
+      <div class="posts-section">
+        <h2>Posts récents</h2>
+        <div id="moodWall"></div>
+      </div>
+      <div class="suggested-accounts">
+        <h2>Comptes à suivre</h2>
+        <div class="accounts-list">
+          <div class="account skeleton"></div>
+          <div class="account skeleton"></div>
+          <div class="account skeleton"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="postsTab" class="tab hidden">
       <div id="moodWall"></div>
-    </div>
-    <div class="suggested-accounts">
-      <h2>Comptes à suivre</h2>
-      <div class="accounts-list">
-        <div class="account skeleton"></div>
-        <div class="account skeleton"></div>
-        <div class="account skeleton"></div>
-      </div>
-    </div>
-  </section>
+      <!-- Les posts apparaîtront ici -->
+    </section>
 
-  <section id="postsTab" class="tab hidden">
-    <div id="moodWall"></div>
-    <!-- Les posts apparaîtront ici -->
-  </section>
+    <section id="createTab" class="tab hidden">
+      <div id="postModal">
+        <textarea
+          id="moodInput"
+          maxlength="450"
+          placeholder="Comment tu te sens ?"
+        ></textarea>
+        <div class="mood-options">
+          <div class="inputdiv">
+            <input type="color" id="moodColor" value="#ffffff" />
+            <label for="moodColor">Fond</label>
+          </div>
+          <div class="inputdiv">
+            <input type="color" id="textColor" value="#000000" />
+            <label for="textColor">Couleur</label>
+          </div>
 
-  <section id="createTab" class="tab hidden">
-    <div id="postModal">
-      <textarea id="moodInput" maxlength="100" placeholder="Comment tu te sens ?"></textarea>
-      <div class="mood-options">
-        <div class="inputdiv">
-          <input type="color" id="moodColor" value="#ffffff" />
-          <label for="moodColor">Fond</label>
+          <input
+            type="text"
+            class="moodEmoji"
+            id="editEmojiBtn"
+            placeholder=""
+            readonly
+          />
+
+          <div id="emojiPickerContainer">
+            <emoji-picker id="emojiPicker"></emoji-picker>
+            <p><i>Séléctionnez un emoji ou cliquez autour pour fermer.</i></p>
+          </div>
         </div>
-        <div class="inputdiv">
-          <input type="color" id="textColor" value="#000000" />
-          <label for="textColor">Couleur</label>
+        <!-- Aperçu du post -->
+        <p>Aperçu de votre poste</p>
+        <div id="previewMood" class="mood-card">
+          <span id="previewEmoji"></span>
+          <span id="previewText"></span>
         </div>
-
-        <input type="text" class="moodEmoji" id="editEmojiBtn" placeholder="" readonly />
-
-
-        <div id="emojiPickerContainer">
-          <emoji-picker id="emojiPicker"></emoji-picker>
-          <p><i>Séléctionnez un emoji ou cliquez autour pour fermer.</i></p>
+        <button id="submitMood">
+          <span class="material-symbols-rounded">upload</span>Partager
+        </button>
+        <!-- Ajouter après mood-options dans la section createTab -->
+        <div class="ephemeral-options">
+          <label class="container">
+            <input type="checkbox" id="ephemeralToggle" />
+            <svg viewBox="0 0 64 64" height="2em" width="2em">
+              <path
+                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                pathLength="575.0541381835938"
+                class="path"
+              ></path>
+            </svg>
+            Message éphémère
+          </label>
+          <div id="durationPicker" class="duration-picker">
+            <div class="duration-input">
+              <input
+                type="number"
+                id="durationYear"
+                min="0"
+                max="10"
+                placeholder="aa"
+              />
+              <label for="durationYear">Années</label>
+            </div>
+            <div class="duration-input">
+              <input
+                type="number"
+                id="durationMonths"
+                min="0"
+                max="11"
+                placeholder="mm"
+              />
+              <label for="durationMonths">Mois</label>
+            </div>
+            <div class="duration-input">
+              <input
+                type="number"
+                id="durationDays"
+                min="0"
+                max="31"
+                placeholder="jj"
+              />
+              <label for="durationDays">Jours</label>
+            </div>
+            <div class="duration-input">
+              <input
+                type="number"
+                id="durationHours"
+                min="0"
+                max="23"
+                placeholder="hh"
+              />
+              <label for="durationHours">Heures</label>
+            </div>
+            <div class="duration-input">
+              <input
+                type="number"
+                id="durationMinutes"
+                min="0"
+                max="59"
+                placeholder="mm"
+              />
+              <label for="durationMinutes">Minutes</label>
+            </div>
+            <div class="duration-input">
+              <input
+                type="number"
+                id="durationSeconds"
+                min="0"
+                max="59"
+                placeholder="ss"
+              />
+              <label for="durationSeconds">Secondes</label>
+            </div>
+          </div>
+          <p>Le message disparaîtra le <span id="msgdeletetime"></span></p>
         </div>
-      </div>
-      <!-- Aperçu du post -->
-      <p>Aperçu de votre poste</p>
-      <div id="previewMood" class="mood-card">
-        <span id="previewEmoji"></span>
-        <span id="previewText"></span>
-      </div>
-      <button id="submitMood">
-        <span class="material-symbols-rounded">upload</span>Partager
-      </button>
-      <!-- Ajouter après mood-options dans la section createTab -->
-      <div class="ephemeral-options">
-        <label class="container">
-          <input type="checkbox" id="ephemeralToggle" />
+        <label class="container storyinput">
+          <input type="checkbox" />
           <svg viewBox="0 0 64 64" height="2em" width="2em">
             <path
               d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-              pathLength="575.0541381835938" class="path"></path>
+              pathLength="575.0541381835938"
+              class="path"
+            ></path>
           </svg>
-          Message éphémère
+          Mettre en story
         </label>
-        <div id="durationPicker" class="duration-picker">
-          <div class="duration-input">
-            <input type="number" id="durationYear" min="0" max="10" placeholder="aa" />
-            <label for="durationYear">Années</label>
-          </div>
-          <div class="duration-input">
-            <input type="number" id="durationMonths" min="0" max="11" placeholder="mm" />
-            <label for="durationMonths">Mois</label>
-          </div>
-          <div class="duration-input">
-            <input type="number" id="durationDays" min="0" max="31" placeholder="jj" />
-            <label for="durationDays">Jours</label>
-          </div>
-          <div class="duration-input">
-            <input type="number" id="durationHours" min="0" max="23" placeholder="hh" />
-            <label for="durationHours">Heures</label>
-          </div>
-          <div class="duration-input">
-            <input type="number" id="durationMinutes" min="0" max="59" placeholder="mm" />
-            <label for="durationMinutes">Minutes</label>
-          </div>
-          <div class="duration-input">
-            <input type="number" id="durationSeconds" min="0" max="59" placeholder="ss" />
-            <label for="durationSeconds">Secondes</label>
-          </div>
+      </div>
+    </section>
+
+    <section id="inboxTab" class="tab hidden">
+      <h1>Boîte de récéption</h1>
+      <div id="inboxdiv">
+        <i>Vos notifications apparaîtront ici.</i>
+      </div>
+    </section>
+
+    <section id="profileTab" class="tab hidden">
+      <div id="accountinfo">
+        <img
+          src="/assets/icons/logo_cropped.jpg"
+          alt="AccountAvatar"
+          id="accountavatar"
+        />
+        <p>Votre avatar</p>
+
+        <button id="editProfileBtn">
+          <span class="material-symbols-rounded">edit</span>Modifier le profil
+        </button>
+
+        <div class="accountname">
+          <input id="profileUsername" placeholder="Votre pseudo" disabled />
+          <input id="profileFullName" placeholder="Votre nom" disabled />
         </div>
-        <p>Le message disparaîtra le <span id="msgdeletetime"></span></p>
-      </div>
-    </div>
-  </section>
 
-  <section id="inboxTab" class="tab hidden">
-    <h1>Boîte de récéption</h1>
-    <div id="inboxdiv">
-      <i>Vos notifications apparaîtront ici.</i>
-    </div>
-  </section>
+        <div class="plusinfos">
+          <h4>Informations complémentaires</h4>
+          <input id="profileEmail" placeholder="votre@email.com" disabled />
+          <input
+            id="profilePhone"
+            placeholder="Votre numéro de téléphone"
+            disabled
+          />
+          <input
+            id="profilePassword"
+            placeholder="Votre*mot*de*passe"
+            type="password"
+            disabled
+          />
+        </div>
 
-  <section id="profileTab" class="tab hidden">
-    <div id="accountinfo">
-      <img src="/assets/icons/logo_cropped.jpg" alt="AccountAvatar" id="accountavatar" />
-      <p>Votre avatar</p>
-      <button id="editProfileBtn">
-        <span class="material-symbols-rounded">edit</span>Modifier
-      </button>
-      <div class="accountname">
-        <input id="profileUsername" placeholder="Votre pseudo" disabled />
-        <input id="profileFullName" placeholder="Votre nom" disabled />
-      </div>
-      <div class="plusinfos">
-        <h4>Informations complémentaires</h4>
-        <input id="profileEmail" placeholder="votre@email.com" disabled />
-        <input id="profilePhone" placeholder="Votre numéro de téléphone" disabled />
-        <input id="profilePassword" placeholder="Votre*mot*de*passe" type="password" disabled />
+        <div id="socialStats">
+          <p>Abonnés : <span id="countFollowers">0</span></p>
+          <p>J'aime : <span id="countLikes">0</span></p>
+          <p>Posts : <span id="countPosts">0</span></p>
+        </div>
       </div>
 
-      <div id="socialLoginLinks">
-        <p>Se connecter avec</p>
-        <button id="loginGoogle">Google</button>
-        <button id="loginInstagram">Instagram</button>
+      <!-- 🧠 Section des posts du profil -->
+      <div id="userPostsSection">
+        <h2>Vos posts</h2>
+        <div id="userPostsWall"><i>Chargement des posts...</i></div>
       </div>
 
-      <div id="socialStats">
-        <p>Abonnés: <span id="countFollowers">0</span></p>
-        <p>J'aime: <span id="countLikes">0</span></p>
+      <div id="MoreAccSettings">
+        <p><b>Paramètres supplémentaires</b></p>
+        <a href="https://github.com/Raphleouf74/moodshare"
+          ><button>Accéder au GitHub</button></a
+        >
+        <a
+          href="https://ko-fi.com/moodshare"
+          target="_blank"
+          class="donate-btn"
+        >
+          <button>Faire un don</button>
+        </a>
+        <a href="Legal/TERMS_OF_SERVICE.html"
+          ><button>
+            Conditions générales du service
+            <span class="material-symbols-rounded">article</span>
+          </button></a
+        >
+        <a href="Legal/PRIVACY_POLICY.html"
+          ><button>
+            Politique de confidentialité
+            <span class="material-symbols-rounded">article</span>
+          </button></a
+        >
+        <!-- <button id="logoutBtn">Se déconnecter</button>
+      <p><b>Gestion du compte</b></p>
+      <button id="editAccountBtn">Modifier les informations</button>
+      <button id="disableAccountBtn">Désactiver le compte</button>
+      <button id="clearContentBtn">Supprimer le contenu</button>
+      <button id="deleteAccountBtn">Supprimer le compte</button> -->
       </div>
-    </div>
-    <div id="MoreAccSettings">
-      <p><b>Paramètres supplémentaires</b></p>
-      <a href="https://github.com/Raphleouf74/moodshare"><button>Accéder au GitHub</button></a>
-      <a href="https://ko-fi.com/moodshare" target="_blank" class="donate-btn">
-        <button>Faire un don</button>
-      </a>
-      <a href="Legal/TERMS_OF_SERVICE.html"><button>
-          Conditions générales du service
-          <span class="material-symbols-rounded">article</span>
-        </button></a>
-      <a href="Legal/PRIVACY_POLICY.html"><button>
-          Politique de confidentialité<span class="material-symbols-rounded">article</span>
-        </button></a>
-      <button>Se déconnecter</button>
-      <p><b>Paramètres supplémentaires à propos du compte</b></p>
-      <button>Modifier les informations du compte</button>
-      <button>Désactiver le compte</button>
-      <button>Supprimer le contenu du compte</button>
-      <button>Supprimer le compte</button>
-    </div>
-    <footer>
-      <p>
-        V<span id="SiteVersion">...</span> Build
-        <span id="BuildVersion">...</span>
-      </p>
-    </footer>
-  </section>
 
-  <!-- <section id="settingsTab" class="tab hidden">
+      <footer>
+        <p>
+          <span id="SiteVersion">...</span> Build
+          <span id="BuildVersion">...</span>
+        </p>
+      </footer>
+    </section>
+
+    <!-- <section id="settingsTab" class="tab hidden">
     <div id="appSettings">
       <h3>Paramètres de l'application</h3>
       <label>
@@ -247,13 +343,12 @@
 
     </div>
   </section> -->
-</body>
-<!-- Remplacer les 3 lignes d'import de scripts par : -->
-<script type="module" src="scripts/app.js"></script>
-<script type="module" src="scripts/account/profile.js"></script>
-<!-- <script defer src="scripts/a11y/a11y.js"></script> -->
-<script type="module" src="scripts/social/feed.js"></script>
-<script type="module" src="scripts/social/interactions.js"></script>
-<script defer src="scripts/offline/sync.js"></script>
-
+  </body>
+  <!-- Remplacer les 3 lignes d'import de scripts par : -->
+  <script type="module" src="scripts/app.js"></script>
+  <script type="module" src="scripts/account/profile.js"></script>
+  <!-- <script defer src="scripts/a11y/a11y.js"></script> -->
+  <script type="module" src="scripts/social/feed.js"></script>
+  <script type="module" src="scripts/social/interactions.js"></script>
+  <script defer src="scripts/offline/sync.js"></script>
 </html>

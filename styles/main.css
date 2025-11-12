@@ -40,7 +40,7 @@ header {
     display: flex;
     width: 100%;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-evenly;
     z-index: 2000;
     -webkit-backdrop-filter: blur(0);
     backdrop-filter: blur(0);
@@ -78,7 +78,7 @@ nav {
     max-width: 600px;
     height: 65px;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
     align-items: center;
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -178,7 +178,7 @@ a {
 
 
 nav.scrolled button {
-    background-color: rgb(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.15);
     -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(10px);
 }
@@ -199,8 +199,8 @@ nav button#createTab:hover span {
 }
 
 section#createTab {
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
 }
 
 nav button#inboxTab:hover span {
@@ -414,13 +414,51 @@ section {
     gap: 1rem;
 }
 
+
+
 .story {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
-    background: #eee;
-    border: 2px solid #ccc;
+    background: linear-gradient(135deg, #d9d9d9, #b0b0b0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
+
+.story:hover {
+    transform: scale(1.1);
+}
+
+.story-viewer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+
+.story-content {
+    width: 80%;
+    height: 80%;
+    border-radius: 20px;
+    color: white;
+    font-size: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
 
 .posts-section {
     margin-bottom: 2rem;
@@ -428,7 +466,7 @@ section {
 
 .post {
     height: 120px;
-    width: 98%;
+    max-width: 98%;
     border-radius: 1rem;
     background: rgba(255, 255, 255, 0.2);
     -webkit-backdrop-filter: blur(10px);
@@ -441,6 +479,7 @@ section {
     transition: all 0.3s ease;
     position: relative;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
 
@@ -492,7 +531,7 @@ section {
     position: absolute;
     display: flex;
     flex-direction: column;
-    align-items: space-around;
+    align-items: space-evenly;
     justify-content: space-evenly;
     align-self: center;
     top: 0;
@@ -560,7 +599,7 @@ section {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-evenly;
     width: auto;
     min-width: 75px;
 }
@@ -675,8 +714,9 @@ section {
 /* Créer */
 
 #postModal {
-    max-height: 90vh;
-    overflow-y: auto;
+    height: auto;
+    width: 100%;
+    left: 0;
 }
 
 input,
@@ -731,20 +771,23 @@ textarea {
     width: 200px;
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-evenly;
     border: 2px solid black;
 }
+
 .mood-options {
     display: flex;
     flex-direction: row;
     gap: 20px;
 }
+
 .mood-options div {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 }
+
 #previewMood {
     border-radius: 1rem;
     padding: 1rem;
@@ -775,7 +818,7 @@ textarea {
     border-radius: 15px;
 }
 
-#emojiPickerContainer div{
+#emojiPickerContainer div {
     border-radius: 15px;
 }
 
@@ -786,7 +829,7 @@ textarea {
     transform: translateY(0);
 }
 
-.ephemeral-options {
+.ephemeral-options, .storyinput {
     margin: 1rem 0;
     padding: 1rem;
     background: rgba(255, 255, 255, 0.1);
@@ -795,6 +838,10 @@ textarea {
     width: 300px;
     height: 30px;
     overflow: hidden;
+}
+
+.storyinput {
+    width: 150px;
 }
 
 .ephemeral-toggle {
@@ -949,7 +996,7 @@ textarea {
     cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-evenly;
     width: 100%;
 }
 
@@ -977,6 +1024,13 @@ textarea {
     stroke-dashoffset: -262.2723388671875;
     stroke: green;
 }
+
+.container.storyinput input:checked~svg .path {
+    stroke-dasharray: 70.5096664428711 9999999;
+    stroke-dashoffset: -262.2723388671875;
+    stroke: blue;
+}
+
 
 input[type="number"] {
     background: red;
@@ -1033,6 +1087,17 @@ input[type="number"] {
     font-size: 1.5rem;
 }
 
+.story.add-story {
+    background: rgba(0, 255, 200, 0.2);
+    border: 2px dashed #00ffe0;
+    color: #00ffe0;
+    font-size: 2rem;
+}
+
+.story.add-story:hover {
+    background: rgba(0, 255, 200, 0.35);
+}
+
 
 
 /* Boîte de récéption */
@@ -1068,7 +1133,7 @@ section#inboxTab {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-evenly;
 }
 
 .notificationInbox.critical {
@@ -1114,10 +1179,52 @@ section#inboxTab {
 
 
 /* Profil */
-
-#socialLoginLinks {
-    margin-top: 1rem;
+section#profileTab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    padding-top: 80px;
 }
+
+#userPostsSection {
+    width: 80%;
+    background: #f5f5f5;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+}
+
+#userPostsSection h2 {
+    margin-bottom: 10px;
+}
+
+#userPostsWall {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.user-post {
+    background: white;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.user-post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+}
+
+.user-post p {
+    margin: 5px 0 0 0;
+}
+
 
 #socialStats {
     margin-top: 1rem;
@@ -1162,7 +1269,7 @@ section#inboxTab {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-evenly;
 }
 
 #accountinfo footer button {
@@ -1203,7 +1310,7 @@ section#settingsTab {
 
 section#settingsTab button,
 section#settingsTab a {
-    width: 80%y;
+    width: 80%;
     border: none;
     font-size: 15px;
     font-weight: 500;
@@ -1212,5 +1319,5 @@ section#settingsTab a {
     background-color: transparent;
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-evenly;
 }

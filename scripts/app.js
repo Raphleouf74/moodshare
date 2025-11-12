@@ -1,6 +1,6 @@
 const header = document.querySelector('header');
 const nav = document.querySelector('nav');
-window.addEventListener('scroll', () => {
+window.addEventListener(('scroll'), () => {
     if (window.scrollY > 30) {
         header.classList.add('scrolled');
         nav.classList.add('scrolled');
@@ -11,10 +11,9 @@ window.addEventListener('scroll', () => {
 });
 
 async function checkSiteVersion() {
-    
+
     const siteVersion = document.getElementById("SiteVersion");
     const buildVersion = document.getElementById("BuildVersion");
-    const inboxdiv = document.getElementById("inboxdiv")
 
     try {
         const res = await fetch('/version.json', {
@@ -43,17 +42,7 @@ async function checkSiteVersion() {
         // Vérification des mises à jour
         if (current && current !== latest || currentBuild && currentBuild !== latestBuild) {
             showFeedback("warning", "Votre version de Moodshare n'est pas à jour. Veuillez mettre à jour l'application. <a href='../FAQ/downloadlastver.html'>Comment faire ?</a> <button onclick='location.reload()'>Recharger la page</button>");
-            const inboxdivnotif = document.createElement('div');
-            inboxdivnotif.className = 'notificationInbox critical';
-            inboxdivnotif.innerHTML = `
-            <span class="material-symbols-rounded">notifications</span>
-            <div>
-                <h3>Votre version n'est pas à jour !</h3>
-                <p>Veuillez mettre à jour l'application. <a href='../FAQ/downloadlastver.html'>Comment faire ?</a></p>
-                <button onclick="location.reload()">Recharger la page</button>
-            </div>`;
-            inboxdiv.appendChild(inboxdivnotif);
-            // Désactive le cache du navigateur et recharge la page proprement
+            addInboxNotification("warning", "Votre version n'est pas à jour !", "Merci de mettre le site à jour", "warning")            // Désactive le cache du navigateur et recharge la page proprement
             caches.keys().then(names => names.forEach(name => caches.delete(name)));
             localStorage.clear();
 
@@ -72,7 +61,8 @@ async function checkSiteVersion() {
         }, 1500);
     } catch (error) {
         console.error('Erreur lors de la vérification de la version du site:', error);
-        showFeedback("error", `Erreur lors de la vérification de la version du site. Voire console.`);
+        showFeedback("error", `Erreur lors de la vérification de la version du site. Voir console.`);
+        addInboxNotification("critical", "Erreur lors de la vérification de la version du site", "Voir console.", "dangerous")            // Désactive le cache du navigateur et recharge la page proprement
 
     }
 }
@@ -407,6 +397,59 @@ function showFeedback(type, message) {
         }, 3000);
     }
 }
+/**
+ * Ajoute une notification dans la boîte de réception (Inbox)
+ * @param {string} type - Le type de notification (info, success, warning, error, critical)
+ * @param {string} title - Le titre de la notification
+ * @param {string} message - Le message à afficher (HTML autorisé)
+ * @param {string} [icon] - Icône Material Symbols facultative
+ * @param {string} [actionLabel] - Texte du bouton d'action (facultatif)
+ * @param {function} [actionFn] - Fonction à exécuter au clic sur le bouton
+ */
+function addInboxNotification(type, title, message, icon = "notifications", actionLabel, actionFn) {
+    const inboxDiv = document.getElementById("inboxdiv");
+    if (!inboxDiv) return console.error("❌ Inbox non trouvée dans le DOM");
+
+    // Palette de couleurs par type
+    const typeColors = {
+        info: "#3498db",
+        success: "#27ae60",
+        warning: "#f1c40f",
+        error: "#e74c3c",
+        critical: "#c0392b"
+    };
+
+    // Création de la notification
+    const notif = document.createElement("div");
+    notif.className = `notificationInbox ${type}`;
+    notif.style.borderLeft = `6px solid ${typeColors[type] || "#777"}`;
+
+    notif.innerHTML = `
+        <span class="material-symbols-rounded" style="color:${typeColors[type] || "#777"}">${icon}</span>
+        <div>
+            <h3>${title}</h3>
+            <p>${message}</p>
+            ${actionLabel ? `<button class="notif-action">${actionLabel}</button>` : ""}
+        </div>
+    `;
+
+    // Si un bouton d’action est défini
+    if (actionLabel && typeof actionFn === "function") {
+        notif.querySelector(".notif-action").addEventListener("click", actionFn);
+    }
+
+    // Ajout à l’inbox
+    inboxDiv.prepend(notif);
+
+    // Animation d’apparition
+    notif.style.opacity = "0";
+    notif.style.transform = "translateY(-10px)";
+    setTimeout(() => {
+        notif.style.transition = "all 0.3s ease";
+        notif.style.opacity = "1";
+        notif.style.transform = "translateY(0)";
+    }, 50);
+}
 
 // Modifier la gestion du submit
 if (submitBtn) {
@@ -474,7 +517,134 @@ if (submitBtn) {
         }
     });
 }
+async function loadUserPosts() {
+    const wall = document.getElementById("userPostsWall");
+    wall.innerHTML = "<i>Chargement des posts...</i>";
 
+    try {
+        // ⚙️ Si tu as une API user spécifique :
+        const res = await fetch("https://moodshare-7dd7.onrender.com/api/posts");
+        const posts = await res.json();
+
+        // Simule l’utilisateur connecté
+        const currentUser = localStorage.getItem("username") || "Anonyme";
+
+        const userPosts = posts.filter(p => p.user === currentUser || !p.user);
+        userPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+        wall.innerHTML = "";
+
+        if (userPosts.length === 0) {
+            wall.innerHTML = "<i>Aucun post pour le moment.</i>";
+            return;
+        }
+
+        userPosts.forEach(p => {
+            const div = document.createElement("div");
+            div.className = "user-post";
+            div.innerHTML = `
+        <div class="user-post-header">
+          <span>${p.emoji || "🙂"}</span>
+          <span>${new Date(p.createdAt).toLocaleString("fr-FR")}</span>
+        </div>
+        <p>${p.text}</p>
+      `;
+            wall.appendChild(div);
+        });
+
+        document.getElementById("countPosts").textContent = userPosts.length;
+    } catch (err) {
+        wall.innerHTML = "<p style='color:red;'>Erreur lors du chargement des posts</p>";
+        console.error(err);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", loadUserPosts);
+
+const addStoryBtn = document.getElementById('addStoryBtn');
+const storyModeToggle = document.getElementById('storyModeToggle');
+
+if (addStoryBtn) {
+    addStoryBtn.addEventListener('click', () => {
+        // Active automatiquement le mode "Story"
+        const createTabBtn = document.getElementById('createTab');
+        createTabBtn.click();
+        storyModeToggle.checked = true;
+        showFeedback("info", "Mode story activé – les posts disparaîtront après 24h.");
+    });
+}
+
+// Lors de la création d’un post
+if (submitBtn) {
+    submitBtn.addEventListener("click", async () => {
+        const isStory = storyModeToggle?.checked;
+        let expiresAt = null;
+
+        if (isStory) {
+            // 24 heures = 24 * 60 * 60 * 1000
+            expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+        }
+
+        const newMood = {
+            text: document.getElementById("moodInput").value.trim(),
+            color: document.getElementById("moodColor").value,
+            emoji: document.querySelector(".moodEmoji").value,
+            ephemeral: isStory || ephemeralToggle.checked,
+            expiresAt
+        };
+
+        // Envoi vers ton API existante
+        const response = await fetch("https://moodshare-7dd7.onrender.com/api/posts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(newMood)
+        });
+
+        const savedMood = await response.json();
+
+        if (isStory) {
+            await fetch("https://moodshare-7dd7.onrender.com/api/stories", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newMood)
+            });
+            addStoryToList(newMood);
+
+            showFeedback("success", "Story publiée !");
+        } else {
+            displayMood(savedMood);
+            showFeedback("success", "Mood partagé !");
+        }
+    });
+}
+
+// Affichage des stories dans la liste
+function addStoryToList(story) {
+    const storiesList = document.querySelector('.stories-list');
+    const storyDiv = document.createElement('div');
+    storyDiv.className = 'story';
+    storyDiv.innerHTML = `<span>${story.emoji || '📸'}</span>`;
+    storiesList.appendChild(storyDiv);
+
+    storyDiv.addEventListener('click', () => {
+        openStoryViewer(story);
+    });
+}
+
+// Visionneuse simple
+function openStoryViewer(story) {
+    const viewer = document.createElement('div');
+    viewer.className = 'story-viewer';
+    viewer.innerHTML = `
+    <div class="story-content" style="background:${story.color}">
+      <span style="font-size:3rem">${story.emoji}</span>
+      <p>${story.text}</p>
+    </div>
+  `;
+    document.body.appendChild(viewer);
+
+    setTimeout(() => viewer.remove(), 4000); // auto-close after 4s
+}
 
 
 console.log(`%c⚠ Avertissement: Le site est en développement, des erreurs ou des bugs peuvent survenir !`, "color: yellow; font-size: 25px; font-family: impact");

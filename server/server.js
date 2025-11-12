@@ -1,35 +1,25 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import * as fs from 'fs/promises';  // Changement ici
+import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import session from 'express-session';
-import passport from './passport.js';  // Ajouter .js
-import authRoutes from './routes/auth.js';  // Ajouter .js
+import authRoutes, { verifyToken } from './routes/auth.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:8888', 'https://votre-site.netlify.app'],
+  credentials: true
+}));
 app.use(bodyParser.json());
 
 // Stockage en mémoire
-let posts = [
-  // Exemple de post
-  {
-    text: 'Bienvenue dans Moodshare ! Partagez dès maintenant votre mood depuis la section "Créer" !',
-    color: '#00cfeb',
-    emoji: '👋',
-    ephemeral: false,
-    expiresAt: null,
-    id: 1
-  }
-];
+let posts = [];
 
 // Charger les posts au démarrage
 try {
@@ -37,14 +27,8 @@ try {
   posts = JSON.parse(data);
   console.log('✅ Posts chargés depuis le fichier');
 } catch (error) {
-  console.log('⚠️ Aucun fichier de posts trouvé, démarrage avec un tableau vide');
+  console.log('⚠️ Aucun fichier de posts trouvé');
 }
-
-// Routes
-app.get("/api/posts", (req, res) => {
-  console.log('GET /api/posts');
-  res.json(posts);
-});
 
 // Middleware de logging
 app.use((req, res, next) => {
@@ -52,107 +36,166 @@ app.use((req, res, next) => {
   res.on('finish', () => {
     const duration = Date.now() - start;
     console.log(`📝 ${req.method} ${req.url} - Status: ${res.statusCode} - ${duration}ms`);
-    if (req.method === 'POST') {
-      console.log('📦 Contenu reçu:', req.body);
-    }
   });
   next();
 });
 
-// Route posts avec logs
-// Dans la route de création de post
-app.post("/api/posts", async (req, res) => {
-  console.log('🆕 Nouveau post reçu:', req.body);
+// Routes d'authentification
+app.use('/api/auth', authRoutes);
 
-  const newPost = {
-    id: Date.now().toString(),
-    ...req.body,
-    likes: 0,
-    comments: [],
-    createdAt: new Date().toISOString()
-  };
-
-  posts.unshift(newPost);
-
-  // Nettoyage des posts expirés
-  posts = posts.filter(post => {
-    if (!post.ephemeral || !post.expiresAt) return true;
-    return new Date(post.expiresAt) > new Date();
-  });
-
-  // Si le post est éphémère, programmer sa suppression
-  if (newPost.ephemeral && newPost.expiresAt) {
-    const timeUntilExpiry = new Date(newPost.expiresAt) - new Date();
-    setTimeout(async () => {  // Ajout du async ici
-      posts = posts.filter(p => p.id !== newPost.id);
-      // Sauvegarder après suppression
-      try {
-        await fs.writeFile(  // Utilisation de writeFile au lieu de writeFileSync
-          path.join(__dirname, 'data', 'posts.json'),
-          JSON.stringify(posts, null, 2)
-        );
-        console.log('🗑️ Post éphémère supprimé, ID:', newPost.id);
-      } catch (error) {
-        console.error('❌ Erreur sauvegarde après suppression:', error);
-      }
-    }, timeUntilExpiry);
-  } if (newPost.ephemeral && newPost.expiresAt) {
-    const timeUntilExpiry = new Date(newPost.expiresAt) - new Date();
-    setTimeout(() => {
-      posts = posts.filter(p => p.id !== newPost.id);
-      // Sauvegarder après suppression
-      try {
-        fs.writeFileSync(
-          path.join(__dirname, 'data', 'posts.json'),
-          JSON.stringify(posts, null, 2)
-        );
-        console.log('🗑️ Post éphémère supprimé, ID:', newPost.id);
-      } catch (error) {
-        console.error('❌ Erreur sauvegarde après suppression:', error);
-      }
-    }, timeUntilExpiry);
-  }
-
-  // Sauvegarder dans le fichier
+// Routes posts (protégées)
+app.get("/api/posts", async (req, res) => {
   try {
+    // Nettoyer les posts expirés
+    const now = new Date();
+    posts = posts.filter(post => {
+      if (!post.ephemeral || !post.expiresAt) return true;
+      return new Date(post.expiresAt) > now;
+    });
+
+    // Sauvegarder après nettoyage
+    await fs.writeFile(
+      path.join(__dirname, 'data', 'posts.json'),
+      JSON.stringify(posts, null, 2)
+    );
+
+    res.json(posts);
+  } catch (error) {
+    console.error('Erreur récupération posts:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+app.post("/api/posts", verifyToken, async (req, res) => {
+  try {
+    console.log('🆕 Nouveau post reçu:', req.body);
+
+    const newPost = {
+      id: Date.now().toString(),
+      userId: req.userId,
+      ...req.body,
+      likes: 0,
+      comments: [],
+      createdAt: new Date().toISOString()
+    };
+
+    posts.unshift(newPost);
+
+    // Si le post est éphémère, programmer sa suppression
+    if (newPost.ephemeral && newPost.expiresAt) {
+      const timeUntilExpiry = new Date(newPost.expiresAt) - new Date();
+      if (timeUntilExpiry > 0) {
+        setTimeout(async () => {
+          posts = posts.filter(p => p.id !== newPost.id);
+          try {
+            await fs.writeFile(
+              path.join(__dirname, 'data', 'posts.json'),
+              JSON.stringify(posts, null, 2)
+            );
+            console.log('🗑️ Post éphémère supprimé, ID:', newPost.id);
+          } catch (error) {
+            console.error('❌ Erreur sauvegarde après suppression:', error);
+          }
+        }, timeUntilExpiry);
+      }
+    }
+
+    // Sauvegarder
     await fs.mkdir(path.join(__dirname, 'data'), { recursive: true });
     await fs.writeFile(
       path.join(__dirname, 'data', 'posts.json'),
       JSON.stringify(posts, null, 2)
     );
-    console.log('💾 Post sauvegardé avec succès, ID:', newPost.id);
-  } catch (error) {
-    console.error('❌ Erreur sauvegarde:', error);
-  }
 
-  res.status(201).json(newPost);
+    console.log('💾 Post sauvegardé avec succès, ID:', newPost.id);
+    res.status(201).json(newPost);
+  } catch (error) {
+    console.error('❌ Erreur création post:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
 });
 
 // Route like
-app.post("/api/posts/:id/like", (req, res) => {
-  const post = posts.find(p => p.id === req.params.id);
-  if (!post) return res.status(404).json({ message: "Post non trouvé" });
+app.post("/api/posts/:id/like", verifyToken, async (req, res) => {
+  try {
+    const post = posts.find(p => p.id === req.params.id);
+    if (!post) return res.status(404).json({ message: "Post non trouvé" });
 
-  post.likes = (post.likes || 0) + 1;
-  res.json(post);
+    post.likes = (post.likes || 0) + 1;
+
+    await fs.writeFile(
+      path.join(__dirname, 'data', 'posts.json'),
+      JSON.stringify(posts, null, 2)
+    );
+
+    res.json(post);
+  } catch (error) {
+    console.error('Erreur like:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// Route pour récupérer les posts d'un utilisateur
+app.get("/api/users/:userId/posts", async (req, res) => {
+  try {
+    const userPosts = posts.filter(p => p.userId === req.params.userId);
+    res.json(userPosts);
+  } catch (error) {
+    console.error('Erreur récupération posts utilisateur:', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// Route santé
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+// === STORIES API ===
+import fs from "fs";
+import path from "path";
+const storiesFile = path.join(__dirname, "data/stories.json");
+
+// Charger les stories existantes
+function loadStories() {
+  if (!fs.existsSync(storiesFile)) return [];
+  return JSON.parse(fs.readFileSync(storiesFile, "utf8"));
+}
+
+// Sauvegarder les stories
+function saveStories(stories) {
+  fs.writeFileSync(storiesFile, JSON.stringify(stories, null, 2), "utf8");
+}
+
+// GET toutes les stories valides (<24h)
+app.get("/api/stories", (req, res) => {
+  const now = new Date();
+  const stories = loadStories().filter(s => new Date(s.expiresAt) > now);
+  res.json(stories);
+});
+
+// POST une nouvelle story
+app.post("/api/stories", express.json(), (req, res) => {
+  const { text, color, emoji } = req.body;
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+
+  const story = {
+    id: Date.now().toString(),
+    text,
+    color,
+    emoji,
+    createdAt: new Date().toISOString(),
+    expiresAt
+  };
+
+  const stories = loadStories();
+  stories.push(story);
+  saveStories(stories);
+
+  res.json(story);
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ MoodShare API running on port ${PORT}`));
-
-
-
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000 // 24h
-  }
-}));
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-app.use('/auth', authRoutes);
+app.listen(PORT, () => {
+  console.log(`✅ MoodShare API running on port ${PORT}`);
+  console.log(`🔐 Authentication enabled`);
+});
