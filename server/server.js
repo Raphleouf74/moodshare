@@ -151,7 +151,6 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 // === STORIES API ===
-import fs from "fs";
 import path from "path";
 const storiesFile = path.join(__dirname, "data/stories.json");
 
