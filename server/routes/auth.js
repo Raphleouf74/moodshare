@@ -24,20 +24,5 @@ router.get(
 
 router.get('/failure', (req, res) => res.status(401).send('Authentication failed'));
 
-// Instagram routes
-router.get('/instagram', passport.authenticate('instagram'));
-router.get('/instagram/callback',
-    passport.authenticate('instagram', { failureRedirect: '/auth/failure' }),
-    (req, res) => {
-        const user = req.user || {};
-        const payload = JSON.stringify(user).replace(/</g, '\\u003c');
-        res.send(`
-      <script>
-        window.opener.postMessage({ type: 'oauth', user: ${payload} }, window.location.origin);
-        window.close();
-      </script>
-    `);
-    }
-);
 
 export default router;  // Change to export default

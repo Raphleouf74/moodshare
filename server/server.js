@@ -4,7 +4,6 @@ import bodyParser from "body-parser";
 import { promises as fs } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import authRoutes, { verifyToken } from './routes/auth.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -66,7 +65,7 @@ app.get("/api/posts", async (req, res) => {
   }
 });
 
-app.post("/api/posts", verifyToken, async (req, res) => {
+app.post("/api/posts", async (req, res) => {
   try {
     console.log('🆕 Nouveau post reçu:', req.body);
 
@@ -116,7 +115,7 @@ app.post("/api/posts", verifyToken, async (req, res) => {
 });
 
 // Route like
-app.post("/api/posts/:id/like", verifyToken, async (req, res) => {
+app.post("/api/posts/:id/like", async (req, res) => {
   try {
     const post = posts.find(p => p.id === req.params.id);
     if (!post) return res.status(404).json({ message: "Post non trouvé" });
