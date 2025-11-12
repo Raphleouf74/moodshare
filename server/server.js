@@ -39,9 +39,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes d'authentification
-app.use('/api/auth', authRoutes);
-
 // Routes posts (protégées)
 app.get("/api/posts", async (req, res) => {
   try {
