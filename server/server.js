@@ -210,6 +210,12 @@ app.post("/api/stories", express.json(), (req, res) => {
   }
 });
 
+// Nettoyage automatique toutes les heures
+setInterval(() => {
+  const now = new Date();
+  const stories = loadStories().filter(s => new Date(s.expiresAt) > now);
+  saveStories(stories);
+}, 60 * 60 * 1000);
 
 
 const PORT = process.env.PORT || 3000;

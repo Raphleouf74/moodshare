@@ -4,18 +4,23 @@ const feedContainer = document.getElementById('moodWall');
 const storiesList = document.querySelector('.stories-list');
 
 // Charger les stories au démarrage
-(async () => {
+document.addEventListener("DOMContentLoaded", async () => {
     try {
         const resStories = await fetch("https://moodshare-7dd7.onrender.com/api/stories");
         if (!resStories.ok) throw new Error(`HTTP ${resStories.status}`);
         const stories = await resStories.json();
 
-        // Affiche les stories
+        // Nettoyage et affichage
+        const storiesList = document.querySelector('.stories-list');
+        if (!storiesList) return console.warn("❌ stories-list introuvable");
+
+        storiesList.querySelectorAll('.story:not(.add-story)').forEach(s => s.remove());
         stories.forEach(story => addStoryToList(story));
     } catch (err) {
         console.error("❌ Erreur chargement stories:", err);
     }
-})();
+});
+
 
 
 // === Affichage des stories ===
