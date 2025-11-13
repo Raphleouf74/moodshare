@@ -526,7 +526,7 @@ if (submitBtn) {
             submitBtn.classList.add('submitting');
             submitBtn.disabled = true;
 
-            // Cas STORY
+            // ✅ Cas STORY - on crée UNIQUEMENT une story
             if (isStory) {
                 const storyData = {
                     text,
@@ -548,15 +548,33 @@ if (submitBtn) {
                 addStoryToList(savedStory);
                 showFeedback("success", "Story publiée !");
             }
-
-            // Cas POST classique
+            // ✅ Cas POST classique - on crée UNIQUEMENT un post
             else {
+                // Calcul de l'expiration si ephemeral
+                let expiresAt = null;
+                if (ephemeralToggle.checked) {
+                    const years = parseInt(document.getElementById('durationYear')?.value || 0);
+                    const months = parseInt(document.getElementById('durationMonths')?.value || 0);
+                    const days = parseInt(document.getElementById('durationDays')?.value || 0);
+                    const hours = parseInt(document.getElementById('durationHours')?.value || 0);
+                    const minutes = parseInt(document.getElementById('durationMinutes')?.value || 0);
+                    const seconds = parseInt(document.getElementById('durationSeconds')?.value || 0);
+
+                    const totalMs = 
+                        ((((years * 365) + (months * 30) + days) * 24 + hours) * 60 + minutes) * 60 * 1000 + 
+                        (seconds * 1000);
+
+                    if (totalMs > 0) {
+                        expiresAt = new Date(Date.now() + totalMs).toISOString();
+                    }
+                }
+
                 const newMood = {
                     text,
                     color,
                     emoji,
                     ephemeral: ephemeralToggle.checked,
-                    expiresAt: null
+                    expiresAt
                 };
 
                 const response = await fetch("https://moodshare-7dd7.onrender.com/api/posts", {
@@ -572,9 +590,13 @@ if (submitBtn) {
                 showFeedback("success", "Mood partagé !");
             }
 
-            // Réinitialisation
+            // Réinitialisation du formulaire
             modal.classList.add("hidden");
             document.getElementById("moodInput").value = "";
+            document.querySelector(".moodEmoji").value = "";
+            ephemeralToggle.checked = false;
+            storyModeToggle.checked = false;
+            updateMsgDeleteTime();
 
         } catch (error) {
             console.error('Erreur envoi post:', error);
