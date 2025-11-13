@@ -7,6 +7,9 @@ import { fileURLToPath } from 'url';
 import session from 'express-session';
 import passport from './passport.js';  // Ajouter .js
 import authRoutes from './routes/auth.js';  // Ajouter .js
+process.on("uncaughtException", err => console.error("❌ Uncaught Exception:", err));
+process.on("unhandledRejection", err => console.error("❌ Unhandled Rejection:", err));
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -136,47 +139,78 @@ app.post("/api/posts/:id/like", (req, res) => {
   post.likes = (post.likes || 0) + 1;
   res.json(post);
 });
+
 // === STORIES API ===
-const storiesFile = path.join(__dirname, "data/stories.json");
+import fsSync from "fs";
+const storiesDir = path.join(__dirname, "data");
+const storiesFile = path.join(storiesDir, "stories.json");
+
+// 🔧 Assure-toi que le dossier "data" existe
+if (!fsSync.existsSync(storiesDir)) {
+  fsSync.mkdirSync(storiesDir, { recursive: true });
+  console.log("📁 Dossier 'data' créé.");
+}
 
 // Charger les stories existantes
 function loadStories() {
-  if (!fs.existsSync(storiesFile)) return [];
-  return JSON.parse(fs.readFileSync(storiesFile, "utf8"));
+  try {
+    if (!fsSync.existsSync(storiesFile)) return [];
+    const raw = fsSync.readFileSync(storiesFile, "utf8");
+    return JSON.parse(raw || "[]");
+  } catch (err) {
+    console.error("❌ Erreur lecture stories:", err);
+    return [];
+  }
 }
 
 // Sauvegarder les stories
 function saveStories(stories) {
-  fs.writeFileSync(storiesFile, JSON.stringify(stories, null, 2), "utf8");
+  try {
+    fsSync.writeFileSync(storiesFile, JSON.stringify(stories, null, 2), "utf8");
+  } catch (err) {
+    console.error("❌ Erreur sauvegarde stories:", err);
+  }
 }
 
 // GET toutes les stories valides (<24h)
 app.get("/api/stories", (req, res) => {
-  const now = new Date();
-  const stories = loadStories().filter(s => new Date(s.expiresAt) > now);
-  res.json(stories);
+  try {
+    const now = new Date();
+    const stories = loadStories().filter(s => new Date(s.expiresAt) > now);
+    res.json(stories);
+  } catch (err) {
+    console.error("❌ Erreur /api/stories:", err);
+    res.status(500).json({ error: "Erreur serveur stories" });
+  }
 });
 
 // POST une nouvelle story
 app.post("/api/stories", express.json(), (req, res) => {
-  const { text, color, emoji } = req.body;
-  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+  try {
+    const { text, color, emoji } = req.body;
+    if (!text) return res.status(400).json({ error: "Texte requis" });
 
-  const story = {
-    id: Date.now().toString(),
-    text,
-    color,
-    emoji,
-    createdAt: new Date().toISOString(),
-    expiresAt
-  };
+    const story = {
+      id: Date.now().toString(),
+      text,
+      color,
+      emoji,
+      createdAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24h
+    };
 
-  const stories = loadStories();
-  stories.push(story);
-  saveStories(stories);
+    const stories = loadStories();
+    stories.push(story);
+    saveStories(stories);
 
-  res.json(story);
+    res.status(201).json(story);
+  } catch (err) {
+    console.error("❌ Erreur POST /api/stories:", err);
+    res.status(500).json({ error: "Impossible d’enregistrer la story" });
+  }
 });
+
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(` MoodShare API running on port ${PORT}`));

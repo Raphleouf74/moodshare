@@ -8,18 +8,6 @@ export function initializeSocialFeatures() {
     setupInteractions();
 }
 
-async function loadPosts() {
-    try {
-        const API_URL = 'https://moodshare-7dd7.onrender.com/api/posts';
-        const response = await fetch(API_URL);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const posts = await response.json();
-    } catch (error) {
-        console.error('Erreur chargement posts:', error);
-    }
-}
 (async () => {
   const resStories = await fetch("https://moodshare-7dd7.onrender.com/api/stories");
   const stories = await resStories.json();
@@ -41,12 +29,9 @@ async function likePost(postId) {
     try {
         const response = await fetch(`https://moodshare-7dd7.onrender.com/api/posts/${postId}/like`, { method: 'POST' });
         if (response.ok) {
-            loadPosts(); // Reload posts to update likes
+            pass 
         }
     } catch (error) {
         console.error('Error liking post:', error);
     }
 }
-
-// Initial load of posts
-loadPosts();

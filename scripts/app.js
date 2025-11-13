@@ -577,46 +577,80 @@ if (addStoryBtn) {
 // Lors de la création d’un post
 if (submitBtn) {
     submitBtn.addEventListener("click", async () => {
-        const isStory = storyModeToggle?.checked;
-        let expiresAt = null;
+        try {
+            const text = document.getElementById("moodInput").value.trim();
+            const color = document.getElementById("moodColor").value;
+            const emoji = document.querySelector(".moodEmoji").value;
+            const isStory = storyModeToggle?.checked;
 
-        if (isStory) {
-            // 24 heures = 24 * 60 * 60 * 1000
-            expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-        }
+            if (!text) {
+                showFeedback("error", "Écris quelque chose !");
+                return;
+            }
 
-        const newMood = {
-            text: document.getElementById("moodInput").value.trim(),
-            color: document.getElementById("moodColor").value,
-            emoji: document.querySelector(".moodEmoji").value,
-            ephemeral: isStory || ephemeralToggle.checked,
-            expiresAt
-        };
+            submitBtn.classList.add('submitting');
+            submitBtn.disabled = true;
 
-        // Envoi vers ton API existante
-        const response = await fetch("https://moodshare-7dd7.onrender.com/api/posts", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(newMood)
-        });
+            // Cas STORY
+            if (isStory) {
+                const storyData = {
+                    text,
+                    color,
+                    emoji,
+                    createdAt: new Date().toISOString(),
+                    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+                };
 
-        const savedMood = await response.json();
+                const resStory = await fetch("https://moodshare-7dd7.onrender.com/api/stories", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(storyData)
+                });
 
-        if (isStory) {
-            await fetch("https://moodshare-7dd7.onrender.com/api/stories", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newMood)
-            });
-            addStoryToList(newMood);
+                if (!resStory.ok) throw new Error(`HTTP ${resStory.status}`);
 
-            showFeedback("success", "Story publiée !");
-        } else {
-            displayMood(savedMood);
-            showFeedback("success", "Mood partagé !");
+                const savedStory = await resStory.json();
+                addStoryToList(savedStory);
+                showFeedback("success", "Story publiée !");
+            }
+
+            // Cas POST classique
+            else {
+                const newMood = {
+                    text,
+                    color,
+                    emoji,
+                    ephemeral: ephemeralToggle.checked,
+                    expiresAt: null
+                };
+
+                const response = await fetch("https://moodshare-7dd7.onrender.com/api/posts", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newMood)
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                const savedMood = await response.json();
+                displayMood(savedMood);
+                showFeedback("success", "Mood partagé !");
+            }
+
+            // Réinitialisation
+            modal.classList.add("hidden");
+            document.getElementById("moodInput").value = "";
+
+        } catch (error) {
+            console.error('Erreur envoi post:', error);
+            showFeedback("error", "Erreur lors de l'envoi du mood ou de la story.");
+        } finally {
+            submitBtn.classList.remove('submitting');
+            submitBtn.disabled = false;
         }
     });
 }
+
 
 // Affichage des stories dans la liste
 function addStoryToList(story) {
