@@ -459,6 +459,11 @@ section {
 
 
 
+.likebtn.liked {
+    color: #e74c3c;
+    transform: scale(1.2);
+    transition: all 0.2s ease;
+}
 
 .posts-section {
     margin-bottom: 2rem;
@@ -829,7 +834,8 @@ textarea {
     transform: translateY(0);
 }
 
-.ephemeral-options, .storyinput {
+.ephemeral-options,
+.storyinput {
     margin: 1rem 0;
     padding: 1rem;
     background: rgba(255, 255, 255, 0.1);

@@ -199,6 +199,7 @@ ephemeralToggle.addEventListener('change', () => {
 function displayMood(mood) {
     const moodcard = document.createElement("div");
     moodcard.className = "post";
+    moodcard.dataset.id = mood.id;
     wall.prepend(moodcard);
 
     // Formatage de la date de création
