@@ -190,6 +190,20 @@ app.post("/api/stories", express.json(), (req, res) => {
     const { text, color, emoji } = req.body;
     if (!text) return res.status(400).json({ error: "Texte requis" });
 
+    const stories = loadStories();
+
+    // 🔧 Éviter les doublons exacts dans la même minute
+    const nowIso = new Date().toISOString().slice(0, 16); // jusqu'à la minute
+    const isDuplicate = stories.some(
+      s => s.text === text && s.createdAt.slice(0, 16) === nowIso
+    );
+
+    if (isDuplicate) {
+      console.log("⚠️ Story ignorée (doublon détecté).");
+      return res.status(409).json({ error: "Story déjà reçue récemment" });
+    }
+
+    // ✅ Si pas de doublon, on crée la nouvelle story
     const story = {
       id: Date.now().toString(),
       text,
@@ -199,16 +213,18 @@ app.post("/api/stories", express.json(), (req, res) => {
       expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24h
     };
 
-    const stories = loadStories();
     stories.push(story);
     saveStories(stories);
 
+    console.log("📸 Nouvelle story enregistrée:", story.id);
     res.status(201).json(story);
+
   } catch (err) {
     console.error("❌ Erreur POST /api/stories:", err);
     res.status(500).json({ error: "Impossible d’enregistrer la story" });
   }
 });
+
 
 // Nettoyage automatique toutes les heures
 setInterval(() => {
