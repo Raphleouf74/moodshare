@@ -27,6 +27,7 @@ let posts = [
   {
     text: 'Bienvenue dans Moodshare ! Partagez dès maintenant votre mood depuis la section "Créer" !',
     color: '#00cfeb',
+    date: '01/01/2025',
     emoji: '👋',
     ephemeral: false,
     expiresAt: null,
@@ -96,22 +97,7 @@ app.post("/api/posts", async (req, res) => {
         );
         console.log('ðŸ—‘ï¸ Post Ã©phÃ©mÃ¨re supprimÃ©, ID:', newPost.id);
       } catch (error) {
-        console.error('âŒ Erreur sauvegarde aprÃ¨s suppression:', error);
-      }
-    }, timeUntilExpiry);
-  } if (newPost.ephemeral && newPost.expiresAt) {
-    const timeUntilExpiry = new Date(newPost.expiresAt) - new Date();
-    setTimeout(() => {
-      posts = posts.filter(p => p.id !== newPost.id);
-      // Sauvegarder aprÃ¨s suppression
-      try {
-        fs.writeFileSync(
-          path.join(__dirname, 'data', 'posts.json'),
-          JSON.stringify(posts, null, 2)
-        );
-        console.log('ðŸ—‘ï¸ Post Ã©phÃ©mÃ¨re supprimÃ©, ID:', newPost.id);
-      } catch (error) {
-        console.error('âŒ Erreur sauvegarde aprÃ¨s suppression:', error);
+        console.error('âŒ Erreur sauvegarde après suppression:', error);
       }
     }, timeUntilExpiry);
   }
@@ -123,9 +109,9 @@ app.post("/api/posts", async (req, res) => {
       path.join(__dirname, 'data', 'posts.json'),
       JSON.stringify(posts, null, 2)
     );
-    console.log('ðŸ’¾ Post sauvegardÃ© avec succÃ¨s, ID:', newPost.id);
+    console.log('Post sauvegardé avec succès, ID:', newPost.id);
   } catch (error) {
-    console.error('âŒ Erreur sauvegarde:', error);
+    console.error('Erreur sauvegarde:', error);
   }
 
   res.status(201).json(newPost);
