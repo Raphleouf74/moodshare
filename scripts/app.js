@@ -510,6 +510,8 @@ if (addStoryBtn) {
 }
 
 // Lors de la création d’un post
+// Remplace le code du submitBtn par celui-ci dans app.js
+
 if (submitBtn) {
     submitBtn.addEventListener("click", async () => {
         try {
@@ -595,7 +597,7 @@ if (submitBtn) {
             document.getElementById("moodInput").value = "";
             document.querySelector(".moodEmoji").value = "";
             ephemeralToggle.checked = false;
-            storyModeToggle.checked = false;
+            if (storyModeToggle) storyModeToggle.checked = false;
             updateMsgDeleteTime();
 
         } catch (error) {
