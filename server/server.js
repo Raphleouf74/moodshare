@@ -39,9 +39,9 @@ let posts = [
 try {
   const data = await fs.readFile(path.join(__dirname, 'data', 'posts.json'), 'utf8');
   posts = JSON.parse(data);
-  console.log('âœ… Posts chargÃ©s depuis le fichier');
+  console.log('Posts chargés depuis le fichier');
 } catch (error) {
-  console.log('âš ï¸ Aucun fichier de posts trouvÃ©, dÃ©marrage avec un tableau vide');
+  console.log(' Aucun fichier de posts trouvé, démarrage avec un tableau vide');
 }
 
 // Routes
@@ -55,9 +55,9 @@ app.use((req, res, next) => {
   const start = Date.now();
   res.on('finish', () => {
     const duration = Date.now() - start;
-    console.log(`ðŸ“ ${req.method} ${req.url} - Status: ${res.statusCode} - ${duration}ms`);
+    console.log(` ${req.method} ${req.url} - Status: ${res.statusCode} - ${duration}ms`);
     if (req.method === 'POST') {
-      console.log('ðŸ“¦ Contenu reÃ§u:', req.body);
+      console.log('Contenu recu:', req.body);
     }
   });
   next();
@@ -66,7 +66,7 @@ app.use((req, res, next) => {
 // Route posts avec logs
 // Dans la route de crÃ©ation de post
 app.post("/api/posts", async (req, res) => {
-  console.log('ðŸ†• Nouveau post reÃ§u:', req.body);
+  console.log('Nouveau post reçu:', req.body);
 
   const newPost = {
     id: Date.now().toString(),
@@ -95,9 +95,9 @@ app.post("/api/posts", async (req, res) => {
           path.join(__dirname, 'data', 'posts.json'),
           JSON.stringify(posts, null, 2)
         );
-        console.log('ðŸ—‘ï¸ Post Ã©phÃ©mÃ¨re supprimÃ©, ID:', newPost.id);
+        console.log('=Post éphémère supprimé, ID:', newPost.id);
       } catch (error) {
-        console.error('âŒ Erreur sauvegarde après suppression:', error);
+        console.error('Erreur sauvegarde après suppression:', error);
       }
     }, timeUntilExpiry);
   }
