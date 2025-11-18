@@ -562,8 +562,8 @@ if (submitBtn) {
                     const minutes = parseInt(document.getElementById('durationMinutes')?.value || 0);
                     const seconds = parseInt(document.getElementById('durationSeconds')?.value || 0);
 
-                    const totalMs = 
-                        ((((years * 365) + (months * 30) + days) * 24 + hours) * 60 + minutes) * 60 * 1000 + 
+                    const totalMs =
+                        ((((years * 365) + (months * 30) + days) * 24 + hours) * 60 + minutes) * 60 * 1000 +
                         (seconds * 1000);
 
                     if (totalMs > 0) {
@@ -638,7 +638,145 @@ function openStoryViewer(story) {
 
     setTimeout(() => viewer.remove(), 4000); // auto-close after 4s
 }
+window.addEventListener('DOMContentLoaded', () => {
+    // Simule un temps de chargement (enlève ce setTimeout en production)
+    setTimeout(() => {
+        const loader = document.getElementById('loader');
+        const mainContent = document.getElementById('main-content');
+
+        // Cache le loader
+        loader.classList.add('hidden');
+
+    }, 4000); // 4 secondes de démo, à supprimer en prod
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const dot = document.querySelector(".cursor-dot");
+    const clickRing = document.querySelector(".cursor-click");
+    const locateRing = document.querySelector(".cursor-locate");
+
+    const enableToggle = document.getElementById("cursorEnable");
+    const sizeSlider = document.getElementById("cursorSize");
+    const opacitySlider = document.getElementById("cursorOpacity");
+    const colorPicker = document.getElementById("cursorColor");
+    const hoverSelect = document.getElementById("cursorHover");
+
+    let mouseX = 0, mouseY = 0;
+
+    /* -----------------------------
+       LOAD SETTINGS (localStorage)
+    ------------------------------*/
+    const saved = JSON.parse(localStorage.getItem("cursorSettings")) || {};
+
+    if (saved.size) sizeSlider.value = saved.size;
+    if (saved.opacity) opacitySlider.value = saved.opacity;
+    if (saved.color) colorPicker.value = saved.color;
+    if (saved.hover) hoverSelect.value = saved.hover;
+    if (saved.enabled !== undefined) enableToggle.checked = saved.enabled;
+
+    applySettings();
 
 
+    /* -----------------------------
+          FOLLOW CURSOR
+    ------------------------------*/
+    window.addEventListener("mousemove", (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+
+        dot.style.top = clickRing.style.top = locateRing.style.top = mouseY + "px";
+        dot.style.left = clickRing.style.left = locateRing.style.left = mouseX + "px";
+
+        // Remove the locate circle after movement
+        locateRing.classList.remove("active");
+    });
+
+
+    /* -----------------------------
+             CLICK PULSE
+    ------------------------------*/
+    window.addEventListener("mousedown", () => {
+        clickRing.classList.add("active");
+    });
+
+    window.addEventListener("mouseup", () => {
+        setTimeout(() => clickRing.classList.remove("active"), 100);
+    });
+
+
+    /* -----------------------------
+           SAVE & APPLY SETTINGS
+    ------------------------------*/
+    function saveSettings() {
+        localStorage.setItem("cursorSettings", JSON.stringify({
+            size: sizeSlider.value,
+            opacity: opacitySlider.value,
+            color: colorPicker.value,
+            hover: hoverSelect.value,
+            enabled: enableToggle.checked
+        }));
+    }
+
+    function applySettings() {
+        // Enable/disable
+        document.body.style.cursor = enableToggle.checked ? "none" : "auto";
+        document.querySelector(".custom-cursor").style.display = enableToggle.checked ? "block" : "none";
+
+        // Size
+        dot.style.width = dot.style.height = sizeSlider.value + "px";
+
+        // Color & opacity
+        const rgba = hexToRGBA(colorPicker.value, opacitySlider.value);
+        dot.style.background = rgba;
+        clickRing.style.borderColor = rgba;
+    }
+
+    [sizeSlider, opacitySlider, colorPicker, hoverSelect, enableToggle].forEach(el => {
+        el.addEventListener("input", () => {
+            applySettings();
+            saveSettings();
+        });
+    });
+
+
+    /* -----------------------------
+          CTRL → LOCATOR RING
+    ------------------------------*/
+    window.addEventListener("keydown", (e) => {
+        if (e.key === "Control") {
+            locateRing.classList.add("active");
+        }
+    });
+
+
+    /* -----------------------------
+           UTIL: HEX → RGBA
+    ------------------------------*/
+    function hexToRGBA(hex, alpha) {
+        const r = parseInt(hex.substr(1, 2), 16);
+        const g = parseInt(hex.substr(3, 2), 16);
+        const b = parseInt(hex.substr(5, 2), 16);
+        return `rgba(${r},${g},${b},${alpha})`;
+    }
+    // Hover behaviour
+    document.querySelectorAll("a, button, .hoverable, .container").forEach(el => {
+        el.addEventListener("mouseenter", () => {
+            switch (hoverSelect.value) {
+                case "invert":
+                    dot.style.filter = "invert(100%)";
+                    break;
+                case "grow":
+                    dot.style.transform = "translate(-50%, -50%) scale(1.8)";
+                    break;
+            }
+        });
+
+        el.addEventListener("mouseleave", () => {
+            dot.style.filter = "invert(0)";
+            dot.style.transform = "translate(-50%, -50%) scale(1)";
+        });
+    });
+});
 console.log(`%c⚠ Avertissement: Le site est en développement, des erreurs ou des bugs peuvent survenir !`, "color: yellow; font-size: 25px; font-family: impact");
 console.log(`%c⚠ Attention: Ne rentrez JAMAIS de commande ici sans connaître son but !`, "color: orange; font-size: 25px; font-family: impact");
