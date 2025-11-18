@@ -1,3 +1,5 @@
+
+
 const header = document.querySelector('header');
 const nav = document.querySelector('nav');
 window.addEventListener(('scroll'), () => {
@@ -391,6 +393,11 @@ function showFeedback(type, message) {
         setTimeout(() => {
             feedback.style.display = "none";
         }, 30000);
+    } if (icon === "chat_bubble") {
+        feedback.style.animation = "slideInOut 30s ease forwards";
+        setTimeout(() => {
+            feedback.style.display = "none";
+        }, 30000);
     } else {
         feedback.style.animation = "slideInOut 3s ease forwards";
         setTimeout(() => {
@@ -649,6 +656,41 @@ window.addEventListener('DOMContentLoaded', () => {
 
     }, 4000); // 4 secondes de démo, à supprimer en prod
 });
+/* -------------------------------------------
+   FIRST TIME BUILD CHECK
+------------------------------------------- */
+
+const CURRENT_BUILD_ID = "1.0.1.3-a0618112025";  // Tu peux changer ça à chaque release
+const BUILD_STORAGE_KEY = "cursorCustomBuildUsed";
+
+function checkFirstTimeBuild() {
+    const lastUsedBuild = localStorage.getItem(BUILD_STORAGE_KEY);
+
+    // Si build différent ou totalement absent → c'est la première fois
+    if (lastUsedBuild !== CURRENT_BUILD_ID) {
+        // Trigger notification
+        if (typeof showFeedback === "function") {
+            showFeedback(
+                "remark",
+                "On dirait que c'est la première fois que vous utilisez la souris personnalisable ! Voulez-vous la customiser ? Rendez-vous dans les réglages !"
+            );
+            addInboxNotification(
+                "info", "Nouvelle fonctionnalité !",
+                "On dirait que c'est la première fois que vous utilisez la souris personnalisable ! Voulez-vous la customiser ? Rendez-vous dans les réglages !"
+            );
+        } else {
+            console.warn("showFeedback() n'est pas défini.");
+        }
+
+        // Stocke le build utilisé pour éviter de répéter la notification
+        localStorage.setItem(BUILD_STORAGE_KEY, CURRENT_BUILD_ID);
+    }
+}
+
+setTimeout(() => {
+    checkFirstTimeBuild();
+}, 1000);
+
 
 document.addEventListener("DOMContentLoaded", () => {
 
