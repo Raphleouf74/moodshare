@@ -498,13 +498,17 @@ section {
 .post:hover {
     margin-top: 15px;
     margin-bottom: 60px;
-    transform: translateY(-2px);
     box-shadow:
         0 8px 12px rgba(0, 0, 0, 0.15),
         inset 0 0 20px rgba(255, 255, 255, 0.2);
     z-index: 100;
     color: black;
 }
+
+.WelcomeMood:hover {
+    margin-bottom: 1rem;
+    margin-top: 0;
+} 
 
 /* Ajout d'un effet de reflet subtil */
 .post::after {
@@ -542,7 +546,7 @@ section {
     right: 0;
     height: 125px;
     width: 100%;
-    background-color: rgb(225, 175, 255, 0.8);
+    background-color: transparent;
     padding: 10px;
     border-radius: 10px;
     font-size: 1rem;
@@ -575,10 +579,17 @@ section {
 }
 
 .buttons {
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
+    background-color: rgb(0,0,0,0.8);
+    color: white;
+    padding: 10px;
+    border-radius: 15px;
+    bottom: -10px;
+    left: 17.5px;
     font-weight: 600;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
 }
 
 
@@ -590,6 +601,7 @@ section {
     align-self: center;
     justify-content: center;
     margin: 0 5px;
+    color: white;
     height: 50px;
     width: 50px;
     font-size: 1.2rem;
@@ -607,12 +619,6 @@ section {
     min-width: 75px;
 }
 
-.buttons {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-}
 
 #postoptions p {
     margin-bottom: 10px;
@@ -628,26 +634,9 @@ section {
 
 .post:hover #postoptions {
     opacity: 1;
-    height: 200px;
-    top: -35px;
+    height: 160px;
     width: 100%;
     pointer-events: all;
-}
-
-.post:hover #postoptions {
-    opacity: 1;
-}
-
-.post-dates {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    font-size: 0.85rem;
-    opacity: 0.8;
-}
-
-.postdate {
-    margin: 0;
 }
 
 .expiration-date {
@@ -1574,4 +1563,15 @@ body.loading {
     .cursor-settings, .cursor-dot, .custom-cursor {
         display: none;
     }
+}
+/* Animation LIKE 💥 */
+@keyframes likePop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.4); }
+    100% { transform: scale(1); }
+}
+
+.likebtn.liked span.material-symbols-rounded {
+    color: #ff3b3b !important;
+    text-shadow: 0 0 12px rgba(255, 50, 50, 0.6);
 }

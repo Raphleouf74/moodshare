@@ -93,24 +93,24 @@
     </div>
   </header>
   <nav>
-    <button id="homeTab" class="active">
+    <button class="hoverable" id="homeTab" class="active">
       <span class="material-symbols-rounded">home</span>
-    </button>
-    <button id="postsTab">
+    </button class="hoverable">
+    <button class="hoverable" id="postsTab">
       <span class="material-symbols-rounded">post</span>
-    </button>
-    <button id="createTab">
+    </button class="hoverable">
+    <button class="hoverable" id="createTab">
       <span class="material-symbols-rounded">add_circle</span>
-    </button>
-    <button id="inboxTab">
+    </button class="hoverable">
+    <button class="hoverable" id="inboxTab">
       <span class="material-symbols-rounded">inbox</span>
-    </button>
-    <button id="profileTab">
+    </button class="hoverable">
+    <button class="hoverable" id="profileTab">
       <span class="material-symbols-rounded">account_circle</span>
-    </button>
-    <button id="settingsTab">
+    </button class="hoverable">
+    <button class="hoverable" id="settingsTab">
       <span class="material-symbols-rounded">settings</span>
-    </button>
+    </button class="hoverable">
   </nav>
   <section id="homeTab" class="tab active">
     <div class="stories">
@@ -167,9 +167,9 @@
         <span id="previewEmoji"></span>
         <span id="previewText"></span>
       </div>
-      <button id="submitMood">
+      <button class="hoverable" id="submitMood">
         <span class="material-symbols-rounded">upload</span>Partager
-      </button>
+      </button class="hoverable">
       <!-- Ajouter après mood-options dans la section createTab -->
       <div class="ephemeral-options">
         <label class="container">
@@ -233,9 +233,9 @@
       <img src="/assets/icons/logo_cropped.jpg" alt="AccountAvatar" id="accountavatar" />
       <p>Votre avatar</p>
 
-      <!-- <button id="editProfileBtn">
+      <!-- <button class="hoverable" id="editProfileBtn">
         <span class="material-symbols-rounded">edit</span>Modifier le profil
-      </button>
+      </button class="hoverable">
 
       <div class="accountname">
         <input id="profileUsername" placeholder="Votre pseudo" disabled />
@@ -252,7 +252,7 @@
       <div id="socialStats">
         <p><span class="material-symbols-rounded">people</span> <span id="countFollowers">0</span></p>
         <p><span class="material-symbols-rounded">favorite</span> <span id="countLikes">0</span></p>
-        <p><span class="material-symbols-rounded" style="color: red;">post</span> <span id="countPosts">0</span></p>
+        <p><span class="material-symbols-rounded">post</span> <span id="countPosts">0</span></p>
       </div>
       <div id="userPostsSection">
         <h2>Vos posts</h2>
@@ -265,24 +265,24 @@
 
     <div id="MoreAccSettings">
       <p><b>Paramètres supplémentaires</b></p>
-      <a href="https://github.com/Raphleouf74/moodshare"><button>Accéder au GitHub</button></a>
+      <a href="https://github.com/Raphleouf74/moodshare"><button class="hoverable">Accéder au GitHub</button class="hoverable"></a>
       <a href="https://ko-fi.com/moodshare" target="_blank" class="donate-btn">
-        <button>Faire un don</button>
+        <button class="hoverable">Faire un don</button class="hoverable">
       </a>
-      <a href="Legal/TERMS_OF_SERVICE.html"><button>
+      <a href="Legal/TERMS_OF_SERVICE.html"><button class="hoverable">
           Conditions générales du service
           <span class="material-symbols-rounded">article</span>
-        </button></a>
-      <a href="Legal/PRIVACY_POLICY.html"><button>
+        </button class="hoverable"></a>
+      <a href="Legal/PRIVACY_POLICY.html"><button class="hoverable">
           Politique de confidentialité
           <span class="material-symbols-rounded">article</span>
-        </button></a>
-      <!-- <button id="logoutBtn">Se déconnecter</button>
+        </button class="hoverable"></a>
+      <!-- <button class="hoverable" id="logoutBtn">Se déconnecter</button class="hoverable">
       <p><b>Gestion du compte</b></p>
-      <button id="editAccountBtn">Modifier les informations</button>
-      <button id="disableAccountBtn">Désactiver le compte</button>
-      <button id="clearContentBtn">Supprimer le contenu</button>
-      <button id="deleteAccountBtn">Supprimer le compte</button> -->
+      <button class="hoverable" id="editAccountBtn">Modifier les informations</button class="hoverable">
+      <button class="hoverable" id="disableAccountBtn">Désactiver le compte</button class="hoverable">
+      <button class="hoverable" id="clearContentBtn">Supprimer le contenu</button class="hoverable">
+      <button class="hoverable" id="deleteAccountBtn">Supprimer le compte</button class="hoverable"> -->
     </div>
 
     <footer>
@@ -313,24 +313,24 @@
           <option value="de">Deutsch</option>
         </select>
       </label>
-      <button id="themeToggle">
+      <button class="hoverable" id="themeToggle">
         Thème <span class="material-symbols-rounded">routine</span>
-      </button>
-      <button id="increaseFontBtn">
+      </button class="hoverable">
+      <button class="hoverable" id="increaseFontBtn">
         Augmenter la taille de la police
         <span class="material-symbols-rounded">text_increase</span>
-      </button>
-      <button id="decreaseFontBtn">
+      </button class="hoverable">
+      <button class="hoverable" id="decreaseFontBtn">
         Diminuer la taille de la police
         <span class="material-symbols-rounded">text_decrease</span>
-      </button>
-      <button id="readContentBtn">
+      </button class="hoverable">
+      <button class="hoverable" id="readContentBtn">
         Lire la page <span class="material-symbols-rounded">volume_up</span>
-      </button>
-      <button id="highContrastBtn">
+      </button class="hoverable">
+      <button class="hoverable" id="highContrastBtn">
         Contraste de la page
         <span class="material-symbols-rounded">contrast</span>
-      </button>
+      </button class="hoverable">
 
 
     </div>
@@ -338,7 +338,7 @@
       <h3>Paramètres du curseur</h3>
 
       <label>Activer curseur personnalisé :
-        <input type="checkbox" id="cursorEnable" checked>
+        <input type="checkbox" id="cursorEnable" checked disabled>
       </label>
 
       <label>Taille :

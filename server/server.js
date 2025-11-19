@@ -211,6 +211,33 @@ app.post("/api/stories", express.json(), (req, res) => {
   }
 });
 
+// UNLIKE - Retire un like au post
+app.post("/api/posts/:id/unlike", (req, res) => {
+  const postId = req.params.id;
+
+  // Trouver le post dans la base
+  const post = posts.find(p => String(p.id) === String(postId));
+
+  if (!post) {
+    return res.status(404).json({ error: "Post not found" });
+  }
+
+  // Sécuriser : on empêche les likes négatifs
+  if (!post.likes) {
+    post.likes = 0;
+  }
+
+  if (post.likes > 0) {
+    post.likes--;
+  }
+
+  // Retourner le post mis à jour
+  return res.json({
+    message: "Like removed",
+    post
+  });
+});
+
 
 // Nettoyage automatique toutes les heures
 setInterval(() => {

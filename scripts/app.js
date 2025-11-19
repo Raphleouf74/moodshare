@@ -229,18 +229,24 @@ function displayMood(mood) {
     moodcard.innerHTML = `
     <div class="post-content" style="background: ${mood.color}">${mood.emoji} ${mood.text} ${expirationText}</div>
     <div id="postoptions">
-        <div class="post-dates">
+        
+        <div class="buttons">
+            <button class="likebtn"><span class="material-symbols-rounded">favorite</span> <span class="like-count">${mood.likes || 0}</span></button>
             <p class="postdate">Créé le ${createdDate}</p>
         </div>
-        <div class="buttons">
-            <button class="likebtn"><span class="material-symbols-rounded">thumb_up</span> <span class="like-count">${mood.likes || 0}</span></button>
-            <button class="commentbtn"><span class="material-symbols-rounded">comment</span> <span class="comment-count">0</span></button>
-            <button class="sharebtn"><span class="material-symbols-rounded">share</span></button>
-            <button class="savebtn"><span class="material-symbols-rounded">bookmark</span></button>
-            <button class="reportbtn"><span class="material-symbols-rounded">report</span></button>
-            <button class="morebtn"><span class="material-symbols-rounded">more_horiz</span></button>
-        </div>
     </div>`;
+
+    if (moodcard.dataset.id == "1") {
+        moodcard.innerHTML = `<div class="post-content" style="background: ${mood.color}">${mood.emoji} ${mood.text} ${expirationText}</div>`;
+        moodcard.classList.add('WelcomeMood');
+    }
+    // Restaurer l'état like si déjà liké
+    const likedPosts = JSON.parse(localStorage.getItem("likedPosts") || "[]");
+    if (likedPosts.includes(String(mood.id))) {
+        const btn = moodcard.querySelector(".likebtn");
+        if (btn) btn.classList.add("liked");
+    }
+
 }
 
 // Chargement initial
@@ -656,40 +662,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     }, 4000); // 4 secondes de démo, à supprimer en prod
 });
-/* -------------------------------------------
-   FIRST TIME BUILD CHECK
-------------------------------------------- */
-
-const CURRENT_BUILD_ID = "1.0.1.3-a0618112025";  // Tu peux changer ça à chaque release
-const BUILD_STORAGE_KEY = "cursorCustomBuildUsed";
-
-function checkFirstTimeBuild() {
-    const lastUsedBuild = localStorage.getItem(BUILD_STORAGE_KEY);
-
-    // Si build différent ou totalement absent → c'est la première fois
-    if (lastUsedBuild !== CURRENT_BUILD_ID) {
-        // Trigger notification
-        if (typeof showFeedback === "function") {
-            showFeedback(
-                "remark",
-                "On dirait que c'est la première fois que vous utilisez la souris personnalisable ! Voulez-vous la customiser ? Rendez-vous dans les réglages !"
-            );
-            addInboxNotification(
-                "info", "Nouvelle fonctionnalité !",
-                "On dirait que c'est la première fois que vous utilisez la souris personnalisable ! Voulez-vous la customiser ? Rendez-vous dans les réglages !"
-            );
-        } else {
-            console.warn("showFeedback() n'est pas défini.");
-        }
-
-        // Stocke le build utilisé pour éviter de répéter la notification
-        localStorage.setItem(BUILD_STORAGE_KEY, CURRENT_BUILD_ID);
-    }
-}
-
-setTimeout(() => {
-    checkFirstTimeBuild();
-}, 1000);
 
 
 document.addEventListener("DOMContentLoaded", () => {
