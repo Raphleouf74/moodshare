@@ -121,8 +121,6 @@ document.addEventListener("click", async (e) => {
             // Retirer de localStorage
             likedPosts = likedPosts.filter(id => id !== postId);
             localStorage.setItem("likedPosts", JSON.stringify(likedPosts));
-
-            showFeedback("info", "Like retiré !");
             return;
         }
 
@@ -142,7 +140,6 @@ document.addEventListener("click", async (e) => {
         likedPosts.push(postId);
         localStorage.setItem("likedPosts", JSON.stringify(likedPosts));
 
-        showFeedback("success", "Tu aimes ce post ❤️");
     } catch (err) {
         showFeedback("error", "Impossible de mettre à jour le like.");
         console.error(err);
