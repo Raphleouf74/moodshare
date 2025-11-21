@@ -2,6 +2,16 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
+:root {
+    --bg: #dde8f3;
+    --menu-bg: rgba(255, 255, 255, 0.7);
+    --border: rgba(0, 0, 0, 0.06);
+    --accent: #2563eb;
+    --text: #111827;
+    --muted: #6b7280;
+    --radius: 16px;
+    --transition: 0.3s ease;
+}
 
 /* STYLES GLOBAUX */
 * {
@@ -72,11 +82,10 @@ header.scrolled p {
 
 nav {
     position: fixed;
-    bottom: 20px;
+    bottom: 5px;
     left: 50%;
     transform: translateX(-50%);
-    width: 90%;
-    max-width: 600px;
+    width: 600px;
     height: 65px;
     display: flex;
     justify-content: space-evenly;
@@ -90,55 +99,72 @@ nav {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     z-index: 2000;
     transition: all 0.3s ease-in-out;
-}
-
-/* Icônes et boutons */
-nav button {
-    all: unset;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    padding: 1rem;
+    background: var(--menu-bg);
+    backdrop-filter: blur(12px);
     border-radius: 16px;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 1.8rem;
-    transition: all 0.25s ease-in-out;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    display: flex;
+    gap: 14px;
+}
+
+.link {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 60px;
+    height: 50px;
+    border-radius: var(--radius);
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 500;
     position: relative;
+    overflow: hidden;
+    transition: all var(--transition);
 }
 
-nav button span {
-    transition: all 0.2s ease;
-    color: black;
+.link:hover,
+.link:focus-visible {
+    width: 175px;
+    color: #fff;
+    background: var(--accent);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
 }
 
-/* Effet au hover */
-nav button:hover span {
-    transform: scale(1.25);
+.link.active {
+    color: #000;
+    height: 60px;
+    scale: 1.1;
+    background: #2564eb50;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
 }
 
-/* Bouton actif avec pastille glassy */
-nav button.active {
-    color: white;
-    background: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
-    transform: translateY(-4px);
+.link-icon {
+    font-family: "Material Symbols Rounded";
+    font-size: 26px;
+    margin-left: 16px;
+    flex-shrink: 0;
+    transition: transform var(--transition);
 }
 
-/* Animation fluide quand un bouton devient actif */
-nav button.active::after {
-    content: "";
-    position: absolute;
-    bottom: -6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 6px;
-    height: 6px;
-    background: #00ffe0;
-    border-radius: 50%;
-    opacity: 0.9;
-    box-shadow: 0 0 12px #00ffe0;
-    animation: pulseGlow 2s infinite ease-in-out;
+.link:hover .link-icon {
+    transform: scale(1.1);
+}
+
+.link-title {
+    margin-left: 12px;
+    opacity: 0;
+    transform: translateX(10px);
+    transition: opacity var(--transition), transform var(--transition);
+    white-space: nowrap;
+    font-size: 15px;
+}
+
+.link:hover .link-title,
+.link:focus-visible .link-title {
+    opacity: 1;
+    transform: translateX(0);
 }
 
 @keyframes pulseGlow {
@@ -158,11 +184,11 @@ nav button.active::after {
 /* Version desktop : plus fine quand on scrolle */
 @media (min-width: 768px) {
     nav.scrolled {
-        bottom: 10px;
-        width: 70%;
+        bottom: 0px;
+        border-radius: 20px 20px 0 0;
+        width: 550px;
         height: 55px;
         background: rgba(255, 255, 255, 0.06);
-        border-radius: 20px;
     }
 }
 
@@ -194,7 +220,7 @@ nav button span {
     transition: all 0.2s ease-in-out;
 }
 
-nav button#createTab:hover span {
+nav a#createTab:hover span {
     transform: rotate(90deg) scale(1.5);
 }
 
@@ -203,26 +229,26 @@ section#createTab {
     height: 100vh;
 }
 
-nav button#inboxTab:hover span {
+nav a#inboxTab:hover span {
     animation: fire 0.5s forwards;
     font-weight: 300;
 }
 
-nav button#profileTab:hover span {
+nav a#profileTab:hover span {
     transform: scale(1.5) rotate(15deg);
     font-weight: 300;
 }
 
-nav button#postsTab:hover span {
+nav a#postsTab:hover span {
     animation: scroll 0.5s forwards;
 }
 
-nav button#settingsTab span {
+nav a#settingsTab span {
     animation: rotate1 0.5s forwards;
     transform: scale(1);
 }
 
-nav button#settingsTab:hover span {
+nav a#settingsTab:hover span {
     animation: rotate 0.5s forwards;
     transform: scale(1.5);
     font-weight: 300;
@@ -508,7 +534,7 @@ section {
 .WelcomeMood:hover {
     margin-bottom: 1rem;
     margin-top: 0;
-} 
+}
 
 /* Ajout d'un effet de reflet subtil */
 .post::after {
@@ -579,7 +605,7 @@ section {
 }
 
 .buttons {
-    background-color: rgb(0,0,0,0.8);
+    background-color: rgb(0, 0, 0, 0.8);
     color: white;
     padding: 10px;
     border-radius: 15px;
@@ -1560,15 +1586,27 @@ body.loading {
 }
 
 @media (max-width: 760px) {
-    .cursor-settings, .cursor-dot, .custom-cursor {
+
+    .cursor-settings,
+    .cursor-dot,
+    .custom-cursor {
         display: none;
     }
 }
+
 /* Animation LIKE 💥 */
 @keyframes likePop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.4); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.4);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 .likebtn.liked span.material-symbols-rounded {

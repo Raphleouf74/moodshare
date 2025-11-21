@@ -83,38 +83,44 @@
         </svg>
       </div>
     </div>
-    <div class="loading-text">Chargement...</div>
+    <div class="loading-text" data-i18n="loader_loading">Chargement...</div>
   </div>
 
   <header>
     <div class="logo">
-      <h1>MoodShare</h1>
-      <p>Exprime ton mood</p>
+      <h1 data-i18n="header_title">MoodShare</h1>
+      <p data-i18n="header_subtitle">Exprime ton mood</p>
     </div>
   </header>
-  <nav>
-    <button class="hoverable" id="homeTab" class="active">
-      <span class="material-symbols-rounded">home</span>
-    </button class="hoverable">
-    <button class="hoverable" id="postsTab">
-      <span class="material-symbols-rounded">post</span>
-    </button class="hoverable">
-    <button class="hoverable" id="createTab">
-      <span class="material-symbols-rounded">add_circle</span>
-    </button class="hoverable">
-    <button class="hoverable" id="inboxTab">
-      <span class="material-symbols-rounded">inbox</span>
-    </button class="hoverable">
-    <button class="hoverable" id="profileTab">
-      <span class="material-symbols-rounded">account_circle</span>
-    </button class="hoverable">
-    <button class="hoverable" id="settingsTab">
-      <span class="material-symbols-rounded">settings</span>
-    </button class="hoverable">
+  <nav class="menu" role="navigation" aria-label="Menu">
+    <a class="hoverable link active" id="homeTab">
+      <span class="link-icon">home</span>
+      <p class="link-title" data-i18n="nav_home">Accueil</p>
+    </a>
+    <a class="hoverable link" id="postsTab">
+      <span class="link-icon">post</span>
+      <p class="link-title" data-i18n="nav_posts">Posts</p>
+    </a>
+    <a class="hoverable link" id="createTab">
+      <span class="link-icon">add_circle</span>
+      <p class="link-title" data-i18n="nav_create">Créer</p>
+    </a>
+    <a class="hoverable link" id="inboxTab">
+      <span class="link-icon">inbox</span>
+      <p class="link-title" data-i18n="nav_inbox">Notifications</p>
+    </a>
+    <a class="hoverable link" id="profileTab">
+      <span class="link-icon">account_circle</span>
+      <p class="link-title" data-i18n="nav_profile">Profil</p>
+    </a>
+    <a class="hoverable link" id="settingsTab">
+      <span class="link-icon">settings</span>
+      <p class="link-title" data-i18n="nav_settings">Paramètres</p>
+    </a>
   </nav>
   <section id="homeTab" class="tab active">
     <div class="stories">
-      <h2>Stories</h2>
+      <h2 data-i18n="home_stories">Stories</h2>
       <div class="stories-list">
         <div class="story add-story" id="addStoryBtn">
           <span class="material-symbols-rounded">add</span>
@@ -125,11 +131,11 @@
     </div>
 
     <div class="posts-section">
-      <h2>Posts récents</h2>
+      <h2 data-i18n="home_recent_posts">Posts récents</h2>
       <div id="moodWall"></div>
     </div>
     <div class="suggested-accounts">
-      <h2>Comptes à suivre</h2>
+      <h2 data-i18n="home_suggested_accounts">Comptes à suivre</h2>
       <div class="accounts-list">
         <div class="account skeleton"></div>
         <div class="account skeleton"></div>
@@ -143,15 +149,16 @@
 
   <section id="createTab" class="tab hidden">
     <div id="postModal">
-      <textarea id="moodInput" maxlength="450" placeholder="Comment tu te sens ?"></textarea>
+      <textarea id="moodInput" maxlength="450" placeholder="Comment tu te sens ?"
+        data-i18n="create_placeholder"></textarea>
       <div class="mood-options">
         <div class="inputdiv">
           <input type="color" id="moodColor" value="#ffffff" />
-          <label for="moodColor">Fond</label>
+          <label for="moodColor" data-i18n="create_bg">Fond</label>
         </div>
         <div class="inputdiv">
           <input type="color" id="textColor" value="#000000" />
-          <label for="textColor">Couleur</label>
+          <label for="textColor" data-i18n="create_color">Couleur</label>
         </div>
 
         <input type="text" class="moodEmoji" id="editEmojiBtn" placeholder="" readonly />
@@ -162,12 +169,12 @@
         </div>
       </div>
       <!-- Aperçu du post -->
-      <p>Aperçu de votre poste</p>
+      <p data-i18n="create_preview">Aperçu de votre poste</p>
       <div id="previewMood" class="mood-card">
         <span id="previewEmoji"></span>
         <span id="previewText"></span>
       </div>
-      <button class="hoverable" id="submitMood">
+      <button class="hoverable" id="submitMood" data-i18n="create_share">
         <span class="material-symbols-rounded">upload</span>Partager
       </button class="hoverable">
       <!-- Ajouter après mood-options dans la section createTab -->
@@ -179,7 +186,7 @@
               d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
               pathLength="575.0541381835938" class="path"></path>
           </svg>
-          Message éphémère
+          <p data-i18n="create_ephemeral">Message éphémère</p>
         </label>
         <div id="durationPicker" class="duration-picker">
           <div class="duration-input">
@@ -207,7 +214,7 @@
             <label for="durationSeconds">Secondes</label>
           </div>
         </div>
-        <p>Le message disparaîtra le <span id="msgdeletetime"></span></p>
+        <p data-i18n="create_expire_at">Le message disparaîtra le <span id="msgdeletetime"></span></p>
       </div>
       <label class="container storyinput">
         <input type="checkbox" />
@@ -216,22 +223,22 @@
             d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
             pathLength="575.0541381835938" class="path"></path>
         </svg>
-        Mettre en story
+        <p data-i18n="create_story">Mettre en story</p>
       </label>
     </div>
   </section>
 
   <section id="inboxTab" class="tab hidden">
-    <h1>Boîte de récéption</h1>
+    <h1 data-i18n="inbox_title">Boîte de récéption</h1>
     <div id="inboxdiv">
-      <i>Vos notifications apparaîtront ici.</i>
+      <i data-i18n="inbox_empty">Vos notifications apparaîtront ici.</i>
     </div>
   </section>
 
   <section id="profileTab" class="tab hidden">
     <div id="accountinfo">
       <img src="/assets/icons/logo_cropped.jpg" alt="AccountAvatar" id="accountavatar" />
-      <p>Votre avatar</p>
+      <p data-i18n="profile_avatar">Votre avatar</p>
 
       <!-- <button class="hoverable" id="editProfileBtn">
         <span class="material-symbols-rounded">edit</span>Modifier le profil
@@ -255,7 +262,7 @@
         <p><span class="material-symbols-rounded">post</span> <span id="countPosts">0</span></p>
       </div>
       <div id="userPostsSection">
-        <h2>Vos posts</h2>
+        <h2 data-i18n="profile_posts">Vos posts</h2>
         <div id="userPostsWall"><i>Chargement des posts...</i></div>
       </div>
     </div>
@@ -265,7 +272,8 @@
 
     <div id="MoreAccSettings">
       <p><b>Paramètres supplémentaires</b></p>
-      <a href="https://github.com/Raphleouf74/moodshare"><button class="hoverable">Accéder au GitHub</button class="hoverable"></a>
+      <a href="https://github.com/Raphleouf74/moodshare"><button class="hoverable">Accéder au GitHub</button
+          class="hoverable"></a>
       <a href="https://ko-fi.com/moodshare" target="_blank" class="donate-btn">
         <button class="hoverable">Faire un don</button class="hoverable">
       </a>
@@ -295,71 +303,67 @@
 
   <section id="settingsTab" class="tab hidden">
     <div id="appSettings">
-      <h3>Paramètres de l'application</h3>
+      <h3 data-i18n="settings_app">Paramètres de l'application</h3>
       <label>
-        Thème sombre
-        <input type="checkbox" id="darkModeToggle" />
-      </label>
-      <label>
-        Notifications
-        <input type="checkbox" id="notificationsToggle" />
-      </label>
-      <label>
-        Langue
+        <p data-i18n="settings_language">Langue</p>
         <select id="languageSelect">
           <option value="fr">Français</option>
           <option value="en">English</option>
           <option value="es">Español</option>
           <option value="de">Deutsch</option>
+          <option value="it">Italiano</option>
+          <option value="pt">Portuguese (Portugal)</option>
+          <option value="pt-br">Portuguese (Brazil)</option>
+          <option value="se">Suomi</option>
+          <option value="no">Norvégien</option>
+          <option value="da">Danois</option>
+          <option value="fi">Finnois</option>
+          <option value="et">Estonien</option>
+          <option value="lv">Letton</option>
+          <option value="lt">Lituanien</option>
+          <option value="hr">Croate</option>
+          <option value="sr">Serbe</option>
+          <option value="sl">Slovène</option>
+          <option value="bg">Bulgare</option>
+          <option value="el">Grec</option>
+          <option value="al">Albanais</option>
+          <option value="nl">Nederlands</option>
         </select>
       </label>
-      <button class="hoverable" id="themeToggle">
-        Thème <span class="material-symbols-rounded">routine</span>
-      </button class="hoverable">
-      <button class="hoverable" id="increaseFontBtn">
-        Augmenter la taille de la police
-        <span class="material-symbols-rounded">text_increase</span>
-      </button class="hoverable">
-      <button class="hoverable" id="decreaseFontBtn">
-        Diminuer la taille de la police
-        <span class="material-symbols-rounded">text_decrease</span>
-      </button class="hoverable">
-      <button class="hoverable" id="readContentBtn">
-        Lire la page <span class="material-symbols-rounded">volume_up</span>
-      </button class="hoverable">
-      <button class="hoverable" id="highContrastBtn">
-        Contraste de la page
-        <span class="material-symbols-rounded">contrast</span>
-      </button class="hoverable">
 
+      <div class="cursor-settings">
+        <h3 data-i18n="settings_cursor">Paramètres du curseur</h3>
 
-    </div>
-    <div class="cursor-settings">
-      <h3>Paramètres du curseur</h3>
+        <label>
+          <p data-i18n="settings_cursor_personnalise_toggle">Activer curseur personnalisé :</p>
+          <input type="checkbox" id="cursorEnable" checked disabled>
+        </label>
 
-      <label>Activer curseur personnalisé :
-        <input type="checkbox" id="cursorEnable" checked disabled>
-      </label>
+        <label>
+          <p data-i18n="settings_cursor_size">Taille :</p>
+          <input type="range" id="cursorSize" min="6" max="40" value="12">
+        </label>
 
-      <label>Taille :
-        <input type="range" id="cursorSize" min="6" max="40" value="12">
-      </label>
+        <label>
+          <p data-i18n="settings_cursor_opacity">Transparence :</p>
+          <input type="range" id="cursorOpacity" min="0.1" max="1" step="0.05" value="0.8">
+        </label>
 
-      <label>Transparence :
-        <input type="range" id="cursorOpacity" min="0.1" max="1" step="0.05" value="0.8">
-      </label>
+        <label>
+          <p data-i18n="settings_cursor_color">Couleur :</p>
+          <input type="color" id="cursorColor" value="#ffffff">
+        </label>
 
-      <label>Couleur :
-        <input type="color" id="cursorColor" value="#ffffff">
-      </label>
-
-      <label>Effet Hover :
-        <select id="cursorHover">
-          <option value="none">Aucun</option>
-          <option value="invert">Inversion des couleurs</option>
-          <option value="grow">Agrandissement</option>
-        </select>
-      </label>
+        <label>
+          <p data-i18n="settings_cursor_hover_effect">Effet de survol :</p>
+          <select id="cursorHover">
+            <option value="none" data-i18n="settings_cursor_hover_effect_none">Aucun</option>
+            <option value="invert" data-i18n="settings_cursor_hover_effect_colour_invert">Inversion des couleurs
+            </option>
+            <option value="grow" data-i18n="settings_cursor_hover_effect_grow">Agrandissement</option>
+          </select>
+        </label>
+      </div>
     </div>
   </section>
 

@@ -1,4 +1,18 @@
 
+import { loadLanguage } from "./lang.js";
+document.addEventListener("DOMContentLoaded", async () => {
+    const lang = localStorage.getItem("lang") || "fr";
+    await loadLanguage(lang);
+
+    const selector = document.getElementById("languageSelect");
+    selector.value = lang;
+
+    selector.addEventListener("change", async () => {
+        const selected = selector.value;
+        localStorage.setItem("lang", selected);
+        await loadLanguage(selected);
+    });
+});
 
 const header = document.querySelector('header');
 const nav = document.querySelector('nav');
@@ -75,7 +89,6 @@ window.addEventListener('DOMContentLoaded', () => {
 // scripts/app.js
 import './social/feed.js';
 const wall = document.getElementById("moodWall");
-const postBtn = document.getElementById("postMoodBtn");
 const modal = document.getElementById("postModal");
 const submitBtn = document.getElementById("submitMood");
 
@@ -255,7 +268,7 @@ function displayMood(mood) {
     const moods = await res.json();
     moods.reverse().forEach(displayMood);
 })();
-const tabs = document.querySelectorAll("nav button");
+const tabs = document.querySelectorAll("nav a");
 const sections = document.querySelectorAll(".tab");
 
 tabs.forEach(tab => {

@@ -1,22 +1,38 @@
-import express from 'express';
-import router from express.Router();
+// routes/users.js
+const express = require("express");
+const router = express.Router();
+const db = require("../db/db");
 
-// retourne l'utilisateur connecté (session)
-router.get('/me', (req, res) => {
-  if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
+// GET /api/users/me
+router.get("/me", (req, res) => {
+  if (!req.user) return res.status(401).json({ error: "Not authenticated" });
   res.json(req.user);
 });
 
-// met à jour préférences / affichage du profil (stub : persister en DB en prod)
-router.put('/me', express.json(), (req, res) => {
-  if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
+// PUT /api/users/me  -> mise à jour du profil (persister en DB)
+router.put("/me", express.json(), async (req, res) => {
+  if (!req.user) return res.status(401).json({ error: "Not authenticated" });
   const updates = req.body || {};
-  const user = Object.assign({}, req.user, updates);
-  // Met à jour la session afin que fetch /api/users/me retourne les nouveaux champs
-  req.login && req.login(user, (err) => {
-    if (err) return res.status(500).json({ error: 'Failed to update session' });
-    return res.json(user);
-  }) || res.json(user);
+
+  try {
+    // exemple: autoriser update display_name uniquement pour l'instant
+    const allowed = {};
+    if (typeof updates.display_name === "string") allowed.display_name = updates.display_name;
+
+    if (Object.keys(allowed).length === 0) {
+      return res.status(400).json({ error: "Aucune mise à jour valide fournie" });
+    }
+
+    const q = await db.query(
+      "UPDATE users SET display_name = $1 WHERE id = $2 RETURNING id, email, display_name",
+      [allowed.display_name, req.user.id]
+    );
+
+    return res.json(q.rows[0]);
+  } catch (err) {
+    console.error("Error update /api/users/me", err);
+    return res.status(500).json({ error: "Erreur serveur" });
+  }
 });
 
 module.exports = router;

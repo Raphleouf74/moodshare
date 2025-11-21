@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Register — MoodShare</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body>
+    <div class="custom-cursor">
+        <div class="cursor-dot"></div>
+        <div class="cursor-click"></div>
+        <div class="cursor-locate"></div>
+    </div>
+    <main class="auth-page">
+        <form id="registerForm" class="auth-form">
+            <h2>Créer un compte</h2>
+            <input id="email" type="email" placeholder="Email" required />
+            <input id="displayName" type="text" placeholder="Pseudo (optionnel)" />
+            <input id="password" type="password" placeholder="Mot de passe (min 8)" required minlength="8" />
+            <button type="submit">S'inscrire</button>
+            <p id="regMsg" class="msg"></p>
+        </form>
+    </main>
+    <script src="scripts/cursor.js"></script>
+    <script src="/assets/js/auth.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const displayName = document.getElementById('displayName').value;
+            const password = document.getElementById('password').value;
+            const msg = document.getElementById('regMsg');
+            msg.textContent = '';
+            try {
+                await registerUser(email, password, displayName);
+                msg.textContent = "Compte créé — redirection vers login...";
+                setTimeout(() => location.href = "/login.html", 800);
+            } catch (err) {
+                msg.textContent = err.error || "Erreur";
+            }
+        });
+    </script>
+</body>
+
+</html>

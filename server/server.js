@@ -247,10 +247,50 @@ setInterval(() => {
 }, 60 * 60 * 1000);
 
 
-const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(` MoodShare API running on port ${PORT}`));
 
+// server.js (CommonJS — remplace le contenu existant)
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+const path = require("path");
 
+// routes
+const authRoutes = require("./routes/auth");
+const usersRoutes = require("./routes/users"); // créé ci-dessous
+const { requireAuth } = require("./middleware/authMiddleware");
+
+
+// CORS config — adapte FRONTEND_URL à ton Netlify (ex: https://moodsharing.netlify.app)
+const FRONTEND_URL = process.env.FRONTEND_URL || "https://moodsharing.netlify.app";
+app.use(cors({
+  origin: FRONTEND_URL,
+  credentials: true,
+}));
+
+app.use(helmet());
+app.use(express.json());
+app.use(cookieParser());
+
+// Rate limit global (tweak)
+const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 200 });
+app.use(limiter);
+
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/users", requireAuth, usersRoutes); // /api/users/me
+
+// Option: serve static front from /public if you want
+app.use(express.static(path.join(__dirname, "public")));
+
+// default health
+app.get("/api/health", (req, res) => res.json({ ok: true }));
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log("Server ready on port", PORT));
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -266,3 +306,4 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/auth', authRoutes);
+
