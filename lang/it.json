@@ -1,4 +1,7 @@
 {
+    "__name__": "Italiano",
+    "__flag__": "🇮🇹",
+    "__code__": "it",
     "loader_loading": "Caricamento...",
     "header_title": "MoodShare",
     "header_subtitle": "Esprimi il tuo umore",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Effetto hover",
     "settings_cursor_hover_effect_none": "Nessuno",
     "settings_cursor_hover_effect_colour_invert": "Inversione colori",
-    "settings_cursor_hover_effect_grow": "Ingrandimento"
+    "settings_cursor_hover_effect_grow": "Ingrandimento",
+    "search_language": "Cerca una lingua..."
 }

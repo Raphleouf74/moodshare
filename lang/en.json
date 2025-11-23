@@ -1,7 +1,10 @@
 {
+    "__name__": "English",
+    "__flag__": "🇬🇧",
+    "__code__": "en",
     "loader_loading": "Loading...",
     "header_title": "MoodShare",
-    "header_subtitle": "Tell you mood",
+    "header_subtitle": "Tell your mood",
     "nav_home": "Home",
     "nav_posts": "Posts",
     "nav_create": "Create",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Hover effect",
     "settings_cursor_hover_effect_none": "None",
     "settings_cursor_hover_effect_colour_invert": "Colors inversion",
-    "settings_cursor_hover_effect_grow": "Grow"
+    "settings_cursor_hover_effect_grow": "Grow",
+    "search_language": "Search a language..."
 }

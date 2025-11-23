@@ -1,0 +1,262 @@
+{
+    "languages": [
+        {
+            "code": "fr",
+            "name": "Français",
+            "flag": "🇫🇷",
+            "file": "fr.json"
+        },
+        {
+            "code": "en",
+            "name": "English",
+            "flag": "🇬🇧",
+            "file": "en.json"
+        },
+        {
+            "code": "es",
+            "name": "Español",
+            "flag": "🇪🇸",
+            "file": "es.json"
+        },
+        {
+            "code": "de",
+            "name": "Deutsch",
+            "flag": "🇩🇪",
+            "file": "de.json"
+        },
+        {
+            "code": "it",
+            "name": "Italiano",
+            "flag": "🇮🇹",
+            "file": "it.json"
+        },
+        {
+            "code": "pt",
+            "name": "Português (Portugal)",
+            "flag": "🇵🇹",
+            "file": "pt.json"
+        },
+        {
+            "code": "pt-br",
+            "name": "Português (Brasil)",
+            "flag": "🇧🇷",
+            "file": "pt-br.json"
+        },
+        {
+            "code": "se",
+            "name": "Svenska",
+            "flag": "🇸🇪",
+            "file": "se.json"
+        },
+        {
+            "code": "no",
+            "name": "Norsk",
+            "flag": "🇳🇴",
+            "file": "no.json"
+        },
+        {
+            "code": "da",
+            "name": "Dansk",
+            "flag": "🇩🇰",
+            "file": "da.json"
+        },
+        {
+            "code": "fi",
+            "name": "Suomi",
+            "flag": "🇫🇮",
+            "file": "fi.json"
+        },
+        {
+            "code": "et",
+            "name": "Eesti",
+            "flag": "🇪🇪",
+            "file": "et.json"
+        },
+        {
+            "code": "lv",
+            "name": "Latviešu",
+            "flag": "🇱🇻",
+            "file": "lv.json"
+        },
+        {
+            "code": "lt",
+            "name": "Lietuvių",
+            "flag": "🇱🇹",
+            "file": "lt.json"
+        },
+        {
+            "code": "hr",
+            "name": "Hrvatski",
+            "flag": "🇭🇷",
+            "file": "hr.json"
+        },
+        {
+            "code": "sr",
+            "name": "Српски",
+            "flag": "🇷🇸",
+            "file": "sr.json"
+        },
+        {
+            "code": "sl",
+            "name": "Slovenščina",
+            "flag": "🇸🇮",
+            "file": "sl.json"
+        },
+        {
+            "code": "bg",
+            "name": "Български",
+            "flag": "🇧🇬",
+            "file": "bg.json"
+        },
+        {
+            "code": "el",
+            "name": "Ελληνικά",
+            "flag": "🇬🇷",
+            "file": "el.json"
+        },
+        {
+            "code": "al",
+            "name": "Shqip",
+            "flag": "🇦🇱",
+            "file": "al.json"
+        },
+        {
+            "code": "nl",
+            "name": "Nederlands",
+            "flag": "🇳🇱",
+            "file": "nl.json"
+        },
+        {
+            "code": "pl",
+            "name": "Polski",
+            "flag": "🇵🇱",
+            "file": "pl.json"
+        },
+        {
+            "code": "cs",
+            "name": "Čeština",
+            "flag": "🇨🇿",
+            "file": "cs.json"
+        },
+        {
+            "code": "sk",
+            "name": "Slovenčina",
+            "flag": "🇸🇰",
+            "file": "sk.json"
+        },
+        {
+            "code": "uk",
+            "name": "Українська",
+            "flag": "🇺🇦",
+            "file": "uk.json"
+        },
+        {
+            "code": "ru",
+            "name": "Русский",
+            "flag": "🇷🇺",
+            "file": "ru.json"
+        },
+        {
+            "code": "by",
+            "name": "Беларуская",
+            "flag": "🇧🇾",
+            "file": "by.json"
+        },
+        {
+            "code": "ro",
+            "name": "Română",
+            "flag": "🇷🇴",
+            "file": "ro.json"
+        },
+        {
+            "code": "hu",
+            "name": "Magyar",
+            "flag": "🇭🇺",
+            "file": "hu.json"
+        },
+        {
+            "code": "mk",
+            "name": "Македонски",
+            "flag": "🇲🇰",
+            "file": "mk.json"
+        },
+        {
+            "code": "me",
+            "name": "Crnogorski",
+            "flag": "🇲🇪",
+            "file": "me.json"
+        },
+        {
+            "code": "ba",
+            "name": "Bosanski",
+            "flag": "🇧🇦",
+            "file": "ba.json"
+        },
+        {
+            "code": "ja",
+            "name": "日本語",
+            "flag": "🇯🇵",
+            "file": "ja.json"
+        },
+        {
+            "code": "ko",
+            "name": "한국어",
+            "flag": "🇰🇷",
+            "file": "ko.json"
+        },
+        {
+            "code": "zh-CN",
+            "name": "中文 (简体)",
+            "flag": "🇨🇳",
+            "file": "zh-CN.json"
+        },
+        {
+            "code": "zh-TW",
+            "name": "中文 (繁體)",
+            "flag": "🇹🇼",
+            "file": "zhTW.json"
+        },
+        {
+            "code": "th",
+            "name": "ไทย",
+            "flag": "🇹🇭",
+            "file": "th.json"
+        },
+        {
+            "code": "vi",
+            "name": "Tiếng Việt",
+            "flag": "🇻🇳",
+            "file": "vi.json"
+        },
+        {
+            "code": "hi",
+            "name": "हिन्दी",
+            "flag": "🇮🇳",
+            "file": "hi.json"
+        },
+        {
+            "code": "bn",
+            "name": "বাংলা",
+            "flag": "🇧🇩",
+            "file": "bn.json"
+        },
+        {
+            "code": "id",
+            "name": "Bahasa Indonesia",
+            "flag": "🇮🇩",
+            "file": "id.json"
+        },
+        {
+            "code": "ms",
+            "name": "Bahasa Melayu",
+            "flag": "🇲🇾",
+            "file": "ms.json"
+        },
+        {
+            "code": "fil",
+            "name": "Filipino",
+            "flag": "🇵🇭",
+            "file": "fil.json"
+        }
+    ]
+}

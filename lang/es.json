@@ -1,4 +1,7 @@
 {
+    "__name__": "Español",
+    "__flag__": "🇪🇸",
+    "__code__": "es",
     "loader_loading": "Cargando...",
     "header_title": "MoodShare",
     "header_subtitle": "Expresa tu estado",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Efecto al pasar",
     "settings_cursor_hover_effect_none": "Ninguno",
     "settings_cursor_hover_effect_colour_invert": "Invertir colores",
-    "settings_cursor_hover_effect_grow": "Agrandar"
+    "settings_cursor_hover_effect_grow": "Agrandar",
+    "search_language": "Buscar un idioma..."
 }

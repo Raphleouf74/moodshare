@@ -1,4 +1,7 @@
 {
+    "__name__": "Norsk",
+    "__flag__": "🇳🇴",
+    "__code__": "no",
     "loader_loading": "Laster...",
     "header_title": "MoodShare",
     "header_subtitle": "Del humøret ditt",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Hover-effekt",
     "settings_cursor_hover_effect_none": "Ingen",
     "settings_cursor_hover_effect_colour_invert": "Fargeinversjon",
-    "settings_cursor_hover_effect_grow": "Forstørre"
+    "settings_cursor_hover_effect_grow": "Forstørre",
+    "search_language": "Søk etter et språk..."
 }

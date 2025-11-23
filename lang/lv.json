@@ -1,4 +1,7 @@
 {
+    "__name__": "Latviešu",
+    "__flag__": "🇱🇻",
+    "__code__": "lv",
     "loader_loading": "Ielādē...",
     "header_title": "MoodShare",
     "header_subtitle": "Dalies ar savu noskaņu",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Novietošanas efekts",
     "settings_cursor_hover_effect_none": "Nav",
     "settings_cursor_hover_effect_colour_invert": "Krāsu invertēšana",
-    "settings_cursor_hover_effect_grow": "Palielināt"
+    "settings_cursor_hover_effect_grow": "Palielināt",
+    "search_language": "Meklēt valodu..."
 }

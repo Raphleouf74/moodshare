@@ -304,32 +304,26 @@
   <section id="settingsTab" class="tab hidden">
     <div id="appSettings">
       <h3 data-i18n="settings_app">Paramètres de l'application</h3>
-      <label>
-        <p data-i18n="settings_language">Langue</p>
-        <select id="languageSelect">
-          <option value="fr">Français</option>
-          <option value="en">English</option>
-          <option value="es">Español</option>
-          <option value="de">Deutsch</option>
-          <option value="it">Italiano</option>
-          <option value="pt">Portuguese (Portugal)</option>
-          <option value="pt-br">Portuguese (Brazil)</option>
-          <option value="se">Suomi</option>
-          <option value="no">Norvégien</option>
-          <option value="da">Danois</option>
-          <option value="fi">Finnois</option>
-          <option value="et">Estonien</option>
-          <option value="lv">Letton</option>
-          <option value="lt">Lituanien</option>
-          <option value="hr">Croate</option>
-          <option value="sr">Serbe</option>
-          <option value="sl">Slovène</option>
-          <option value="bg">Bulgare</option>
-          <option value="el">Grec</option>
-          <option value="al">Albanais</option>
-          <option value="nl">Nederlands</option>
-        </select>
-      </label>
+      <!-- Language Picker -->
+      <div class="language-picker">
+        <p data-i18n="settings_language" class="lp-title">Langue</p>
+
+        <div class="lp-control">
+          <button class="lp-button" id="lpOpenBtn" aria-haspopup="dialog" aria-expanded="false">
+            <span id="lpCurrentFlag" class="lp-flag">🌐</span>
+            <span id="lpCurrentLabel">Français</span>
+            <span class="material-symbols-rounded lp-caret">arrow_downward</span>
+          </button>
+          <div id="lpPopup" class="lp-popup" role="dialog" aria-label="Language selector">
+            <div class="search">
+              <span class="material-symbols-rounded">search</span>
+              <input resizable id="lpSearch" class="lp-search" data-i18n="search_language" aria-label="Search language">
+            </div>
+            <div id="lpGrid" class="lp-grid" tabindex="0"></div>
+          </div>
+        </div>
+      </div>
+
 
       <div class="cursor-settings">
         <h3 data-i18n="settings_cursor">Paramètres du curseur</h3>
@@ -369,5 +363,6 @@
 
 </body>
 <script type="module" src="scripts/app.js"></script>
+<script type="module" src="/scripts/lang-picker.js"></script>
 
 </html>

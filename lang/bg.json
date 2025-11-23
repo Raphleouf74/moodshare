@@ -1,4 +1,7 @@
 {
+    "__name__": "Български",
+    "__flag__": "🇧🇬",
+    "__code__": "bg",
     "loader_loading": "Зареждане...",
     "header_title": "MoodShare",
     "header_subtitle": "Сподели настроението си",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Ефект при задържане",
     "settings_cursor_hover_effect_none": "Без",
     "settings_cursor_hover_effect_colour_invert": "Инвертиране на цветовете",
-    "settings_cursor_hover_effect_grow": "Увеличаване"
+    "settings_cursor_hover_effect_grow": "Увеличаване",
+    "search_language": "Търсете език..."
 }

@@ -1,4 +1,7 @@
 {
+    "__name__": "Shqip",
+    "__flag__": "🇦🇱",
+    "__code__": "al",
     "loader_loading": "Ngarkim...",
     "header_title": "MoodShare",
     "header_subtitle": "Shpreh humorin tënd",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Efekti hover",
     "settings_cursor_hover_effect_none": "Asnjë",
     "settings_cursor_hover_effect_colour_invert": "Inversim ngjyrash",
-    "settings_cursor_hover_effect_grow": "Zmadho"
+    "settings_cursor_hover_effect_grow": "Zmadho",
+    "search_language": "Kërko një gjuhë..."
 }

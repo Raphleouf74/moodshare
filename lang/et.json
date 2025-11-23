@@ -1,4 +1,7 @@
 {
+    "__name__": "Eesti",
+    "__flag__": "🇪🇪",
+    "__code__": "et",
     "loader_loading": "Laadimine...",
     "header_title": "MoodShare",
     "header_subtitle": "Jaga oma tuju",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Hõljutus­efekt",
     "settings_cursor_hover_effect_none": "Puudub",
     "settings_cursor_hover_effect_colour_invert": "Värvipööramine",
-    "settings_cursor_hover_effect_grow": "Suurenda"
+    "settings_cursor_hover_effect_grow": "Suurenda",
+    "search_language": "Otsi keelt..."
 }

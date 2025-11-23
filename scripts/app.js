@@ -1,18 +1,25 @@
 
-import { loadLanguage } from "./lang.js";
-document.addEventListener("DOMContentLoaded", async () => {
-    const lang = localStorage.getItem("lang") || "fr";
-    await loadLanguage(lang);
+// import { loadLanguage } from "./lang.js";
+// document.addEventListener("DOMContentLoaded", async () => {
+//     const selector = document.getElementById("languageSelect");
 
-    const selector = document.getElementById("languageSelect");
-    selector.value = lang;
+//     if (!selector) {
+//         console.warn("⚠️ #languageSelect not found in DOM");
+//         return;
+//     }
 
-    selector.addEventListener("change", async () => {
-        const selected = selector.value;
-        localStorage.setItem("lang", selected);
-        await loadLanguage(selected);
-    });
-});
+//     const lang = localStorage.getItem("lang") || "fr";
+//     await loadLanguage(lang);
+
+//     selector.value = lang;
+
+//     selector.addEventListener("change", async () => {
+//         const selected = selector.value;
+//         localStorage.setItem("lang", selected);
+//         await loadLanguage(selected);
+//     });
+// });
+
 
 const header = document.querySelector('header');
 const nav = document.querySelector('nav');
@@ -805,5 +812,90 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+
+async function loadLanguages() {
+    const manifest = await fetch("/lang/manifest.json").then(r => r.json());
+
+    const languages = [];
+
+    for (const entry of manifest.languages) {
+        const fileName = entry.file;   // ex: "fr.json"
+        const code = entry.code;       // ex: "fr"
+
+        // sécurité : s'assurer que c’est bien une string
+        if (typeof fileName !== "string") {
+            console.error("❌ Mauvais format file:", fileName);
+            continue;
+        }
+
+        const data = await fetch(`/lang/${fileName}`).then(r => r.json());
+
+        languages.push({
+            code,
+            name: entry.name || data.__name__ || code,
+            flag: entry.flag || data.__flag__ || "🌐"
+        });
+    }
+
+    return languages;
+}
+
+
+const grid = document.getElementById("langGrid");
+const popup = document.getElementById("langPopup");
+const openBtn = document.getElementById("openLangPicker");
+const currentLang = document.getElementById("currentLangLabel");
+
+const langPopup = document.getElementById("langPopup");
+const langGrid = document.getElementById("langGrid");
+const searchInput = document.getElementById("langSearch");
+
+async function initLanguageSelector() {
+    const langs = await loadLanguages();
+
+    function render(filtered) {
+        langGrid.innerHTML = "";
+
+        filtered.forEach(lang => {
+            const item = document.createElement("div");
+            item.className = "lp-item";
+            item.dataset.lang = lang.code;
+            item.innerHTML = `
+                <div class="lp-flag">${lang.flag}</div>
+                <div>${lang.name}</div>
+            `;
+
+            item.addEventListener("click", () => {
+                localStorage.setItem("lang", lang.code);
+                location.reload();
+            });
+
+            langGrid.appendChild(item);
+        });
+    }
+
+    // Search filter
+    if (searchInput) {
+        searchInput.addEventListener("input", () => {
+            const q = searchInput.value.toLowerCase();
+            const filtered = langs.filter(l =>
+                l.name.toLowerCase().includes(q) ||
+                l.code.toLowerCase().includes(q)
+            );
+            render(filtered);
+        });
+    }
+
+}
+
+initLanguageSelector();
+if (openBtn) {
+    openBtn.addEventListener("click", () => {
+        popup.style.display = popup.style.display === "block" ? "none" : "block";
+    });
+}
+
+
+
 console.log(`%c⚠ Avertissement: Le site est en développement, des erreurs ou des bugs peuvent survenir !`, "color: yellow; font-size: 25px; font-family: impact");
 console.log(`%c⚠ Attention: Ne rentrez JAMAIS de commande ici sans connaître son but !`, "color: orange; font-size: 25px; font-family: impact");

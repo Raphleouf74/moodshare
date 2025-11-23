@@ -1,4 +1,7 @@
 {
+    "__name__": "Nederlands",
+    "__flag__": "🇳🇱",
+    "__code__": "nl",
     "loader_loading": "Laden...",
     "header_title": "MoodShare",
     "header_subtitle": "Deel je stemming",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Hover-effect",
     "settings_cursor_hover_effect_none": "Geen",
     "settings_cursor_hover_effect_colour_invert": "Kleuren omkeren",
-    "settings_cursor_hover_effect_grow": "Vergroten"
+    "settings_cursor_hover_effect_grow": "Vergroten",
+    "search_language": "Zoek naar een taal..."
 }

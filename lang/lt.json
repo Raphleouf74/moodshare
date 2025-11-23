@@ -1,4 +1,7 @@
 {
+    "__name__": "Lietuvių",
+    "__flag__": "🇱🇹",
+    "__code__": "lt",
     "loader_loading": "Įkeliama...",
     "header_title": "MoodShare",
     "header_subtitle": "Pasidalink nuotaika",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Laikymo efektas",
     "settings_cursor_hover_effect_none": "Nėra",
     "settings_cursor_hover_effect_colour_invert": "Spalvų inversiona",
-    "settings_cursor_hover_effect_grow": "Padidinti"
+    "settings_cursor_hover_effect_grow": "Padidinti",
+    "search_language": "Ieškoti kalbos..."
 }

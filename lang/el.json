@@ -1,4 +1,7 @@
 {
+    "__name__": "Ελληνικά",
+    "__flag__": "🇬🇷",
+    "__code__": "el",
     "loader_loading": "Φόρτωση...",
     "header_title": "MoodShare",
     "header_subtitle": "Μοιράσου τη διάθεσή σου",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Εφέ hover",
     "settings_cursor_hover_effect_none": "Κανένα",
     "settings_cursor_hover_effect_colour_invert": "Αντιστροφή χρωμάτων",
-    "settings_cursor_hover_effect_grow": "Μεγέθυνση"
+    "settings_cursor_hover_effect_grow": "Μεγέθυνση",
+    "search_language": "Αναζήτηση γλώσσας..."
 }

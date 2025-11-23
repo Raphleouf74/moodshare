@@ -1,4 +1,7 @@
 {
+    "__name__": "Deutsch",
+    "__flag__": "🇩🇪",
+    "__code__": "de",
     "loader_loading": "Lädt...",
     "header_title": "MoodShare",
     "header_subtitle": "Drücke deine Stimmung aus",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Hover-Effekt",
     "settings_cursor_hover_effect_none": "Keiner",
     "settings_cursor_hover_effect_colour_invert": "Farben invertieren",
-    "settings_cursor_hover_effect_grow": "Vergrößern"
+    "settings_cursor_hover_effect_grow": "Vergrößern",
+    "search_language": "Suche nach einer Sprache..."
 }

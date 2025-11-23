@@ -1,4 +1,7 @@
 {
+    "__name__": "Português (Portugal)",
+    "__flag__": "🇵🇹",
+    "__code__": "pt",
     "loader_loading": "A carregar...",
     "header_title": "MoodShare",
     "header_subtitle": "Expressa o teu estado",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Efeito de hover",
     "settings_cursor_hover_effect_none": "Nenhum",
     "settings_cursor_hover_effect_colour_invert": "Inversão de cores",
-    "settings_cursor_hover_effect_grow": "Aumentar"
+    "settings_cursor_hover_effect_grow": "Aumentar",
+    "search_language": "Pesquisar um idioma..."
 }

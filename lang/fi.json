@@ -1,4 +1,7 @@
 {
+    "__name__": "Suomi",
+    "__flag__": "🇫🇮",
+    "__code__": "fi",
     "loader_loading": "Ladataan...",
     "header_title": "MoodShare",
     "header_subtitle": "Kerro mielialasi",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Hover-efekti",
     "settings_cursor_hover_effect_none": "Ei mitään",
     "settings_cursor_hover_effect_colour_invert": "Värien inversio",
-    "settings_cursor_hover_effect_grow": "Kasvata"
+    "settings_cursor_hover_effect_grow": "Kasvata",
+    "search_language": "Hae kieltä..."
 }

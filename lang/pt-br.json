@@ -1,4 +1,7 @@
 {
+    "__name__": "Português (Brasil)",
+    "__flag__": "🇧🇷",
+    "__code__": "pt-br",
     "loader_loading": "Carregando...",
     "header_title": "MoodShare",
     "header_subtitle": "Expresse seu humor",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Efeito ao passar",
     "settings_cursor_hover_effect_none": "Nenhum",
     "settings_cursor_hover_effect_colour_invert": "Inverter cores",
-    "settings_cursor_hover_effect_grow": "Aumentar"
+    "settings_cursor_hover_effect_grow": "Aumentar",
+    "search_language": "Pesquisar um idioma..."
 }

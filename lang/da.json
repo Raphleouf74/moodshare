@@ -1,4 +1,7 @@
 {
+    "__name__": "Dansk",
+    "__flag__": "🇩🇰",
+    "__code__": "da",
     "loader_loading": "Indlæser...",
     "header_title": "MoodShare",
     "header_subtitle": "Fortæl hvordan du har det",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Hover-effekt",
     "settings_cursor_hover_effect_none": "Ingen",
     "settings_cursor_hover_effect_colour_invert": "Farveinversion",
-    "settings_cursor_hover_effect_grow": "Forstør"
+    "settings_cursor_hover_effect_grow": "Forstør",
+    "search_language": "Søg efter et sprog..."
 }

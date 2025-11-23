@@ -1,4 +1,7 @@
 {
+    "__name__": "Français",
+    "__flag__": "🇫🇷",
+    "__code__": "fr",
     "loader_loading": "Chargement...",
     "header_title": "MoodShare",
     "header_subtitle": "Exprime ton mood",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Effet de survol",
     "settings_cursor_hover_effect_none": "Aucun",
     "settings_cursor_hover_effect_colour_invert": "Inversion des couleurs",
-    "settings_cursor_hover_effect_grow": "Aggrandissement"
+    "settings_cursor_hover_effect_grow": "Aggrandissement",
+    "search_language": "Rechercher une langue..."
 }

@@ -1,4 +1,7 @@
 {
+    "__name__": "Slovenščina",
+    "__flag__": "🇸🇮",
+    "__code__": "sl",
     "loader_loading": "Nalaganje...",
     "header_title": "MoodShare",
     "header_subtitle": "Deli svoje počutje",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Učinek lebdenja",
     "settings_cursor_hover_effect_none": "Brez",
     "settings_cursor_hover_effect_colour_invert": "Obrnitev barv",
-    "settings_cursor_hover_effect_grow": "Povečaj"
+    "settings_cursor_hover_effect_grow": "Povečaj",
+    "search_language": "Iskanje jezika..."
 }

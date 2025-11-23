@@ -95,18 +95,32 @@ nav {
     -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
 
-    border-radius: 25px;
+    border-radius: 15px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     z-index: 2000;
     transition: all 0.3s ease-in-out;
     padding: 1rem;
     background: var(--menu-bg);
     backdrop-filter: blur(12px);
-    border-radius: 16px;
     border: 1px solid var(--border);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     display: flex;
     gap: 14px;
+}
+
+nav.scrolled {
+    bottom: 2px;
+    width: 500px;
+    border-radius: 15px;
+    background: rgb(200, 200, 200, 0.4);
+    height: 30px;
+}
+
+
+@media (max-width: 769px) {
+    nav {
+        width: 80%;
+    }
 }
 
 .link {
@@ -134,10 +148,14 @@ nav {
 
 .link.active {
     color: #000;
-    height: 60px;
+    height: 100%;
     scale: 1.1;
     background: #2564eb50;
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
+.scrolled .link.active:hover {
+    height: 120%;
 }
 
 .link-icon {
@@ -182,15 +200,7 @@ nav {
 }
 
 /* Version desktop : plus fine quand on scrolle */
-@media (min-width: 768px) {
-    nav.scrolled {
-        bottom: 0px;
-        border-radius: 20px 20px 0 0;
-        width: 550px;
-        height: 55px;
-        background: rgba(255, 255, 255, 0.06);
-    }
-}
+
 
 
 a {
@@ -1588,6 +1598,7 @@ body.loading {
 @media (max-width: 760px) {
 
     .cursor-settings,
+    .cursor-settings label
     .cursor-dot,
     .custom-cursor {
         display: none;
@@ -1612,4 +1623,174 @@ body.loading {
 .likebtn.liked span.material-symbols-rounded {
     color: #ff3b3b !important;
     text-shadow: 0 0 12px rgba(255, 50, 50, 0.6);
+}
+
+/* Language picker */
+.language-picker {
+    position: relative;
+    width: 520px;
+    
+    margin: 0.5rem 0;
+}
+
+.lp-title {
+    margin: 0 0 8px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.lp-control {
+    position: relative;
+}
+
+.lp-button {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: black 1px solid;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.03));
+    backdrop-filter: blur(6px);
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text);
+    transition: all .12s ease;
+}
+
+.lp-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+.lp-caret {
+    margin-left: auto;
+    opacity: 0.8;
+}
+
+.lp-popup {
+    background: rgb(255,255,255,0.6);
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-height: 360px;
+    overflow: hidden;
+    border-radius: 14px;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+    transform-origin: top center;
+    opacity: 0;
+    transform: translateY(-6px) scale(.98);
+    pointer-events: none;
+    transition: opacity .18s ease, transform .18s ease;
+    z-index: 200;
+}
+
+.lp-popup.open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* Search input */
+.lp-search {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(200, 200, 200, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+    outline: none;
+}
+
+/* Grid: 3 columns */
+.lp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    overflow-y: auto;
+    border-radius: 20px;
+    height: 240px;
+    width: 100%;
+    padding: 10px;
+}
+
+/* Item */
+.lp-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    min-height: 56px;
+    transition: all 0.2s ease-in-out;
+    color: var(--text);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.01);
+}
+
+.lp-item:hover {
+    transform: translateY(-4px);
+    background: rgba(100, 255, 255, 0.5);
+
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.32);
+}
+
+/* Flag display */
+.lp-item .flag {
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #fff;
+    flex-shrink: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0.05));
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+}
+
+/* Label */
+.lp-item .label {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* Active highlight */
+.lp-item.active {
+    outline: 2px solid rgba(255, 255, 255, 0.14);
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.02));
+}
+
+/* Scrollbar (light) */
+.lp-grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.lp-grid::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 6px;
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    text-align: center;
+    height: 40px;
 }

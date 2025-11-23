@@ -1,4 +1,7 @@
 {
+    "__name__": "Svenska",
+    "__flag__": "🇸🇪",
+    "__code__": "se",
     "loader_loading": "Laddar...",
     "header_title": "MoodShare",
     "header_subtitle": "Dela ditt humör",
@@ -40,5 +43,6 @@
     "settings_cursor_hover_effect": "Hover-effekt",
     "settings_cursor_hover_effect_none": "Ingen",
     "settings_cursor_hover_effect_colour_invert": "Färgomvändning",
-    "settings_cursor_hover_effect_grow": "Förstora"
+    "settings_cursor_hover_effect_grow": "Förstora",
+    "search_language": "Претражи језик..."
 }
