@@ -44,5 +44,15 @@
     "settings_cursor_hover_effect_none": "Aucun",
     "settings_cursor_hover_effect_colour_invert": "Inversion des couleurs",
     "settings_cursor_hover_effect_grow": "Aggrandissement",
-    "search_language": "Rechercher une langue..."
+    "search_language": "Rechercher une langue...",
+    "fb_version_not_up_to_date": "Votre version de MoodShare n'est pas à jour.",
+    "fb_update_how_to": "Comment faire ?",
+    "fb_reload": "Recharger la page",
+    "fb_write_something": "Écris quelque chose !",
+    "fb_story_posted": "Story publiée !",
+    "fb_post_shared": "Post partagé !",
+    "github_access": "Accéder au GitHub",
+    "donate": "Faire un don",
+    "CGU_title": "Conditions Générales d'Utilisation",
+    "Policy_title": "Politique de Confidentialité"
 }

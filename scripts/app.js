@@ -1,24 +1,21 @@
+import { loadLanguage } from "./lang.js";
+document.addEventListener("DOMContentLoaded", async () => {
+    const selector = document.getElementById("languageSelect");
 
-// import { loadLanguage } from "./lang.js";
-// document.addEventListener("DOMContentLoaded", async () => {
-//     const selector = document.getElementById("languageSelect");
+    if (!selector) {
+        console.warn("⚠️ #languageSelect not found in DOM");
+        return;
+    }
+    const lang = localStorage.getItem("lang") || "fr";
+    await loadLanguage(lang);
 
-//     if (!selector) {
-//         console.warn("⚠️ #languageSelect not found in DOM");
-//         return;
-//     }
-
-//     const lang = localStorage.getItem("lang") || "fr";
-//     await loadLanguage(lang);
-
-//     selector.value = lang;
-
-//     selector.addEventListener("change", async () => {
-//         const selected = selector.value;
-//         localStorage.setItem("lang", selected);
-//         await loadLanguage(selected);
-//     });
-// });
+    selector.value = lang;
+    selector.addEventListener("change", async () => {
+        const selected = selector.value;
+        localStorage.setItem("lang", selected);
+        await loadLanguage(selected);
+    });
+});
 
 
 const header = document.querySelector('header');
@@ -65,7 +62,7 @@ async function checkSiteVersion() {
         // Vérification des mises à jour
         if (current && current !== latest || currentBuild && currentBuild !== latestBuild) {
             showFeedback("warning", "Votre version de Moodshare n'est pas à jour. Veuillez mettre à jour l'application. <a href='../FAQ/downloadlastver.html'>Comment faire ?</a> <button onclick='location.reload()'>Recharger la page</button>");
-            addInboxNotification("warning", "Votre version n'est pas à jour !", "Merci de mettre le site à jour", "warning")            // Désactive le cache du navigateur et recharge la page proprement
+            addInboxNotification("warning", "fb_version_not_up_to_date", "fb_update_how_to");
             caches.keys().then(names => names.forEach(name => caches.delete(name)));
             localStorage.clear();
 
@@ -329,8 +326,6 @@ pickerContent.addEventListener('emoji-click', (event) => {
 });
 
 
-// ...existing code...
-
 const previewMood = document.getElementById('previewMood');
 const previewEmoji = document.getElementById('previewEmoji');
 const previewText = document.getElementById('previewText');
@@ -388,11 +383,18 @@ document.querySelector('emoji-picker').addEventListener('emoji-click', updatePre
 updatePreview();
 
 // Fonction pour montrer le feedback
-function showFeedback(type, message) {
+async function showFeedback(type, messageKey) {
+
+    // charge la langue actuelle depuis le cache si disponible
+    const lang = localStorage.getItem("lang") || "fr";
+    const t = window.__translations__ || await loadLanguage(lang);
+
+    // si la clé existe → traduction
+    const message = (t && t[messageKey]) ? t[messageKey] : messageKey;
+
     const feedback = document.createElement("div");
     feedback.className = `upload-feedback feedback-${type}`;
 
-    // Choix des icônes selon le type
     const icons = {
         success: "check_circle",
         error: "error",
@@ -402,35 +404,19 @@ function showFeedback(type, message) {
         welcome: "celebration",
     };
 
-    // Icône par défaut
-    const icon = icons[type];
-
     feedback.innerHTML = `
-    <span class="material-symbols-rounded">${icon}</span>
-    ${message}
-  `;
+        <span class="material-symbols-rounded">${icons[type]}</span>
+        ${message}
+    `;
 
     document.body.appendChild(feedback);
 
+    const duration = type === "warning" || type === "remark" ? 30000 : 3000;
+    feedback.style.animation = `slideInOut ${duration / 1000}s ease forwards`;
 
-    // Supprimer après animation
-    if (icon === "warning") {
-        feedback.style.animation = "slideInOut 30s ease forwards";
-        setTimeout(() => {
-            feedback.style.display = "none";
-        }, 30000);
-    } if (icon === "chat_bubble") {
-        feedback.style.animation = "slideInOut 30s ease forwards";
-        setTimeout(() => {
-            feedback.style.display = "none";
-        }, 30000);
-    } else {
-        feedback.style.animation = "slideInOut 3s ease forwards";
-        setTimeout(() => {
-            feedback.style.display = "none";
-        }, 3000);
-    }
+    setTimeout(() => feedback.remove(), duration);
 }
+
 /**
  * Ajoute une notification dans la boîte de réception (Inbox)
  * @param {string} type - Le type de notification (info, success, warning, error, critical)
@@ -440,7 +426,13 @@ function showFeedback(type, message) {
  * @param {string} [actionLabel] - Texte du bouton d'action (facultatif)
  * @param {function} [actionFn] - Fonction à exécuter au clic sur le bouton
  */
-function addInboxNotification(type, title, message, icon = "notifications", actionLabel, actionFn) {
+async function addInboxNotification(type, titleKey, messageKey, icon = "notifications", actionLabel, actionFn) {
+    const lang = localStorage.getItem("lang") || "fr";
+    const t = await (await fetch(`/lang/${lang}.json`)).json();
+
+    const title = t[titleKey] || titleKey;
+    const message = t[messageKey] || messageKey;
+
     const inboxDiv = document.getElementById("inboxdiv");
     if (!inboxDiv) return console.error("❌ Inbox non trouvée dans le DOM");
 

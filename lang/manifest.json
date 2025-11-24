@@ -32,15 +32,9 @@
         },
         {
             "code": "pt",
-            "name": "Português (Portugal)",
+            "name": "Português",
             "flag": "🇵🇹",
             "file": "pt.json"
-        },
-        {
-            "code": "pt-br",
-            "name": "Português (Brasil)",
-            "flag": "🇧🇷",
-            "file": "pt-br.json"
         },
         {
             "code": "se",
@@ -214,7 +208,7 @@
             "code": "zh-TW",
             "name": "中文 (繁體)",
             "flag": "🇹🇼",
-            "file": "zhTW.json"
+            "file": "zh-TW.json"
         },
         {
             "code": "th",
