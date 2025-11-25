@@ -30,7 +30,7 @@ MoodShare est une application web qui permet aux utilisateurs d'exprimer leurs �
 
 1. Démarrez le serveur :
    ```
-   node server.js
+   node server.cjs
    ```
 2. Ouvrez `index.html` dans votre navigateur pour accéder à l'application.
 
