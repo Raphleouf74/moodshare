@@ -254,7 +254,6 @@ require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
-const path = require("path");
 
 // routes
 const authRoutes = require("./routes/auth");
