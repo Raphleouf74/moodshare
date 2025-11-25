@@ -256,8 +256,6 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 
 // routes
-const authRoutes = require("./routes/auth");
-const usersRoutes = require("./routes/users"); // créé ci-dessous
 const { requireAuth } = require("./middleware/authMiddleware");
 
 
