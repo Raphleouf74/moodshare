@@ -54,5 +54,15 @@
   "github_access": "Gå til GitHub",
   "donate": "Gi en donasjon",
   "CGU_title": "Generelle vilkår for bruk",
-  "Policy_title": "Personvernerklæring"
+  "Policy_title": "Personvernerklæring",
+  "fb_error_year": "En kortvarig melding kan ikke overstige 5 år.",
+  "fb_error_month": "Antall måneder kan ikke overstige 11.",
+  "fb_error_day": "Antall dager kan ikke overstige 30.",
+  "fb_error_hour": "Antall timer kan ikke overstige 23.",
+  "fb_error_minute": "Antall minutter kan ikke overstige 59.",
+  "fb_error_seconds": "Antall sekunder kan ikke overstige 59.",
+  "fb_error_verify_version": "Kan ikke sjekke appversjonen.",
+  "fb_error_invalid_value": "Ugyldig(e) verdi(er).",
+  "fb_error_post": "Feil ved publisering av stemningen eller historien.",
+  "fb_version_info": "Versjon : {version} (bygg {build})"
 }

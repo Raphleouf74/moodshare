@@ -54,5 +54,15 @@
   "github_access": "Accesați GitHub",
   "donate": "Fă o donație",
   "CGU_title": "Condiții generale de utilizare",
-  "Policy_title": "Politica de confidențialitate"
+  "Policy_title": "Politica de confidențialitate",
+  "fb_error_year": "Un mesaj efemer nu poate depăși 5 ani.",
+  "fb_error_month": "Numărul de luni nu poate depăși 11.",
+  "fb_error_day": "Numărul de zile nu poate depăși 30.",
+  "fb_error_hour": "Numărul de ore nu poate depăși 23.",
+  "fb_error_minute": "Numărul de minute nu poate depăși 59.",
+  "fb_error_seconds": "Numărul de secunde nu poate depăși 59.",
+  "fb_error_verify_version": "Nu se poate verifica versiunea aplicației.",
+  "fb_error_invalid_value": "Valori nevalide.",
+  "fb_error_post": "Eroare la publicarea stării de spirit sau a poveștii.",
+  "fb_version_info": "Versiune: {version} (Build {build})"
 }

@@ -1,20 +1,14 @@
-import { loadLanguage } from "./lang.js";
-document.addEventListener("DOMContentLoaded", async () => {
-    const selector = document.getElementById("languageSelect");
+import { loadLanguage, t } from "./lang.js";
 
-    if (!selector) {
-        console.warn("⚠️ #languageSelect not found in DOM");
-        return;
-    }
+document.addEventListener("DOMContentLoaded", async () => {
+
+    // 1️⃣ Charger la langue AVANT TOUTE CHOSE
     const lang = localStorage.getItem("lang") || "fr";
     await loadLanguage(lang);
 
-    selector.value = lang;
-    selector.addEventListener("change", async () => {
-        const selected = selector.value;
-        localStorage.setItem("lang", selected);
-        await loadLanguage(selected);
-    });
+    // 2️⃣ Maintenant le site peut utiliser t()=
+    checkSiteVersion();
+    loadUserPosts();
 });
 
 
@@ -61,7 +55,7 @@ async function checkSiteVersion() {
 
         // Vérification des mises à jour
         if (current && current !== latest || currentBuild && currentBuild !== latestBuild) {
-            showFeedback("warning", "Votre version de Moodshare n'est pas à jour. Veuillez mettre à jour l'application. <a href='../FAQ/downloadlastver.html'>Comment faire ?</a> <button onclick='location.reload()'>Recharger la page</button>");
+            showFeedback("warning", "fb_version_not_up_to_date");
             addInboxNotification("warning", "fb_version_not_up_to_date", "fb_update_how_to");
             caches.keys().then(names => names.forEach(name => caches.delete(name)));
             localStorage.clear();
@@ -77,11 +71,15 @@ async function checkSiteVersion() {
         localStorage.setItem('buildVersion', latestBuild);
 
         setTimeout(() => {
-            showFeedback("info", `Version stable du site ${latest} (build ${latestBuild})`);
+            showFeedback("info", "fb_version_info", {
+                version: latest,
+                build: latestBuild
+            });
+
         }, 1500);
     } catch (error) {
         console.error('Erreur lors de la vérification de la version du site:', error);
-        showFeedback("error", `Erreur lors de la vérification de la version du site. Voir console.`);
+        showFeedback("error", "fb_error_verify_version");
         addInboxNotification("critical", "Erreur lors de la vérification de la version du site", "Voir console.", "dangerous")            // Désactive le cache du navigateur et recharge la page proprement
 
     }
@@ -119,27 +117,27 @@ function updateMsgDeleteTime() {
 
     // ✅ Vérification des valeurs invalides
     if (years > 5) {
-        showFeedback("error", "Un message éphémère ne peut pas dépasser 5 ans.");
+        showFeedback("error", "fb_error_year");
         document.getElementById('durationYear').value = 5;
     }
     if (months >= 12) {
-        showFeedback("error", "Le nombre de mois ne peut pas dépasser 11.");
+        showFeedback("error", "fb_error_month");
         document.getElementById('durationMonths').value = 11;
     }
     if (days >= 31) {
-        showFeedback("error", "Le nombre de jours ne peut pas dépasser 30.");
+        showFeedback("error", "fb_error_day");
         document.getElementById('durationDays').value = 30;
     }
     if (hours >= 24) {
-        showFeedback("error", "Le nombre d'heures ne peut pas dépasser 23.");
+        showFeedback("error", "fb_error_hour");
         document.getElementById('durationHours').value = 23;
     }
     if (minutes >= 60) {
-        showFeedback("error", "Le nombre de minutes ne peut pas dépasser 59.");
+        showFeedback("error", "fb_error_minute");
         document.getElementById('durationMinutes').value = 59;
     }
     if (seconds >= 60) {
-        showFeedback("error", "Le nombre de secondes ne peut pas dépasser 59.");
+        showFeedback("error", "fb_error_seconds");
         document.getElementById('durationSeconds').value = 59;
     }
     if (!ephemeralToggle.checked) {
@@ -183,11 +181,11 @@ ephemeralToggle.addEventListener('change', updateMsgDeleteTime);
 durationInputs.forEach(input => {
     input.addEventListener('input', updateMsgDeleteTime);
     if (document.getElementById('durationYear') >= 5) {
-        showFeedback("warning", "Un message ephémère à une limite de 5 ans.");
+        showFeedback("warning", "fb_error_year");
     }
 
     if (document.getElementById('durationMonths') >= 12 || document.getElementById('durationDays') >= 31 || document.getElementById('durationHours') >= 24 || document.getElementById('durationMinutes') >= 60 || document.getElementById('durationSeconds') >= 60) {
-        showFeedback("warning", "Veuillez entrer des valeurs valides.");
+        showFeedback("warning", "fb_error_invalid_value");
     }
 });
 
@@ -382,15 +380,9 @@ document.querySelector('emoji-picker').addEventListener('emoji-click', updatePre
 // Initialisation à l'ouverture
 updatePreview();
 
-// Fonction pour montrer le feedback
-async function showFeedback(type, messageKey) {
 
-    // charge la langue actuelle depuis le cache si disponible
-    const lang = localStorage.getItem("lang") || "fr";
-    const t = window.__translations__ || await loadLanguage(lang);
-
-    // si la clé existe → traduction
-    const message = (t && t[messageKey]) ? t[messageKey] : messageKey;
+function showFeedback(type, messageKey, vars = {}) {
+    const translated = t(messageKey, vars) || messageKey;
 
     const feedback = document.createElement("div");
     feedback.className = `upload-feedback feedback-${type}`;
@@ -406,16 +398,20 @@ async function showFeedback(type, messageKey) {
 
     feedback.innerHTML = `
         <span class="material-symbols-rounded">${icons[type]}</span>
-        ${message}
+        <p>${translated}</p>
     `;
 
     document.body.appendChild(feedback);
 
-    const duration = type === "warning" || type === "remark" ? 30000 : 3000;
+    const duration = (type === "warning" || type === "remark") ? 30000 : 3000;
     feedback.style.animation = `slideInOut ${duration / 1000}s ease forwards`;
 
     setTimeout(() => feedback.remove(), duration);
 }
+
+
+
+
 
 /**
  * Ajoute une notification dans la boîte de réception (Inbox)
@@ -426,17 +422,21 @@ async function showFeedback(type, messageKey) {
  * @param {string} [actionLabel] - Texte du bouton d'action (facultatif)
  * @param {function} [actionFn] - Fonction à exécuter au clic sur le bouton
  */
-async function addInboxNotification(type, titleKey, messageKey, icon = "notifications", actionLabel, actionFn) {
-    const lang = localStorage.getItem("lang") || "fr";
-    const t = await (await fetch(`/lang/${lang}.json`)).json();
 
-    const title = t[titleKey] || titleKey;
-    const message = t[messageKey] || messageKey;
+async function addInboxNotification(
+    type,
+    titleKey,
+    messageKey,
+    icon = "notifications",
+    actionLabel,
+    actionFn
+) {
+    const title = t(titleKey);
+    const message = t(messageKey);
 
     const inboxDiv = document.getElementById("inboxdiv");
     if (!inboxDiv) return console.error("❌ Inbox non trouvée dans le DOM");
 
-    // Palette de couleurs par type
     const typeColors = {
         info: "#3498db",
         success: "#27ae60",
@@ -445,7 +445,6 @@ async function addInboxNotification(type, titleKey, messageKey, icon = "notifica
         critical: "#c0392b"
     };
 
-    // Création de la notification
     const notif = document.createElement("div");
     notif.className = `notificationInbox ${type}`;
     notif.style.borderLeft = `6px solid ${typeColors[type] || "#777"}`;
@@ -459,15 +458,12 @@ async function addInboxNotification(type, titleKey, messageKey, icon = "notifica
         </div>
     `;
 
-    // Si un bouton d’action est défini
     if (actionLabel && typeof actionFn === "function") {
         notif.querySelector(".notif-action").addEventListener("click", actionFn);
     }
 
-    // Ajout à l’inbox
     inboxDiv.prepend(notif);
 
-    // Animation d’apparition
     notif.style.opacity = "0";
     notif.style.transform = "translateY(-10px)";
     setTimeout(() => {
@@ -476,6 +472,7 @@ async function addInboxNotification(type, titleKey, messageKey, icon = "notifica
         notif.style.transform = "translateY(0)";
     }, 50);
 }
+
 
 async function loadUserPosts() {
     const wall = document.getElementById("userPostsWall");
@@ -519,7 +516,6 @@ async function loadUserPosts() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", loadUserPosts);
 
 const addStoryBtn = document.getElementById('addStoryBtn');
 const storyModeToggle = document.getElementById('storyModeToggle');
@@ -530,7 +526,6 @@ if (addStoryBtn) {
         const createTabBtn = document.getElementById('createTab');
         createTabBtn.click();
         storyModeToggle.checked = true;
-        showFeedback("info", "Mode story activé – les posts disparaîtront après 24h.");
     });
 }
 
@@ -546,7 +541,7 @@ if (submitBtn) {
             const isStory = storyModeToggle?.checked;
 
             if (!text) {
-                showFeedback("error", "Écris quelque chose !");
+                showFeedback("error", "Écris quelque chose !", "fb_write_something");
                 return;
             }
 
@@ -573,7 +568,7 @@ if (submitBtn) {
 
                 const savedStory = await resStory.json();
                 addStoryToList(savedStory);
-                showFeedback("success", "Story publiée !");
+                showFeedback("success", "Story publiée !", "fb_story_posted");
             }
             // ✅ Cas POST classique - on crée UNIQUEMENT un post
             else {
@@ -614,7 +609,7 @@ if (submitBtn) {
 
                 const savedMood = await response.json();
                 displayMood(savedMood);
-                showFeedback("success", "Mood partagé !");
+                showFeedback("success", "fb_post_shared"); // au lieu d'un texte brut
             }
 
             // Réinitialisation du formulaire
@@ -627,7 +622,7 @@ if (submitBtn) {
 
         } catch (error) {
             console.error('Erreur envoi post:', error);
-            showFeedback("error", "Erreur lors de l'envoi du mood ou de la story.");
+            showFeedback("error", "fb_error_post");
         } finally {
             submitBtn.classList.remove('submitting');
             submitBtn.disabled = false;
@@ -835,8 +830,7 @@ async function loadLanguages() {
 
 const grid = document.getElementById("langGrid");
 const popup = document.getElementById("langPopup");
-const openBtn = document.getElementById("openLangPicker");
-const currentLang = document.getElementById("currentLangLabel");
+const openBtn = document.getElementById("currentLangLabel");
 
 const langPopup = document.getElementById("langPopup");
 const langGrid = document.getElementById("langGrid");

@@ -54,5 +54,15 @@
     "github_access": "Accéder au GitHub",
     "donate": "Faire un don",
     "CGU_title": "Conditions Générales d'Utilisation",
-    "Policy_title": "Politique de Confidentialité"
+    "Policy_title": "Politique de Confidentialité",
+    "fb_error_year": "Un message éphémère ne epeut pas dépasser 5 ans.",
+    "fb_error_month": "Le nombre de mois ne peut pas dépasser 11.",
+    "fb_error_day": "Le nombre de jours ne peut pas dépasser 30.",
+    "fb_error_hour": "Le nombre d'heures ne peut pas dépasser 23.",
+    "fb_error_minute": "Le nombre de minutes ne peut pas dépasser 59.",
+    "fb_error_seconds": "Le nombre de secondes ne peut pas dépasser 59.",
+    "fb_error_verify_version": "Impossible de vérifier la version de l'application.",
+    "fb_error_invalid_value": "Valeur(s) invalide(s).",
+    "fb_error_post": "Erreur lors de la publication du mood ou de la story.",
+    "fb_version_info": "Version : {version} (Build {build})"
 }

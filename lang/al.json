@@ -54,5 +54,15 @@
   "github_access": "Shkoni te GitHub",
   "donate": "Bëni një donacion",
   "CGU_title": "Kushtet e Përgjithshme të Përdorimit",
-  "Policy_title": "Politika e privatësisë"
+  "Policy_title": "Politika e privatësisë",
+  "fb_error_year": "Një mesazh kalimtar nuk mund të kalojë 5 vjet.",
+  "fb_error_month": "Numri i muajve nuk mund të kalojë 11.",
+  "fb_error_day": "Numri i ditëve nuk mund të kalojë 30.",
+  "fb_error_hour": "Numri i orëve nuk mund të kalojë 23.",
+  "fb_error_minute": "Numri i minutave nuk mund të kalojë 59.",
+  "fb_error_seconds": "Numri i sekondave nuk mund të kalojë 59.",
+  "fb_error_verify_version": "Versioni i aplikacionit nuk mund të kontrollohet.",
+  "fb_error_invalid_value": "Vlera(at) e pavlefshme.",
+  "fb_error_post": "Gabim gjatë publikimit të humorit ose tregimit.",
+  "fb_version_info": "Versioni: {version} (Ndërtimi {build})"
 }

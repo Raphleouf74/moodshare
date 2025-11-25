@@ -54,5 +54,15 @@
   "github_access": "Dodieties uz GitHub",
   "donate": "Veiciet ziedojumu",
   "CGU_title": "Vispārīgie lietošanas nosacījumi",
-  "Policy_title": "Privātuma politika"
+  "Policy_title": "Privātuma politika",
+  "fb_error_year": "Īslaicīgas ziņas ilgums nedrīkst pārsniegt 5 gadus.",
+  "fb_error_month": "Mēnešu skaits nedrīkst pārsniegt 11.",
+  "fb_error_day": "Dienu skaits nedrīkst pārsniegt 30.",
+  "fb_error_hour": "Stundu skaits nedrīkst pārsniegt 23.",
+  "fb_error_minute": "Minūtes nedrīkst pārsniegt 59.",
+  "fb_error_seconds": "Sekunžu skaits nedrīkst pārsniegt 59.",
+  "fb_error_verify_version": "Nevar pārbaudīt lietojumprogrammas versiju.",
+  "fb_error_invalid_value": "Nederīga(-as) vērtība(-as).",
+  "fb_error_post": "Kļūda, publicējot noskaņu vai stāstu.",
+  "fb_version_info": "Versija: {version} (Build {build})"
 }

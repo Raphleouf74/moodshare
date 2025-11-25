@@ -54,5 +54,15 @@
   "github_access": "Gå til GitHub",
   "donate": "Giv en donation",
   "CGU_title": "Generelle betingelser for brug",
-  "Policy_title": "Privatlivspolitik"
+  "Policy_title": "Privatlivspolitik",
+  "fb_error_year": "En flygtig besked kan ikke overstige 5 år.",
+  "fb_error_month": "Antallet af måneder må ikke overstige 11.",
+  "fb_error_day": "Antallet af dage må ikke overstige 30.",
+  "fb_error_hour": "Antallet af timer må ikke overstige 23.",
+  "fb_error_minute": "Antallet af minutter må ikke overstige 59.",
+  "fb_error_seconds": "Antallet af sekunder må ikke overstige 59.",
+  "fb_error_verify_version": "Kan ikke kontrollere applikationsversionen.",
+  "fb_error_invalid_value": "Ugyldig(e) værdi(er).",
+  "fb_error_post": "Fejl ved offentliggørelse af stemningen eller historien.",
+  "fb_version_info": "Version: {version} (Build {build})"
 }

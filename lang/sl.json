@@ -54,5 +54,15 @@
   "github_access": "Pojdite na GitHub",
   "donate": "Donirajte",
   "CGU_title": "Splošni pogoji uporabe",
-  "Policy_title": "Politika zasebnosti"
+  "Policy_title": "Politika zasebnosti",
+  "fb_error_year": "Efemerno sporočilo ne sme biti daljše od 5 let.",
+  "fb_error_month": "Število mesecev ne sme presegati 11.",
+  "fb_error_day": "Število dni ne sme presegati 30.",
+  "fb_error_hour": "Število ur ne sme presegati 23.",
+  "fb_error_minute": "Število minut ne sme presegati 59.",
+  "fb_error_seconds": "Število sekund ne sme preseči 59.",
+  "fb_error_verify_version": "Ni mogoče preveriti različice aplikacije.",
+  "fb_error_invalid_value": "Neveljavne vrednosti.",
+  "fb_error_post": "Napaka pri objavi razpoloženja ali zgodbe.",
+  "fb_version_info": "Različica: {version} (gradnja {build})"
 }

@@ -54,5 +54,15 @@
   "github_access": "Siirry GitHubiin",
   "donate": "Tee lahjoitus",
   "CGU_title": "Yleiset käyttöehdot",
-  "Policy_title": "Tietosuojakäytäntö"
+  "Policy_title": "Tietosuojakäytäntö",
+  "fb_error_year": "Lyhytaikainen viesti ei saa ylittää 5 vuotta.",
+  "fb_error_month": "Kuukausien määrä ei saa ylittää 11:tä.",
+  "fb_error_day": "Päivien lukumäärä ei saa ylittää 30:tä.",
+  "fb_error_hour": "Tuntien määrä ei saa ylittää 23.",
+  "fb_error_minute": "Minuuttimäärä ei saa ylittää 59 minuuttia.",
+  "fb_error_seconds": "Sekuntien määrä ei saa ylittää 59:ää.",
+  "fb_error_verify_version": "Sovelluksen versiota ei voi tarkistaa.",
+  "fb_error_invalid_value": "Virheelliset arvot.",
+  "fb_error_post": "Virhe tunnelman tai tarinan julkaisemisessa.",
+  "fb_version_info": "Versio: {versio} (Build {build})"
 }

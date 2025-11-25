@@ -38,3 +38,15 @@ export async function loadLanguage(lang) {
     // 🔥 Renvoie les traductions pour les appels dans app.js
     return translations;
 }
+
+// Fonction utilitaire pour traduire une clé
+// Traduction avec variables : t("key", {var1: "..."} )
+export function t(key, vars = {}) {
+    let text = currentTranslations[key] || key;
+
+    Object.keys(vars).forEach(k => {
+        text = text.replace(`{${k}}`, vars[k]);
+    });
+
+    return text;
+}

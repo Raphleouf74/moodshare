@@ -54,5 +54,15 @@
   "github_access": "Váldde GitHub",
   "donate": "Daga doarjaga",
   "CGU_title": "Oppalaš geavahandilit",
-  "Policy_title": "Persovdnadiehtovuogádat"
+  "Policy_title": "Persovdnadiehtovuogádat",
+  "fb_error_year": "Efemeralaš boasta ii sáhte leat badjel 5 jagi.",
+  "fb_error_month": "Mánuid lohku ii sáhte leat badjel 11.",
+  "fb_error_day": "Beaivvi lohku ii sáhte leat badjel 30.",
+  "fb_error_hour": "Diimmuid lohku ii sáhte leat badjel 23.",
+  "fb_error_minute": "Minuhtaid lohku ii sáhte leat badjel 59.",
+  "fb_error_seconds": "Sekunddaid lohku ii sáhte leat badjel 59.",
+  "fb_error_verify_version": "Ii sáhte dárkkistit prográmmaveršuvnna.",
+  "fb_error_invalid_value": "Eahpevuoiggalaš árvu(t).",
+  "fb_error_post": "Vearru go almmuha miellaguottu dahje muitalusa.",
+  "fb_version_info": "Veršuvdna : {veršuvdna} (Heivet {huksen})"
 }

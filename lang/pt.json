@@ -54,5 +54,15 @@
   "github_access": "Vá para GitHub",
   "donate": "Faça uma doação",
   "CGU_title": "Condições Gerais de Uso",
-  "Policy_title": "política de Privacidade"
+  "Policy_title": "política de Privacidade",
+  "fb_error_year": "Uma mensagem efémera não pode exceder 5 anos.",
+  "fb_error_month": "O número de meses não pode exceder 11.",
+  "fb_error_day": "O número de dias não pode exceder 30.",
+  "fb_error_hour": "O número de horas não pode exceder 23.",
+  "fb_error_minute": "O número de minutos não pode exceder 59.",
+  "fb_error_seconds": "O número de segundos não pode exceder 59.",
+  "fb_error_verify_version": "Não foi possível verificar a versão do aplicativo.",
+  "fb_error_invalid_value": "Valores inválidos.",
+  "fb_error_post": "Erro ao publicar o humor ou a história.",
+  "fb_version_info": "Versão: {versão} (Build {build})"
 }

@@ -54,5 +54,15 @@
   "github_access": "Truy cập GitHub",
   "donate": "Hãy quyên góp",
   "CGU_title": "Điều kiện sử dụng chung",
-  "Policy_title": "Chính sách bảo mật"
+  "Policy_title": "Chính sách bảo mật",
+  "fb_error_year": "Một tin nhắn phù du không thể vượt quá 5 năm.",
+  "fb_error_month": "Số tháng không được vượt quá 11.",
+  "fb_error_day": "Số ngày không thể vượt quá 30.",
+  "fb_error_hour": "Số giờ không thể vượt quá 23.",
+  "fb_error_minute": "Số phút không được vượt quá 59.",
+  "fb_error_seconds": "Số giây không được vượt quá 59.",
+  "fb_error_verify_version": "Không thể kiểm tra phiên bản ứng dụng.",
+  "fb_error_invalid_value": "(Các) giá trị không hợp lệ.",
+  "fb_error_post": "Lỗi khi xuất bản tâm trạng hoặc câu chuyện.",
+  "fb_version_info": "Phiên bản: {version} (Bản dựng {bản dựng})"
 }

@@ -54,5 +54,15 @@
   "github_access": "Gehen Sie zu GitHub",
   "donate": "Machen Sie eine Spende",
   "CGU_title": "Allgemeine Nutzungsbedingungen",
-  "Policy_title": "Datenschutzrichtlinie"
+  "Policy_title": "Datenschutzrichtlinie",
+  "fb_error_year": "Eine kurzlebige Nachricht darf 5 Jahre nicht überschreiten.",
+  "fb_error_month": "Die Anzahl der Monate darf 11 nicht überschreiten.",
+  "fb_error_day": "Die Anzahl der Tage darf 30 nicht überschreiten.",
+  "fb_error_hour": "Die Anzahl der Stunden darf 23 nicht überschreiten.",
+  "fb_error_minute": "Die Anzahl der Minuten darf 59 nicht überschreiten.",
+  "fb_error_seconds": "Die Anzahl der Sekunden darf 59 nicht überschreiten.",
+  "fb_error_verify_version": "Die Anwendungsversion konnte nicht überprüft werden.",
+  "fb_error_invalid_value": "Ungültige(r) Wert(e).",
+  "fb_error_post": "Fehler beim Veröffentlichen der Stimmung oder Geschichte.",
+  "fb_version_info": "Version: {version} (Build {build})"
 }

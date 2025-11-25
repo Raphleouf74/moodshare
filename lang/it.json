@@ -54,5 +54,15 @@
   "github_access": "Vai su GitHub",
   "donate": "Fai una donazione",
   "CGU_title": "Condizioni Generali d'Uso",
-  "Policy_title": "politica sulla riservatezza"
+  "Policy_title": "politica sulla riservatezza",
+  "fb_error_year": "Un messaggio effimero non può superare i 5 anni.",
+  "fb_error_month": "Il numero di mesi non può superare 11.",
+  "fb_error_day": "Il numero di giorni non può superare i 30.",
+  "fb_error_hour": "Il numero di ore non può superare le 23.",
+  "fb_error_minute": "Il numero di minuti non può superare 59.",
+  "fb_error_seconds": "Il numero di secondi non può superare 59.",
+  "fb_error_verify_version": "Impossibile verificare la versione dell'applicazione.",
+  "fb_error_invalid_value": "Valori non validi.",
+  "fb_error_post": "Errore durante la pubblicazione dell'atmosfera o della storia.",
+  "fb_version_info": "Versione: {version} (build {build})"
 }

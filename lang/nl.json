@@ -54,5 +54,15 @@
   "github_access": "Ga naar GitHub",
   "donate": "Doe een donatie",
   "CGU_title": "Algemene gebruiksvoorwaarden",
-  "Policy_title": "Privacybeleid"
+  "Policy_title": "Privacybeleid",
+  "fb_error_year": "Een kortstondige boodschap kan niet langer duren dan vijf jaar.",
+  "fb_error_month": "Het aantal maanden mag niet groter zijn dan 11.",
+  "fb_error_day": "Het aantal dagen mag niet groter zijn dan 30.",
+  "fb_error_hour": "Het aantal uren mag niet groter zijn dan 23.",
+  "fb_error_minute": "Het aantal minuten mag niet groter zijn dan 59.",
+  "fb_error_seconds": "Het aantal seconden mag niet groter zijn dan 59.",
+  "fb_error_verify_version": "Kan de applicatieversie niet controleren.",
+  "fb_error_invalid_value": "Ongeldige waarde(n).",
+  "fb_error_post": "Fout bij het publiceren van de sfeer of het verhaal.",
+  "fb_version_info": "Versie: {version} (build {build})"
 }

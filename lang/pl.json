@@ -54,5 +54,15 @@
   "github_access": "Przejdź do GitHuba",
   "donate": "Ofiarować",
   "CGU_title": "Ogólne Warunki Korzystania",
-  "Policy_title": "Polityka prywatności"
+  "Policy_title": "Polityka prywatności",
+  "fb_error_year": "Wiadomość efemeryczna nie może trwać dłużej niż 5 lat.",
+  "fb_error_month": "Liczba miesięcy nie może przekraczać 11.",
+  "fb_error_day": "Liczba dni nie może przekraczać 30.",
+  "fb_error_hour": "Liczba godzin nie może przekraczać 23.",
+  "fb_error_minute": "Liczba minut nie może przekraczać 59.",
+  "fb_error_seconds": "Liczba sekund nie może przekraczać 59.",
+  "fb_error_verify_version": "Nie można sprawdzić wersji aplikacji.",
+  "fb_error_invalid_value": "Nieprawidłowe wartości.",
+  "fb_error_post": "Błąd podczas publikowania nastroju lub historii.",
+  "fb_version_info": "Wersja: {wersja} (kompilacja {kompilacja})"
 }

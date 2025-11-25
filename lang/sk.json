@@ -54,5 +54,15 @@
   "github_access": "Prejdite na GitHub",
   "donate": "Darujte",
   "CGU_title": "Všeobecné podmienky používania",
-  "Policy_title": "Zásady ochrany osobných údajov"
+  "Policy_title": "Zásady ochrany osobných údajov",
+  "fb_error_year": "Prchavé posolstvo nemôže presiahnuť 5 rokov.",
+  "fb_error_month": "Počet mesiacov nemôže presiahnuť 11.",
+  "fb_error_day": "Počet dní nesmie presiahnuť 30.",
+  "fb_error_hour": "Počet hodín nesmie presiahnuť 23.",
+  "fb_error_minute": "Počet minút nesmie presiahnuť 59.",
+  "fb_error_seconds": "Počet sekúnd nesmie prekročiť 59.",
+  "fb_error_verify_version": "Nie je možné skontrolovať verziu aplikácie.",
+  "fb_error_invalid_value": "Neplatné hodnoty.",
+  "fb_error_post": "Chyba pri zverejňovaní nálady alebo príbehu.",
+  "fb_version_info": "Verzia: {version} (zostava {build})"
 }

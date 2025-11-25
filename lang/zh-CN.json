@@ -54,5 +54,15 @@
   "github_access": "前往 GitHub",
   "donate": "捐款",
   "CGU_title": "一般使用条件",
-  "Policy_title": "隐私政策"
+  "Policy_title": "隐私政策",
+  "fb_error_year": "一条短暂的消息不能超过 5 年。",
+  "fb_error_month": "月份数不能超过 11。",
+  "fb_error_day": "天数不能超过30天。",
+  "fb_error_hour": "小时数不能超过23小时。",
+  "fb_error_minute": "分钟数不能超过 59。",
+  "fb_error_seconds": "秒数不能超过 59。",
+  "fb_error_verify_version": "无法检查应用程序版本。",
+  "fb_error_invalid_value": "值无效。",
+  "fb_error_post": "发布心情或故事时出错。",
+  "fb_version_info": "版本：{version}（内部版本{build}）"
 }

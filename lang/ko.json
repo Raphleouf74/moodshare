@@ -54,5 +54,15 @@
   "github_access": "GitHub로 이동",
   "donate": "기부하기",
   "CGU_title": "일반 사용 조건",
-  "Policy_title": "개인 정보 보호 정책"
+  "Policy_title": "개인 정보 보호 정책",
+  "fb_error_year": "임시 메시지는 5년을 초과할 수 없습니다.",
+  "fb_error_month": "개월 수는 11을 초과할 수 없습니다.",
+  "fb_error_day": "일수는 30일을 초과할 수 없습니다.",
+  "fb_error_hour": "시간은 23시간을 초과할 수 없습니다.",
+  "fb_error_minute": "분은 59분을 초과할 수 없습니다.",
+  "fb_error_seconds": "초 수는 59를 초과할 수 없습니다.",
+  "fb_error_verify_version": "애플리케이션 버전을 확인할 수 없습니다.",
+  "fb_error_invalid_value": "잘못된 값입니다.",
+  "fb_error_post": "분위기나 스토리를 게시하는 중에 오류가 발생했습니다.",
+  "fb_version_info": "버전: {version}(빌드 {build})"
 }

@@ -54,5 +54,15 @@
   "github_access": "Pumunta sa Github",
   "donate": "Gumawa ng isang donasyon",
   "CGU_title": "Pangkalahatang mga kondisyon ng paggamit",
-  "Policy_title": "Patakaran sa Pagkapribado"
+  "Policy_title": "Patakaran sa Pagkapribado",
+  "fb_error_year": "Ang isang mensahe ng ephemeral ay hindi maaaring lumampas sa 5 taon.",
+  "fb_error_month": "Ang bilang ng mga buwan ay hindi maaaring lumampas sa 11.",
+  "fb_error_day": "Ang bilang ng mga araw ay hindi maaaring lumampas sa 30.",
+  "fb_error_hour": "Ang bilang ng oras ay hindi maaaring lumampas sa 23.",
+  "fb_error_minute": "Ang bilang ng mga minuto ay hindi maaaring lumampas sa 59.",
+  "fb_error_seconds": "Ang bilang ng mga segundo ay hindi maaaring lumampas sa 59.",
+  "fb_error_verify_version": "Hindi masuri ang bersyon ng application.",
+  "fb_error_invalid_value": "Di -wastong (mga) halaga.",
+  "fb_error_post": "Error kapag nai -publish ang mood o kwento.",
+  "fb_version_info": "Bersyon: {bersyon} (bumuo ng {build})"
 }

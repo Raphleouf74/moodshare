@@ -54,5 +54,15 @@
   "github_access": "Pergi ke Github",
   "donate": "Buat sumbangan",
   "CGU_title": "Syarat Penggunaan Umum",
-  "Policy_title": "Dasar Privasi"
+  "Policy_title": "Dasar Privasi",
+  "fb_error_year": "Mesej yang tidak lama tidak dapat melebihi 5 tahun.",
+  "fb_error_month": "Bilangan bulan tidak boleh melebihi 11.",
+  "fb_error_day": "Bilangan hari tidak boleh melebihi 30.",
+  "fb_error_hour": "Bilangan jam tidak boleh melebihi 23.",
+  "fb_error_minute": "Bilangan minit tidak boleh melebihi 59.",
+  "fb_error_seconds": "Bilangan detik tidak boleh melebihi 59.",
+  "fb_error_verify_version": "Tidak dapat memeriksa versi permohonan.",
+  "fb_error_invalid_value": "Nilai tidak sah.",
+  "fb_error_post": "Ralat ketika menerbitkan mood atau cerita.",
+  "fb_version_info": "Versi: {versi} (membina {binaan})"
 }

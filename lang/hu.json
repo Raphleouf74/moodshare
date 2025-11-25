@@ -54,5 +54,15 @@
   "github_access": "Lépjen a GitHub oldalra",
   "donate": "Tegyen adományt",
   "CGU_title": "Általános felhasználási feltételek",
-  "Policy_title": "Adatvédelmi szabályzat"
+  "Policy_title": "Adatvédelmi szabályzat",
+  "fb_error_year": "Egy átmeneti üzenet nem haladhatja meg az 5 évet.",
+  "fb_error_month": "A hónapok száma nem haladhatja meg a 11-et.",
+  "fb_error_day": "A napok száma nem haladhatja meg a 30-at.",
+  "fb_error_hour": "Az órák száma nem haladhatja meg a 23-at.",
+  "fb_error_minute": "A percek száma nem haladhatja meg az 59-et.",
+  "fb_error_seconds": "A másodpercek száma nem haladhatja meg az 59-et.",
+  "fb_error_verify_version": "Nem lehet ellenőrizni az alkalmazás verzióját.",
+  "fb_error_invalid_value": "Érvénytelen érték(ek).",
+  "fb_error_post": "Hiba a hangulat vagy a történet közzétételekor.",
+  "fb_version_info": "Verzió: {version} (Build {build})"
 }

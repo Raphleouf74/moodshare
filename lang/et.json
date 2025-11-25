@@ -54,5 +54,15 @@
   "github_access": "Minge GitHubi",
   "donate": "Tee annetus",
   "CGU_title": "Üldised kasutustingimused",
-  "Policy_title": "Privaatsuspoliitika"
+  "Policy_title": "Privaatsuspoliitika",
+  "fb_error_year": "Lühiajaline sõnum ei tohi ületada 5 aastat.",
+  "fb_error_month": "Kuude arv ei tohi ületada 11.",
+  "fb_error_day": "Päevade arv ei tohi ületada 30.",
+  "fb_error_hour": "Tundide arv ei tohi ületada 23.",
+  "fb_error_minute": "Minutite arv ei tohi ületada 59.",
+  "fb_error_seconds": "Sekundite arv ei tohi ületada 59.",
+  "fb_error_verify_version": "Rakenduse versiooni ei saa kontrollida.",
+  "fb_error_invalid_value": "Kehtetu väärtus(d).",
+  "fb_error_post": "Viga meeleolu või loo avaldamisel.",
+  "fb_version_info": "Versioon: {version} (järg {build})"
 }

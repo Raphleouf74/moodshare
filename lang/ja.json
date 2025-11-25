@@ -54,5 +54,15 @@
   "github_access": "GitHub に移動",
   "donate": "寄付をする",
   "CGU_title": "一般使用条件",
-  "Policy_title": "プライバシーポリシー"
+  "Policy_title": "プライバシーポリシー",
+  "fb_error_year": "一時的なメッセージは 5 年を超えることはできません。",
+  "fb_error_month": "月数は 11 を超えることはできません。",
+  "fb_error_day": "日数は 30 日を超えることはできません。",
+  "fb_error_hour": "時間数は 23 を超えることはできません。",
+  "fb_error_minute": "分数は 59 を超えることはできません。",
+  "fb_error_seconds": "秒数は 59 を超えることはできません。",
+  "fb_error_verify_version": "アプリケーションのバージョンを確認できません。",
+  "fb_error_invalid_value": "無効な値です。",
+  "fb_error_post": "ムードまたはストーリーを公開するときにエラーが発生しました。",
+  "fb_version_info": "バージョン : {version} (ビルド {build})"
 }

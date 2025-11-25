@@ -54,5 +54,15 @@
   "github_access": "Eikite į „GitHub“.",
   "donate": "Paaukokite",
   "CGU_title": "Bendrosios naudojimo sąlygos",
-  "Policy_title": "Privatumo politika"
+  "Policy_title": "Privatumo politika",
+  "fb_error_year": "Trumpalaikis pranešimas negali būti ilgesnis nei 5 metai.",
+  "fb_error_month": "Mėnesių skaičius negali viršyti 11.",
+  "fb_error_day": "Dienų skaičius negali viršyti 30.",
+  "fb_error_hour": "Valandų skaičius negali viršyti 23.",
+  "fb_error_minute": "Minučių skaičius negali viršyti 59.",
+  "fb_error_seconds": "Sekundžių skaičius negali viršyti 59.",
+  "fb_error_verify_version": "Nepavyko patikrinti programos versijos.",
+  "fb_error_invalid_value": "Netinkama (-os) vertė (-ės).",
+  "fb_error_post": "Klaida skelbiant nuotaiką ar istoriją.",
+  "fb_version_info": "Versija: {version} (Build {build})"
 }
