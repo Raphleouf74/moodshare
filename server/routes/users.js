@@ -1,7 +1,6 @@
-// routes/users.js
 const express = require("express");
 const router = express.Router();
-const db = require("../db/db");
+
 
 // GET /api/users/me
 router.get("/me", (req, res) => {

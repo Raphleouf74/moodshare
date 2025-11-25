@@ -1,10 +1,14 @@
-// routes/auth.js
 const express = require("express");
-const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
 const db = require("../db/db");
+
+const router = express.Router();
+
+
+
+
 
 
 const COOKIE_OPTIONS = {
