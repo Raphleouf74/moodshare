@@ -22,26 +22,26 @@ process.on("unhandledRejection", err => console.error("❌ Unhandled Rejection:"
 const app = express();
 
 // CORS
-const FRONTEND_URL = [
+// CORS — liste des origines autorisées
+const allowedOrigins = [
   "https://moodsharing.netlify.app",
   "http://127.0.0.1:5500",
   "http://127.0.0.1:5501",
-  "http://127.0.0.1:5502"
+  "http://127.0.0.1:5502",
+  "http://localhost:5500",
+  "http://localhost:5501",
+  "http://localhost:5502"
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
+    // Autorise requêtes server-side (no origin) OU origine dans la liste
     if (!origin || allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
+    console.log("❌ CORS blocked:", origin);  // debug
     return callback(new Error("Not allowed by CORS"));
   },
-  credentials: true
-}));
-
-
-app.use(cors({
-  origin: FRONTEND_URL,
   credentials: true
 }));
 
