@@ -1,6 +1,6 @@
 const passport =require('passport');
-const {Strategy, GoogleStrategy} = require('passport-google-oauth20');
-const { Strategy, InstagramStrategy }= require('passport-instagram');
+const GoogleStrategy = require('passport-google-oauth20');
+const InstagramStrategy= require('passport-instagram');
 
 const {
   GOOGLE_CLIENT_ID,
