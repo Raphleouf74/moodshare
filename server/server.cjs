@@ -22,7 +22,23 @@ process.on("unhandledRejection", err => console.error("❌ Unhandled Rejection:"
 const app = express();
 
 // CORS
-const FRONTEND_URL = process.env.FRONTEND_URL || "https://moodsharing.netlify.app";
+const allowedOrigins = [
+  "https://moodsharing.netlify.app",
+  "http://127.0.0.1:5500",
+  "http://127.0.0.1:5501",
+  "http://127.0.0.1:5502"
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true
+}));
+
 
 app.use(cors({
   origin: FRONTEND_URL,
@@ -57,7 +73,7 @@ const dataDir = path.join(__dirname, "data");
 const postsFile = path.join(dataDir, "posts.json");
 
 // Ensure dir exists
-if (!fs.existsSync(dataDir)){
+if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
 
