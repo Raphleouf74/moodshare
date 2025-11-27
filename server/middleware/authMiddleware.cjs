@@ -1,6 +1,6 @@
 // middleware/authMiddleware.js (assure-toi que c'est exactement ça)
 const jwt = require("jsonwebtoken");
-const db = require("../db/db");
+const db = require("../db/db.cjs");
 
 module.exports.requireAuth = (req, res, next) => {
     const token = req.cookies?.access_token;

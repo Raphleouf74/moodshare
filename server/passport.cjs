@@ -1,6 +1,6 @@
-import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { Strategy as InstagramStrategy } from 'passport-instagram';
+const passport =require('passport');
+const {Strategy, GoogleStrategy} = require('passport-google-oauth20');
+const { Strategy, InstagramStrategy }= require('passport-instagram');
 
 const {
   GOOGLE_CLIENT_ID,
