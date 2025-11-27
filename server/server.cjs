@@ -14,7 +14,6 @@ const authRoutes = require("./routes/auth.cjs");
 const usersRoutes = require("./routes/users.cjs");
 const db = require("./db/db.cjs");
 const { requireAuth } = require("./middleware/authMiddleware.cjs");
-const passport = require("./passport.cjs");
 
 
 process.on("uncaughtException", err => console.error("❌ Uncaught Exception:", err));
