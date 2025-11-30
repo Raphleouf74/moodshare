@@ -67,7 +67,7 @@ header.scrolled {
     left: 10px;
     border-radius: 15px;
     color: white;
-    background:  rgb(0, 0, 0, 0.2);
+    background: rgb(0, 0, 0, 0.2);
     -webkit-backdrop-filter: blur(-25px);
     backdrop-filter: blur(25px);
 }
@@ -83,7 +83,7 @@ header.scrolled h1 {
     opacity: 0;
 }
 
-header.scrolled .logodraw{
+header.scrolled .logodraw {
     scale: .8;
 }
 
@@ -251,7 +251,6 @@ a {
     width: 100%;
     height: 100%;
     display: flex;
-    align-items: center;
 }
 
 
@@ -749,32 +748,130 @@ section {
     border: 1px solid #ccc;
 }
 
-/* Skeleton loading animation */
+/* Skeleton loading animation - Défilement continu de carrés/cercles */
 .skeleton {
     position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    background-color: rgb(200, 200, 200, 0.4);
+    justify-content: center;
+    gap: 0;
+    height: 60px;
+    width: 150px;
+    border-radius: 12px;
 }
 
-.skeleton::after {
+/* Créer le conteneur pour le défilement infini */
+.skeleton::before {
     content: "";
-    display: block;
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
+    width: 200%;
     height: 100%;
-    background: linear-gradient(90deg, transparent 0%, #9695953f 50%, transparent 100%);
-    animation: skeleton-loading 1.2s infinite;
+    background: transparent;
+    animation: scrollShapes 3s linear infinite;
+    pointer-events: none;
 }
 
-@keyframes skeleton-loading {
+/* Formes individuelles (carrés et cercles) */
+.skeleton-circle {
+    position: absolute;
+    top: 40%;
+    left: 0;
+    margin-right: 10px;
+    transform: translateY(-90px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: slideRight 4s linear infinite;
+    background-color: rgb(100, 100, 100, 0.6);
+    border-radius: var(--shape-radius, 50%);
+    flex-shrink: 0;
+    margin-bottom: 15px;
+}
+
+/* Générer les carrés et cercles alternés avec keyframes individuelles */
+.skeleton-circle:nth-child(1) {
+    --shape-radius: 8px;
+    width: 40px;
+    height: 40px;
+    animation-delay: -0.75s;
+    animation-duration: 4s;
+    margin-bottom: 15px;
+    margin-right: 15px;
+}
+
+.skeleton-circle:nth-child(2) {
+    --shape-radius: 50%;
+    width: 35px;
+    height: 35px;
+    animation-delay: -1.5s;
+    animation-duration: 4s;
+    margin-bottom: 15px;
+    margin-right: 15px;
+}
+
+.skeleton-circle:nth-child(3) {
+    --shape-radius: 10px;
+    width: 45px;
+    height: 45px;
+    animation-delay: -2.25s;
+    animation-duration: 4s;
+    margin-bottom: 15px;
+    margin-right: 15px;
+}
+
+.skeleton-circle:nth-child(4) {
+    --shape-radius: 50%;
+    width: 32px;
+    height: 32px;
+    animation-delay: -3s;
+    animation-duration: 4s;
+    margin-bottom: 15px;
+    margin-right: 15px;
+}
+
+.skeleton-circle:nth-child(5) {
+    --shape-radius: 6px;
+    width: 38px;
+    height: 38px;
+    animation-delay: -3.75s;
+    animation-duration: 4s;
+    margin-bottom: 15px;
+    margin-right: 15px;
+}
+
+
+/* Animation de défilement : droite → gauche */
+@keyframes slideRight {
     0% {
-        transform: translateX(-100%);
+        left: 100%;
+        opacity: 0;
+    }
+
+    5% {
+        opacity: 1;
+    }
+
+    95% {
+        opacity: 1;
     }
 
     100% {
-        transform: translateX(100%);
+        left: -100px;
+        opacity: 0;
+    }
+}
+
+@keyframes scrollShapes {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
     }
 }
 

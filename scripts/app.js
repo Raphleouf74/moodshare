@@ -879,3 +879,50 @@ showFeedback("error", "fb_stories_down");
 
 console.log(`%c⚠ Avertissement: Le site est en développement, des erreurs ou des bugs peuvent survenir !`, "color: yellow; font-size: 25px; font-family: impact");
 console.log(`%c⚠ Attention: Ne rentrez JAMAIS de commande ici sans connaître son but !`, "color: orange; font-size: 25px; font-family: impact");
+
+
+
+
+
+
+// Fonction pour générer couleur RGB aléatoire avec alpha 0.5
+function getRandomSkeletonColor() {
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    return `rgba(${r}, ${g}, ${b}, 0.5)`;
+}
+
+// Générer les skeleton loaders avec cercles/carrés défilants
+function enhanceSkeletons() {
+    document.querySelectorAll('.skeleton').forEach(skeleton => {
+        if (skeleton.dataset.enhanced) return;
+
+        skeleton.innerHTML = '';
+        skeleton.dataset.enhanced = 'true';
+
+        // Créer 5 formes (alternance carré/cercle)
+        for (let i = 0; i < 5; i++) {
+            const shape = document.createElement('div');
+            shape.className = 'skeleton-circle';
+            
+            const isCircle = i % 2 === 0;
+            const size = 32 + Math.random() * 14; // 32-46px
+            const scale = 0.8 + Math.random() * 0.4; // 0.8-1.2
+            const color = getRandomSkeletonColor();
+            const borderRadius = isCircle ? '50%' : (4 + Math.random() * 6) + 'px';
+
+            shape.style.cssText = `
+                width: ${size}px;
+                height: ${size}px;
+                border-radius: ${borderRadius};
+                transform: scale(${scale});
+            `;
+            
+            skeleton.appendChild(shape);
+        }
+    });
+}
+
+// Lancer après le chargement du DOM
+document.addEventListener('DOMContentLoaded', enhanceSkeletons);
