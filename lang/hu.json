@@ -64,5 +64,12 @@
   "fb_error_verify_version": "Nem lehet ellenőrizni az alkalmazás verzióját.",
   "fb_error_invalid_value": "Érvénytelen érték(ek).",
   "fb_error_post": "Hiba a hangulat vagy a történet közzétételekor.",
-  "fb_version_info": "Verzió: {version} (Build {build})"
+  "fb_version_info": "Verzió: {version} (Build {build})",
+  "fb_stories_down": "A történetek jelenleg nem érhetők el.",
+  "years": "Évek",
+  "months": "Hónap",
+  "days": "Napok",
+  "hours": "Órák",
+  "minutes": "Jegyzőkönyv",
+  "seconds": "Másodpercek"
 }

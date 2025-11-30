@@ -64,5 +64,12 @@
   "fb_error_verify_version": "অ্যাপ্লিকেশন সংস্করণ পরীক্ষা করতে অক্ষম.",
   "fb_error_invalid_value": "অবৈধ মান(গুলি)।",
   "fb_error_post": "মেজাজ বা গল্প প্রকাশের সময় ত্রুটি।",
-  "fb_version_info": "সংস্করণ : {সংস্করণ} (বিল্ড {build})"
+  "fb_version_info": "সংস্করণ : {সংস্করণ} (বিল্ড {build})",
+  "fb_stories_down": "গল্প বর্তমানে উপলব্ধ নেই.",
+  "years": "বছর",
+  "months": "মাস",
+  "days": "দিন",
+  "hours": "ঘন্টা",
+  "minutes": "মিনিট",
+  "seconds": "সেকেন্ড"
 }

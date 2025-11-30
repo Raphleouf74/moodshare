@@ -64,5 +64,12 @@
   "fb_error_verify_version": "Versioni i aplikacionit nuk mund të kontrollohet.",
   "fb_error_invalid_value": "Vlera(at) e pavlefshme.",
   "fb_error_post": "Gabim gjatë publikimit të humorit ose tregimit.",
-  "fb_version_info": "Versioni: {version} (Ndërtimi {build})"
+  "fb_version_info": "Versioni: {version} (Ndërtimi {build})",
+  "fb_stories_down": "Historitë nuk janë aktualisht të disponueshme.",
+  "years": "vite",
+  "months": "muaj",
+  "days": "Ditët",
+  "hours": "orët",
+  "minutes": "Minutat",
+  "seconds": "Sekonda"
 }

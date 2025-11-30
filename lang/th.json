@@ -64,5 +64,12 @@
   "fb_error_verify_version": "ไม่สามารถตรวจสอบเวอร์ชันของแอปพลิเคชันได้",
   "fb_error_invalid_value": "ค่าไม่ถูกต้อง",
   "fb_error_post": "เกิดข้อผิดพลาดในการเผยแพร่อารมณ์หรือเรื่องราว",
-  "fb_version_info": "เวอร์ชัน : {version} (สร้าง {build})"
+  "fb_version_info": "เวอร์ชัน : {version} (สร้าง {build})",
+  "fb_stories_down": "ยังไม่มีเรื่องราวในขณะนี้",
+  "years": "ปี",
+  "months": "เดือน",
+  "days": "วัน",
+  "hours": "ชั่วโมง",
+  "minutes": "นาที",
+  "seconds": "วินาที"
 }

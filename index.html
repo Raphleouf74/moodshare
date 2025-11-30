@@ -18,78 +18,26 @@
     <div class="cursor-locate"></div>
   </div>
   <div id="loader">
-    <div class="logo-container">
-      <!-- M -->
-      <div class="letter">
-        <svg width="60" height="70" viewBox="0 0 60 70">
-          <path class="letter-path" d="M 5 65 L 5 5 L 30 35 L 55 5 L 55 65" />
-        </svg>
+    <div class="loader-content">
+      <div id="squareback"></div>
+      <div id="circleback"></div>
+      <div class="logo-container">
+        <div id="square"></div>
+        <div id="circle"></div>
       </div>
-
-      <!-- O -->
-      <div class="letter">
-        <svg width="60" height="70" viewBox="0 0 60 70">
-          <ellipse class="letter-path" cx="30" cy="35" rx="25" ry="30" />
-        </svg>
-      </div>
-
-      <!-- O -->
-      <div class="letter">
-        <svg width="60" height="70" viewBox="0 0 60 70">
-          <ellipse class="letter-path" cx="30" cy="35" rx="25" ry="30" />
-        </svg>
-      </div>
-
-      <!-- D -->
-      <div class="letter">
-        <svg width="60" height="70" viewBox="0 0 60 70">
-          <path class="letter-path" d="M 5 5 L 5 65 L 30 65 Q 55 65 55 35 Q 55 5 30 5 Z" />
-        </svg>
-      </div>
-
-      <!-- S -->
-      <div class="letter">
-        <svg width="60" height="70" viewBox="0 0 60 70">
-          <path class="letter-path"
-            d="M 50 15 Q 50 5 30 5 Q 10 5 10 20 Q 10 30 30 35 Q 50 40 50 50 Q 50 65 30 65 Q 10 65 10 55" />
-        </svg>
-      </div>
-
-      <!-- H -->
-      <div class="letter">
-        <svg width="60" height="70" viewBox="0 0 60 70">
-          <path class="letter-path" d="M 10 5 L 10 65 M 10 35 L 50 35 M 50 5 L 50 65" />
-        </svg>
-      </div>
-
-      <!-- A -->
-      <div class="letter">
-        <svg width="60" height="70" viewBox="0 0 60 70">
-          <path class="letter-path" d="M 5 65 L 30 5 L 55 65 M 15 45 L 45 45" />
-        </svg>
-      </div>
-
-      <!-- R -->
-      <div class="letter">
-        <svg width="60" height="70" viewBox="0 0 60 70">
-          <path class="letter-path" d="M 10 65 L 10 5 L 40 5 Q 55 5 55 20 Q 55 35 40 35 L 10 35 M 40 35 L 55 65" />
-        </svg>
-      </div>
-
-      <!-- E -->
-      <div class="letter">
-        <svg width="60" height="70" viewBox="0 0 60 70">
-          <path class="letter-path" d="M 50 5 L 10 5 L 10 65 L 50 65 M 10 35 L 45 35" />
-        </svg>
-      </div>
+      <div class="loading-text" data-i18n="loader_loading">Chargement...</div>
     </div>
-    <div class="loading-text" data-i18n="loader_loading">Chargement...</div>
   </div>
 
   <header>
     <div class="logo">
-      <h1 data-i18n="header_title">MoodShare</h1>
-      <p data-i18n="header_subtitle">Exprime ton mood</p>
+      <div class="mainlogo">
+        <div class="logodraw">
+          <div id="square"></div>
+          <div id="circle"></div>
+        </div>
+        <h1 data-i18n="header_title">MoodShare</h1>
+      </div>
     </div>
   </header>
   <nav class="menu" role="navigation" aria-label="Menu">
@@ -119,7 +67,7 @@
     </a>
   </nav>
   <section id="homeTab" class="tab active">
-    <div class="stories">
+    <!-- <div class="stories">
       <h2 data-i18n="home_stories">Stories</h2>
       <div class="stories-list">
         <div class="story add-story" id="addStoryBtn">
@@ -128,7 +76,7 @@
         <div class="story skeleton"></div>
         <div class="story skeleton"></div>
       </div>
-    </div>
+    </div> -->
 
     <div class="posts-section">
       <h2 data-i18n="home_recent_posts">Posts récents</h2>
@@ -191,27 +139,27 @@
         <div id="durationPicker" class="duration-picker">
           <div class="duration-input">
             <input type="number" id="durationYear" min="0" max="10" placeholder="aa" />
-            <label for="durationYear">Années</label>
+            <label for="durationYear" data-i18n="years">Années</label>
           </div>
           <div class="duration-input">
             <input type="number" id="durationMonths" min="0" max="11" placeholder="mm" />
-            <label for="durationMonths">Mois</label>
+            <label for="durationMonths" data-i18n="months">Mois</label>
           </div>
           <div class="duration-input">
             <input type="number" id="durationDays" min="0" max="31" placeholder="jj" />
-            <label for="durationDays">Jours</label>
+            <label for="durationDays" data-i18n="days">Jours</label>
           </div>
           <div class="duration-input">
             <input type="number" id="durationHours" min="0" max="23" placeholder="hh" />
-            <label for="durationHours">Heures</label>
+            <label for="durationHours" data-i18n="hours">Heures</label>
           </div>
           <div class="duration-input">
             <input type="number" id="durationMinutes" min="0" max="59" placeholder="mm" />
-            <label for="durationMinutes">Minutes</label>
+            <label for="durationMinutes" data-i18n="minutes">Minutes</label>
           </div>
           <div class="duration-input">
             <input type="number" id="durationSeconds" min="0" max="59" placeholder="ss" />
-            <label for="durationSeconds">Secondes</label>
+            <label for="durationSeconds" data-i18n="seconds">Secondes</label>
           </div>
         </div>
         <p data-i18n="create_expire_at">Le message disparaîtra le <span id="msgdeletetime"></span></p>
@@ -272,8 +220,8 @@
 
     <div id="MoreAccSettings">
       <p><b>Paramètres supplémentaires</b></p>
-      <a href="https://github.com/Raphleouf74/moodshare"><button class="hoverable" data-i18n="github_access">Accéder au GitHub</button
-          class="hoverable"></a>
+      <a href="https://github.com/Raphleouf74/moodshare"><button class="hoverable" data-i18n="github_access">Accéder au
+          GitHub</button class="hoverable"></a>
       <a href="https://ko-fi.com/moodshare" target="_blank" class="donate-btn">
         <button class="hoverable" data-i18n="donate">Faire un don</button class="hoverable">
       </a>

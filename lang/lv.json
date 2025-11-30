@@ -64,5 +64,12 @@
   "fb_error_verify_version": "Nevar pārbaudīt lietojumprogrammas versiju.",
   "fb_error_invalid_value": "Nederīga(-as) vērtība(-as).",
   "fb_error_post": "Kļūda, publicējot noskaņu vai stāstu.",
-  "fb_version_info": "Versija: {version} (Build {build})"
+  "fb_version_info": "Versija: {version} (Build {build})",
+  "fb_stories_down": "Stāsti pašlaik nav pieejami.",
+  "years": "Gadiem",
+  "months": "Mēnesis",
+  "days": "Dienas",
+  "hours": "Stundas",
+  "minutes": "Minūtes",
+  "seconds": "Sekundes"
 }

@@ -111,6 +111,10 @@ app.post("/api/posts", async (req, res) => {
   res.status(201).json(newPost);
 });
 
+app.post("/api/stories", async (req, res) => {
+  console.log("En cours de développement...")
+});
+
 // LIKE / UNLIKE
 app.post("/api/posts/:id/like", (req, res) => {
   const post = posts.find(p => p.id == req.params.id);

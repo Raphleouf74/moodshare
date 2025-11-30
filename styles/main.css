@@ -44,12 +44,14 @@ main {
 header {
     text-align: center;
     padding: 1rem;
+    width: 250px;
+    top: 10px;
+    left: 10px;
+    border-radius: 15px;
     height: 75px;
     background: transparent;
     position: fixed;
-    top: 0;
     display: flex;
-    width: 100%;
     align-items: center;
     justify-content: space-evenly;
     z-index: 2000;
@@ -60,21 +62,62 @@ header {
 
 header.scrolled {
     height: 30px;
+    width: 100px;
+    top: 10px;
+    left: 10px;
+    border-radius: 15px;
     color: white;
-    background: rgb(0, 0, 0, 0.25);
+    background:  rgb(0, 0, 0, 0.2);
     -webkit-backdrop-filter: blur(-25px);
     backdrop-filter: blur(25px);
+}
+
+
+header h1 {
+    opacity: 1;
+    transition: all 0.3s ease-in-out;
+    display: flex;
+}
+
+header.scrolled h1 {
+    opacity: 0;
+}
+
+header.scrolled .logodraw{
+    scale: .8;
+}
+
+.mainlogo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+}
+
+.logodraw {
+    height: 100%;
+    width: auto;
+    display: flex;
+    scale: .8;
     align-items: center;
     justify-content: center;
+    flex-direction: row;
+    transform: translateX(0);
+    transition: all 0.2s ease-in-out;
 }
 
-header p {
-    margin-top: -25px;
-    transition: all 0.3s ease-in-out;
+.logodraw #square {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background-color: #000;
 }
 
-header.scrolled p {
-    opacity: 0;
+.logodraw #circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #000;
 }
 
 
@@ -1348,7 +1391,6 @@ section#settingsTab a {
     border: none;
     font-size: 15px;
     font-weight: 500;
-    border-top: 1.5px grey solid;
     height: 50px;
     background-color: transparent;
     display: flex;
@@ -1364,12 +1406,23 @@ section#settingsTab a {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-color: rgba(0, 0, 0, 0.2);
+    -webkit-backdrop-filter: blur(55px);
+    backdrop-filter: blur(55px);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+.loader-content {
+    height: 650px;
+    padding: 50px;
+    border-radius: 15px;
+    width: 500px;
+    background-color: blue;
+    overflow: hidden;
 }
 
 #loader.hidden {
@@ -1377,110 +1430,172 @@ section#settingsTab a {
     visibility: hidden;
 }
 
+
+.loading-text {
+    position: absolute;
+    bottom: 25px;
+    font-size: 24px;
+    color: white;
+    margin-top: 20px;
+}
+
 .logo-container {
+    position: relative;
+    /* nécessaire pour l'orbite absolue */
     display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 8px;
     font-family: 'Arial Black', sans-serif;
     font-size: 80px;
     font-weight: bold;
+    /* optionnel : force une taille minimale pour l'orbite */
+    min-width: 260px;
+    min-height: 140px;
 }
 
-.letter {
+.logo-container #square {
+    /* garde le carré centré et au-dessus du cercle en orbite */
     position: relative;
-    display: inline-block;
+    z-index: 2;
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    display: flex;
+    margin-top: 150px;
+    justify-content: center;
+    align-items: center;
+    color: #667eea;
+    font-size: 60px;
+    border-radius: 12px;
+    /* supprime l'ancien pulse si tu veux uniquement l'orbite */
+    animation: none;
 }
 
-.letter svg {
-    display: block;
-    overflow: visible;
-}
-
-.letter-path {
-    fill: none;
-    stroke: white;
-    stroke-width: 8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-dasharray: 1000;
-    stroke-dashoffset: 1000;
-    animation: draw 3.5s ease-in-out infinite;
-}
-
-/* Décalage pour chaque lettre */
-.letter:nth-child(1) .letter-path {
-    animation-delay: 0s;
-}
-
-.letter:nth-child(2) .letter-path {
-    animation-delay: 0.1s;
-}
-
-.letter:nth-child(3) .letter-path {
-    animation-delay: 0.2s;
-}
-
-.letter:nth-child(4) .letter-path {
-    animation-delay: 0.3s;
-}
-
-.letter:nth-child(5) .letter-path {
-    animation-delay: 0.4s;
-}
-
-.letter:nth-child(6) .letter-path {
-    animation-delay: 0.5s;
-}
-
-.letter:nth-child(7) .letter-path {
-    animation-delay: 0.6s;
-}
-
-.letter:nth-child(8) .letter-path {
-    animation-delay: 0.7s;
-}
-
-.letter:nth-child(9) .letter-path {
-    animation-delay: 0.8s;
-}
-
-@keyframes draw {
-
-    0%,
-    100% {
-        stroke-dashoffset: 1000;
-        fill-opacity: 0;
-    }
-
-    40% {
-        stroke-dashoffset: 0;
-        fill-opacity: 0;
-    }
-
-
-
-}
-
-.loading-text {
+/* Cercle en orbite */
+.logo-container #circle {
     position: absolute;
-    bottom: 30%;
-    font-size: 20px;
-    color: white;
-    opacity: 0.8;
-    animation: pulse 1.5s ease-in-out infinite;
+    left: 50%;
+    top: 50%;
+    margin-top: 150px;
+    z-index: 1;
+    /* taille du rond */
+    width: 80px;
+    height: 80px;
+    background-color: white;
+    color: #764ba2;
+    font-size: 46px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* transform initial (centre + distance orbitale) :
+       translate(-50%,-50%) recentre l'élément sur le centre du container,
+       puis rotate(...) translateX(radius) rotate(...) fait l'orbite */
+    transform: translate(-90%, -90%) rotate(0deg) translateX(140px) rotate(0deg);
+
+    /* Durée totale 4s : 0->50% = 2s (sens forward), 50->100% = 2s (sens inverse) */
+    animation: orbit 4s linear infinite;
 }
 
-@keyframes pulse {
-
-    0%,
-    100% {
-        opacity: 0.4;
+/* keyframes : première moitié -> rotation 0 → 360,
+   seconde moitié -> retour 360 → 0 (donc inversion toutes les 2s) */
+@keyframes orbit {
+    0% {
+        transform: translate(-90%, -50%) rotate(0deg) translateX(140px) rotate(0deg);
     }
 
     50% {
-        opacity: 1;
+        transform: translate(-90%, -50%) rotate(360deg) translateX(140px) rotate(-360deg);
+    }
+
+    100% {
+        transform: translate(-90%, -50%) rotate(0deg) translateX(140px) rotate(0deg);
     }
 }
 
+/* Loader : orbite + échange de place toutes les 2s (cycle total 4s) */
+.logo-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: 'Arial Black', sans-serif;
+    font-size: 80px;
+    font-weight: bold;
+    min-width: 260px;
+    min-height: 140px;
+}
+
+/* Mettre les deux éléments en absolute pour pouvoir animer leur orbite/centre */
+.logo-container #square,
+.logo-container #circle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform-origin: center center;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Carré (centre par défaut) */
+.logo-container #square {
+    z-index: 2;
+    width: 100px;
+    height: 100px;
+    background-color: white;
+    color: #667eea;
+    font-size: 60px;
+    border-radius: 12px;
+    /* animation : au milieu passe en orbite */
+    animation: squareSwap 4s linear infinite;
+}
+
+/* Cercle (orbite par défaut) */
+.logo-container #circle {
+    z-index: 1;
+    width: 80px;
+    height: 80px;
+    background-color: white;
+    color: #764ba2;
+    font-size: 46px;
+    border-radius: 50%;
+    /* composition: rotate(orbitAngle) translateX(radius) rotate(selfAngle)
+       -> l'élément garde son orientation sauf quand on modifie le dernier rotate */
+    transform: translate(-50%, -50%) rotate(0deg) translateX(140px) rotate(0deg);
+    animation: circleSwap 4s linear infinite;
+}
+
+/* animation du cercle : orbite -> centre (spin) -> orbite inverse */
+@keyframes circleSwap {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg) translateX(140px) rotate(0deg);
+        z-index: 1;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(720deg) translateX(140px) rotate(0deg);
+        z-index: 1;
+    }
+}
+
+@keyframes squareSwap {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+        z-index: 1;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(-360deg);
+        z-index: 1;
+    }
+}
+
+/* animation du carré : centre -> orbite -> centre (inverse du cercle) */
 /* Quand le loader est actif, cache le contenu principal */
 body.loading>*:not(#loader) {
     display: none;
@@ -1496,19 +1611,115 @@ body.loading {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-color: rgba(0, 0, 0, 0.2);
+    -webkit-backdrop-filter: blur(55px);
+    backdrop-filter: blur(55px);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+/* IMPORTANT: position:relative pour que les enfants absolute soient
+   confinés et masqués par overflow: hidden */
+.loader-content {
+    position: relative;
+    /* <-- ajouté */
+    height: 500px;
+    padding: 15px;
+    border-radius: 15px;
+    width: 500px;
+    background-color: blue;
+    overflow: hidden;
+    /* animation d'entrée (slide up + fade) */
+    transform: translateY(18px);
+    opacity: 0;
+    animation: loaderEnter 480ms cubic-bezier(.22, .9, .36, 1) forwards;
+}
+
+/* entrée smooth */
+@keyframes loaderEnter {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 #loader.hidden {
     opacity: 0;
     visibility: hidden;
-    pointer-events: none;
 }
+
+/* placer le squareback RELATIVEMENT à .loader-content et corriger transform */
+#squareback {
+    position: absolute;
+    /* déjà absolute, OK */
+    width: 200px;
+    height: 200px;
+    background-color: rgba(255, 255, 255, 0.28);
+    border-radius: 20px;
+    /* centrer par rapport au conteneur loader-content */
+    top: 50%;
+    left: 50%;
+    /* scale/rotate corrigés dans transform */
+    transform: translate(-50%, -50%) scale(1.8) rotate(0deg);
+    pointer-events: none;
+    will-change: transform, opacity;
+    transition: transform .6s cubic-bezier(.22, .9, .36, 1), opacity .4s ease;
+}
+
+#circleback {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    /* centrer par rapport au conteneur loader-content */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.5);
+    pointer-events: none;
+    will-change: transform, opacity;
+    transition: transform .6s cubic-bezier(.22, .9, .36, 1), opacity .4s ease;
+}
+
+/* si tu veux un léger slide-in pour le squareback */
+@keyframes squarebackIn {
+    from {
+        opacity: 0;
+        transform: translateX(-500px) translateY(-300px) scale(2) rotate(0deg)
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-325px) translateY(-200px) scale(3) rotate(10deg);
+    }
+}
+
+/* si tu veux un léger slide-in pour le squareback */
+@keyframes circlebackIn {
+    from {
+        opacity: 0;
+        transform: translateX(500px) translateY(300px) scale(2) rotate(0deg)
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(200px) translateY(150px) scale(3) rotate(10deg);
+    }
+}
+
+.loader-content #squareback {
+    animation: squarebackIn 560ms cubic-bezier(.22, .9, .36, 1) both;
+    animation-delay: .2s;
+}
+
+.loader-content #circleback {
+    animation: circlebackIn 560ms cubic-bezier(.22, .9, .36, 1) both;
+    animation-delay: .6s;
+}
+
 
 /* Curseur caché par défaut sur mobile */
 @media (hover: hover) and (pointer: fine) {
@@ -1598,8 +1809,7 @@ body.loading {
 @media (max-width: 760px) {
 
     .cursor-settings,
-    .cursor-settings label
-    .cursor-dot,
+    .cursor-settings label .cursor-dot,
     .custom-cursor {
         display: none;
     }
@@ -1629,7 +1839,7 @@ body.loading {
 .language-picker {
     position: relative;
     width: 520px;
-    
+
     margin: 0.5rem 0;
 }
 
@@ -1650,7 +1860,7 @@ body.loading {
     align-items: center;
     padding: 10px 12px;
     border-radius: 12px;
-    border: black 1px solid;
+    border: green 3px solid;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.03));
     backdrop-filter: blur(6px);
     cursor: pointer;
@@ -1670,7 +1880,7 @@ body.loading {
 }
 
 .lp-popup {
-    background: rgb(255,255,255,0.6);
+    background: rgb(255, 255, 255, 0.6);
     -webkit-backdrop-filter: blur(15px);
     backdrop-filter: blur(15px);
     position: absolute;

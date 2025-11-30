@@ -70,13 +70,7 @@ async function checkSiteVersion() {
         localStorage.setItem('siteVersion', latest);
         localStorage.setItem('buildVersion', latestBuild);
 
-        setTimeout(() => {
-            showFeedback("info", "fb_version_info", {
-                version: latest,
-                build: latestBuild
-            });
-
-        }, 1500);
+        console.log(`%c Version du site: ${latest} (Build ${latestBuild})`, "color: blue; font-size: 16px;");
     } catch (error) {
         console.error('Erreur lors de la vérification de la version du site:', error);
         showFeedback("error", "fb_error_verify_version");
@@ -881,7 +875,7 @@ if (openBtn) {
     });
 }
 
-
+showFeedback("error", "fb_stories_down");
 
 console.log(`%c⚠ Avertissement: Le site est en développement, des erreurs ou des bugs peuvent survenir !`, "color: yellow; font-size: 25px; font-family: impact");
 console.log(`%c⚠ Attention: Ne rentrez JAMAIS de commande ici sans connaître son but !`, "color: orange; font-size: 25px; font-family: impact");

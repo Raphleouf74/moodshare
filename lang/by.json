@@ -64,5 +64,12 @@
   "fb_error_verify_version": "Немагчыма праверыць версію прыкладання.",
   "fb_error_invalid_value": "Няправільнае значэнне(-я).",
   "fb_error_post": "Памылка пры публікацыі настрою або гісторыі.",
-  "fb_version_info": "Версія: {version} (зборка {build})"
+  "fb_version_info": "Версія: {version} (зборка {build})",
+  "fb_stories_down": "Гісторыі зараз недаступныя.",
+  "years": "гады",
+  "months": "Месяц",
+  "days": "дзён",
+  "hours": "Гадзіны",
+  "minutes": "хвіліны",
+  "seconds": "Секунды"
 }

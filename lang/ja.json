@@ -64,5 +64,12 @@
   "fb_error_verify_version": "アプリケーションのバージョンを確認できません。",
   "fb_error_invalid_value": "無効な値です。",
   "fb_error_post": "ムードまたはストーリーを公開するときにエラーが発生しました。",
-  "fb_version_info": "バージョン : {version} (ビルド {build})"
+  "fb_version_info": "バージョン : {version} (ビルド {build})",
+  "fb_stories_down": "現在ストーリーは利用できません。",
+  "years": "年",
+  "months": "月",
+  "days": "日数",
+  "hours": "営業時間",
+  "minutes": "分",
+  "seconds": "秒"
 }

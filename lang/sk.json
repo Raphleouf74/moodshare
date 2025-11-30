@@ -64,5 +64,12 @@
   "fb_error_verify_version": "Nie je možné skontrolovať verziu aplikácie.",
   "fb_error_invalid_value": "Neplatné hodnoty.",
   "fb_error_post": "Chyba pri zverejňovaní nálady alebo príbehu.",
-  "fb_version_info": "Verzia: {version} (zostava {build})"
+  "fb_version_info": "Verzia: {version} (zostava {build})",
+  "fb_stories_down": "Príbehy momentálne nie sú k dispozícii.",
+  "years": "rokov",
+  "months": "mesiac",
+  "days": "dní",
+  "hours": "hodiny",
+  "minutes": "Minúty",
+  "seconds": "sekúnd"
 }

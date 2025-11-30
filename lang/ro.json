@@ -64,5 +64,12 @@
   "fb_error_verify_version": "Nu se poate verifica versiunea aplicației.",
   "fb_error_invalid_value": "Valori nevalide.",
   "fb_error_post": "Eroare la publicarea stării de spirit sau a poveștii.",
-  "fb_version_info": "Versiune: {version} (Build {build})"
+  "fb_version_info": "Versiune: {version} (Build {build})",
+  "fb_stories_down": "Poveștile nu sunt disponibile momentan.",
+  "years": "ani",
+  "months": "Lună",
+  "days": "Zile",
+  "hours": "Ore",
+  "minutes": "Minute",
+  "seconds": "secunde"
 }

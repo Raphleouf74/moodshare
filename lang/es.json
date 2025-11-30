@@ -64,5 +64,12 @@
   "fb_error_verify_version": "No se puede comprobar la versión de la aplicación.",
   "fb_error_invalid_value": "Valores no válidos.",
   "fb_error_post": "Error al publicar el estado de ánimo o la historia.",
-  "fb_version_info": "Versión: {versión} (compilación {compilación})"
+  "fb_version_info": "Versión: {versión} (compilación {compilación})",
+  "fb_stories_down": "Las historias no están disponibles actualmente.",
+  "years": "Años",
+  "months": "Mes",
+  "days": "Días",
+  "hours": "Horas",
+  "minutes": "Minutos",
+  "seconds": "Artículos de segunda clase"
 }

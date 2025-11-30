@@ -64,5 +64,12 @@
   "fb_error_verify_version": "Nie można sprawdzić wersji aplikacji.",
   "fb_error_invalid_value": "Nieprawidłowe wartości.",
   "fb_error_post": "Błąd podczas publikowania nastroju lub historii.",
-  "fb_version_info": "Wersja: {wersja} (kompilacja {kompilacja})"
+  "fb_version_info": "Wersja: {wersja} (kompilacja {kompilacja})",
+  "fb_stories_down": "Historie nie są obecnie dostępne.",
+  "years": "Lata",
+  "months": "Miesiąc",
+  "days": "Dni",
+  "hours": "Godziny",
+  "minutes": "Protokół",
+  "seconds": "Towary drugiej jakości"
 }

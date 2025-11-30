@@ -64,5 +64,12 @@
   "fb_error_verify_version": "애플리케이션 버전을 확인할 수 없습니다.",
   "fb_error_invalid_value": "잘못된 값입니다.",
   "fb_error_post": "분위기나 스토리를 게시하는 중에 오류가 발생했습니다.",
-  "fb_version_info": "버전: {version}(빌드 {build})"
+  "fb_version_info": "버전: {version}(빌드 {build})",
+  "fb_stories_down": "현재 스토리를 사용할 수 없습니다.",
+  "years": "연령",
+  "months": "월",
+  "days": "날",
+  "hours": "시간",
+  "minutes": "분",
+  "seconds": "초"
 }

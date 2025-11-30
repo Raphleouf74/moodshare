@@ -3,7 +3,7 @@
   "__flag__": "🇵🇹",
   "__code__": "pt",
   "loader_loading": "Carregando...",
-  "header_title": "HumorShare",
+  "header_title": "MoodShare",
   "header_subtitle": "Exprime ton humor",
   "nav_home": "Bem-vindo",
   "nav_posts": "Postagens",
@@ -64,5 +64,12 @@
   "fb_error_verify_version": "Não foi possível verificar a versão do aplicativo.",
   "fb_error_invalid_value": "Valores inválidos.",
   "fb_error_post": "Erro ao publicar o humor ou a história.",
-  "fb_version_info": "Versão: {versão} (Build {build})"
+  "fb_version_info": "Versão: {versão} (Build {build})",
+  "fb_stories_down": "As histórias não estão disponíveis no momento.",
+  "years": "Anos",
+  "months": "Mês",
+  "days": "Dias",
+  "hours": "Horas",
+  "minutes": "Minutos",
+  "seconds": "Segundos"
 }

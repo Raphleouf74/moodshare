@@ -64,5 +64,12 @@
   "fb_error_verify_version": "Unable to check application version.",
   "fb_error_invalid_value": "Invalid value(s).",
   "fb_error_post": "Error when publishing the mood or story.",
-  "fb_version_info": "Version : {version} (Build {build})"
+  "fb_version_info": "Version : {version} (Build {build})",
+  "fb_stories_down": "Stories are not currently available.",
+  "years": "Years",
+  "months": "Month",
+  "days": "Days",
+  "hours": "Hours",
+  "minutes": "Minutes",
+  "seconds": "Seconds"
 }

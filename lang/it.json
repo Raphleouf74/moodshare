@@ -64,5 +64,12 @@
   "fb_error_verify_version": "Impossibile verificare la versione dell'applicazione.",
   "fb_error_invalid_value": "Valori non validi.",
   "fb_error_post": "Errore durante la pubblicazione dell'atmosfera o della storia.",
-  "fb_version_info": "Versione: {version} (build {build})"
+  "fb_version_info": "Versione: {version} (build {build})",
+  "fb_stories_down": "Le storie non sono al momento disponibili.",
+  "years": "Anni",
+  "months": "Mese",
+  "days": "Giorni",
+  "hours": "Ore",
+  "minutes": "Minuti",
+  "seconds": "Secondi"
 }

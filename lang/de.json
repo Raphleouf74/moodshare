@@ -64,5 +64,12 @@
   "fb_error_verify_version": "Die Anwendungsversion konnte nicht überprüft werden.",
   "fb_error_invalid_value": "Ungültige(r) Wert(e).",
   "fb_error_post": "Fehler beim Veröffentlichen der Stimmung oder Geschichte.",
-  "fb_version_info": "Version: {version} (Build {build})"
+  "fb_version_info": "Version: {version} (Build {build})",
+  "fb_stories_down": "Geschichten sind derzeit nicht verfügbar.",
+  "years": "Jahre",
+  "months": "Monat",
+  "days": "Tage",
+  "hours": "Std",
+  "minutes": "Minuten",
+  "seconds": "Sekunden"
 }

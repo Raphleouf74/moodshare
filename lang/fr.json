@@ -21,7 +21,6 @@
     "create_share": "Partager",
     "create_ephemeral": "Message éphémère",
     "create_story": "Mettre en story",
-    "create_expire_at": "Le message disparaîtra le",
     "inbox_title": "Boîte de réception",
     "inbox_empty": "Vos notifications apparaîtront ici.",
     "profile_avatar": "Votre avatar",
@@ -64,5 +63,12 @@
     "fb_error_verify_version": "Impossible de vérifier la version de l'application.",
     "fb_error_invalid_value": "Valeur(s) invalide(s).",
     "fb_error_post": "Erreur lors de la publication du mood ou de la story.",
-    "fb_version_info": "Version : {version} (Build {build})"
+    "fb_stories_down": "Les stories ne sont pas disponibles pour le moment.",
+    "years": "Années",
+    "months": "Mois",
+    "days": "Jours",
+    "hours": "Heures",
+    "minutes": "Minutes",
+    "seconds": "Secondes",
+    "create_expire_at": "Le message disparaîtra le <span id=\"msgdeletetime\"></span>"
 }

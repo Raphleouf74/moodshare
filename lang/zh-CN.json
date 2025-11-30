@@ -64,5 +64,12 @@
   "fb_error_verify_version": "无法检查应用程序版本。",
   "fb_error_invalid_value": "值无效。",
   "fb_error_post": "发布心情或故事时出错。",
-  "fb_version_info": "版本：{version}（内部版本{build}）"
+  "fb_version_info": "版本：{version}（内部版本{build}）",
+  "fb_stories_down": "目前无法获取故事。",
+  "years": "年",
+  "months": "月",
+  "days": "天",
+  "hours": "时间",
+  "minutes": "分钟",
+  "seconds": "秒数"
 }

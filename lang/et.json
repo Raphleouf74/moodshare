@@ -64,5 +64,12 @@
   "fb_error_verify_version": "Rakenduse versiooni ei saa kontrollida.",
   "fb_error_invalid_value": "Kehtetu väärtus(d).",
   "fb_error_post": "Viga meeleolu või loo avaldamisel.",
-  "fb_version_info": "Versioon: {version} (järg {build})"
+  "fb_version_info": "Versioon: {version} (järg {build})",
+  "fb_stories_down": "Lood pole praegu saadaval.",
+  "years": "Aastaid",
+  "months": "Kuu",
+  "days": "Päevad",
+  "hours": "Tundi",
+  "minutes": "Minutid",
+  "seconds": "Sekundid"
 }

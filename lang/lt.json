@@ -64,5 +64,12 @@
   "fb_error_verify_version": "Nepavyko patikrinti programos versijos.",
   "fb_error_invalid_value": "Netinkama (-os) vertė (-ės).",
   "fb_error_post": "Klaida skelbiant nuotaiką ar istoriją.",
-  "fb_version_info": "Versija: {version} (Build {build})"
+  "fb_version_info": "Versija: {version} (Build {build})",
+  "fb_stories_down": "Istorijos šiuo metu nepasiekiamos.",
+  "years": "Metai",
+  "months": "Mėnuo",
+  "days": "Dienos",
+  "hours": "Valandos",
+  "minutes": "Minutės",
+  "seconds": "sekundės"
 }
