@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>MoodShare</title>
-  <link rel="icon" href="/assets/icons/logo_cropped.jpg" />
+  <link rel="icon" href="/assets/logo/logo_cropped.jpg" />
   <link rel="stylesheet" href="/styles/main.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" />
   <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
@@ -61,10 +61,7 @@
       <span class="link-icon">account_circle</span>
       <p class="link-title" data-i18n="nav_profile">Profil</p>
     </a>
-    <a class="hoverable link" id="settingsTab">
-      <span class="link-icon">settings</span>
-      <p class="link-title" data-i18n="nav_settings">Paramètres</p>
-    </a>
+
   </nav>
   <section id="homeTab" class="tab active">
     <!-- <div class="stories">
@@ -185,7 +182,7 @@
 
   <section id="profileTab" class="tab hidden">
     <div id="accountinfo">
-      <img src="/assets/icons/logo_cropped.jpg" alt="AccountAvatar" id="accountavatar" />
+      <img src="/assets/logo/logo_cropped.jpg" alt="AccountAvatar" id="accountavatar" />
       <p data-i18n="profile_avatar">Votre avatar</p>
 
       <!-- <button class="hoverable" id="editProfileBtn">
@@ -220,19 +217,22 @@
 
     <div id="MoreAccSettings">
       <p><b>Paramètres supplémentaires</b></p>
-      <a href="https://github.com/Raphleouf74/moodshare"><button class="hoverable" data-i18n="github_access">Accéder au
-          GitHub</button class="hoverable"></a>
+      <a href="https://github.com/Raphleouf74/moodshare">
+        <button class="hoverable" data-i18n="github_access">Accéder au GitHub
+        </button></a>
       <a href="https://ko-fi.com/moodshare" target="_blank" class="donate-btn">
-        <button class="hoverable" data-i18n="donate">Faire un don</button class="hoverable">
+        <button class="hoverable" data-i18n="donate">Faire un don
+        </button>
       </a>
       <a href="Legal/TERMS_OF_SERVICE.html"><button class="hoverable">
           <p data-i18n="CGU_title">Conditions générales du service</p>
-          <span class="material-symbols-rounded">article</span>
-        </button class="hoverable"></a>
+        </button></a>
       <a href="Legal/PRIVACY_POLICY.html"><button class="hoverable">
           <p data-i18n="Policy_title">Politique de confidentialité</p>
-          <span class="material-symbols-rounded">article</span>
-        </button class="hoverable"></a>
+        </button></a>
+      <button class="hoverable" id="goToSettingsBtn">
+        <b><p data-i18n="nav_settings">Paramètres</p></b>
+      </button>
       <!-- <button class="hoverable" id="logoutBtn">Se déconnecter</button class="hoverable">
       <p><b>Gestion du compte</b></p>
       <button class="hoverable" id="editAccountBtn">Modifier les informations</button class="hoverable">

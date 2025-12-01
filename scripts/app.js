@@ -274,7 +274,7 @@ tabs.forEach(tab => {
         // Ajoute la classe active au bouton cliqué
         tab.classList.add("active");
 
-        // Récupère l'ID du bouton (ex: "Home", "Posts", etc.)
+        // Récupère l'ID du bouton (ex: "homeTab", "postsTab", etc.)
         const tabId = tab.id;
 
         // Affiche la section correspondante
@@ -289,6 +289,30 @@ tabs.forEach(tab => {
         });
     });
 });
+
+// 🔥 Bouton Settings dans le profil → navigue vers settingsTab
+const goToSettingsBtn = document.getElementById('goToSettingsBtn');
+if (goToSettingsBtn) {
+    goToSettingsBtn.addEventListener('click', () => {
+        // Enlève active de tous les tabs nav
+        tabs.forEach(btn => btn.classList.remove("active"));
+        
+        // Active le settingsTab dans nav (s'il existe)
+        const settingsNavTab = document.querySelector('nav a#settingsTab');
+        if (settingsNavTab) settingsNavTab.classList.add('active');
+
+        // Affiche la section settingsTab
+        sections.forEach(section => {
+            if (section.id === 'settingsTab') {
+                section.classList.add("active");
+                section.classList.remove("hidden");
+            } else {
+                section.classList.remove("active");
+                section.classList.add("hidden");
+            }
+        });
+    });
+};
 
 const editBtn = document.getElementById('editEmojiBtn');
 const pickerContainer = document.getElementById('emojiPickerContainer');
@@ -881,18 +905,6 @@ console.log(`%c⚠ Avertissement: Le site est en développement, des erreurs ou 
 console.log(`%c⚠ Attention: Ne rentrez JAMAIS de commande ici sans connaître son but !`, "color: orange; font-size: 25px; font-family: impact");
 
 
-
-
-
-
-// Fonction pour générer couleur RGB aléatoire avec alpha 0.5
-function getRandomSkeletonColor() {
-    const r = Math.floor(Math.random() * 256);
-    const g = Math.floor(Math.random() * 256);
-    const b = Math.floor(Math.random() * 256);
-    return `rgba(${r}, ${g}, ${b}, 0.5)`;
-}
-
 // Générer les skeleton loaders avec cercles/carrés défilants
 function enhanceSkeletons() {
     document.querySelectorAll('.skeleton').forEach(skeleton => {
@@ -902,23 +914,20 @@ function enhanceSkeletons() {
         skeleton.dataset.enhanced = 'true';
 
         // Créer 5 formes (alternance carré/cercle)
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 7; i++) {
             const shape = document.createElement('div');
             shape.className = 'skeleton-circle';
-            
+
             const isCircle = i % 2 === 0;
-            const size = 32 + Math.random() * 14; // 32-46px
-            const scale = 0.8 + Math.random() * 0.4; // 0.8-1.2
-            const color = getRandomSkeletonColor();
-            const borderRadius = isCircle ? '50%' : (4 + Math.random() * 6) + 'px';
+            const borderRadius = isCircle ? '50%' : '15px';
 
             shape.style.cssText = `
-                width: ${size}px;
-                height: ${size}px;
+                width: 60px;
+                height: 60px;
                 border-radius: ${borderRadius};
-                transform: scale(${scale});
+                transform: scale(1) translateY(-22px);
             `;
-            
+
             skeleton.appendChild(shape);
         }
     });

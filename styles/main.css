@@ -66,8 +66,6 @@ header.scrolled {
     top: 10px;
     left: 10px;
     border-radius: 15px;
-    color: white;
-    background: rgb(0, 0, 0, 0.2);
     -webkit-backdrop-filter: blur(-25px);
     backdrop-filter: blur(25px);
 }
@@ -81,6 +79,7 @@ header h1 {
 
 header.scrolled h1 {
     opacity: 0;
+    transform: translateY(-3px);
 }
 
 header.scrolled .logodraw {
@@ -785,7 +784,7 @@ section {
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: slideRight 4s linear infinite;
+    animation: slideRight 2s linear infinite;
     background-color: rgb(100, 100, 100, 0.6);
     border-radius: var(--shape-radius, 50%);
     flex-shrink: 0;
@@ -797,8 +796,8 @@ section {
     --shape-radius: 8px;
     width: 40px;
     height: 40px;
-    animation-delay: -0.75s;
-    animation-duration: 4s;
+    animation-delay: -5s;
+    animation-duration: 2s;
     margin-bottom: 15px;
     margin-right: 15px;
 }
@@ -808,7 +807,7 @@ section {
     width: 35px;
     height: 35px;
     animation-delay: -1.5s;
-    animation-duration: 4s;
+    animation-duration: 2s;
     margin-bottom: 15px;
     margin-right: 15px;
 }
@@ -817,8 +816,8 @@ section {
     --shape-radius: 10px;
     width: 45px;
     height: 45px;
-    animation-delay: -2.25s;
-    animation-duration: 4s;
+    animation-delay: -2s;
+    animation-duration: 2s;
     margin-bottom: 15px;
     margin-right: 15px;
 }
@@ -827,8 +826,8 @@ section {
     --shape-radius: 50%;
     width: 32px;
     height: 32px;
-    animation-delay: -3s;
-    animation-duration: 4s;
+    animation-delay: -2.5s;
+    animation-duration: 2s;
     margin-bottom: 15px;
     margin-right: 15px;
 }
@@ -837,8 +836,28 @@ section {
     --shape-radius: 6px;
     width: 38px;
     height: 38px;
-    animation-delay: -3.75s;
-    animation-duration: 4s;
+    animation-delay: -3s;
+    animation-duration: 2s;
+    margin-bottom: 15px;
+    margin-right: 15px;
+}
+
+.skeleton-circle:nth-child(6) {
+    --shape-radius: 6px;
+    width: 38px;
+    height: 38px;
+    animation-delay: -3.5s;
+    animation-duration: 2s;
+    margin-bottom: 15px;
+    margin-right: 15px;
+}
+
+.skeleton-circle:nth-child(7) {
+    --shape-radius: 6px;
+    width: 38px;
+    height: 38px;
+    animation-delay: -4s;
+    animation-duration: 2s;
     margin-bottom: 15px;
     margin-right: 15px;
 }
@@ -1467,6 +1486,9 @@ section#profileTab {
     border-top: 1.5px grey solid;
     height: 50px;
     background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Paramètres */
