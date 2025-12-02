@@ -1519,13 +1519,14 @@ section#settingsTab a {
 
 
 /* loader */
+
 #loader {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: blue;
     -webkit-backdrop-filter: blur(55px);
     backdrop-filter: blur(55px);
     display: flex;
@@ -1535,14 +1536,6 @@ section#settingsTab a {
     transition: all 0.5s ease;
 }
 
-.loader-content {
-    height: 650px;
-    padding: 50px;
-    border-radius: 15px;
-    width: 500px;
-    background-color: blue;
-    overflow: hidden;
-}
 
 #loader.hidden {
     opacity: 0;
@@ -1556,21 +1549,6 @@ section#settingsTab a {
     font-size: 24px;
     color: white;
     margin-top: 20px;
-}
-
-.logo-container {
-    position: relative;
-    /* nécessaire pour l'orbite absolue */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-family: 'Arial Black', sans-serif;
-    font-size: 80px;
-    font-weight: bold;
-    /* optionnel : force une taille minimale pour l'orbite */
-    min-width: 260px;
-    min-height: 140px;
 }
 
 .logo-container #square {
@@ -1640,6 +1618,7 @@ section#settingsTab a {
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
     gap: 8px;
     font-family: 'Arial Black', sans-serif;
     font-size: 80px;
@@ -1724,34 +1703,17 @@ body.loading {
     overflow: hidden;
 }
 
-#loader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.2);
-    -webkit-backdrop-filter: blur(55px);
-    backdrop-filter: blur(55px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    transition: all 0.5s ease;
-}
+
 
 /* IMPORTANT: position:relative pour que les enfants absolute soient
    confinés et masqués par overflow: hidden */
 .loader-content {
     position: relative;
-    /* <-- ajouté */
-    height: 500px;
+    height: 50%;
     padding: 15px;
     border-radius: 15px;
     width: 500px;
-    background-color: blue;
-    overflow: hidden;
-    /* animation d'entrée (slide up + fade) */
+    background-color: transparent;
     transform: translateY(18px);
     opacity: 0;
     animation: loaderEnter 480ms cubic-bezier(.22, .9, .36, 1) forwards;
@@ -1782,7 +1744,7 @@ body.loading {
     top: 50%;
     left: 50%;
     /* scale/rotate corrigés dans transform */
-    transform: translate(-50%, -50%) scale(1.8) rotate(0deg);
+    transform: translate(-50%, -50%) scale(10) rotate(0deg);
     pointer-events: none;
     will-change: transform, opacity;
     transition: transform .6s cubic-bezier(.22, .9, .36, 1), opacity .4s ease;
@@ -1807,12 +1769,12 @@ body.loading {
 @keyframes squarebackIn {
     from {
         opacity: 0;
-        transform: translateX(-500px) translateY(-300px) scale(2) rotate(0deg)
+        transform: translateX(-1000px) translateY(-300px) scale(5) rotate(40deg)
     }
 
     to {
         opacity: 1;
-        transform: translateX(-325px) translateY(-200px) scale(3) rotate(10deg);
+        transform: translateX(-905px) translateY(-500px) scale(7.5) rotate(10deg);
     }
 }
 
@@ -1825,7 +1787,7 @@ body.loading {
 
     to {
         opacity: 1;
-        transform: translateX(200px) translateY(150px) scale(3) rotate(10deg);
+        transform: translateX(500px) translateY(150px) scale(7.5) rotate(10deg);
     }
 }
 
