@@ -71,5 +71,8 @@
   "days": "Päevad",
   "hours": "Tundi",
   "minutes": "Minutid",
-  "seconds": "Sekundid"
+  "seconds": "Sekundid",
+  "fb_xss_detected": "Sõnumis tuvastati skript. Skripti lisamine postitustesse on <b>ametlikult keelatud</b>.",
+  "fb_xss_ban_warning": "Korduvate skriptisüstide katsete tõttu on teil funktsioonide avaldamine ajutiselt keelatud. Palun järgige kasutusreegleid.",
+  "fb_xss_unblocked": "Avaldamisfunktsioonid on uuesti lubatud."
 }

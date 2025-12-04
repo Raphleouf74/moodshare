@@ -71,5 +71,8 @@
   "days": "päivää",
   "hours": "Tuntia",
   "minutes": "Minuutit",
-  "seconds": "Sekuntia"
+  "seconds": "Sekuntia",
+  "fb_xss_detected": "Viestissä havaittu komentosarja. Käsikirjoituksen sisällyttäminen viesteihin on <b>virallisesti kiellettyä</b>.",
+  "fb_xss_ban_warning": "Sinut on väliaikaisesti kielletty julkaisemasta ominaisuuksia toistuvien kirjoitusyritysten vuoksi. Noudata käyttösääntöjä.",
+  "fb_xss_unblocked": "Julkaisuominaisuudet on otettu uudelleen käyttöön."
 }

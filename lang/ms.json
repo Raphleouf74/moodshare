@@ -71,5 +71,8 @@
   "days": "Hari",
   "hours": "Jam",
   "minutes": "Minit",
-  "seconds": "Saat"
+  "seconds": "Saat",
+  "fb_xss_detected": "Skrip yang dikesan dalam mesej. Ia adalah <b> dilarang secara rasmi </b> untuk memasukkan skrip dalam jawatan.",
+  "fb_xss_ban_warning": "Anda telah diharamkan sementara dari ciri -ciri penerbitan kerana percubaan suntikan skrip berulang. Sila hormati peraturan penggunaan.",
+  "fb_xss_unblocked": "Ciri-ciri penerbitan telah diaktifkan semula."
 }

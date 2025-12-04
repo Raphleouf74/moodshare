@@ -27,7 +27,7 @@ export async function loadLanguage(lang) {
     document.querySelectorAll("[data-i18n-html]").forEach(el => {
         const key = el.dataset.i18nHtml;
         if (translations[key]) {
-            el.innerHTML = translations[key];
+            el.textContent = translations[key];
         }
     });
 

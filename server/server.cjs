@@ -89,27 +89,49 @@ try {
 app.get("/api/posts", (req, res) => {
   res.json(posts);
 });
+function sanitizeText(text) {
+  if (!text) return "";
 
-// CREATE POST
-app.post("/api/posts", async (req, res) => {
-  const newPost = {
-    id: Date.now().toString(),
-    ...req.body,
-    likes: 0,
-    comments: [],
-    createdAt: new Date().toISOString()
-  };
+  // Détection stricte → refuse la requête
+  const forbiddenPattern = /(script|javascript:|onerror=|onclick=|onload=|<iframe|<img|<svg|document\.|window\.)/i;
 
-  posts.unshift(newPost);
-
-  try {
-    await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
-  } catch (err) {
-    console.log("❌ Error save posts:", err);
+  if (forbiddenPattern.test(text)) {
+    throw new Error("Forbidden content detected");
   }
 
-  res.status(201).json(newPost);
+  // Sanitize quand même :
+  return text
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+// CREATE POST
+app.post("/api/posts", async (req, res) => {
+  try {
+    const cleanText = sanitizeText(req.body.text);
+    const cleanEmoji = sanitizeText(req.body.emoji);
+
+    const newPost = {
+      text: cleanText,
+      emoji: cleanEmoji,
+      color: req.body.color,
+      id: Date.now().toString(),
+      ...req.body,
+      likes: 0,
+      comments: [],
+      createdAt: new Date().toISOString()
+    };
+
+    posts.unshift(newPost);
+    await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
+
+    res.status(201).json(newPost);
+
+  } catch (err) {
+    return res.status(400).json({ error: "Invalid content" });
+  }
 });
+
+
 
 app.post("/api/stories", async (req, res) => {
   console.log("En cours de développement...")
@@ -140,6 +162,19 @@ app.use("/api/users", requireAuth, usersRoutes);
 app.get("/api/health", (req, res) => {
   res.json({ ok: true });
 });
+
+import helmet from "helmet";
+
+app.use(helmet({
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      "script-src": ["'self'", "https://cdnjs.cloudflare.com"],
+      "object-src": ["'none'"]
+    }
+  }
+}));
+
 
 // Start server
 const PORT = process.env.PORT || 3000;

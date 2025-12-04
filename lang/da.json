@@ -71,5 +71,8 @@
   "days": "dage",
   "hours": "Timer",
   "minutes": "Referater",
-  "seconds": "Sekunder"
+  "seconds": "Sekunder",
+  "fb_xss_detected": "Script fundet i meddelelsen. Det er <b>formelt forbudt</b> at inkludere script i indlæg.",
+  "fb_xss_ban_warning": "Du er blevet midlertidigt udelukket fra at udgive funktioner på grund af gentagne forsøg på indsprøjtning af script. Respekter venligst brugsreglerne.",
+  "fb_xss_unblocked": "Udgivelsesfunktioner er blevet genaktiveret."
 }

@@ -71,5 +71,8 @@
   "days": "Zile",
   "hours": "Ore",
   "minutes": "Minute",
-  "seconds": "secunde"
+  "seconds": "secunde",
+  "fb_xss_detected": "Script detectat în mesaj. Este <b>interzis oficial</b> să includeți script în postări.",
+  "fb_xss_ban_warning": "Vi s-a interzis temporar să publicați funcții din cauza încercărilor repetate de injectare de script. Vă rugăm să respectați regulile de utilizare.",
+  "fb_xss_unblocked": "Funcțiile de publicare au fost reactivate."
 }

@@ -71,5 +71,8 @@
   "days": "Dienas",
   "hours": "Stundas",
   "minutes": "Minūtes",
-  "seconds": "Sekundes"
+  "seconds": "Sekundes",
+  "fb_xss_detected": "Ziņojumā konstatēts skripts. Skriptu iekļaušana ziņās ir <b>formāli aizliegts</b>.",
+  "fb_xss_ban_warning": "Atkārtotu skripta ievadīšanas mēģinājumu dēļ jums ir īslaicīgi aizliegts publicēt funkcijas. Lūdzu, ievērojiet lietošanas noteikumus.",
+  "fb_xss_unblocked": "Publicēšanas funkcijas ir atkārtoti iespējotas."
 }

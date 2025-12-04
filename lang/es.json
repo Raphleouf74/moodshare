@@ -71,5 +71,8 @@
   "days": "Días",
   "hours": "Horas",
   "minutes": "Minutos",
-  "seconds": "Artículos de segunda clase"
+  "seconds": "Artículos de segunda clase",
+  "fb_xss_detected": "Secuencia de comandos detectada en el mensaje. Está <b>formalmente prohibido</b> incluir guiones en las publicaciones.",
+  "fb_xss_ban_warning": "Se le ha prohibido temporalmente la publicación de funciones debido a repetidos intentos de inyección de script. Por favor respete las reglas de uso.",
+  "fb_xss_unblocked": "Se han vuelto a habilitar las funciones de publicación."
 }

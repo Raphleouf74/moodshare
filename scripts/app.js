@@ -9,6 +9,47 @@ document.addEventListener("DOMContentLoaded", async () => {
     // 2️⃣ Maintenant le site peut utiliser t()=
     checkSiteVersion();
     loadUserPosts();
+
+    // Sécurité anti-code dans le textarea
+    const moodInput = document.getElementById("moodInput");
+
+    // Regex détectant TOUT code suspect (script, tags, JS, HTML, onerror, onclick...)
+    const forbiddenPattern = /(script|javascript:|onerror=|onclick=|onload=|<iframe|<img|<svg|document\.|window\.)/i;
+
+    // Compteur de tentatives
+    let securityStrike = parseInt(localStorage.getItem("xss_strikes") || "0");
+
+    moodInput.addEventListener("input", () => {
+        const text = moodInput.value;
+
+        if (forbiddenPattern.test(text)) {
+
+            // Efface automatiquement
+            moodInput.value = "";
+
+            // Ajoute un strike
+            securityStrike++;
+            localStorage.setItem("xss_strikes", securityStrike.toString());
+
+            // Feedback
+            showFeedback("warning", "fb_xss_detected");
+
+            // (OPTIONNEL) → Au bout de 3 tentatives, on bloque temporairement :
+            if (securityStrike >= 3) {
+                showFeedback("error", "fb_xss_ban_warning");
+                moodInput.disabled = true;
+
+                // Tu peux réactiver après 5 minutes :
+                setTimeout(() => {
+                    moodInput.disabled = false;
+                    securityStrike = 0;
+                    localStorage.setItem("xss_strikes", "0");
+                    showFeedback("info", "fb_xss_unblocked");
+                }, 5 * 60 * 1000); // Ban de 5 minutes
+            }
+        }
+    });
+
 });
 
 
@@ -213,49 +254,93 @@ function displayMood(mood) {
     moodcard.dataset.id = mood.id;
     wall.prepend(moodcard);
 
-    // Formatage de la date de création
-    const createdDate = new Date(mood.createdAt).toLocaleString('fr-FR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+    // ---- POST CONTENT ----
+    const content = document.createElement("div");
+    content.className = "post-content";
+    content.style.background = mood.color;
+
+    const emojiSpan = document.createElement("span");
+    emojiSpan.textContent = mood.emoji + " ";
+    emojiSpan.className = "post-emoji";
+
+    const textSpan = document.createElement("span");
+    textSpan.textContent = mood.text;
+    textSpan.className = "post-text";
+
+    content.appendChild(emojiSpan);
+    content.appendChild(textSpan);
+
+    // Expiration
+    if (mood.ephemeral && mood.expiresAt) {
+        const expiration = document.createElement("p");
+        expiration.className = "expiration-date";
+
+        const icon = document.createElement("span");
+        icon.className = "material-symbols-rounded";
+        icon.textContent = "warning";
+
+        const expirationDate = new Date(mood.expiresAt).toLocaleString("fr-FR", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+
+        expiration.appendChild(icon);
+        expiration.appendChild(document.createTextNode(" Expire le " + expirationDate));
+
+        content.appendChild(expiration);
+    }
+
+    moodcard.appendChild(content);
+
+    // ---- OPTIONS ----
+    const options = document.createElement("div");
+    options.id = "postoptions";
+    moodcard.appendChild(options);
+
+    const buttons = document.createElement("div");
+    buttons.className = "buttons";
+    options.appendChild(buttons);
+
+    // Like button
+    const likeBtn = document.createElement("button");
+    likeBtn.className = "likebtn";
+
+    const likeIcon = document.createElement("span");
+    likeIcon.className = "material-symbols-rounded";
+    likeIcon.textContent = "favorite";
+
+    const likeCount = document.createElement("span");
+    likeCount.className = "like-count";
+    likeCount.textContent = mood.likes || 0;
+
+    likeBtn.appendChild(likeIcon);
+    likeBtn.appendChild(likeCount);
+
+    buttons.appendChild(likeBtn);
+
+    // Date
+    const dateP = document.createElement("p");
+    dateP.className = "postdate";
+
+    const createdDate = new Date(mood.createdAt).toLocaleString("fr-FR", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
     });
 
-    // Préparation du texte d'expiration si le post est éphémère
-    let expirationText = '';
-    if (mood.ephemeral && mood.expiresAt) {
-        const expirationDate = new Date(mood.expiresAt).toLocaleString('fr-FR', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-        expirationText = `<p class="expiration-date"><span class="material-symbols-rounded">warning</span> Expire le ${expirationDate}</p>`;
-    }
+    dateP.textContent = "Créé le " + createdDate;
+    buttons.appendChild(dateP);
 
-    moodcard.innerHTML = `
-    <div class="post-content" style="background: ${mood.color}">${mood.emoji} ${mood.text} ${expirationText}</div>
-    <div id="postoptions">
-        
-        <div class="buttons">
-            <button class="likebtn"><span class="material-symbols-rounded">favorite</span> <span class="like-count">${mood.likes || 0}</span></button>
-            <p class="postdate">Créé le ${createdDate}</p>
-        </div>
-    </div>`;
-
-    if (moodcard.dataset.id == "1") {
-        moodcard.innerHTML = `<div class="post-content" style="background: ${mood.color}">${mood.emoji} ${mood.text} ${expirationText}</div>`;
-        moodcard.classList.add('WelcomeMood');
-    }
-    // Restaurer l'état like si déjà liké
+    // ---- Restaurer les likes ----
     const likedPosts = JSON.parse(localStorage.getItem("likedPosts") || "[]");
     if (likedPosts.includes(String(mood.id))) {
-        const btn = moodcard.querySelector(".likebtn");
-        if (btn) btn.classList.add("liked");
+        likeBtn.classList.add("liked");
     }
-
 }
 
 // Chargement initial
@@ -296,7 +381,7 @@ if (goToSettingsBtn) {
     goToSettingsBtn.addEventListener('click', () => {
         // Enlève active de tous les tabs nav
         tabs.forEach(btn => btn.classList.remove("active"));
-        
+
         // Active le settingsTab dans nav (s'il existe)
         const settingsNavTab = document.querySelector('nav a#settingsTab');
         if (settingsNavTab) settingsNavTab.classList.add('active');
@@ -411,17 +496,25 @@ function showFeedback(type, messageKey, vars = {}) {
         warning: "warning",
         info: "info",
         remark: "chat_bubble",
-        welcome: "celebration",
+        welcome: "celebration"
     };
 
-    feedback.innerHTML = `
-        <span class="material-symbols-rounded">${icons[type]}</span>
-        <p>${translated}</p>
-    `;
+    // ---- Icône ----
+    const icon = document.createElement("span");
+    icon.className = "material-symbols-rounded";
+    icon.textContent = icons[type];
+
+    // ---- Texte ----
+    const p = document.createElement("p");
+    p.textContent = translated;
+
+    // ---- Ajout DOM ----
+    feedback.appendChild(icon);
+    feedback.appendChild(p);
 
     document.body.appendChild(feedback);
 
-    const duration = (type === "warning" || type === "remark") ? 30000 : 3000;
+    const duration = 3000;
     feedback.style.animation = `slideInOut ${duration / 1000}s ease forwards`;
 
     setTimeout(() => feedback.remove(), duration);
@@ -467,7 +560,7 @@ async function addInboxNotification(
     notif.className = `notificationInbox ${type}`;
     notif.style.borderLeft = `6px solid ${typeColors[type] || "#777"}`;
 
-    notif.innerHTML = `
+    notif.textContent = `
         <span class="material-symbols-rounded" style="color:${typeColors[type] || "#777"}">${icon}</span>
         <div>
             <h3>${title}</h3>
@@ -494,7 +587,7 @@ async function addInboxNotification(
 
 async function loadUserPosts() {
     const wall = document.getElementById("userPostsWall");
-    wall.innerHTML = "<i>Chargement des posts...</i>";
+    wall.textContent = "<i>Chargement des posts...</i>";
 
     try {
         // ⚙️ Si tu as une API user spécifique :
@@ -507,17 +600,17 @@ async function loadUserPosts() {
         const userPosts = posts.filter(p => p.user === currentUser || !p.user);
         userPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-        wall.innerHTML = "";
+        wall.textContent = "";
 
         if (userPosts.length === 0) {
-            wall.innerHTML = "<i>Aucun post pour le moment.</i>";
+            wall.textContent = "<i>Aucun post pour le moment.</i>";
             return;
         }
 
         userPosts.forEach(p => {
             const div = document.createElement("div");
             div.className = "user-post";
-            div.innerHTML = `
+            div.textContent = `
         <div class="user-post-header">
           <span>${p.emoji || "🙂"}</span>
           <span>${new Date(p.createdAt).toLocaleString("fr-FR")}</span>
@@ -529,7 +622,7 @@ async function loadUserPosts() {
 
         document.getElementById("countPosts").textContent = userPosts.length;
     } catch (err) {
-        wall.innerHTML = "<p style='color:red;'>Erreur lors du chargement des posts</p>";
+        wall.textContent = "<p style='color:red;'>Erreur lors du chargement des posts</p>";
         console.error(err);
     }
 }
@@ -654,7 +747,7 @@ function addStoryToList(story) {
     const storiesList = document.querySelector('.stories-list');
     const storyDiv = document.createElement('div');
     storyDiv.className = 'story';
-    storyDiv.innerHTML = `<span>${story.emoji || '📸'}</span>`;
+    storyDiv.textContent = `<span>${story.emoji || '📸'}</span>`;
     storiesList.appendChild(storyDiv);
 
     storyDiv.addEventListener('click', () => {
@@ -666,7 +759,7 @@ function addStoryToList(story) {
 function openStoryViewer(story) {
     const viewer = document.createElement('div');
     viewer.className = 'story-viewer';
-    viewer.innerHTML = `
+    viewer.textContent = `
     <div class="story-content" style="background:${story.color}">
       <span style="font-size:3rem">${story.emoji}</span>
       <p>${story.text}</p>
@@ -858,13 +951,13 @@ async function initLanguageSelector() {
     const langs = await loadLanguages();
 
     function render(filtered) {
-        langGrid.innerHTML = "";
+        langGrid.textContent = "";
 
         filtered.forEach(lang => {
             const item = document.createElement("div");
             item.className = "lp-item";
             item.dataset.lang = lang.code;
-            item.innerHTML = `
+            item.textContent = `
                 <div class="lp-flag">${lang.flag}</div>
                 <div>${lang.name}</div>
             `;
@@ -910,7 +1003,7 @@ function enhanceSkeletons() {
     document.querySelectorAll('.skeleton').forEach(skeleton => {
         if (skeleton.dataset.enhanced) return;
 
-        skeleton.innerHTML = '';
+        skeleton.textContent = '';
         skeleton.dataset.enhanced = 'true';
 
         // Créer 5 formes (alternance carré/cercle)

@@ -71,5 +71,8 @@
   "days": "hari",
   "hours": "Jam",
   "minutes": "Menit",
-  "seconds": "Detik"
+  "seconds": "Detik",
+  "fb_xss_detected": "Skrip terdeteksi dalam pesan. <b>Dilarang secara resmi</b> untuk menyertakan skrip dalam postingan.",
+  "fb_xss_ban_warning": "Anda telah dilarang untuk sementara menerbitkan fitur karena upaya injeksi skrip berulang kali. Harap hormati aturan penggunaan.",
+  "fb_xss_unblocked": "Fitur penerbitan telah diaktifkan kembali."
 }

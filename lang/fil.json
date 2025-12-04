@@ -71,5 +71,8 @@
   "days": "Araw",
   "hours": "Oras",
   "minutes": "Minuto",
-  "seconds": "Segundo"
+  "seconds": "Segundo",
+  "fb_xss_detected": "Ang script na napansin sa mensahe. Ito ay <b> pormal na ipinagbabawal </b> na isama ang script sa mga post.",
+  "fb_xss_ban_warning": "Pansamantalang pinagbawalan ka mula sa pag -publish ng mga tampok dahil sa paulit -ulit na mga pagtatangka sa iniksyon ng script. Mangyaring igalang ang mga patakaran ng paggamit.",
+  "fb_xss_unblocked": "Ang mga tampok sa pag-publish ay muling pinagana."
 }

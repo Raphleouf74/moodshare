@@ -71,5 +71,8 @@
   "days": "Dny",
   "hours": "hodiny",
   "minutes": "Zápis",
-  "seconds": "Sekundy"
+  "seconds": "Sekundy",
+  "fb_xss_detected": "Ve zprávě byl zjištěn skript. Je <b>formálně zakázáno</b> vkládat skript do příspěvků.",
+  "fb_xss_ban_warning": "Bylo vám dočasně zakázáno publikovat funkce kvůli opakovaným pokusům o vložení skriptu. Respektujte prosím pravidla používání.",
+  "fb_xss_unblocked": "Funkce publikování byly znovu povoleny."
 }

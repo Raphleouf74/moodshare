@@ -2,7 +2,7 @@
 function toMarkdown(title, htmlContent){
   // Très simple transformation : retire balises et garde titres
   const tmp = document.createElement('div');
-  tmp.innerHTML = htmlContent;
+  tmp.textContent = htmlContent;
   const text = tmp.innerText.replace(/\r\n/g,'\n');
   return `# ${title}\n\n${text}\n`;
 }
@@ -13,7 +13,7 @@ function attachControls(printId, downloadId, title){
   if(p) p.addEventListener('click', () => window.print());
   if(d) d.addEventListener('click', () => {
     const body = document.querySelector('.container section');
-    const md = toMarkdown(title, body.innerHTML);
+    const md = toMarkdown(title, body.textContent);
     const blob = new Blob([md], {type:'text/markdown;charset=utf-8'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

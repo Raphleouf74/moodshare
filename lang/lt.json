@@ -71,5 +71,8 @@
   "days": "Dienos",
   "hours": "Valandos",
   "minutes": "Minutės",
-  "seconds": "sekundės"
+  "seconds": "sekundės",
+  "fb_xss_detected": "Pranešime aptiktas scenarijus. Į įrašus įtraukti scenarijų <b>oficialiai draudžiama</b>.",
+  "fb_xss_ban_warning": "Jums buvo laikinai uždrausta skelbti funkcijas dėl pasikartojančių bandymų įterpti scenarijų. Prašome laikytis naudojimo taisyklių.",
+  "fb_xss_unblocked": "Paskelbimo funkcijos vėl įgalintos."
 }

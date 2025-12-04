@@ -71,5 +71,8 @@
   "days": "Dagen",
   "hours": "Uur",
   "minutes": "Notulen",
-  "seconds": "Seconden"
+  "seconds": "Seconden",
+  "fb_xss_detected": "Script gedetecteerd in bericht. Het is <b>formeel verboden</b> om scripts in berichten op te nemen.",
+  "fb_xss_ban_warning": "U bent tijdelijk uitgesloten van het publiceren van functies vanwege herhaalde pogingen tot scriptinjectie. Gelieve de gebruiksregels te respecteren.",
+  "fb_xss_unblocked": "De publicatiefuncties zijn opnieuw ingeschakeld."
 }

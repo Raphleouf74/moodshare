@@ -71,5 +71,8 @@
   "days": "Dager",
   "hours": "Timer",
   "minutes": "Minutter",
-  "seconds": "Sekunder"
+  "seconds": "Sekunder",
+  "fb_xss_detected": "Skript oppdaget i meldingen. Det er <b>formelt forbudt</b> å inkludere skript i innlegg.",
+  "fb_xss_ban_warning": "Du har blitt midlertidig utestengt fra å publisere funksjoner på grunn av gjentatte forsøk på skriptinjeksjon. Vennligst respekter reglene for bruk.",
+  "fb_xss_unblocked": "Publiseringsfunksjoner er aktivert på nytt."
 }

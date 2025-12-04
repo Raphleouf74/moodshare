@@ -77,7 +77,7 @@ async function initLangPicker() {
 
     // render all items
     function render(list) {
-        grid.innerHTML = "";
+        grid.textContent = "";
         list.forEach(l => {
             const item = createItem(l);
             item.addEventListener("click", async () => {

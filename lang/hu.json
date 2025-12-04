@@ -71,5 +71,8 @@
   "days": "Napok",
   "hours": "Órák",
   "minutes": "Jegyzőkönyv",
-  "seconds": "Másodpercek"
+  "seconds": "Másodpercek",
+  "fb_xss_detected": "Szkript észlelve az üzenetben. <b>Formálisan tilos</b> szkriptet elhelyezni a bejegyzésekben.",
+  "fb_xss_ban_warning": "A többszöri szkript-injektálási kísérletek miatt ideiglenesen kitiltották a funkciók közzétételéből. Kérjük, tartsa be a használati szabályokat.",
+  "fb_xss_unblocked": "A közzétételi funkciók újra engedélyezve lettek."
 }

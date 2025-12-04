@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Icône par défaut
         const icon = icons[type];
 
-        feedback.innerHTML = `
+        feedback.textContent = `
     <span class="material-symbols-rounded">${icon}</span>
     ${message}
   `;
@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     function addStoryToList(story) {
         const storyDiv = document.createElement('div');
         storyDiv.className = 'story';
-        storyDiv.innerHTML = `<span>${story.emoji || '📸'}</span>`;
+        storyDiv.textContent = `<span>${story.emoji || '📸'}</span>`;
         storiesList.appendChild(storyDiv);
 
         storyDiv.addEventListener('click', () => openStoryViewer(story));
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     function openStoryViewer(story) {
         const viewer = document.createElement('div');
         viewer.className = 'story-viewer';
-        viewer.innerHTML = `
+        viewer.textContent = `
     <div class="story-content" style="background:${story.color}">
       <span style="font-size:3rem">${story.emoji}</span>
       <p>${story.text}</p>

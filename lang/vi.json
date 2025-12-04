@@ -71,5 +71,8 @@
   "days": "Ngày",
   "hours": "Giờ",
   "minutes": "Phút",
-  "seconds": "Giây"
+  "seconds": "Giây",
+  "fb_xss_detected": "Tập lệnh được phát hiện trong tin nhắn. <b>Chính thức bị cấm</b> đưa tập lệnh vào bài viết.",
+  "fb_xss_ban_warning": "Bạn đã tạm thời bị cấm xuất bản các tính năng do cố gắng chèn tập lệnh nhiều lần. Hãy tôn trọng các quy tắc sử dụng.",
+  "fb_xss_unblocked": "Tính năng xuất bản đã được kích hoạt lại."
 }

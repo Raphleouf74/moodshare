@@ -71,5 +71,8 @@
   "days": "Dias",
   "hours": "Horas",
   "minutes": "Minutos",
-  "seconds": "Segundos"
+  "seconds": "Segundos",
+  "fb_xss_detected": "Script detectado na mensagem. É <b>formalmente proibido</b> incluir scripts em postagens.",
+  "fb_xss_ban_warning": "Você foi temporariamente banido dos recursos de publicação devido a repetidas tentativas de injeção de script. Por favor, respeite as regras de uso.",
+  "fb_xss_unblocked": "Os recursos de publicação foram reativados."
 }

@@ -71,5 +71,8 @@
   "days": "Tage",
   "hours": "Std",
   "minutes": "Minuten",
-  "seconds": "Sekunden"
+  "seconds": "Sekunden",
+  "fb_xss_detected": "Skript in Nachricht erkannt. Es ist <b>formell verboten</b>, Skripte in Beiträgen einzubinden.",
+  "fb_xss_ban_warning": "Aufgrund wiederholter Skripteinschleusungsversuche wurde Ihnen die Veröffentlichung von Funktionen vorübergehend untersagt. Bitte beachten Sie die Nutzungsregeln.",
+  "fb_xss_unblocked": "Die Veröffentlichungsfunktionen wurden wieder aktiviert."
 }

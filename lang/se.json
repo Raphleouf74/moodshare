@@ -71,5 +71,8 @@
   "days": "Beaivvit",
   "hours": "Diimmut",
   "minutes": "Beavdegirji",
-  "seconds": "Nuppit"
+  "seconds": "Nuppit",
+  "fb_xss_detected": "Script fuomášuvvon boasttuvuođas. Lea <b>formálalaččat gildojuvvon</b> váldit mielde čállosa poasttaide.",
+  "fb_xss_ban_warning": "Don leat gaskaboddosaččat gielddus almmuhit funkšuvnnaid fas čállosa injekšuvdnageahččalemiid geažil. Ávžžuhit geavahannjuolggadusaid.",
+  "fb_xss_unblocked": "Almmuhanfálaldagat leat ođđasit álggahuvvon."
 }

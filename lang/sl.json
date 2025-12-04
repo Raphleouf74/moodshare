@@ -71,5 +71,8 @@
   "days": "dni",
   "hours": "ure",
   "minutes": "minute",
-  "seconds": "sekund"
+  "seconds": "sekund",
+  "fb_xss_detected": "V sporočilu zaznan skript. Vključevanje skripta v objave je <b>uradno prepovedano</b>.",
+  "fb_xss_ban_warning": "Začasno vam je bilo prepovedano objavljanje funkcij zaradi ponavljajočih se poskusov vstavljanja skripta. Prosimo, da upoštevate pravila uporabe.",
+  "fb_xss_unblocked": "Funkcije objavljanja so bile znova omogočene."
 }

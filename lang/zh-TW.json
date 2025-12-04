@@ -71,5 +71,8 @@
   "days": "天",
   "hours": "時間",
   "minutes": "分鐘",
-  "seconds": "秒數"
+  "seconds": "秒數",
+  "fb_xss_detected": "在消息中檢測到腳本。 <b>正式禁止</b>在帖子中包含腳本。",
+  "fb_xss_ban_warning": "由於多次嘗試注入腳本，您已被暫時禁止發布功能。 請遵守使用規則。",
+  "fb_xss_unblocked": "發布功能已重新啟用。"
 }
