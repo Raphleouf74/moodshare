@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             // (OPTIONNEL) → Au bout de 3 tentatives, on bloque temporairement :
             if (securityStrike >= 3) {
                 showFeedback("error", "fb_xss_ban_warning");
+                addInboxNotification("critical",":(", "fb_xss_ban_warning");
                 moodInput.disabled = true;
 
                 // Tu peux réactiver après 5 minutes :
@@ -542,8 +543,8 @@ async function addInboxNotification(
     actionLabel,
     actionFn
 ) {
-    const title = t(titleKey);
-    const message = t(messageKey);
+    const title = t(titleKey) || titleKey;
+    const message = t(messageKey) || messageKey;
 
     const inboxDiv = document.getElementById("inboxdiv");
     if (!inboxDiv) return console.error("❌ Inbox non trouvée dans le DOM");
@@ -560,21 +561,40 @@ async function addInboxNotification(
     notif.className = `notificationInbox ${type}`;
     notif.style.borderLeft = `6px solid ${typeColors[type] || "#777"}`;
 
-    notif.textContent = `
-        <span class="material-symbols-rounded" style="color:${typeColors[type] || "#777"}">${icon}</span>
-        <div>
-            <h3>${title}</h3>
-            <p>${message}</p>
-            ${actionLabel ? `<button class="notif-action">${actionLabel}</button>` : ""}
-        </div>
-    `;
+    // Structure de base
+    const iconSpan = document.createElement("span");
+    iconSpan.className = "material-symbols-rounded";
+    iconSpan.style.color = typeColors[type] || "#777";
+    iconSpan.textContent = icon; // 🔒 OK : icône interne, safe
 
-    if (actionLabel && typeof actionFn === "function") {
-        notif.querySelector(".notif-action").addEventListener("click", actionFn);
+    const wrapper = document.createElement("div");
+
+    const h3 = document.createElement("h3");
+    h3.textContent = title;
+
+    const p = document.createElement("p");
+    p.innerHTML = message;
+
+    wrapper.appendChild(h3);
+    wrapper.appendChild(p);
+
+    // Bouton d'action sécurisé
+    if (actionLabel) {
+        const btn = document.createElement("button");
+        btn.className = "notif-action";
+        if (typeof actionFn === "function") {
+            btn.addEventListener("click", actionFn);
+        }
+        wrapper.appendChild(btn);
     }
 
+    notif.appendChild(iconSpan);
+    notif.appendChild(wrapper);
+
+    // Injection finale
     inboxDiv.prepend(notif);
 
+    // Animation safe
     notif.style.opacity = "0";
     notif.style.transform = "translateY(-10px)";
     setTimeout(() => {
@@ -583,6 +603,7 @@ async function addInboxNotification(
         notif.style.transform = "translateY(0)";
     }, 50);
 }
+
 
 
 async function loadUserPosts() {
@@ -996,7 +1017,7 @@ showFeedback("error", "fb_stories_down");
 
 console.log(`%c⚠ Avertissement: Le site est en développement, des erreurs ou des bugs peuvent survenir !`, "color: yellow; font-size: 25px; font-family: impact");
 console.log(`%c⚠ Attention: Ne rentrez JAMAIS de commande ici sans connaître son but !`, "color: orange; font-size: 25px; font-family: impact");
-
+addInboxNotification("info", "New Patch", "Patch 1.0", "info");
 
 // Générer les skeleton loaders avec cercles/carrés défilants
 function enhanceSkeletons() {

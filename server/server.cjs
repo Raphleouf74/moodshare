@@ -163,18 +163,6 @@ app.get("/api/health", (req, res) => {
   res.json({ ok: true });
 });
 
-import helmet from "helmet";
-
-app.use(helmet({
-  contentSecurityPolicy: {
-    useDefaults: true,
-    directives: {
-      "script-src": ["'self'", "https://cdnjs.cloudflare.com"],
-      "object-src": ["'none'"]
-    }
-  }
-}));
-
 
 // Start server
 const PORT = process.env.PORT || 3000;
