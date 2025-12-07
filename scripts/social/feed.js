@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!storiesList) return console.warn("❌ stories-list introuvable");
 
     try {
-        const res = await fetch('/api/stories');
+        const res = await fetch('https://moodshare-7dd7.onrender.com/api/stories');
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const stories = await res.json();
 
@@ -88,7 +88,7 @@ document.addEventListener("click", async (e) => {
     try {
         // --- DISLIKE ---
         if (alreadyLiked) {
-            const res = await fetch(`/api/posts/${postId}/unlike`, {
+            const res = await fetch(`https://moodshare-7dd7.onrender.com/api/posts/${postId}/unlike`, {
                 method: "POST"
             });
 
@@ -104,7 +104,7 @@ document.addEventListener("click", async (e) => {
         }
 
         // --- LIKE ---
-        const res = await fetch(`/api/posts/${postId}/like`, {
+        const res = await fetch(`https://moodshare-7dd7.onrender.com/api/posts/${postId}/like`, {
             method: "POST"
         });
 
