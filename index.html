@@ -12,11 +12,8 @@
 </head>
 
 <body>
-  <div class="custom-cursor">
-    <div class="cursor-dot"></div>
-    <div class="cursor-click"></div>
-    <div class="cursor-locate"></div>
-  </div>
+  <div id="squareback"></div>
+  <div id="circleback"></div>
   <div id="loader">
     <div class="loader-content">
       <div id="squareback"></div>
@@ -272,39 +269,24 @@
         </div>
       </div>
 
+      <div class="lowend-settings">
+        <h4 data-i18n="settings_performance">Mode performance</h4>
+        <p class="lp-title">Mode "low‑end" (détection automatique ou manuel)</p>
 
-      <div class="cursor-settings">
-        <h3 data-i18n="settings_cursor">Paramètres du curseur</h3>
-
-        <label>
-          <p data-i18n="settings_cursor_personnalise_toggle">Activer curseur personnalisé :</p>
-          <input type="checkbox" id="cursorEnable" checked disabled>
-        </label>
-
-        <label>
-          <p data-i18n="settings_cursor_size">Taille :</p>
-          <input type="range" id="cursorSize" min="6" max="40" value="12">
-        </label>
-
-        <label>
-          <p data-i18n="settings_cursor_opacity">Transparence :</p>
-          <input type="range" id="cursorOpacity" min="0.1" max="1" step="0.05" value="0.8">
-        </label>
-
-        <label>
-          <p data-i18n="settings_cursor_color">Couleur :</p>
-          <input type="color" id="cursorColor" value="#ffffff">
-        </label>
-
-        <label>
-          <p data-i18n="settings_cursor_hover_effect">Effet de survol :</p>
-          <select id="cursorHover">
-            <option value="none" data-i18n="settings_cursor_hover_effect_none">Aucun</option>
-            <option value="invert" data-i18n="settings_cursor_hover_effect_colour_invert">Inversion des couleurs
-            </option>
-            <option value="grow" data-i18n="settings_cursor_hover_effect_grow">Agrandissement</option>
-          </select>
-        </label>
+        <div class="lowend-controls" role="radiogroup" aria-label="Low end mode">
+          <label>
+            <input type="radio" name="lowEndMode" id="lowEndAuto" value="auto">
+            Auto (détection)
+          </label>
+          <label>
+            <input type="radio" name="lowEndMode" id="lowEndForce" value="on">
+            Forcer mode low-end
+          </label>
+          <label>
+            <input type="radio" name="lowEndMode" id="lowEndOff" value="off">
+            Désactivé
+          </label>
+        </div>
       </div>
     </div>
   </section>

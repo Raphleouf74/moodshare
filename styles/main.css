@@ -10,13 +10,12 @@
     --text: #111827;
     --muted: #6b7280;
     --radius: 16px;
-    --transition: 0.3s ease;
 }
 
 /* STYLES GLOBAUX */
 * {
     font-family: "Inter";
-    cursor: none;
+    transition: all 0.2s ease-in-out;
 }
 
 body {
@@ -27,6 +26,9 @@ body {
     overflow-x: hidden;
 }
 
+button {
+    cursor: pointer;
+}
 
 body,
 main {
@@ -57,7 +59,7 @@ header {
     z-index: 2000;
     -webkit-backdrop-filter: blur(0);
     backdrop-filter: blur(0);
-    transition: all 0.2s ease-in-out;
+
 }
 
 header.scrolled {
@@ -73,7 +75,6 @@ header.scrolled {
 
 header h1 {
     opacity: 1;
-    transition: all 0.3s ease-in-out;
     display: flex;
 }
 
@@ -102,7 +103,7 @@ header.scrolled .logodraw {
     justify-content: center;
     flex-direction: row;
     transform: translateX(0);
-    transition: all 0.2s ease-in-out;
+
 }
 
 .logodraw #square {
@@ -140,7 +141,6 @@ nav {
     border-radius: 15px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
     z-index: 2000;
-    transition: all 0.3s ease-in-out;
     padding: 1rem;
     background: var(--menu-bg);
     backdrop-filter: blur(12px);
@@ -177,7 +177,6 @@ nav.scrolled {
     font-weight: 500;
     position: relative;
     overflow: hidden;
-    transition: all var(--transition);
 }
 
 .link:hover,
@@ -205,7 +204,6 @@ nav.scrolled {
     font-size: 26px;
     margin-left: 16px;
     flex-shrink: 0;
-    transition: transform var(--transition);
 }
 
 .link:hover .link-icon {
@@ -216,7 +214,6 @@ nav.scrolled {
     margin-left: 12px;
     opacity: 0;
     transform: translateX(10px);
-    transition: opacity var(--transition), transform var(--transition);
     white-space: nowrap;
     font-size: 15px;
 }
@@ -265,10 +262,6 @@ nav button:hover {
     transform: translateY(-2px);
     background-position: 50% 50%;
     color: rgb(255, 255, 255);
-}
-
-nav button span {
-    transition: all 0.2s ease-in-out;
 }
 
 nav a#createTab:hover span {
@@ -501,7 +494,6 @@ section {
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: all 0.2s ease;
 }
 
 .story:hover {
@@ -538,7 +530,6 @@ section {
 .likebtn.liked {
     color: #e74c3c;
     transform: scale(1.2);
-    transition: all 0.2s ease;
 }
 
 .posts-section {
@@ -557,7 +548,6 @@ section {
     box-shadow:
         0 4px 6px rgba(0, 0, 0, 0.1),
         inset 0 0 15px rgba(255, 255, 255, 0.15);
-    transition: all 0.3s ease;
     position: relative;
     display: flex;
     flex-wrap: wrap;
@@ -630,7 +620,7 @@ section {
     opacity: 0;
     color: black;
     z-index: 1;
-    transition: all 0.2s ease-in-out;
+
     -webkit-backdrop-filter: blur(15px);
     backdrop-filter: blur(15px);
     pointer-events: none;
@@ -682,7 +672,7 @@ section {
     height: 50px;
     width: 50px;
     font-size: 1.2rem;
-    transition: all 0.2s ease-in-out;
+
 }
 
 
@@ -1001,7 +991,7 @@ textarea {
     z-index: 1000;
     opacity: 0;
     transform: translateY(-15px);
-    transition: all 0.2s ease-in-out;
+
     border-radius: 15px;
 }
 
@@ -1022,7 +1012,7 @@ textarea {
     padding: 1rem;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 0.5rem;
-    transition: all 0.2s ease-in-out;
+
     width: 300px;
     height: 30px;
     overflow: hidden;
@@ -1044,13 +1034,11 @@ textarea {
     gap: 1rem;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease-in-out;
 }
 
 #durationPicker {
     display: flex;
     bottom: 50px;
-    transition: all 0.3s ease-in-out;
     opacity: 1;
 }
 
@@ -1061,7 +1049,6 @@ textarea {
     gap: 0.25rem;
     opacity: 0;
     transform: translateY(15px);
-    transition: all 0.3s ease-in-out;
 }
 
 .duration-input input {
@@ -1090,7 +1077,6 @@ textarea {
     color: white;
     font-weight: 500;
     opacity: 0;
-    transition: all 0.3s ease;
     z-index: 9999;
     display: flex;
     align-items: center;
@@ -1199,7 +1185,6 @@ textarea {
     stroke-width: 6;
     stroke-linecap: round;
     stroke-linejoin: round;
-    transition: stroke-dasharray 0.3s ease, stroke-dashoffset 0.3s ease, stroke 0.6s ease;
     stroke-dasharray: 241 9999999;
     stroke-dashoffset: 0;
 }
@@ -1300,11 +1285,12 @@ section#inboxTab {
     width: 70%;
     padding: 15px;
     height: auto;
-    min-height: 100vh;
     border-radius: 25px;
     gap: 10px;
     margin-bottom: 50px;
-    background-color: rgb(230, 230, 230);
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+    background-color: rgb(255, 255, 255, 0.05);
 }
 
 .notificationInbox {
@@ -1455,13 +1441,15 @@ section#profileTab {
     height: auto;
     width: 70%;
     border-radius: 20px;
-    background-color: rgb(230, 230, 230);
+    background-color: rgb(230, 230, 230, 0.6);
     padding: 15px;
     padding-top: 50px;
     padding-bottom: 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
     justify-content: space-evenly;
 }
 
@@ -1533,7 +1521,6 @@ section#settingsTab a {
     justify-content: center;
     align-items: center;
     z-index: 9999;
-    transition: all 0.5s ease;
 }
 
 
@@ -1732,8 +1719,67 @@ body.loading {
     visibility: hidden;
 }
 
+body #squareback {
+    pointer-events: none;
+    position: fixed;
+    top: -300px;
+    left: 150px;
+
+    width: 200px;
+    height: 200px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    /* scale/rotate corrigés dans transform */
+    transform: scale(7) rotate(5deg);
+    pointer-events: none;
+    animation: moveSquare 35s linear infinite;
+}
+
+@keyframes moveSquare {
+    0% {
+        transform: translateX(0) translateY(0) scale(7) rotate(0deg);
+    }
+
+    50% {
+        transform: translateX(50px) translateY(50px) scale(7) rotate(10deg);
+    }
+
+    100% {
+        transform: translateX(0) translateY(0) scale(7) rotate(0deg);
+    }
+}
+
+body #circleback {
+    position: fixed;
+    width: 150px;
+    height: 150px;
+    background-color: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    /* centrer par rapport au conteneur loader-content */
+    bottom: -300px;
+    right: 150px;
+    transform: scale(10);
+    pointer-events: none;
+    animation: moveCircle 60s linear infinite;
+}
+
+@keyframes moveCircle {
+    0% {
+        transform: translateX(0) translateY(0) scale(10);
+    }
+
+    50% {
+        transform: translateX(-50px) translateY(-50px) scale(10);
+    }
+
+    100% {
+        transform: translateX(0) translateY(0) scale(10);
+    }
+}
+
+
 /* placer le squareback RELATIVEMENT à .loader-content et corriger transform */
-#squareback {
+#loader #squareback {
     position: absolute;
     /* déjà absolute, OK */
     width: 200px;
@@ -1747,10 +1793,9 @@ body.loading {
     transform: translate(-50%, -50%) scale(10) rotate(0deg);
     pointer-events: none;
     will-change: transform, opacity;
-    transition: transform .6s cubic-bezier(.22, .9, .36, 1), opacity .4s ease;
 }
 
-#circleback {
+#loader #circleback {
     position: absolute;
     width: 150px;
     height: 150px;
@@ -1762,7 +1807,6 @@ body.loading {
     transform: translate(-50%, -50%) scale(1.5);
     pointer-events: none;
     will-change: transform, opacity;
-    transition: transform .6s cubic-bezier(.22, .9, .36, 1), opacity .4s ease;
 }
 
 /* si tu veux un léger slide-in pour le squareback */
@@ -1801,100 +1845,6 @@ body.loading {
     animation-delay: .6s;
 }
 
-
-/* Curseur caché par défaut sur mobile */
-@media (hover: hover) and (pointer: fine) {
-
-    body {
-        cursor: none;
-    }
-
-    .custom-cursor {
-        position: fixed;
-        top: 0;
-        left: 0;
-        pointer-events: none;
-        z-index: 9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999;
-    }
-
-    .cursor-dot {
-        width: 12px;
-        height: 12px;
-        background: rgba(255, 255, 255, 0.8);
-        border-radius: 50%;
-        backdrop-filter: blur(4px);
-        position: absolute;
-        transform: translate(-50%, -50%);
-        transition: filter .3s ease-out, background .2s ease-out, transform .05s ease-out;
-        mix-blend-mode: difference;
-    }
-
-    .cursor-click {
-        width: 30px;
-        height: 30px;
-        border: 2px solid rgba(255, 255, 255, 0.8);
-        border-radius: 50%;
-        position: absolute;
-        transform: translate(-50%, -50%) scale(0);
-        opacity: 0;
-        transition: transform .3s ease-out, opacity .3s;
-        mix-blend-mode: difference;
-    }
-
-    .cursor-click.active {
-        transform: translate(-50%, -50%) scale(1.4);
-        opacity: 1;
-    }
-
-    /* Cercle rouge localisation */
-    .cursor-locate {
-        width: 80px;
-        height: 80px;
-        border: 3px solid red;
-        border-radius: 50%;
-        position: absolute;
-        transform: translate(-50%, -50%) scale(0);
-        opacity: 0;
-        transition: transform .25s ease-out, opacity .25s ease-out;
-    }
-
-    .cursor-locate.active {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-    }
-
-    /* Settings panel */
-    .cursor-settings {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: rgba(20, 20, 20, 0.45);
-        backdrop-filter: blur(12px);
-        padding: 16px;
-        border-radius: 14px;
-        width: 230px;
-        color: white;
-        font-family: sans-serif;
-        z-index: 999999;
-        box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
-    }
-
-    .cursor-settings label {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 10px;
-        font-size: 14px;
-    }
-}
-
-@media (max-width: 760px) {
-
-    .cursor-settings,
-    .cursor-settings label .cursor-dot,
-    .custom-cursor {
-        display: none;
-    }
-}
 
 /* Animation LIKE 💥 */
 @keyframes likePop {
@@ -1943,11 +1893,11 @@ body.loading {
     border-radius: 12px;
     border: green 3px solid;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.03));
+    -webkit-backdrop-filter: blur(6px);
     backdrop-filter: blur(6px);
     cursor: pointer;
     font-weight: 600;
     color: var(--text);
-    transition: all .12s ease;
 }
 
 .lp-button:hover {
@@ -1979,7 +1929,6 @@ body.loading {
     opacity: 0;
     transform: translateY(-6px) scale(.98);
     pointer-events: none;
-    transition: opacity .18s ease, transform .18s ease;
     z-index: 200;
 }
 
@@ -2025,7 +1974,7 @@ body.loading {
     border-radius: 10px;
     cursor: pointer;
     min-height: 56px;
-    transition: all 0.2s ease-in-out;
+
     color: var(--text);
     border: 1px solid rgba(255, 255, 255, 0.04);
     background: rgba(255, 255, 255, 0.2);
@@ -2084,4 +2033,32 @@ body.loading {
     justify-content: left;
     text-align: center;
     height: 40px;
+}
+
+.low-end * {
+    transition: none !important;
+    animation: none !important;
+    will-change: auto !important;
+}
+
+.low-end body{
+    background: #f5f5f5;
+}
+
+.low-end .loader,
+.low-end #emojiPickerContainer {
+    display: none !important;
+}
+
+.low-end .post {
+    box-shadow: none;
+    backdrop-filter: none;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.low-end .logo-container,
+.low-end .skeleton-circle,
+.low-end #squareback,
+.low-end #circleback {
+    display: none;
 }

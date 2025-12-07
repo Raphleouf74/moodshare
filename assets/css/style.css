@@ -6,87 +6,6 @@ body {
     margin: 0;
 }
 
-/* cursor styles - desktop only */
-@media (hover: hover) and (pointer: fine) {
-    body {
-        cursor: none;
-    }
-
-    .custom-cursor {
-        position: fixed;
-        top: 0;
-        left: 0;
-        pointer-events: none;
-        z-index: 99999;
-    }
-
-    .cursor-dot {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.8);
-        border: 2px solid rgba(0, 0, 0, 0.15);
-        backdrop-filter: blur(4px);
-        position: fixed;
-        transform: translate(0, 0);
-        transition: transform .12s, background .2s;
-        mix-blend-mode: difference;
-    }
-
-    .cursor-click {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        border: 2px solid rgba(255, 255, 255, 0.8);
-        position: fixed;
-        transform: translate(0, 0) scale(0);
-        opacity: 0;
-        transition: transform .3s, opacity .3s;
-    }
-
-    .cursor-click.active {
-        transform: translate(0, 0) scale(1.4);
-        opacity: 1;
-    }
-
-    .cursor-locate {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        border: 3px solid red;
-        position: fixed;
-        transform: translate(0, 0) scale(0);
-        opacity: 0;
-        transition: transform .25s, opacity .25s;
-    }
-
-    .cursor-locate.active {
-        transform: translate(0, 0) scale(1);
-        opacity: 1;
-    }
-
-    #scrollArrow {
-        position: fixed;
-        pointer-events: none;
-        font-size: 20px;
-        font-weight: 700;
-        color: #fff;
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(.5);
-        transition: opacity .15s, transform .2s;
-        mix-blend-mode: difference;
-        backdrop-filter: blur(6px);
-        border-radius: 10px;
-        padding: 4px 8px;
-        z-index: 999999;
-    }
-
-    #scrollArrow.visible {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-    }
-}
-
 /* auth pages minimal */
 .auth-page {
     display: flex;
@@ -126,23 +45,4 @@ body {
 
 .profile-page {
     padding: 40px;
-}
-
-.cursor-settings {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 240px;
-    background: rgba(20, 20, 20, 0.45);
-    padding: 12px;
-    border-radius: 12px;
-    backdrop-filter: blur(10px);
-    z-index: 999999;
-    color: #fff;
-}
-
-.cursor-settings label {
-    display: block;
-    font-size: 13px;
-    margin-bottom: 8px;
 }

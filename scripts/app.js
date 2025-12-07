@@ -550,11 +550,11 @@ async function addInboxNotification(
     if (!inboxDiv) return console.error("❌ Inbox non trouvée dans le DOM");
 
     const typeColors = {
-        info: "#3498db",
-        success: "#27ae60",
-        warning: "#f1c40f",
-        error: "#e74c3c",
-        critical: "#c0392b"
+        info: "#3498dbb0",
+        success: "#27ae60b0",
+        warning: "#f1c40fb0",
+        error: "#e74c3cb0",
+        critical: "#c0392bb0"
     };
 
     const notif = document.createElement("div");
@@ -802,136 +802,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }, 4000); // 4 secondes de démo, à supprimer en prod
 });
 
-
-document.addEventListener("DOMContentLoaded", () => {
-
-    const dot = document.querySelector(".cursor-dot");
-    const clickRing = document.querySelector(".cursor-click");
-    const locateRing = document.querySelector(".cursor-locate");
-
-    const enableToggle = document.getElementById("cursorEnable");
-    const sizeSlider = document.getElementById("cursorSize");
-    const opacitySlider = document.getElementById("cursorOpacity");
-    const colorPicker = document.getElementById("cursorColor");
-    const hoverSelect = document.getElementById("cursorHover");
-
-    let mouseX = 0, mouseY = 0;
-
-    /* -----------------------------
-       LOAD SETTINGS (localStorage)
-    ------------------------------*/
-    const saved = JSON.parse(localStorage.getItem("cursorSettings")) || {};
-
-    if (saved.size) sizeSlider.value = saved.size;
-    if (saved.opacity) opacitySlider.value = saved.opacity;
-    if (saved.color) colorPicker.value = saved.color;
-    if (saved.hover) hoverSelect.value = saved.hover;
-    if (saved.enabled !== undefined) enableToggle.checked = saved.enabled;
-
-    applySettings();
-
-
-    /* -----------------------------
-          FOLLOW CURSOR
-    ------------------------------*/
-    window.addEventListener("mousemove", (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-
-        dot.style.top = clickRing.style.top = locateRing.style.top = mouseY + "px";
-        dot.style.left = clickRing.style.left = locateRing.style.left = mouseX + "px";
-
-        // Remove the locate circle after movement
-        locateRing.classList.remove("active");
-    });
-
-
-    /* -----------------------------
-             CLICK PULSE
-    ------------------------------*/
-    window.addEventListener("mousedown", () => {
-        clickRing.classList.add("active");
-    });
-
-    window.addEventListener("mouseup", () => {
-        setTimeout(() => clickRing.classList.remove("active"), 100);
-    });
-
-
-    /* -----------------------------
-           SAVE & APPLY SETTINGS
-    ------------------------------*/
-    function saveSettings() {
-        localStorage.setItem("cursorSettings", JSON.stringify({
-            size: sizeSlider.value,
-            opacity: opacitySlider.value,
-            color: colorPicker.value,
-            hover: hoverSelect.value,
-            enabled: enableToggle.checked
-        }));
-    }
-
-    function applySettings() {
-        // Enable/disable
-        document.body.style.cursor = enableToggle.checked ? "none" : "auto";
-        document.querySelector(".custom-cursor").style.display = enableToggle.checked ? "block" : "none";
-
-        // Size
-        dot.style.width = dot.style.height = sizeSlider.value + "px";
-
-        // Color & opacity
-        const rgba = hexToRGBA(colorPicker.value, opacitySlider.value);
-        dot.style.background = rgba;
-        clickRing.style.borderColor = rgba;
-    }
-
-    [sizeSlider, opacitySlider, colorPicker, hoverSelect, enableToggle].forEach(el => {
-        el.addEventListener("input", () => {
-            applySettings();
-            saveSettings();
-        });
-    });
-
-
-    /* -----------------------------
-          CTRL → LOCATOR RING
-    ------------------------------*/
-    window.addEventListener("keydown", (e) => {
-        if (e.key === "Control") {
-            locateRing.classList.add("active");
-        }
-    });
-
-
-    /* -----------------------------
-           UTIL: HEX → RGBA
-    ------------------------------*/
-    function hexToRGBA(hex, alpha) {
-        const r = parseInt(hex.substr(1, 2), 16);
-        const g = parseInt(hex.substr(3, 2), 16);
-        const b = parseInt(hex.substr(5, 2), 16);
-        return `rgba(${r},${g},${b},${alpha})`;
-    }
-    // Hover behaviour
-    document.querySelectorAll("a, button, .hoverable, .container").forEach(el => {
-        el.addEventListener("mouseenter", () => {
-            switch (hoverSelect.value) {
-                case "invert":
-                    dot.style.filter = "invert(100%)";
-                    break;
-                case "grow":
-                    dot.style.transform = "translate(-50%, -50%) scale(1.8)";
-                    break;
-            }
-        });
-
-        el.addEventListener("mouseleave", () => {
-            dot.style.filter = "invert(0)";
-            dot.style.transform = "translate(-50%, -50%) scale(1)";
-        });
-    });
-});
-
 async function loadLanguages() {
     const manifest = await fetch("/lang/manifest.json").then(r => r.json());
 
@@ -1017,7 +887,6 @@ showFeedback("error", "fb_stories_down");
 
 console.log(`%c⚠ Avertissement: Le site est en développement, des erreurs ou des bugs peuvent survenir !`, "color: yellow; font-size: 25px; font-family: impact");
 console.log(`%c⚠ Attention: Ne rentrez JAMAIS de commande ici sans connaître son but !`, "color: orange; font-size: 25px; font-family: impact");
-addInboxNotification("info", "New Patch", "Patch 1.0", "info");
 
 // Générer les skeleton loaders avec cercles/carrés défilants
 function enhanceSkeletons() {
@@ -1049,3 +918,58 @@ function enhanceSkeletons() {
 
 // Lancer après le chargement du DOM
 document.addEventListener('DOMContentLoaded', enhanceSkeletons);
+
+function detectLowEnd() {
+  const mem = navigator.deviceMemory || 1; // GB
+  const cores = navigator.hardwareConcurrency || 1;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // court test FPS
+  return new Promise(resolve => {
+    let frames = 0, start = performance.now();
+    function f(){ frames++; if(performance.now()-start<200){ requestAnimationFrame(f); } else {
+      const fps = frames/( (performance.now()-start)/1000 );
+      const score = (mem*2 + cores + (reduceMotion?2:0) + (fps>45?2: fps>25?1:0));
+      resolve(score < 5); // true = low-end
+    }}; requestAnimationFrame(f);
+  });
+}
+
+async function applyLowEndMode() {
+  const pref = localStorage.getItem('lowEndMode') || 'auto';
+  let isLow = false;
+  if(pref === 'on') isLow = true;
+  else if(pref === 'off') isLow = false;
+  else isLow = await detectLowEnd();
+  document.documentElement.classList.toggle('low-end', isLow);
+}
+applyLowEndMode();
+
+// gestion propre du contrôle radio "low-end"
+(async function initLowEndUI() {
+  // récupération des radios
+  const radios = document.querySelectorAll('input[name="lowEndMode"]');
+  if (!radios || radios.length === 0) return; // rien à faire si le HTML n'est pas présent
+
+  // lecture de la préférence et mise à jour de l'UI
+  const pref = localStorage.getItem('lowEndMode') || 'auto';
+  const match = Array.from(radios).find(r => r.value === pref);
+  if (match) match.checked = true;
+
+  // quand l'utilisateur change la sélection
+  radios.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      if (!e.target.checked) return;
+      localStorage.setItem('lowEndMode', e.target.value);
+      // réapplique immédiatement le mode low-end
+      applyLowEndMode();
+    });
+  });
+
+  // applique l'état au chargement (applyLowEndMode est async)
+  await applyLowEndMode();
+
+  // charger conditionnellement le picker emoji si pas en low-end
+  if (!document.documentElement.classList.contains('low-end')) {
+    import('https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js').catch(() => {/* ignore load errors */});
+  }
+})();
