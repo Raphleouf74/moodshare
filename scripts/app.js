@@ -696,7 +696,7 @@ if (submitBtn) {
                     expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
                 };
 
-                const resStory = await fetch("/api/stories", {
+                const resStory = await fetch("https://moodshare-7dd7.onrender.com/api/stories", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(storyData)
@@ -737,7 +737,7 @@ if (submitBtn) {
                     expiresAt
                 };
 
-                const response = await fetch("/api/posts", {
+                const response = await fetch("https://moodshare-7dd7.onrender.com/api/posts", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(newMood)
@@ -768,6 +768,190 @@ if (submitBtn) {
     });
 }
 
+window.addEventListener('DOMContentLoaded', () => {
+    // Simule un temps de chargement (enlève ce setTimeout en production)
+    setTimeout(() => {
+        const loader = document.getElementById('loader');
+        const mainContent = document.getElementById('main-content');
+
+        // Cache le loader
+        loader.classList.add('hidden');
+
+    }, 4000); // 4 secondes de démo, à supprimer en prod
+});
+
+async function loadLanguages() {
+    const manifest = await fetch("/lang/manifest.json").then(r => r.json());
+
+    const languages = [];
+
+    for (const entry of manifest.languages) {
+        const fileName = entry.file;   // ex: "fr.json"
+        const code = entry.code;       // ex: "fr"
+
+        // sécurité : s'assurer que c’est bien une string
+        if (typeof fileName !== "string") {
+            console.error("❌ Mauvais format file:", fileName);
+            continue;
+        }
+
+        const data = await fetch(`/lang/${fileName}`).then(r => r.json());
+
+        languages.push({
+            code,
+            name: entry.name || data.__name__ || code,
+            flag: entry.flag || data.__flag__ || "🌐"
+        });
+    }
+
+    return languages;
+}
+
+
+const grid = document.getElementById("langGrid");
+const popup = document.getElementById("langPopup");
+const openBtn = document.getElementById("currentLangLabel");
+
+const langPopup = document.getElementById("langPopup");
+const langGrid = document.getElementById("langGrid");
+const searchInput = document.getElementById("langSearch");
+
+async function initLanguageSelector() {
+    const langs = await loadLanguages();
+
+    function render(filtered) {
+        langGrid.textContent = "";
+
+        filtered.forEach(lang => {
+            const item = document.createElement("div");
+            item.className = "lp-item";
+            item.dataset.lang = lang.code;
+            item.textContent = `
+                <div class="lp-flag">${lang.flag}</div>
+                <div>${lang.name}</div>
+            `;
+
+            item.addEventListener("click", () => {
+                localStorage.setItem("lang", lang.code);
+                location.reload();
+            });
+
+            langGrid.appendChild(item);
+        });
+    }
+
+    // Search filter
+    if (searchInput) {
+        searchInput.addEventListener("input", () => {
+            const q = searchInput.value.toLowerCase();
+            const filtered = langs.filter(l =>
+                l.name.toLowerCase().includes(q) ||
+                l.code.toLowerCase().includes(q)
+            );
+            render(filtered);
+        });
+    }
+
+}
+
+initLanguageSelector();
+if (openBtn) {
+    openBtn.addEventListener("click", () => {
+        popup.style.display = popup.style.display === "block" ? "none" : "block";
+    });
+}
+
+
+console.log(`%c⚠ Avertissement: Le site est en développement, des erreurs ou des bugs peuvent survenir !`, "color: yellow; font-size: 25px; font-family: impact");
+console.log(`%c⚠ Attention: Ne rentrez JAMAIS de commande ici sans connaître son but !`, "color: orange; font-size: 25px; font-family: impact");
+
+// Générer les skeleton loaders avec cercles/carrés défilants
+function enhanceSkeletons() {
+    document.querySelectorAll('.skeleton').forEach(skeleton => {
+        if (skeleton.dataset.enhanced) return;
+
+        skeleton.textContent = '';
+        skeleton.dataset.enhanced = 'true';
+
+        // Créer 5 formes (alternance carré/cercle)
+        for (let i = 0; i < 7; i++) {
+            const shape = document.createElement('div');
+            shape.className = 'skeleton-circle';
+
+            const isCircle = i % 2 === 0;
+            const borderRadius = isCircle ? '50%' : '15px';
+
+            shape.style.cssText = `
+                width: 60px;
+                height: 60px;
+                border-radius: ${borderRadius};
+                transform: scale(1) translateY(-22px);
+            `;
+
+            skeleton.appendChild(shape);
+        }
+    });
+}
+
+// Lancer après le chargement du DOM
+document.addEventListener('DOMContentLoaded', enhanceSkeletons);
+
+function detectLowEnd() {
+    const mem = navigator.deviceMemory || 1; // GB
+    const cores = navigator.hardwareConcurrency || 1;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // court test FPS
+    return new Promise(resolve => {
+        let frames = 0, start = performance.now();
+        function f() {
+            frames++; if (performance.now() - start < 200) { requestAnimationFrame(f); } else {
+                const fps = frames / ((performance.now() - start) / 1000);
+                const score = (mem * 2 + cores + (reduceMotion ? 2 : 0) + (fps > 45 ? 2 : fps > 25 ? 1 : 0));
+                resolve(score < 5); // true = low-end
+            }
+        }; requestAnimationFrame(f);
+    });
+}
+
+async function applyLowEndMode() {
+    const pref = localStorage.getItem('lowEndMode') || 'auto';
+    let isLow = false;
+    if (pref === 'on') isLow = true;
+    else if (pref === 'off') isLow = false;
+    else isLow = await detectLowEnd();
+    document.documentElement.classList.toggle('low-end', isLow);
+}
+applyLowEndMode();
+
+// gestion propre du contrôle radio "low-end"
+(async function initLowEndUI() {
+    // récupération des radios
+    const radios = document.querySelectorAll('input[name="lowEndMode"]');
+    if (!radios || radios.length === 0) return; // rien à faire si le HTML n'est pas présent
+
+    // lecture de la préférence et mise à jour de l'UI
+    const pref = localStorage.getItem('lowEndMode') || 'auto';
+    const match = Array.from(radios).find(r => r.value === pref);
+    if (match) match.checked = true;
+
+    // quand l'utilisateur change la sélection
+    radios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (!e.target.checked) return;
+            localStorage.setItem('lowEndMode', e.target.value);
+            // réapplique immédiatement le mode low-end
+            applyLowEndMode();
+        });
+    });
+
+    // applique l'état au chargement (applyLowEndMode est async)
+    await applyLowEndMode();
+
+    // charger conditionnellement le picker emoji si pas en low-end
+    if (!document.documentElement.classList.contains('low-end')) {
+        import('https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js').catch(() => {/* ignore load errors */ });
+    }
+})();
 
 // Affichage des stories dans la liste
 function addStoryToList(story) {
