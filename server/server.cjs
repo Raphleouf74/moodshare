@@ -84,6 +84,19 @@ try {
 } catch (err) {
   console.error("❌ Error loading posts");
 }
+
+// ---- Ajout : STORIES STORAGE (placer AVANT app.get("/api/stories")) ----
+let stories = [];
+const storiesFile = path.join(dataDir, "stories.json");
+
+try {
+  if (fs.existsSync(storiesFile)) {
+    stories = JSON.parse(fs.readFileSync(storiesFile, "utf8"));
+  }
+} catch (err) {
+  console.error("❌ Error loading stories:", err);
+}
+
 app.get("/api/stories", (req, res) => {
   try {
     // Filtrer les stories expirées
