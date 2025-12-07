@@ -1,7 +1,6 @@
 // scripts/social/feed.js
 document.addEventListener("DOMContentLoaded", async () => {
 
-    const feedContainer = document.getElementById('moodWall');
     const storiesList = document.querySelector('.stories-list');
 
     // Charger les stories au démarrage
@@ -19,50 +18,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (err) {
         console.error("❌ Erreur chargement stories:", err);
     }
-    function showFeedback(type, message) {
-        const feedback = document.createElement("div");
-        feedback.className = `upload-feedback feedback-${type}`;
-
-        // Choix des icônes selon le type
-        const icons = {
-            success: "check_circle",
-            error: "error",
-            warning: "warning",
-            info: "info",
-            remark: "chat_bubble",
-            welcome: "celebration",
-        };
-
-        // Icône par défaut
-        const icon = icons[type];
-
-        feedback.textContent = `
-    <span class="material-symbols-rounded">${icon}</span>
-    ${message}
-  `;
-
-        document.body.appendChild(feedback);
-
-
-        // Supprimer après animation
-        if (icon === "warning") {
-            feedback.style.animation = "slideInOut 30s ease forwards";
-            setTimeout(() => {
-                feedback.style.display = "none";
-            }, 30000);
-        } if (icon === "chat_bubble") {
-            feedback.style.animation = "slideInOut 30s ease forwards";
-            setTimeout(() => {
-                feedback.style.display = "none";
-            }, 30000);
-        } else {
-            feedback.style.animation = "slideInOut 3s ease forwards";
-            setTimeout(() => {
-                feedback.style.display = "none";
-            }, 3000);
-        }
-    }
-
 
 
     // === Affichage des stories ===
@@ -92,59 +47,59 @@ document.addEventListener("DOMContentLoaded", async () => {
     // === Gestion des likes ===
     // Empêcher plusieurs likes par session
     // LIKE / DISLIKE (toggle avec mémoire locale)
-document.addEventListener("click", async (e) => {
-    const btn = e.target.closest(".likebtn");
-    if (!btn) return;
+    document.addEventListener("click", async (e) => {
+        const btn = e.target.closest(".likebtn");
+        if (!btn) return;
 
-    const post = btn.closest(".post");
-    const postId = post.dataset.id;
+        const post = btn.closest(".post");
+        const postId = post.dataset.id;
 
-    const likeCount = post.querySelector(".like-count");
+        const likeCount = post.querySelector(".like-count");
 
-    // Récupération des likes déjà faits
-    let likedPosts = JSON.parse(localStorage.getItem("likedPosts") || "[]");
+        // Récupération des likes déjà faits
+        let likedPosts = JSON.parse(localStorage.getItem("likedPosts") || "[]");
 
-    const alreadyLiked = likedPosts.includes(postId);
+        const alreadyLiked = likedPosts.includes(postId);
 
-    try {
-        // --- DISLIKE ---
-        if (alreadyLiked) {
-            const res = await fetch(`https://moodshare-7dd7.onrender.com/api/posts/${postId}/unlike`, {
+        try {
+            // --- DISLIKE ---
+            if (alreadyLiked) {
+                const res = await fetch(`https://moodshare-7dd7.onrender.com/api/posts/${postId}/unlike`, {
+                    method: "POST"
+                });
+
+                if (!res.ok) throw new Error("Erreur serveur");
+
+                likeCount.textContent = parseInt(likeCount.textContent) - 1;
+                btn.classList.remove("liked");
+
+                // Retirer de localStorage
+                likedPosts = likedPosts.filter(id => id !== postId);
+                localStorage.setItem("likedPosts", JSON.stringify(likedPosts));
+                return;
+            }
+
+            // --- LIKE ---
+            const res = await fetch(`https://moodshare-7dd7.onrender.com/api/posts/${postId}/like`, {
                 method: "POST"
             });
 
             if (!res.ok) throw new Error("Erreur serveur");
 
-            likeCount.textContent = parseInt(likeCount.textContent) - 1;
-            btn.classList.remove("liked");
+            likeCount.textContent = parseInt(likeCount.textContent) + 1;
 
-            // Retirer de localStorage
-            likedPosts = likedPosts.filter(id => id !== postId);
+            btn.classList.add("liked");
+            btn.style.animation = "likePop 0.3s ease";
+
+            // Sauvegarde locale
+            likedPosts.push(postId);
             localStorage.setItem("likedPosts", JSON.stringify(likedPosts));
-            return;
+
+        } catch (err) {
+            showFeedback("error", "Impossible de mettre à jour le like.");
+            console.error(err);
         }
-
-        // --- LIKE ---
-        const res = await fetch(`https://moodshare-7dd7.onrender.com/api/posts/${postId}/like`, {
-            method: "POST"
-        });
-
-        if (!res.ok) throw new Error("Erreur serveur");
-
-        likeCount.textContent = parseInt(likeCount.textContent) + 1;
-
-        btn.classList.add("liked");
-        btn.style.animation = "likePop 0.3s ease";
-
-        // Sauvegarde locale
-        likedPosts.push(postId);
-        localStorage.setItem("likedPosts", JSON.stringify(likedPosts));
-
-    } catch (err) {
-        showFeedback("error", "Impossible de mettre à jour le like.");
-        console.error(err);
-    }
-});
+    });
 
 
 

@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             // (OPTIONNEL) → Au bout de 3 tentatives, on bloque temporairement :
             if (securityStrike >= 3) {
                 showFeedback("error", "fb_xss_ban_warning");
-                addInboxNotification("critical",":(", "fb_xss_ban_warning");
+                addInboxNotification("critical", ":(", "fb_xss_ban_warning");
                 moodInput.disabled = true;
 
                 // Tu peux réactiver après 5 minutes :
@@ -54,15 +54,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 
-const header = document.querySelector('header');
 const nav = document.querySelector('nav');
-window.addEventListener(('scroll'), () => {
-    if (window.scrollY > 30) {
-        header.classList.add('scrolled');
+const header = document.querySelector('header');
+
+window.addEventListener('scroll', () => {
+    const currentScroll = window.scrollY;
+
+    // Scroll vers le bas : cache la nav
+    if (currentScroll > 50) {
         nav.classList.add('scrolled');
-    } else {
-        header.classList.remove('scrolled');
+        header.classList.add('scrolled');
+    }
+    // Scroll vers le haut : affiche la nav
+    else {
         nav.classList.remove('scrolled');
+        header.classList.remove('scrolled');
     }
 });
 
@@ -920,56 +926,58 @@ function enhanceSkeletons() {
 document.addEventListener('DOMContentLoaded', enhanceSkeletons);
 
 function detectLowEnd() {
-  const mem = navigator.deviceMemory || 1; // GB
-  const cores = navigator.hardwareConcurrency || 1;
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // court test FPS
-  return new Promise(resolve => {
-    let frames = 0, start = performance.now();
-    function f(){ frames++; if(performance.now()-start<200){ requestAnimationFrame(f); } else {
-      const fps = frames/( (performance.now()-start)/1000 );
-      const score = (mem*2 + cores + (reduceMotion?2:0) + (fps>45?2: fps>25?1:0));
-      resolve(score < 5); // true = low-end
-    }}; requestAnimationFrame(f);
-  });
+    const mem = navigator.deviceMemory || 1; // GB
+    const cores = navigator.hardwareConcurrency || 1;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // court test FPS
+    return new Promise(resolve => {
+        let frames = 0, start = performance.now();
+        function f() {
+            frames++; if (performance.now() - start < 200) { requestAnimationFrame(f); } else {
+                const fps = frames / ((performance.now() - start) / 1000);
+                const score = (mem * 2 + cores + (reduceMotion ? 2 : 0) + (fps > 45 ? 2 : fps > 25 ? 1 : 0));
+                resolve(score < 5); // true = low-end
+            }
+        }; requestAnimationFrame(f);
+    });
 }
 
 async function applyLowEndMode() {
-  const pref = localStorage.getItem('lowEndMode') || 'auto';
-  let isLow = false;
-  if(pref === 'on') isLow = true;
-  else if(pref === 'off') isLow = false;
-  else isLow = await detectLowEnd();
-  document.documentElement.classList.toggle('low-end', isLow);
+    const pref = localStorage.getItem('lowEndMode') || 'auto';
+    let isLow = false;
+    if (pref === 'on') isLow = true;
+    else if (pref === 'off') isLow = false;
+    else isLow = await detectLowEnd();
+    document.documentElement.classList.toggle('low-end', isLow);
 }
 applyLowEndMode();
 
 // gestion propre du contrôle radio "low-end"
 (async function initLowEndUI() {
-  // récupération des radios
-  const radios = document.querySelectorAll('input[name="lowEndMode"]');
-  if (!radios || radios.length === 0) return; // rien à faire si le HTML n'est pas présent
+    // récupération des radios
+    const radios = document.querySelectorAll('input[name="lowEndMode"]');
+    if (!radios || radios.length === 0) return; // rien à faire si le HTML n'est pas présent
 
-  // lecture de la préférence et mise à jour de l'UI
-  const pref = localStorage.getItem('lowEndMode') || 'auto';
-  const match = Array.from(radios).find(r => r.value === pref);
-  if (match) match.checked = true;
+    // lecture de la préférence et mise à jour de l'UI
+    const pref = localStorage.getItem('lowEndMode') || 'auto';
+    const match = Array.from(radios).find(r => r.value === pref);
+    if (match) match.checked = true;
 
-  // quand l'utilisateur change la sélection
-  radios.forEach(radio => {
-    radio.addEventListener('change', (e) => {
-      if (!e.target.checked) return;
-      localStorage.setItem('lowEndMode', e.target.value);
-      // réapplique immédiatement le mode low-end
-      applyLowEndMode();
+    // quand l'utilisateur change la sélection
+    radios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (!e.target.checked) return;
+            localStorage.setItem('lowEndMode', e.target.value);
+            // réapplique immédiatement le mode low-end
+            applyLowEndMode();
+        });
     });
-  });
 
-  // applique l'état au chargement (applyLowEndMode est async)
-  await applyLowEndMode();
+    // applique l'état au chargement (applyLowEndMode est async)
+    await applyLowEndMode();
 
-  // charger conditionnellement le picker emoji si pas en low-end
-  if (!document.documentElement.classList.contains('low-end')) {
-    import('https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js').catch(() => {/* ignore load errors */});
-  }
+    // charger conditionnellement le picker emoji si pas en low-end
+    if (!document.documentElement.classList.contains('low-end')) {
+        import('https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js').catch(() => {/* ignore load errors */ });
+    }
 })();

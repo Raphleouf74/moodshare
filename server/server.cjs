@@ -84,7 +84,27 @@ try {
 } catch (err) {
   console.error("❌ Error loading posts");
 }
+app.get("/api/stories", (req, res) => {
+  try {
+    // Filtrer les stories expirées
+    const now = Date.now();
+    const active = stories.filter(s => !s.expiresAt || new Date(s.expiresAt).getTime() > now);
 
+    // Purger les expirées du stockage si nécessaire
+    const expiredExists = stories.length !== active.length;
+    if (expiredExists) {
+      stories = active;
+      fsPromises.writeFile(storiesFile, JSON.stringify(stories, null, 2)).catch(err => {
+        console.error("❌ Error saving stories after purge:", err);
+      });
+    }
+
+    res.json(active);
+  } catch (err) {
+    console.error("❌ Error getting stories:", err);
+    res.status(500).json({ error: "Internal error" });
+  }
+});
 // GET POSTS
 app.get("/api/posts", (req, res) => {
   res.json(posts);
@@ -134,7 +154,42 @@ app.post("/api/posts", async (req, res) => {
 
 
 app.post("/api/stories", async (req, res) => {
-  console.log("En cours de développement...")
+  try {
+    const text = String(req.body.text || "").trim();
+    const emoji = String(req.body.emoji || "").trim();
+    const color = req.body.color || "#ffffff";
+    const expiresAt = req.body.expiresAt ? new Date(req.body.expiresAt).toISOString() : null;
+
+    // Validation basique
+    if (!text && !emoji) {
+      return res.status(400).json({ error: "Empty story" });
+    }
+
+    // Sanitization stricte (réutilise sanitizeText)
+    const cleanText = sanitizeText(text);
+    const cleanEmoji = sanitizeText(emoji);
+
+    const newStory = {
+      id: Date.now().toString(),
+      text: cleanText,
+      emoji: cleanEmoji,
+      color,
+      createdAt: new Date().toISOString(),
+      expiresAt
+    };
+
+    // Prévenir accumulation : garder récence en tête
+    stories.unshift(newStory);
+
+    // Enregistrer
+    await fsPromises.writeFile(storiesFile, JSON.stringify(stories, null, 2));
+
+    // Répondre avec la story créée
+    res.status(201).json(newStory);
+  } catch (err) {
+    console.error("❌ Error creating story:", err);
+    res.status(400).json({ error: "Invalid content" });
+  }
 });
 
 // LIKE / UNLIKE

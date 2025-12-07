@@ -148,6 +148,7 @@ nav {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     display: flex;
     gap: 14px;
+    transition: all 0.3s ease;
 }
 
 nav.scrolled {
@@ -161,7 +162,19 @@ nav.scrolled {
 
 @media (max-width: 769px) {
     nav {
-        width: 80%;
+        width: 100%;
+        background-color: white;
+        border-radius: 0;
+        bottom: 0;
+        height: 50px;
+    }
+
+    nav.scrolled {
+        background: rgb(200, 200, 200, 0.7);
+        height: 30px;
+        width: 100%;
+        border-radius: 0;
+        bottom: 0;
     }
 }
 
@@ -2041,7 +2054,7 @@ body #circleback {
     will-change: auto !important;
 }
 
-.low-end body{
+.low-end body {
     background: #f5f5f5;
 }
 
