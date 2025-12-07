@@ -1,30 +1,35 @@
 // scripts/social/feed.js
 document.addEventListener("DOMContentLoaded", async () => {
-
     const storiesList = document.querySelector('.stories-list');
+    if (!storiesList) return console.warn("❌ stories-list introuvable");
 
-    // Charger les stories au démarrage
     try {
-        const resStories = await fetch("https://moodshare-7dd7.onrender.com/api/stories");
-        if (!resStories.ok) throw new Error(`HTTP ${resStories.status}`);
-        const stories = await resStories.json();
+        const res = await fetch('/api/stories');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const stories = await res.json();
 
-        // Nettoyage et affichage
-        const storiesList = document.querySelector('.stories-list');
-        if (!storiesList) return console.warn("❌ stories-list introuvable");
-
+        // purge DOM puis ajout
         storiesList.querySelectorAll('.story:not(.add-story)').forEach(s => s.remove());
-        stories.forEach(story => addStoryToList(story));
+        stories.forEach(addStoryToList);
     } catch (err) {
         console.error("❌ Erreur chargement stories:", err);
     }
 
-
-    // === Affichage des stories ===
     function addStoryToList(story) {
         const storyDiv = document.createElement('div');
         storyDiv.className = 'story';
-        storyDiv.textContent = `<span>${story.emoji || '📸'}</span>`;
+
+        const emojiSpan = document.createElement('span');
+        emojiSpan.className = 'story-emoji';
+        emojiSpan.textContent = story.emoji || '📸';
+
+        const textSpan = document.createElement('span');
+        textSpan.className = 'sr-only'; // si tu veux garder le texte pour l'accessibilité
+        textSpan.textContent = story.text || '';
+
+        storyDiv.appendChild(emojiSpan);
+        storyDiv.appendChild(textSpan);
+
         storiesList.appendChild(storyDiv);
 
         storyDiv.addEventListener('click', () => openStoryViewer(story));
@@ -33,91 +38,108 @@ document.addEventListener("DOMContentLoaded", async () => {
     function openStoryViewer(story) {
         const viewer = document.createElement('div');
         viewer.className = 'story-viewer';
-        viewer.textContent = `
-    <div class="story-content" style="background:${story.color}">
-      <span style="font-size:3rem">${story.emoji}</span>
-      <p>${story.text}</p>
-    </div>
-  `;
+
+        const content = document.createElement('div');
+        content.className = 'story-content';
+        content.style.background = story.color || '#111';
+
+        const emojiEl = document.createElement('span');
+        emojiEl.style.fontSize = '3rem';
+        emojiEl.textContent = story.emoji || '';
+
+        const p = document.createElement('p');
+        p.textContent = story.text || '';
+
+        content.appendChild(emojiEl);
+        content.appendChild(p);
+        viewer.appendChild(content);
+
+        // close on click anywhere or after timeout
+        viewer.addEventListener('click', () => viewer.remove());
         document.body.appendChild(viewer);
-        setTimeout(() => viewer.remove(), 4000); // auto-close après 4s
+        setTimeout(() => {
+            if (viewer.parentNode) viewer.remove();
+        }, 4000);
     }
+});
 
 
-    // === Gestion des likes ===
-    // Empêcher plusieurs likes par session
-    // LIKE / DISLIKE (toggle avec mémoire locale)
-    document.addEventListener("click", async (e) => {
-        const btn = e.target.closest(".likebtn");
-        if (!btn) return;
+// === Gestion des likes ===
+// Empêcher plusieurs likes par session
+// LIKE / DISLIKE (toggle avec mémoire locale)
+document.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".likebtn");
+    if (!btn) return;
 
-        const post = btn.closest(".post");
-        const postId = post.dataset.id;
+    const post = btn.closest(".post");
+    if (!post) return console.error("❌ post element not found for like button");
 
-        const likeCount = post.querySelector(".like-count");
+    const postId = post.dataset && post.dataset.id;
+    if (!postId) return console.error("❌ post id missing");
 
-        // Récupération des likes déjà faits
-        let likedPosts = JSON.parse(localStorage.getItem("likedPosts") || "[]");
+    const likeCount = post.querySelector(".like-count");
+    if (!likeCount) return console.error("❌ like-count element not found");
 
-        const alreadyLiked = likedPosts.includes(postId);
+    // Récupération des likes déjà faits
+    let likedPosts = JSON.parse(localStorage.getItem("likedPosts") || "[]");
 
-        try {
-            // --- DISLIKE ---
-            if (alreadyLiked) {
-                const res = await fetch(`https://moodshare-7dd7.onrender.com/api/posts/${postId}/unlike`, {
-                    method: "POST"
-                });
+    const alreadyLiked = likedPosts.includes(postId);
 
-                if (!res.ok) throw new Error("Erreur serveur");
-
-                likeCount.textContent = parseInt(likeCount.textContent) - 1;
-                btn.classList.remove("liked");
-
-                // Retirer de localStorage
-                likedPosts = likedPosts.filter(id => id !== postId);
-                localStorage.setItem("likedPosts", JSON.stringify(likedPosts));
-                return;
-            }
-
-            // --- LIKE ---
-            const res = await fetch(`https://moodshare-7dd7.onrender.com/api/posts/${postId}/like`, {
+    try {
+        // --- DISLIKE ---
+        if (alreadyLiked) {
+            const res = await fetch(`/api/posts/${postId}/unlike`, {
                 method: "POST"
             });
 
             if (!res.ok) throw new Error("Erreur serveur");
 
-            likeCount.textContent = parseInt(likeCount.textContent) + 1;
+            likeCount.textContent = String(Math.max(0, parseInt(likeCount.textContent || "0") - 1));
+            btn.classList.remove("liked");
 
-            btn.classList.add("liked");
-            btn.style.animation = "likePop 0.3s ease";
-
-            // Sauvegarde locale
-            likedPosts.push(postId);
+            // Retirer de localStorage
+            likedPosts = likedPosts.filter(id => id !== postId);
             localStorage.setItem("likedPosts", JSON.stringify(likedPosts));
-
-        } catch (err) {
-            showFeedback("error", "Impossible de mettre à jour le like.");
-            console.error(err);
+            return;
         }
-    });
 
+        // --- LIKE ---
+        const res = await fetch(`/api/posts/${postId}/like`, {
+            method: "POST"
+        });
 
+        if (!res.ok) throw new Error("Erreur serveur");
 
-    async function likePost(postId, likeBtn) {
-        try {
-            const response = await fetch(`https://moodshare-7dd7.onrender.com/api/posts/${postId}/like`, {
-                method: 'POST'
-            });
+        likeCount.textContent = String(parseInt(likeCount.textContent || "0") + 1);
 
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        btn.classList.add("liked");
+        btn.style.animation = "likePop 0.3s ease";
 
-            const updated = await response.json();
-            const countSpan = likeBtn.querySelector('.like-count');
-            if (countSpan) countSpan.textContent = updated.likes || 0;
+        // Sauvegarde locale
+        likedPosts.push(postId);
+        localStorage.setItem("likedPosts", JSON.stringify(likedPosts));
 
-            likeBtn.classList.add('liked');
-        } catch (error) {
-            console.error('❌ Erreur like:', error);
-        }
+    } catch (err) {
+        if (typeof showFeedback === 'function') showFeedback("error", "Impossible de mettre à jour le like.");
+        console.error(err);
     }
 });
+
+
+async function likePost(postId, likeBtn) {
+    try {
+        const response = await fetch(`/api/posts/${postId}/like`, {
+            method: 'POST'
+        });
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const updated = await response.json();
+        const countSpan = likeBtn.querySelector('.like-count');
+        if (countSpan) countSpan.textContent = String(updated.likes || 0);
+
+        likeBtn.classList.add('liked');
+    } catch (error) {
+        console.error('❌ Erreur like:', error);
+    }
+}

@@ -61,7 +61,7 @@
 
   </nav>
   <section id="homeTab" class="tab active">
-    <!-- <div class="stories">
+    <div class="stories">
       <h2 data-i18n="home_stories">Stories</h2>
       <div class="stories-list">
         <div class="story add-story" id="addStoryBtn">
@@ -70,7 +70,7 @@
         <div class="story skeleton"></div>
         <div class="story skeleton"></div>
       </div>
-    </div> -->
+    </div>
 
     <div class="posts-section">
       <h2 data-i18n="home_recent_posts">Posts récents</h2>
@@ -159,7 +159,7 @@
         <p data-i18n="create_expire_at">Le message disparaîtra le <span id="msgdeletetime"></span></p>
       </div>
       <label class="container storyinput">
-        <input type="checkbox" />
+        <input type="checkbox" id="storyModeToggle" />
         <svg viewBox="0 0 64 64" height="2em" width="2em">
           <path
             d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
@@ -228,7 +228,9 @@
           <p data-i18n="Policy_title">Politique de confidentialité</p>
         </button></a>
       <button class="hoverable" id="goToSettingsBtn">
-        <b><p data-i18n="nav_settings">Paramètres</p></b>
+        <b>
+          <p data-i18n="nav_settings">Paramètres</p>
+        </b>
       </button>
       <!-- <button class="hoverable" id="logoutBtn">Se déconnecter</button class="hoverable">
       <p><b>Gestion du compte</b></p>
