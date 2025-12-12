@@ -13,7 +13,6 @@ const helmet = require("helmet");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
-const path = require("path");
 const fs = require("fs");
 const fsPromises = require("fs/promises");
 
