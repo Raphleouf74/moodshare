@@ -59,7 +59,6 @@ header {
     z-index: 2000;
     -webkit-backdrop-filter: blur(0);
     backdrop-filter: blur(0);
-
 }
 
 header.scrolled {
@@ -71,6 +70,59 @@ header.scrolled {
     -webkit-backdrop-filter: blur(-25px);
     backdrop-filter: blur(25px);
 }
+
+/* header */
+#accountheader {
+    text-align: center;
+    padding: 1rem;
+    width: 400px;
+    top: 20px;
+    right: 15px;
+    border-radius: 15px;
+    height: 75px;
+    background: transparent;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    z-index: 2000;
+    -webkit-backdrop-filter: blur(0);
+    backdrop-filter: blur(0);
+}
+
+#accountheader .accounticon {
+    border-radius: 50%;
+    height: 85px;
+    width: 85px;
+}
+
+#accountheader.scrolled {
+    border-radius: 15px;
+    -webkit-backdrop-filter: blur(-25px);
+    backdrop-filter: blur(25px);
+}
+
+#accountheader:hover {
+    background: rgb(255,255,255,0.4);
+    -webkit-backdrop-filter: blur(25px);
+    backdrop-filter: blur(25px);
+}
+
+#accountheader h1 {
+    opacity: 1;
+    display: flex;
+}
+
+#accountheader.scrolled h1 {
+    opacity: 0;
+    transform: translateY(-3px);
+}
+
+#accountheader.scrolled .accounticon {
+    opacity: .8;
+    transform: scale(.8);
+}
+
 
 
 header h1 {
@@ -208,7 +260,7 @@ nav.scrolled {
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
 }
 
-.scrolled .link.active:hover {
+nav.scrolled .link.active:hover {
     height: 120%;
 }
 

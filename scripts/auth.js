@@ -1,23 +1,10 @@
 // assets/js/auth.js
-// Détection simple : en dev (localhost/127.0.0.1) on utilise le backend local,
+// Détection simple : en dev (localhost/127.0.0.1 ou 127.0.0.1) on utilise le backend local,
 // sinon on utilise l'URL de production (Render)
-const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "::1")
   ? "http://localhost:3000"
   : "https://moodshare-7dd7.onrender.com";
 
-async function postJSON(url, body) {
-    const res = await fetch(API_BASE + url, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body)
-    });
-    const json = await res.json();
-    if (!res.ok) throw json;
-    return json;
-}
-
-// fournit: registerUser, loginUser, loginGuest, logout, getCurrentUser
 const API = API_BASE + '/api';
 
 export function getToken() {

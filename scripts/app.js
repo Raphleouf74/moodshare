@@ -2,9 +2,7 @@ import { loadLanguage, t } from "./lang.js";
 import { fetchWithAuth, getCurrentUser } from './auth.js';
 
 // URL du backend (même logique que dans auth.js)
-const API = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
-  ? "http://localhost:3000/api"
-  : "https://moodshare-7dd7.onrender.com/api";
+const API = "https://moodshare-7dd7.onrender.com/api";
 
 async function loadRecommended() {
   const res = await fetch(`${API}/users/recommended`, { credentials: 'include' });
@@ -85,6 +83,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 const nav = document.querySelector('nav');
 const header = document.querySelector('header');
+const profileheader = document.getElementById('accountheader');
 
 window.addEventListener('scroll', () => {
     const currentScroll = window.scrollY;
@@ -93,12 +92,22 @@ window.addEventListener('scroll', () => {
     if (currentScroll > 50) {
         nav.classList.add('scrolled');
         header.classList.add('scrolled');
+        profileheader.classList.add('scrolled');
     }
     // Scroll vers le haut : affiche la nav
     else {
         nav.classList.remove('scrolled');
         header.classList.remove('scrolled');
+        profileheader.classList.remove('scrolled');
     }
+});
+profileheader.addEventListener('mouseover', () => {
+    profileheader.classList.remove('scrolled');
+});
+profileheader.addEventListener('mouseout', () => {
+    if (window.scrollY > 50) {
+        profileheader.classList.add('scrolled');
+    }  
 });
 
 async function checkSiteVersion() {

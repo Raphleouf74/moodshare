@@ -36,10 +36,10 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Autorise requêtes server-side (no origin)
+    // Autorise les requêtes server-side (no origin)
     if (!origin) return callback(null, true);
 
-    // Hosts de production précis
+    // Origines de production précises
     const allowedHosts = [
       "https://moodsharing.netlify.app",
       "https://moodshare-7dd7.onrender.com"
@@ -55,10 +55,12 @@ app.use(cors({
     console.log("❌ Bloqué par le CORS:", origin);
     return callback(new Error("Non accepté par le CORS"));
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization','X-Requested-With']
 }));
 
-// Répond explicitement aux préflight si besoin
+// Répond explicitement aux préflight
 app.options('*', cors());
 
 app.use(helmet());
