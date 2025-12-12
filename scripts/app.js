@@ -1,8 +1,13 @@
 import { loadLanguage, t } from "./lang.js";
 import { fetchWithAuth, getCurrentUser } from './auth.js';
 
+// URL du backend (même logique que dans auth.js)
+const API = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+  ? "http://localhost:3000/api"
+  : "https://moodshare-7dd7.onrender.com/api";
+
 async function loadRecommended() {
-  const res = await fetch('/api/users/recommended');
+  const res = await fetch(`${API}/users/recommended`, { credentials: 'include' });
   const list = res.ok ? await res.json() : [];
   const container = document.querySelector('.accounts-list');
   container.innerHTML = '';
@@ -389,7 +394,7 @@ function displayMood(mood) {
 
 // Chargement initial
 (async () => {
-    const res = await fetch("https://moodshare-7dd7.onrender.com/api/posts");
+    const res = await fetch(`${API}/posts`);
     const moods = await res.json();
     moods.reverse().forEach(displayMood);
 })();
@@ -405,7 +410,6 @@ tabs.forEach(tab => {
 
         // Récupère l'ID du bouton (ex: "homeTab", "postsTab", etc.)
         const tabId = tab.id;
-
         // Affiche la section correspondante
         sections.forEach(section => {
             if (section.id.startsWith(tabId)) {
@@ -616,7 +620,7 @@ async function addInboxNotification(
     h3.textContent = title;
 
     const p = document.createElement("p");
-    p.innerHTML = message;
+    p.textContent = message;
 
     wrapper.appendChild(h3);
     wrapper.appendChild(p);
@@ -655,7 +659,7 @@ async function loadUserPosts() {
 
     try {
         // ⚙️ Si tu as une API user spécifique :
-        const res = await fetch("https://moodshare-7dd7.onrender.com/api/posts");
+        const res = await fetch(`${API}/posts`);
         const posts = await res.json();
 
         // Simule l’utilisateur connecté
@@ -728,7 +732,7 @@ if (submitBtn) {
                     expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
                 };
 
-                const resStory = await fetch("https://moodshare-7dd7.onrender.com/api/stories", {
+                const resStory = await fetch(`${API}/stories`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(storyData)
@@ -770,7 +774,7 @@ if (submitBtn) {
                     expiresAt
                 };
 
-                const response = await fetch("https://moodshare-7dd7.onrender.com/api/posts", {
+                const response = await fetch(`${API}/posts`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(newMood)

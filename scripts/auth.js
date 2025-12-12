@@ -1,5 +1,9 @@
 // assets/js/auth.js
-const API_BASE = "https://TON_BACKEND_ON_RENDER"; // <- remplace par ton URL
+// Détection simple : en dev (localhost/127.0.0.1) on utilise le backend local,
+// sinon on utilise l'URL de production (Render)
+const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+  ? "http://localhost:3000"
+  : "https://moodshare-7dd7.onrender.com";
 
 async function postJSON(url, body) {
     const res = await fetch(API_BASE + url, {
@@ -14,7 +18,7 @@ async function postJSON(url, body) {
 }
 
 // fournit: registerUser, loginUser, loginGuest, logout, getCurrentUser
-const API = '/api';
+const API = API_BASE + '/api';
 
 export function getToken() {
   return localStorage.getItem('moodshare_token');
