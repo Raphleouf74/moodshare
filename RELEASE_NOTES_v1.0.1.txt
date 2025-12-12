@@ -1,5 +1,0 @@
-﻿ Release v1.0.1
-Date: 2025-11-02 16:38
-Build: a011
- Changelog:
-Refonte de l'UI/UX, messages éphemères extensibles jusqu'à 11 ans. Refonte des différents menu, backend amélioré afin d'accueillir de futures améliorations.

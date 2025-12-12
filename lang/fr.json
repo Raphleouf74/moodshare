@@ -64,5 +64,9 @@
     "create_expire_at": "Le message disparaîtra le <span id=\"msgdeletetime\"></span>",
     "fb_xss_detected": "Script détécté dans le message. Il est formellement interdit de rentrer du script dans les posts.",
     "fb_xss_ban_warning": "Vous avez été temporairement banni des fonctionnalités de publication en raison de tentatives répétées d'injection de script. Veuillez respecter les règles d'utilisation.",
-    "fb_xss_unblocked": "Les fonctionnalités de publication ont été réactivées."
+    "fb_xss_unblocked": "Les fonctionnalités de publication ont été réactivées.",
+    "settings-performance": "Mode Performance",
+    "perf-auto": "Auto (détéction)",
+    "perf-low": "Forcer low-end",
+    "perf-unactive": "Désactivé"
 }

@@ -42,10 +42,10 @@
       <span class="link-icon">home</span>
       <p class="link-title" data-i18n="nav_home">Accueil</p>
     </a>
-    <a class="hoverable link" id="postsTab">
+    <!-- <a class="hoverable link" id="postsTab">
       <span class="link-icon">post</span>
       <p class="link-title" data-i18n="nav_posts">Posts</p>
-    </a>
+    </a> -->
     <a class="hoverable link" id="createTab">
       <span class="link-icon">add_circle</span>
       <p class="link-title" data-i18n="nav_create">Créer</p>
@@ -67,7 +67,6 @@
         <div class="story add-story" id="addStoryBtn">
           <span class="material-symbols-rounded">add</span>
         </div>
-        <div class="story skeleton"></div>
         <div class="story skeleton"></div>
       </div>
     </div>
@@ -272,21 +271,21 @@
       </div>
 
       <div class="lowend-settings">
-        <h4 data-i18n="settings_performance">Mode performance</h4>
+        <h4 data-i18n="settings-performance">Mode performance</h4>
         <p class="lp-title">Mode "low‑end" (détection automatique ou manuel)</p>
 
         <div class="lowend-controls" role="radiogroup" aria-label="Low end mode">
           <label>
             <input type="radio" name="lowEndMode" id="lowEndAuto" value="auto">
-            Auto (détection)
+            <p data-i18n="perf-auto">Auto (détection)</p>
           </label>
           <label>
             <input type="radio" name="lowEndMode" id="lowEndForce" value="on">
-            Forcer mode low-end
+            <p data-i18n="perf-low">Forcer low-end</p>
           </label>
           <label>
             <input type="radio" name="lowEndMode" id="lowEndOff" value="off">
-            Désactivé
+            <p data-i18n="perf-unactive">Désactiver</p>
           </label>
         </div>
       </div>

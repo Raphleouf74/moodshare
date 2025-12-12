@@ -274,6 +274,16 @@ function displayMood(mood) {
     textSpan.textContent = mood.text;
     textSpan.className = "post-text";
 
+    // Appliquer couleur de texte si fournie, sinon choisir automatiquement
+    const textColor = mood.textColor || (() => {
+        try {
+            return (getBrightness(mood.color || "#ffffff") < 128) ? "#FFFFFF" : "#000000";
+        } catch (e) { return "#000000"; }
+    })();
+
+    emojiSpan.style.color = textColor;
+    textSpan.style.color = textColor;
+
     content.appendChild(emojiSpan);
     content.appendChild(textSpan);
 
@@ -347,6 +357,9 @@ function displayMood(mood) {
     const likedPosts = JSON.parse(localStorage.getItem("likedPosts") || "[]");
     if (likedPosts.includes(String(mood.id))) {
         likeBtn.classList.add("liked");
+    }
+    if (mood.id === "0") {
+        mood.classList.add('WelcomeMood');
     }
 }
 
@@ -422,7 +435,7 @@ pickerContainer.addEventListener('click', (e) => {
     }
 });
 
-// Empêche de fermer quand on clique *dans* le picker
+// Empêche de fermer quand on clique dans le picker
 pickerContent.addEventListener('click', (e) => {
     e.stopPropagation();
 });
@@ -630,26 +643,20 @@ async function loadUserPosts() {
         wall.textContent = "";
 
         if (userPosts.length === 0) {
-            wall.textContent = "<i>Aucun post pour le moment.</i>";
+            wall.textContent = "Aucun post pour le moment.";
             return;
         }
 
         userPosts.forEach(p => {
             const div = document.createElement("div");
             div.className = "user-post";
-            div.textContent = `
-        <div class="user-post-header">
-          <span>${p.emoji || "🙂"}</span>
-          <span>${new Date(p.createdAt).toLocaleString("fr-FR")}</span>
-        </div>
-        <p>${p.text}</p>
-      `;
+            div.textContent = p.text;
             wall.appendChild(div);
         });
 
         document.getElementById("countPosts").textContent = userPosts.length;
     } catch (err) {
-        wall.textContent = "<p style='color:red;'>Erreur lors du chargement des posts</p>";
+        wall.textContent = "Erreur lors du chargement des posts";
         console.error(err);
     }
 }
@@ -691,6 +698,7 @@ if (submitBtn) {
                 const storyData = {
                     text,
                     color,
+                    textColor: document.getElementById('textColor')?.value || null,
                     emoji,
                     createdAt: new Date().toISOString(),
                     expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
@@ -732,6 +740,7 @@ if (submitBtn) {
                 const newMood = {
                     text,
                     color,
+                    textColor: document.getElementById('textColor')?.value || null,
                     emoji,
                     ephemeral: ephemeralToggle.checked,
                     expiresAt
@@ -959,7 +968,7 @@ function addStoryToList(story) {
     if (!storiesList) return;
 
     const storyDiv = document.createElement('div');
-    storyDiv.className = 'story';
+    storyDiv.className = 'story-item';
 
     const emojiSpan = document.createElement('span');
     emojiSpan.className = 'story-emoji';
@@ -972,36 +981,133 @@ function addStoryToList(story) {
     storyDiv.appendChild(emojiSpan);
     storyDiv.appendChild(textSpan);
 
+    // Appliquer style: fond + couleur texte (si fournie sinon contraste)
+    if (story.color) storyDiv.style.background = story.color;
+    const sTextColor = story.textColor || ((story.color && getBrightness(story.color) < 128) ? "#FFFFFF" : "#000000");
+    emojiSpan.style.color = sTextColor;
+    textSpan.style.color = sTextColor;
+
     storiesList.appendChild(storyDiv);
 
-    storyDiv.addEventListener('click', () => openStoryViewer(story));
+    // passe l'élément source à la visionneuse pour l'animation
+    storyDiv.addEventListener('click', () => openStoryViewer(story, storyDiv));
 }
 
 // Visionneuse simple
-function openStoryViewer(story) {
-    const viewer = document.createElement('div');
-    viewer.className = 'story-viewer';
+function openStoryViewer(story, sourceEl) {
+    if (!sourceEl) {
+        // fallback simple
+        const viewer = document.createElement('div');
+        viewer.className = 'story-viewer';
+        const content = document.createElement('div');
+        content.className = 'story-content';
+        content.style.background = story.color || '#111';
+        const emojiEl = document.createElement('span');
+        emojiEl.style.fontSize = '3rem';
+        emojiEl.textContent = story.emoji || '';
+        const p = document.createElement('p');
+        p.textContent = story.text || '';
 
-    const content = document.createElement('div');
-    content.className = 'story-content';
-    content.style.background = story.color || '#111';
+        // couleur texte pour le viewer
+        const vTextColor = story.textColor || ((story.color && getBrightness(story.color) < 128) ? "#FFFFFF" : "#000000");
+        emojiEl.style.color = vTextColor;
+        p.style.color = vTextColor;
 
-    const emojiEl = document.createElement('span');
-    emojiEl.style.fontSize = '3rem';
-    emojiEl.textContent = story.emoji || '';
+        content.appendChild(emojiEl);
+        content.appendChild(p);
+        viewer.appendChild(content);
+        document.body.appendChild(viewer);
+        viewer.addEventListener('click', () => viewer.remove());
+        setTimeout(() => viewer.remove(), 4000);
+        return;
+    }
 
-    const p = document.createElement('p');
-    p.textContent = story.text || '';
+    // clone la bulle source et place en position fixe
+    const rect = sourceEl.getBoundingClientRect();
+    const clone = sourceEl.cloneNode(true);
+    clone.style.position = 'fixed';
+    clone.style.left = rect.left + 'px';
+    clone.style.top = rect.top + 'px';
+    clone.style.width = rect.width + 'px';
+    clone.style.height = rect.height + 'px';
+    clone.style.zIndex = 9999;
+    clone.style.display = 'flex';
+    clone.style.alignItems = 'center';
+    clone.style.justifyContent = 'center';
+    clone.style.overflow = 'hidden';
+    clone.style.transition = 'all 450ms cubic-bezier(.2,.8,.2,1)';
+    clone.style.borderRadius = '50%';
+    clone.style.boxShadow = '0 0 0px 0px rgba(0,0,0,0.3)';
+    // applique couleur si fournie
+    clone.style.background = story.color || getComputedStyle(sourceEl).backgroundColor || '#111';
+    // force le rendu
+    document.body.appendChild(clone);
+    clone.getBoundingClientRect();
 
-    content.appendChild(emojiEl);
-    content.appendChild(p);
-    viewer.appendChild(content);
+    // calcule taille cible (centre écran)
+    const targetW = Math.min(window.innerWidth * 0.9, 900);
+    const targetH = Math.min(window.innerHeight * 0.82, 700);
+    const targetLeft = (window.innerWidth - targetW) / 2;
+    const targetTop = (window.innerHeight - targetH) / 2;
 
-    document.body.appendChild(viewer);
+    // anime vers le centre et passe en rectangle
+    requestAnimationFrame(() => {
+        clone.style.left = targetLeft + 'px';
+        clone.style.top = targetTop + 'px';
+        clone.style.width = targetW + 'px';
+        clone.style.height = targetH + 'px';
+        clone.style.borderRadius = '12px';
+        clone.style.boxShadow = '0 0 8000px 2400px rgba(0,0,0,0.3)';
+    });
 
-    // close on click or after timeout
-    viewer.addEventListener('click', () => viewer.remove());
-    setTimeout(() => {
-        if (viewer.parentNode) viewer.remove();
-    }, 4000);
+    // après l'animation, affiche le contenu détaillé dans le clone
+    clone.addEventListener('transitionend', function handler() {
+        clone.removeEventListener('transitionend', handler);
+
+        // remplace l'intérieur par le viewer réel
+        clone.innerHTML = '';
+        clone.style.cursor = 'pointer';
+        const wrapper = document.createElement('div');
+        wrapper.style.display = 'flex';
+        wrapper.style.flexDirection = 'column';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.justifyContent = 'center';
+        wrapper.style.padding = '20px';
+        wrapper.style.width = '100%';
+        wrapper.style.height = '100%';
+        wrapper.style.boxSizing = 'border-box';
+        const emojiEl = document.createElement('span');
+        emojiEl.style.fontSize = '4rem';
+        emojiEl.textContent = story.emoji || '';
+        const p = document.createElement('p');
+        p.textContent = story.text || '';
+        p.style.marginTop = '12px';
+        p.style.textAlign = 'center';
+        p.style.wordBreak = 'break-word';
+
+        // appliquer couleur texte fournie ou automatique
+        const viewerTextColor = story.textColor || ((story.color && getBrightness(story.color) < 128) ? "#FFFFFF" : "#000000");
+        emojiEl.style.color = viewerTextColor;
+        p.style.color = viewerTextColor;
+
+        wrapper.appendChild(emojiEl);
+        wrapper.appendChild(p);
+        clone.appendChild(wrapper);
+
+        // ferme avec animation de retour
+        let autoTimeout = setTimeout(close, 4000);
+        function close() {
+            clearTimeout(autoTimeout);
+            const srcRect = sourceEl.getBoundingClientRect();
+            clone.style.transition = 'all 320ms ease';
+            clone.style.left = srcRect.left + 'px';
+            clone.style.top = srcRect.top + 'px';
+            clone.style.width = srcRect.width + 'px';
+            clone.style.height = srcRect.height + 'px';
+            clone.style.borderRadius = '50%';
+            clone.addEventListener('transitionend', () => clone.remove(), { once: true });
+        }
+
+        clone.addEventListener('click', close);
+    });
 }

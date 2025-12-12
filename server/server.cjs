@@ -16,8 +16,8 @@ const db = require("./db/db.cjs");
 const { requireAuth } = require("./middleware/authMiddleware.cjs");
 
 
-process.on("uncaughtException", err => console.error("❌ Uncaught Exception:", err));
-process.on("unhandledRejection", err => console.error("❌ Unhandled Rejection:", err));
+process.on("uncaughtException", err => console.error("❌ Exception non attrapée:", err));
+process.on("unhandledRejection", err => console.error("❌ Rejection non faite:", err));
 
 const app = express();
 
@@ -30,7 +30,8 @@ const allowedOrigins = [
   "http://127.0.0.1:5502",
   "http://localhost:5500",
   "http://localhost:5501",
-  "http://localhost:5502"
+  "http://localhost:5502",
+  "http://localhost:3000"
 ];
 
 app.use(cors({
@@ -39,8 +40,8 @@ app.use(cors({
     if (!origin || allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
-    console.log("❌ CORS blocked:", origin);  // debug
-    return callback(new Error("Not allowed by CORS"));
+    console.log("❌ Bloqué par le CORS:", origin);  // debug
+    return callback(new Error("Non accepté par le CORS"));
   },
   credentials: true
 }));
@@ -65,7 +66,7 @@ let posts = [
     emoji: '👋',
     ephemeral: false,
     expiresAt: null,
-    id: 1
+    id: 0
   }
 ];
 
@@ -171,6 +172,8 @@ app.post("/api/stories", async (req, res) => {
     const text = String(req.body.text || "").trim();
     const emoji = String(req.body.emoji || "").trim();
     const color = req.body.color || "#ffffff";
+    // Nouvelle prise en charge de textColor
+    const textColor = req.body.textColor || null;
     const expiresAt = req.body.expiresAt ? new Date(req.body.expiresAt).toISOString() : null;
 
     // Validation basique
@@ -187,6 +190,8 @@ app.post("/api/stories", async (req, res) => {
       text: cleanText,
       emoji: cleanEmoji,
       color,
+      // stocker textColor si fourni
+      ...(textColor ? { textColor } : {}),
       createdAt: new Date().toISOString(),
       expiresAt
     };
