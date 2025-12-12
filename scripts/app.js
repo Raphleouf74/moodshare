@@ -1,8 +1,10 @@
 import { loadLanguage, t } from "./lang.js";
 import { fetchWithAuth, getCurrentUser } from './auth.js';
 
-// URL du backend (même logique que dans auth.js)
-const API = "https://moodshare-7dd7.onrender.com/api";
+// Détection backend : local en dev, prod sinon
+const API = (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "::1")
+  ? "http://localhost:3000/api"
+  : "https://moodshare-7dd7.onrender.com/api";
 
 async function loadRecommended() {
     const res = await fetch(`${API}/users/recommended`, { credentials: 'include' });

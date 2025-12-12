@@ -19,11 +19,12 @@ export function clearToken() {
   localStorage.removeItem('moodshare_token');
 }
 
-export async function fetchWithAuth(url, opts = {}) {
+export async function fetchWithAuth(path, opts = {}) {
   const token = getToken();
-  const headers = opts.headers || {};
+  const headers = { ...(opts.headers || {}) };
   if (token) headers['Authorization'] = `Bearer ${token}`;
-  return fetch(url, { ...opts, headers });
+  // always call the backend full URL and include credentials if cookies used
+  return fetch(`${API}${path}`, { ...opts, headers, credentials: 'include' });
 }
 
 export async function registerUser(username, password) {
