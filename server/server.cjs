@@ -229,7 +229,7 @@ app.post("/api/posts/:id/unlike", (req, res) => {
 
 /// AUTH & USER ROUTES
 app.use("/api/auth", authRoutes);
-app.use("/api/users", requireAuth, usersRoutes);
+app.use("/api", usersRoutes);
 
 /// HEALTH
 app.get("/api/health", (req, res) => {
@@ -240,3 +240,5 @@ app.get("/api/health", (req, res) => {
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
+module.exports = app;

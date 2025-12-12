@@ -36,7 +36,30 @@
         <h1 data-i18n="header_title">MoodShare</h1>
       </div>
     </div>
+
+    <!-- Auth / Profile actions -->
+    <div class="auth-actions" id="authActions">
+      <button id="openLogin" class="hoverable">Se connecter</button>
+      <button id="openRegister" class="hoverable">S'inscrire</button>
+      <button id="guestLogin" class="hoverable">Continuer en invité</button>
+      <div id="userMenu" class="hidden">
+        <span id="userName"></span>
+        <button id="logoutBtn" class="hoverable">Se déconnecter</button>
+      </div>
+    </div>
   </header>
+
+  <!-- Login / Register Modal (hidden by default) -->
+  <div id="authModal" class="modal hidden">
+    <form id="authForm">
+      <h3 id="authFormTitle">Connexion</h3>
+      <input id="authUsername" placeholder="Pseudo" required />
+      <input id="authPassword" type="password" placeholder="Mot de passe" required />
+      <button id="authSubmit" type="submit" class="hoverable">Valider</button>
+      <button id="authCancel" type="button" class="hoverable">Annuler</button>
+    </form>
+  </div>
+
   <nav class="menu" role="navigation" aria-label="Menu">
     <a class="hoverable link active" id="homeTab">
       <span class="link-icon">home</span>
@@ -294,6 +317,8 @@
 
 </body>
 <script type="module" src="scripts/app.js"></script>
+<script type="module" src="scripts/auth.js"></script>
+<script type="module" src="scripts/profile.js"></script>
 <script type="module" src="/scripts/lang-picker.js"></script>
 
 </html>

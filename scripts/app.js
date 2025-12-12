@@ -1,4 +1,28 @@
 import { loadLanguage, t } from "./lang.js";
+import { fetchWithAuth, getCurrentUser } from './auth.js';
+
+async function loadRecommended() {
+  const res = await fetch('/api/users/recommended');
+  const list = res.ok ? await res.json() : [];
+  const container = document.querySelector('.accounts-list');
+  container.innerHTML = '';
+  list.forEach(u => {
+    const el = document.createElement('div');
+    el.className = 'account-suggest';
+    el.innerHTML = `<img src="${u.avatar || '/assets/logo/logo_cropped.jpg'}" alt="${u.username}"/><b>${u.username}</b><p>${u.bio || ''}</p>`;
+    container.appendChild(el);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // load recommended users on home
+  await loadRecommended();
+  // try to restore session for UI (auth.js already handles initial state)
+  const user = await getCurrentUser();
+  if (user) {
+    // set some UI state if needed
+  }
+});
 
 document.addEventListener("DOMContentLoaded", async () => {
 

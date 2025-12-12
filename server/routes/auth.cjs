@@ -27,7 +27,7 @@ function createRefreshToken(uid) {
 }
 
 // REGISTER
-router.post("/register", async (req, res) => {
+router.post("/auth/register", express.json(), async (req, res) => {
   try {
     const { email, password, displayName } = req.body;
     if (!email || !password || !validator.isEmail(email) || !validator.isLength(password, { min: 8 })) {
@@ -50,7 +50,7 @@ router.post("/register", async (req, res) => {
 });
 
 // LOGIN
-router.post("/login", async (req, res) => {
+router.post("/auth/login", express.json(), async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: "Champs manquants" });

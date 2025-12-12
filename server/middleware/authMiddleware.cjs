@@ -1,16 +1,18 @@
 // middleware/authMiddleware.js (assure-toi que c'est exactement ça)
-const jwt = require("jsonwebtoken");
-const db = require("../db/db.cjs");
+const jwtService = require('../services/jwt.cjs');
+const userModel = require('../models/user.cjs');
 
-module.exports.requireAuth = (req, res, next) => {
-    const token = req.cookies?.access_token;
-    if (!token) return res.status(401).json({ error: "No token" });
-
+module.exports = async (req, res, next) => {
+    const auth = req.headers.authorization;
+    if (!auth || !auth.startsWith('Bearer ')) return res.status(401).json({ message: 'No token' });
+    const token = auth.slice(7);
     try {
-        const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-        req.user = { id: payload.uid };
+        const payload = jwtService.verify(token);
+        const user = await userModel.getById(payload.id);
+        if (!user) return res.status(401).json({ message: 'Invalid token' });
+        req.user = { id: user.id, username: user.username };
         next();
-    } catch {
-        return res.status(401).json({ error: "Invalid token" });
+    } catch (err) {
+        return res.status(401).json({ message: 'Invalid token' });
     }
 };
