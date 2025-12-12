@@ -3,13 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
 const db = require("../db/db.cjs");
-
-
 const router = express.Router();
-
-
-
-
+const userModel = require('../models/user.cjs');
 
 
 const COOKIE_OPTIONS = {
@@ -27,7 +22,7 @@ function createRefreshToken(uid) {
 }
 
 // REGISTER
-router.post("/auth/register", express.json(), async (req, res) => {
+router.post("/register", express.json(), async (req, res) => {
   try {
     const { email, password, displayName } = req.body;
     if (!email || !password || !validator.isEmail(email) || !validator.isLength(password, { min: 8 })) {
@@ -50,7 +45,7 @@ router.post("/auth/register", express.json(), async (req, res) => {
 });
 
 // LOGIN
-router.post("/auth/login", express.json(), async (req, res) => {
+router.post("/login", express.json(), async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: "Champs manquants" });
@@ -127,5 +122,18 @@ router.post("/logout", async (req, res) => {
     res.status(500).json({ error: "Erreur serveur" });
   }
 });
+
+// --- Ajout / guest (déjà présent si tu l'as ajouté) ---
+router.post('/guest', async (req, res) => {
+  try {
+    const guest = await userModel.createGuestUser();
+    const token = `guest_${guest.id}`;
+    res.json({ user: guest, token });
+  } catch (err) {
+    console.error('❌ Error creating guest user:', err);
+    res.status(500).json({ error: 'Internal error' });
+  }
+});
+  
 
 module.exports = router;

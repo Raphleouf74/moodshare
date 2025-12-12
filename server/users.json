@@ -10,5 +10,17 @@
     "isGuest": false,
     "createdAt": "2025-01-01T00:00:00.000Z",
     "settings": {}
+  },
+  {
+    "id": "1765576625513",
+    "username": "guest_1765576625513",
+    "verified": false,
+    "passwordHash": null,
+    "avatar": "/assets/logo/logo_cropped.jpg",
+    "bio": "",
+    "recommendedScore": 0,
+    "isGuest": true,
+    "createdAt": "2025-12-12T21:57:05.513Z",
+    "settings": {}
   }
 ]

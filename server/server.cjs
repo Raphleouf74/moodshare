@@ -78,8 +78,14 @@ app.use(cors({
   allowedHeaders: ['Content-Type','Authorization','X-Requested-With']
 }));
 
-// Répond explicitement aux préflight
-app.options('*', cors());
+// DEBUG DEV ONLY: autorise toutes origines et credentials (ne pas laisser en prod)
+app.use(require('cors')({
+  origin: true,
+  credentials: true,
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization','X-Requested-With']
+}));
+app.options('*', require('cors')());
 
 app.use(helmet());
 app.use(express.json());
@@ -265,6 +271,26 @@ app.post("/api/posts/:id/unlike", (req, res) => {
 /// AUTH & USER ROUTES
 app.use("/api/auth", authRoutes);
 app.use("/api", usersRoutes);
+
+// Debug : lister les routes enregistrées (utile pour vérifier les chemins)
+function listRoutes() {
+  const routes = [];
+  app._router.stack.forEach(m => {
+    if (m.route && m.route.path) {
+      const methods = Object.keys(m.route.methods).join(',');
+      routes.push(`${methods.toUpperCase()} ${m.route.path}`);
+    } else if (m.name === 'router' && m.handle && m.handle.stack) {
+      m.handle.stack.forEach(r => {
+        if (r.route && r.route.path) {
+          const methods = Object.keys(r.route.methods).join(',');
+          routes.push(`${methods.toUpperCase()} ${r.route.path}`);
+        }
+      });
+    }
+  });
+  console.log('📡 Routes enregistrées:\n' + routes.join('\n'));
+}
+listRoutes();
 
 /// HEALTH
 app.get("/api/health", (req, res) => {
