@@ -7,6 +7,9 @@ const API_BASE = (location.hostname === "localhost" || location.hostname === "12
 
 const API = API_BASE + '/api';
 
+// debug : vérifier à l'exécution quelle API est utilisée
+console.log('API base:', API, 'hostname:', location.hostname);
+
 export function getToken() {
   return localStorage.getItem('moodshare_token');
 }
@@ -23,8 +26,11 @@ export async function fetchWithAuth(path, opts = {}) {
   const token = getToken();
   const headers = { ...(opts.headers || {}) };
   if (token) headers['Authorization'] = `Bearer ${token}`;
-  // always call the backend full URL and include credentials if cookies used
-  return fetch(`${API}${path}`, { ...opts, headers, credentials: 'include' });
+
+  // Accept either a full URL or a path starting with '/'
+  const url = path && (path.startsWith('http://') || path.startsWith('https://')) ? path : `${API}${path}`;
+
+  return fetch(url, { ...opts, headers, credentials: 'include' });
 }
 
 export async function registerUser(username, password) {
@@ -66,7 +72,8 @@ export async function logout() {
 export async function getCurrentUser() {
   const token = getToken();
   if (!token) return null;
-  const res = await fetchWithAuth(`${API}/auth/me`);
+  // <-- corrige l'appel: passer un path relatif à fetchWithAuth
+  const res = await fetchWithAuth('/auth/me');
   if (!res.ok) return null;
   return res.json();
 }
