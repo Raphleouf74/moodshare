@@ -5,30 +5,26 @@ import { fetchWithAuth, getCurrentUser } from './auth.js';
 const API = "https://moodshare-7dd7.onrender.com/api";
 
 async function loadRecommended() {
-  const res = await fetch(`${API}/users/recommended`, { credentials: 'include' });
-  const list = res.ok ? await res.json() : [];
-  const container = document.querySelector('.accounts-list');
-  container.innerHTML = '';
-  list.forEach(u => {
-    const el = document.createElement('div');
-    el.className = 'account-suggest';
-    el.innerHTML = `<img src="${u.avatar || '/assets/logo/logo_cropped.jpg'}" alt="${u.username}"/><b>${u.username}</b><p>${u.bio || ''}</p>`;
-    container.appendChild(el);
-  });
+    const res = await fetch(`${API}/users/recommended`, { credentials: 'include' });
+    const list = res.ok ? await res.json() : [];
+    const container = document.querySelector('.accounts-list');
+    container.innerHTML = '';
+    list.forEach(u => {
+        const el = document.createElement('div');
+        el.className = 'account-suggest';
+        el.innerHTML = `<img src="${u.avatar || '/assets/logo/logo_cropped.jpg'}" alt="${u.username}"/><b>${u.username}</b><p>${u.bio || ''}</p>`;
+        container.appendChild(el);
+    });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // load recommended users on home
-  await loadRecommended();
-  // try to restore session for UI (auth.js already handles initial state)
-  const user = await getCurrentUser();
-  if (user) {
-    // set some UI state if needed
-  }
-});
-
-document.addEventListener("DOMContentLoaded", async () => {
-
+    // load recommended users on home
+    await loadRecommended();
+    // try to restore session for UI (auth.js already handles initial state)
+    const user = await getCurrentUser();
+    if (user) {
+        // set some UI state if needed
+    }
     // 1️⃣ Charger la langue AVANT TOUTE CHOSE
     const lang = localStorage.getItem("lang") || "fr";
     await loadLanguage(lang);
@@ -77,7 +73,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }
     });
+    setTimeout(() => {
+        const loader = document.getElementById('loader');
+        const mainContent = document.getElementById('main-content');
 
+        // Cache le loader
+        loader.classList.add('hidden');
+
+    }, 4000);
 });
 
 
@@ -107,7 +110,7 @@ profileheader.addEventListener('mouseover', () => {
 profileheader.addEventListener('mouseout', () => {
     if (window.scrollY > 50) {
         profileheader.classList.add('scrolled');
-    }  
+    }
 });
 
 async function checkSiteVersion() {
@@ -165,9 +168,6 @@ async function checkSiteVersion() {
     }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-    checkSiteVersion();
-});
 // scripts/app.js
 import './social/feed.js';
 const wall = document.getElementById("moodWall");
@@ -814,17 +814,6 @@ if (submitBtn) {
     });
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-    // Simule un temps de chargement (enlève ce setTimeout en production)
-    setTimeout(() => {
-        const loader = document.getElementById('loader');
-        const mainContent = document.getElementById('main-content');
-
-        // Cache le loader
-        loader.classList.add('hidden');
-
-    }, 4000); // 4 secondes de démo, à supprimer en prod
-});
 
 async function loadLanguages() {
     const manifest = await fetch("/lang/manifest.json").then(r => r.json());
