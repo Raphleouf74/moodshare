@@ -73,14 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
     });
-    setTimeout(() => {
-        const loader = document.getElementById('loader');
-        const mainContent = document.getElementById('main-content');
 
-        // Cache le loader
-        loader.classList.add('hidden');
-
-    }, 4000);
 });
 
 
@@ -814,6 +807,17 @@ if (submitBtn) {
     });
 }
 
+window.addEventListener('DOMContentLoaded', () => {
+    // Simule un temps de chargement (enlève ce setTimeout en production)
+    setTimeout(() => {
+        const loader = document.getElementById('loader');
+        const mainContent = document.getElementById('main-content');
+
+        // Cache le loader
+        loader.classList.add('hidden');
+
+    }, 4000); // 4 secondes de démo, à supprimer en prod
+});
 
 async function loadLanguages() {
     const manifest = await fetch("/lang/manifest.json").then(r => r.json());

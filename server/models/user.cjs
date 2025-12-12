@@ -1,7 +1,6 @@
 const fs = require('fs').promises;
 const path = require('path');
 
-// Utiliser la variable d'env USERS_FILE si présente, sinon fallback sur server/users.json
 const usersFile = process.env.USERS_FILE || path.join(__dirname, '..', 'users.json');
 
 async function ensureUsersFile() {
@@ -30,8 +29,50 @@ async function writeUsers(users) {
   await fs.writeFile(usersFile, JSON.stringify(users, null, 2), 'utf8');
 }
 
+/**
+ * Retourne une liste d'utilisateurs recommandés.
+ * Tri par recommendedScore descendant puis par date de création.
+ * limit par défaut 5.
+ */
+async function recommended(limit = 5) {
+  const users = await readUsers();
+  return users
+    .filter(u => !u.isGuest) // optionnel : éviter guests
+    .sort((a, b) => (b.recommendedScore || 0) - (a.recommendedScore || 0))
+    .slice(0, limit);
+}
+
+/* Helpers usuels (utilisés potentiellement ailleurs) */
+async function findByUsername(username) {
+  const users = await readUsers();
+  return users.find(u => u.username === username) || null;
+}
+
+async function createGuestUser() {
+  const users = await readUsers();
+  const id = (Date.now()).toString();
+  const guest = {
+    id,
+    username: `guest_${id}`,
+    verified: false,
+    passwordHash: null,
+    avatar: '/assets/logo/logo_cropped.jpg',
+    bio: '',
+    recommendedScore: 0,
+    isGuest: true,
+    createdAt: new Date().toISOString(),
+    settings: {}
+  };
+  users.push(guest);
+  await writeUsers(users);
+  return guest;
+}
+
 module.exports = {
   readUsers,
   writeUsers,
+  recommended,
+  findByUsername,
+  createGuestUser,
   usersFile
 };
