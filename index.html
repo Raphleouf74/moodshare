@@ -1,42 +1,50 @@
 <!DOCTYPE html>
 <html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>MoodShare</title>
+    <link rel="icon" href="/assets/logo/logo_cropped.jpg" />
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+    />
+    <script
+      type="module"
+      src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"
+    ></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>MoodShare</title>
-  <link rel="icon" href="/assets/logo/logo_cropped.jpg" />
-  <link rel="stylesheet" href="/styles/main.css" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" />
-  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
-</head>
-
-<body>
-  <div id="squareback"></div>
-  <div id="circleback"></div>
-  <div id="loader">
-    <div class="loader-content">
-      <div id="squareback"></div>
-      <div id="circleback"></div>
-      <div class="logo-container">
-        <div id="square"></div>
-        <div id="circle"></div>
-      </div>
-      <div class="loading-text" data-i18n="loader_loading">Chargement...</div>
-    </div>
-  </div>
-
-  <header>
-    <div class="logo">
-      <div class="mainlogo">
-        <div class="logodraw">
+  <body>
+    <div id="squareback"></div>
+    <div id="circleback"></div>
+    <div id="loader">
+      <div class="loader-content">
+        <div id="squareback"></div>
+        <div id="circleback"></div>
+        <div class="logo-container">
           <div id="square"></div>
           <div id="circle"></div>
         </div>
-        <h1 data-i18n="header_title">MoodShare</h1>
+        <div class="loading-text" data-i18n="loader_loading">Chargement...</div>
       </div>
     </div>
 
+    <header>
+      <div class="logo">
+        <div class="mainlogo">
+          <div class="logodraw">
+            <div id="square"></div>
+            <div id="circle"></div>
+          </div>
+          <h1 data-i18n="header_title">MoodShare</h1>
+        </div>
+      </div>
+    </header>
     <!-- Auth / Profile actions -->
     <div class="auth-actions" id="authActions">
       <button id="openLogin" class="hoverable">Se connecter</button>
@@ -47,164 +55,222 @@
         <button id="logoutBtn" class="hoverable">Se déconnecter</button>
       </div>
     </div>
-  </header>
 
-  <!-- Login / Register Modal (hidden by default) -->
-  <div id="authModal" class="modal hidden">
-    <form id="authForm">
-      <h3 id="authFormTitle">Connexion</h3>
-      <input id="authUsername" placeholder="Pseudo" required />
-      <input id="authPassword" type="password" placeholder="Mot de passe" required />
-      <button id="authSubmit" type="submit" class="hoverable">Valider</button>
-      <button id="authCancel" type="button" class="hoverable">Annuler</button>
-    </form>
-  </div>
+    <!-- Login / Register Modal (hidden by default) -->
+    <div id="authModal" class="modal hidden">
+      <form id="authForm">
+        <h3 id="authFormTitle">Connexion</h3>
+        <input id="authUsername" placeholder="Pseudo" required />
+        <input
+          id="authPassword"
+          type="password"
+          placeholder="Mot de passe"
+          required
+        />
+        <button id="authSubmit" type="submit" class="hoverable">Valider</button>
+        <button id="authCancel" type="button" class="hoverable">Annuler</button>
+      </form>
+    </div>
 
-  <nav class="menu" role="navigation" aria-label="Menu">
-    <a class="hoverable link active" id="homeTab">
-      <span class="link-icon">home</span>
-      <p class="link-title" data-i18n="nav_home">Accueil</p>
-    </a>
-    <!-- <a class="hoverable link" id="postsTab">
+    <nav class="menu" role="navigation" aria-label="Menu">
+      <a class="hoverable link active" id="homeTab">
+        <span class="link-icon">home</span>
+        <p class="link-title" data-i18n="nav_home">Accueil</p>
+      </a>
+      <!-- <a class="hoverable link" id="postsTab">
       <span class="link-icon">post</span>
       <p class="link-title" data-i18n="nav_posts">Posts</p>
     </a> -->
-    <a class="hoverable link" id="createTab">
-      <span class="link-icon">add_circle</span>
-      <p class="link-title" data-i18n="nav_create">Créer</p>
-    </a>
-    <a class="hoverable link" id="inboxTab">
-      <span class="link-icon">inbox</span>
-      <p class="link-title" data-i18n="nav_inbox">Notifications</p>
-    </a>
-    <a class="hoverable link" id="profileTab">
-      <span class="link-icon">account_circle</span>
-      <p class="link-title" data-i18n="nav_profile">Profil</p>
-    </a>
-
-  </nav>
-  <section id="homeTab" class="tab active">
-    <div class="stories">
-      <h2 data-i18n="home_stories">Stories</h2>
-      <div class="stories-list">
-        <div class="story add-story" id="addStoryBtn">
-          <span class="material-symbols-rounded">add</span>
-        </div>
-        <div class="story skeleton"></div>
-      </div>
-    </div>
-
-    <div class="posts-section">
-      <h2 data-i18n="home_recent_posts">Posts récents</h2>
-      <div id="moodWall"></div>
-    </div>
-    <div class="suggested-accounts">
-      <h2 data-i18n="home_suggested_accounts">Comptes à suivre</h2>
-      <div class="accounts-list">
-        <div class="account skeleton"></div>
-        <div class="account skeleton"></div>
-        <div class="account skeleton"></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="postsTab" class="tab hidden">
-  </section>
-
-  <section id="createTab" class="tab hidden">
-    <div id="postModal">
-      <textarea id="moodInput" maxlength="450" placeholder="Comment tu te sens ?"
-        data-i18n="create_placeholder"></textarea>
-      <div class="mood-options">
-        <div class="inputdiv">
-          <input type="color" id="moodColor" value="#ffffff" />
-          <label for="moodColor" data-i18n="create_bg">Fond</label>
-        </div>
-        <div class="inputdiv">
-          <input type="color" id="textColor" value="#000000" />
-          <label for="textColor" data-i18n="create_color">Couleur</label>
-        </div>
-
-        <input type="text" class="moodEmoji" id="editEmojiBtn" placeholder="" readonly />
-
-        <div id="emojiPickerContainer">
-          <emoji-picker id="emojiPicker"></emoji-picker>
-          <p><i>Séléctionnez un emoji ou cliquez autour pour fermer.</i></p>
+      <a class="hoverable link" id="createTab">
+        <span class="link-icon">add_circle</span>
+        <p class="link-title" data-i18n="nav_create">Créer</p>
+      </a>
+      <a class="hoverable link" id="inboxTab">
+        <span class="link-icon">inbox</span>
+        <p class="link-title" data-i18n="nav_inbox">Notifications</p>
+      </a>
+      <a class="hoverable link" id="profileTab">
+        <span class="link-icon">account_circle</span>
+        <p class="link-title" data-i18n="nav_profile">Profil</p>
+      </a>
+    </nav>
+    <section id="homeTab" class="tab active">
+      <div class="stories">
+        <h2 data-i18n="home_stories">Stories</h2>
+        <div class="stories-list">
+          <div class="story add-story" id="addStoryBtn">
+            <span class="material-symbols-rounded">add</span>
+          </div>
+          <div class="story skeleton"></div>
         </div>
       </div>
-      <!-- Aperçu du post -->
-      <p data-i18n="create_preview">Aperçu de votre poste</p>
-      <div id="previewMood" class="mood-card">
-        <span id="previewEmoji"></span>
-        <span id="previewText"></span>
+
+      <div class="posts-section">
+        <h2 data-i18n="home_recent_posts">Posts récents</h2>
+        <div id="moodWall"></div>
       </div>
-      <button class="hoverable" id="submitMood" data-i18n="create_share">
-        <span class="material-symbols-rounded">upload</span>Partager
-      </button class="hoverable">
-      <!-- Ajouter après mood-options dans la section createTab -->
-      <div class="ephemeral-options">
-        <label class="container">
-          <input type="checkbox" id="ephemeralToggle" />
+      <div class="suggested-accounts">
+        <h2 data-i18n="home_suggested_accounts">Comptes à suivre</h2>
+        <div class="accounts-list">
+          <div class="account skeleton"></div>
+          <div class="account skeleton"></div>
+          <div class="account skeleton"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="postsTab" class="tab hidden"></section>
+
+    <section id="createTab" class="tab hidden">
+      <div id="postModal">
+        <textarea
+          id="moodInput"
+          maxlength="450"
+          placeholder="Comment tu te sens ?"
+          data-i18n="create_placeholder"
+        ></textarea>
+        <div class="mood-options">
+          <div class="inputdiv">
+            <input type="color" id="moodColor" value="#ffffff" />
+            <label for="moodColor" data-i18n="create_bg">Fond</label>
+          </div>
+          <div class="inputdiv">
+            <input type="color" id="textColor" value="#000000" />
+            <label for="textColor" data-i18n="create_color">Couleur</label>
+          </div>
+
+          <input
+            type="text"
+            class="moodEmoji"
+            id="editEmojiBtn"
+            placeholder=""
+            readonly
+          />
+
+          <div id="emojiPickerContainer">
+            <emoji-picker id="emojiPicker"></emoji-picker>
+            <p><i>Séléctionnez un emoji ou cliquez autour pour fermer.</i></p>
+          </div>
+        </div>
+        <!-- Aperçu du post -->
+        <p data-i18n="create_preview">Aperçu de votre poste</p>
+        <div id="previewMood" class="mood-card">
+          <span id="previewEmoji"></span>
+          <span id="previewText"></span>
+        </div>
+        <button class="hoverable" id="submitMood" data-i18n="create_share">
+          <span class="material-symbols-rounded">upload</span>Partager
+        </button>
+        <!-- Ajouter après mood-options dans la section createTab -->
+        <div class="ephemeral-options">
+          <label class="container">
+            <input type="checkbox" id="ephemeralToggle" />
+            <svg viewBox="0 0 64 64" height="2em" width="2em">
+              <path
+                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+                pathLength="575.0541381835938"
+                class="path"
+              ></path>
+            </svg>
+            <p data-i18n="create_ephemeral">Message éphémère</p>
+          </label>
+          <div id="durationPicker" class="duration-picker">
+            <div class="duration-input">
+              <input
+                type="number"
+                id="durationYear"
+                min="0"
+                max="10"
+                placeholder="aa"
+              />
+              <label for="durationYear" data-i18n="years">Années</label>
+            </div>
+            <div class="duration-input">
+              <input
+                type="number"
+                id="durationMonths"
+                min="0"
+                max="11"
+                placeholder="mm"
+              />
+              <label for="durationMonths" data-i18n="months">Mois</label>
+            </div>
+            <div class="duration-input">
+              <input
+                type="number"
+                id="durationDays"
+                min="0"
+                max="31"
+                placeholder="jj"
+              />
+              <label for="durationDays" data-i18n="days">Jours</label>
+            </div>
+            <div class="duration-input">
+              <input
+                type="number"
+                id="durationHours"
+                min="0"
+                max="23"
+                placeholder="hh"
+              />
+              <label for="durationHours" data-i18n="hours">Heures</label>
+            </div>
+            <div class="duration-input">
+              <input
+                type="number"
+                id="durationMinutes"
+                min="0"
+                max="59"
+                placeholder="mm"
+              />
+              <label for="durationMinutes" data-i18n="minutes">Minutes</label>
+            </div>
+            <div class="duration-input">
+              <input
+                type="number"
+                id="durationSeconds"
+                min="0"
+                max="59"
+                placeholder="ss"
+              />
+              <label for="durationSeconds" data-i18n="seconds">Secondes</label>
+            </div>
+          </div>
+          <p data-i18n="create_expire_at">
+            Le message disparaîtra le <span id="msgdeletetime"></span>
+          </p>
+        </div>
+        <label class="container storyinput">
+          <input type="checkbox" id="storyModeToggle" />
           <svg viewBox="0 0 64 64" height="2em" width="2em">
             <path
               d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-              pathLength="575.0541381835938" class="path"></path>
+              pathLength="575.0541381835938"
+              class="path"
+            ></path>
           </svg>
-          <p data-i18n="create_ephemeral">Message éphémère</p>
+          <p data-i18n="create_story">Mettre en story</p>
         </label>
-        <div id="durationPicker" class="duration-picker">
-          <div class="duration-input">
-            <input type="number" id="durationYear" min="0" max="10" placeholder="aa" />
-            <label for="durationYear" data-i18n="years">Années</label>
-          </div>
-          <div class="duration-input">
-            <input type="number" id="durationMonths" min="0" max="11" placeholder="mm" />
-            <label for="durationMonths" data-i18n="months">Mois</label>
-          </div>
-          <div class="duration-input">
-            <input type="number" id="durationDays" min="0" max="31" placeholder="jj" />
-            <label for="durationDays" data-i18n="days">Jours</label>
-          </div>
-          <div class="duration-input">
-            <input type="number" id="durationHours" min="0" max="23" placeholder="hh" />
-            <label for="durationHours" data-i18n="hours">Heures</label>
-          </div>
-          <div class="duration-input">
-            <input type="number" id="durationMinutes" min="0" max="59" placeholder="mm" />
-            <label for="durationMinutes" data-i18n="minutes">Minutes</label>
-          </div>
-          <div class="duration-input">
-            <input type="number" id="durationSeconds" min="0" max="59" placeholder="ss" />
-            <label for="durationSeconds" data-i18n="seconds">Secondes</label>
-          </div>
-        </div>
-        <p data-i18n="create_expire_at">Le message disparaîtra le <span id="msgdeletetime"></span></p>
       </div>
-      <label class="container storyinput">
-        <input type="checkbox" id="storyModeToggle" />
-        <svg viewBox="0 0 64 64" height="2em" width="2em">
-          <path
-            d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-            pathLength="575.0541381835938" class="path"></path>
-        </svg>
-        <p data-i18n="create_story">Mettre en story</p>
-      </label>
-    </div>
-  </section>
+    </section>
 
-  <section id="inboxTab" class="tab hidden">
-    <h1 data-i18n="inbox_title">Boîte de récéption</h1>
-    <div id="inboxdiv">
-      <i data-i18n="inbox_empty">Vos notifications apparaîtront ici.</i>
-    </div>
-  </section>
+    <section id="inboxTab" class="tab hidden">
+      <h1 data-i18n="inbox_title">Boîte de récéption</h1>
+      <div id="inboxdiv">
+        <i data-i18n="inbox_empty">Vos notifications apparaîtront ici.</i>
+      </div>
+    </section>
 
-  <section id="profileTab" class="tab hidden">
-    <div id="accountinfo">
-      <img src="/assets/logo/logo_cropped.jpg" alt="AccountAvatar" id="accountavatar" />
-      <p data-i18n="profile_avatar">Votre avatar</p>
+    <section id="profileTab" class="tab hidden">
+      <div id="accountinfo">
+        <img
+          src="/assets/logo/logo_cropped.jpg"
+          alt="AccountAvatar"
+          id="accountavatar"
+        />
+        <p data-i18n="profile_avatar">Votre avatar</p>
 
-      <!-- <button class="hoverable" id="editProfileBtn">
+        <!-- <button class="hoverable" id="editProfileBtn">
         <span class="material-symbols-rounded">edit</span>Modifier le profil
       </button class="hoverable">
 
@@ -220,105 +286,159 @@
         <input id="profilePassword" placeholder="Votre*mot*de*passe" type="password" disabled />
       </div> -->
 
-      <div id="socialStats">
-        <p><span class="material-symbols-rounded">people</span> <span id="countFollowers">0</span></p>
-        <p><span class="material-symbols-rounded">favorite</span> <span id="countLikes">0</span></p>
-        <p><span class="material-symbols-rounded">post</span> <span id="countPosts">0</span></p>
+        <div id="socialStats">
+          <p>
+            <span class="material-symbols-rounded">people</span>
+            <span id="countFollowers">0</span>
+          </p>
+          <p>
+            <span class="material-symbols-rounded">favorite</span>
+            <span id="countLikes">0</span>
+          </p>
+          <p>
+            <span class="material-symbols-rounded">post</span>
+            <span id="countPosts">0</span>
+          </p>
+        </div>
+        <div id="userPostsSection">
+          <h2 data-i18n="profile_posts">Vos posts</h2>
+          <div id="userPostsWall"><i>Chargement des posts...</i></div>
+        </div>
       </div>
-      <div id="userPostsSection">
-        <h2 data-i18n="profile_posts">Vos posts</h2>
-        <div id="userPostsWall"><i>Chargement des posts...</i></div>
-      </div>
-    </div>
 
-    <!-- 🧠 Section des posts du profil -->
+      <!-- 🧠 Section des posts du profil -->
 
-
-    <div id="MoreAccSettings">
-      <p><b>Paramètres supplémentaires</b></p>
-      <a href="https://github.com/Raphleouf74/moodshare">
-        <button class="hoverable" data-i18n="github_access">Accéder au GitHub
-        </button></a>
-      <a href="https://ko-fi.com/moodshare" target="_blank" class="donate-btn">
-        <button class="hoverable" data-i18n="donate">Faire un don
+      <div id="MoreAccSettings">
+        <p><b>Paramètres supplémentaires</b></p>
+        <a href="https://github.com/Raphleouf74/moodshare">
+          <button class="hoverable" data-i18n="github_access">
+            Accéder au GitHub
+          </button></a
+        >
+        <a
+          href="https://ko-fi.com/moodshare"
+          target="_blank"
+          class="donate-btn"
+        >
+          <button class="hoverable" data-i18n="donate">Faire un don</button>
+        </a>
+        <a href="Legal/TERMS_OF_SERVICE.html"
+          ><button class="hoverable">
+            <p data-i18n="CGU_title">Conditions générales du service</p>
+          </button></a
+        >
+        <a href="Legal/PRIVACY_POLICY.html"
+          ><button class="hoverable">
+            <p data-i18n="Policy_title">Politique de confidentialité</p>
+          </button></a
+        >
+        <button class="hoverable" id="goToSettingsBtn">
+          <b>
+            <p data-i18n="nav_settings">Paramètres</p>
+          </b>
         </button>
-      </a>
-      <a href="Legal/TERMS_OF_SERVICE.html"><button class="hoverable">
-          <p data-i18n="CGU_title">Conditions générales du service</p>
-        </button></a>
-      <a href="Legal/PRIVACY_POLICY.html"><button class="hoverable">
-          <p data-i18n="Policy_title">Politique de confidentialité</p>
-        </button></a>
-      <button class="hoverable" id="goToSettingsBtn">
-        <b>
-          <p data-i18n="nav_settings">Paramètres</p>
-        </b>
-      </button>
-      <!-- <button class="hoverable" id="logoutBtn">Se déconnecter</button class="hoverable">
+        <!-- <button class="hoverable" id="logoutBtn">Se déconnecter</button class="hoverable">
       <p><b>Gestion du compte</b></p>
       <button class="hoverable" id="editAccountBtn">Modifier les informations</button class="hoverable">
       <button class="hoverable" id="disableAccountBtn">Désactiver le compte</button class="hoverable">
       <button class="hoverable" id="clearContentBtn">Supprimer le contenu</button class="hoverable">
       <button class="hoverable" id="deleteAccountBtn">Supprimer le compte</button class="hoverable"> -->
-    </div>
+      </div>
 
-    <footer>
-      <p>
-        <span id="SiteVersion">...</span> Build
-        <span id="BuildVersion">...</span>
-      </p>
-    </footer>
-  </section>
+      <footer>
+        <p>
+          <span id="SiteVersion">...</span> Build
+          <span id="BuildVersion">...</span>
+        </p>
+      </footer>
+    </section>
 
-  <section id="settingsTab" class="tab hidden">
-    <div id="appSettings">
-      <h3 data-i18n="settings_app">Paramètres de l'application</h3>
-      <!-- Language Picker -->
-      <div class="language-picker">
-        <p data-i18n="settings_language" class="lp-title">Langue</p>
+    <section id="settingsTab" class="tab hidden">
+      <div id="appSettings">
+        <h3 data-i18n="settings_app">Paramètres de l'application</h3>
+        <!-- Language Picker -->
+        <div class="language-picker">
+          <p data-i18n="settings_language" class="lp-title">Langue</p>
 
-        <div class="lp-control">
-          <button class="lp-button" id="lpOpenBtn" aria-haspopup="dialog" aria-expanded="false">
-            <span id="lpCurrentFlag" class="lp-flag">🌐</span>
-            <span id="lpCurrentLabel">Français</span>
-            <span class="material-symbols-rounded lp-caret">arrow_downward</span>
-          </button>
-          <div id="lpPopup" class="lp-popup" role="dialog" aria-label="Language selector">
-            <div class="search">
-              <span class="material-symbols-rounded">search</span>
-              <input resizable id="lpSearch" class="lp-search" data-i18n="search_language" aria-label="Search language">
+          <div class="lp-control">
+            <button
+              class="lp-button"
+              id="lpOpenBtn"
+              aria-haspopup="dialog"
+              aria-expanded="false"
+            >
+              <span id="lpCurrentFlag" class="lp-flag">🌐</span>
+              <span id="lpCurrentLabel">Français</span>
+              <span class="material-symbols-rounded lp-caret"
+                >arrow_downward</span
+              >
+            </button>
+            <div
+              id="lpPopup"
+              class="lp-popup"
+              role="dialog"
+              aria-label="Language selector"
+            >
+              <div class="search">
+                <span class="material-symbols-rounded">search</span>
+                <input
+                  resizable
+                  id="lpSearch"
+                  class="lp-search"
+                  data-i18n="search_language"
+                  aria-label="Search language"
+                />
+              </div>
+              <div id="lpGrid" class="lp-grid" tabindex="0"></div>
             </div>
-            <div id="lpGrid" class="lp-grid" tabindex="0"></div>
+          </div>
+        </div>
+
+        <div class="lowend-settings">
+          <h4 data-i18n="settings-performance">Mode performance</h4>
+          <p class="lp-title">
+            Mode "low‑end" (détection automatique ou manuel)
+          </p>
+
+          <div
+            class="lowend-controls"
+            role="radiogroup"
+            aria-label="Low end mode"
+          >
+            <label>
+              <input
+                type="radio"
+                name="lowEndMode"
+                id="lowEndAuto"
+                value="auto"
+              />
+              <p data-i18n="perf-auto">Auto (détection)</p>
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="lowEndMode"
+                id="lowEndForce"
+                value="on"
+              />
+              <p data-i18n="perf-low">Forcer low-end</p>
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="lowEndMode"
+                id="lowEndOff"
+                value="off"
+              />
+              <p data-i18n="perf-unactive">Désactiver</p>
+            </label>
           </div>
         </div>
       </div>
-
-      <div class="lowend-settings">
-        <h4 data-i18n="settings-performance">Mode performance</h4>
-        <p class="lp-title">Mode "low‑end" (détection automatique ou manuel)</p>
-
-        <div class="lowend-controls" role="radiogroup" aria-label="Low end mode">
-          <label>
-            <input type="radio" name="lowEndMode" id="lowEndAuto" value="auto">
-            <p data-i18n="perf-auto">Auto (détection)</p>
-          </label>
-          <label>
-            <input type="radio" name="lowEndMode" id="lowEndForce" value="on">
-            <p data-i18n="perf-low">Forcer low-end</p>
-          </label>
-          <label>
-            <input type="radio" name="lowEndMode" id="lowEndOff" value="off">
-            <p data-i18n="perf-unactive">Désactiver</p>
-          </label>
-        </div>
-      </div>
-    </div>
-  </section>
-
-</body>
-<script type="module" src="scripts/app.js"></script>
-<script type="module" src="scripts/auth.js"></script>
-<script type="module" src="scripts/profile.js"></script>
-<script type="module" src="/scripts/lang-picker.js"></script>
-
+    </section>
+  </body>
+  <script type="module" src="scripts/app.js"></script>
+  <script type="module" src="scripts/auth.js"></script>
+  <script type="module" src="scripts/profile.js"></script>
+  <script type="module" src="/scripts/lang-picker.js"></script>
 </html>

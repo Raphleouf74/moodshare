@@ -36,15 +36,30 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Autorise requêtes server-side (no origin) OU origine dans la liste
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Autorise requêtes server-side (no origin)
+    if (!origin) return callback(null, true);
+
+    // Hosts de production précis
+    const allowedHosts = [
+      "https://moodsharing.netlify.app",
+      "https://moodshare-7dd7.onrender.com"
+    ];
+
+    // Autorise localhost / 127.0.0.1 / ::1 sur n'importe quel port (dev)
+    const localhostRegex = /^https?:\/\/(localhost|127\.0\.0\.1|::1)(:\d+)?$/;
+
+    if (localhostRegex.test(origin) || allowedHosts.includes(origin)) {
       return callback(null, true);
     }
-    console.log("❌ Bloqué par le CORS:", origin);  // debug
+
+    console.log("❌ Bloqué par le CORS:", origin);
     return callback(new Error("Non accepté par le CORS"));
   },
   credentials: true
 }));
+
+// Répond explicitement aux préflight si besoin
+app.options('*', cors());
 
 app.use(helmet());
 app.use(express.json());
