@@ -21,6 +21,18 @@ process.on("unhandledRejection", err => console.error("❌ Rejection non faite:"
 
 const app = express();
 
+// Debug: log simple des requêtes et des origins pour aider le debug CORS
+app.use((req, res, next) => {
+  console.log(`[REQ] ${new Date().toISOString()} ${req.method} ${req.originalUrl} Origin=${req.headers.origin || 'none'}`);
+  next();
+});
+
+// Ping simple pour tester rapidement depuis le navigateur
+app.get('/ping', (req, res) => {
+  res.set('x-server', 'moodshare-server');
+  res.json({ ok: true, time: Date.now() });
+});
+
 // CORS
 // CORS — liste des origines autorisées
 const allowedOrigins = [
