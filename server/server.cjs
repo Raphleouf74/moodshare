@@ -1,4 +1,11 @@
 require("dotenv").config();
+const path = require("path");
+
+// --- CHANGEMENT : garantir un chemin users.json utilisable en local ---
+// si une variable USERS_FILE n'est pas fournie (ex: en dev), pointe par défaut
+// vers le fichier server/users.json du repo.
+process.env.USERS_FILE = process.env.USERS_FILE || path.join(__dirname, "users.json");
+
 const express = require("express");
 const cors = require("cors");
 const session = require("express-session");
