@@ -1,10 +1,7 @@
 // assets/js/auth.js
 // Détection simple : en dev (localhost/127.0.0.1 ou 127.0.0.1) on utilise le backend local,
 // sinon on utilise l'URL de production (Render)
-const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "::1")
-  ? "http://localhost:3000"
-  : "https://moodshare-7dd7.onrender.com";
-
+const API_BASE = "https://moodshare-7dd7.onrender.com";
 const API = API_BASE + '/api';
 
 // debug : vérifier à l'exécution quelle API est utilisée

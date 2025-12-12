@@ -2,22 +2,7 @@ import { loadLanguage, t } from "./lang.js";
 import { fetchWithAuth, getCurrentUser } from './auth.js';
 
 // Détection backend : local en dev, prod sinon
-const API = (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "::1")
-  ? "http://localhost:3000/api"
-  : "https://moodshare-7dd7.onrender.com/api";
-
-async function loadRecommended() {
-    const res = await fetch(`${API}/users/recommended`, { credentials: 'include' });
-    const list = res.ok ? await res.json() : [];
-    const container = document.querySelector('.accounts-list');
-    container.innerHTML = '';
-    list.forEach(u => {
-        const el = document.createElement('div');
-        el.className = 'account-suggest';
-        el.innerHTML = `<img src="${u.avatar || '/assets/logo/logo_cropped.jpg'}" alt="${u.username}"/><b>${u.username}</b><p>${u.bio || ''}</p>`;
-        container.appendChild(el);
-    });
-}
+const API = "https://moodshare-7dd7.onrender.com/api";
 
 document.addEventListener('DOMContentLoaded', async () => {
     // load recommended users on home
