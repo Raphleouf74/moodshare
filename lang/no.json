@@ -74,5 +74,14 @@
   "seconds": "Sekunder",
   "fb_xss_detected": "Skript oppdaget i meldingen. Det er <b>formelt forbudt</b> å inkludere skript i innlegg.",
   "fb_xss_ban_warning": "Du har blitt midlertidig utestengt fra å publisere funksjoner på grunn av gjentatte forsøk på skriptinjeksjon. Vennligst respekter reglene for bruk.",
-  "fb_xss_unblocked": "Publiseringsfunksjoner er aktivert på nytt."
+  "fb_xss_unblocked": "Publiseringsfunksjoner er aktivert på nytt.",
+  "settings-performance": "Modus ytelse",
+  "perf-auto": "Auto (deteksjon)",
+  "perf-low": "Kraftig lavend",
+  "perf-unactive": "Funksjonshemmet",
+  "login_btn": "Logg inn",
+  "register_btn": "Register",
+  "guest_btn": "Fortsett som gjest",
+  "logout_btn": "Logg ut",
+  "login-message": "Moodshare er enda morsommere når du er tilkoblet!"
 }

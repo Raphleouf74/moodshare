@@ -74,5 +74,14 @@
   "seconds": "Giây",
   "fb_xss_detected": "Tập lệnh được phát hiện trong tin nhắn. <b>Chính thức bị cấm</b> đưa tập lệnh vào bài viết.",
   "fb_xss_ban_warning": "Bạn đã tạm thời bị cấm xuất bản các tính năng do cố gắng chèn tập lệnh nhiều lần. Hãy tôn trọng các quy tắc sử dụng.",
-  "fb_xss_unblocked": "Tính năng xuất bản đã được kích hoạt lại."
+  "fb_xss_unblocked": "Tính năng xuất bản đã được kích hoạt lại.",
+  "settings-performance": "Chế độ Hiệu suất",
+  "perf-auto": "Tự động (phát hiện)",
+  "perf-low": "Buộc cấp thấp",
+  "perf-unactive": "Tàn tật",
+  "login_btn": "Đăng nhập",
+  "register_btn": "Đăng ký",
+  "guest_btn": "Tiếp tục làm khách",
+  "logout_btn": "Đăng xuất",
+  "login-message": "Moodshare thậm chí còn thú vị hơn khi bạn kết nối!"
 }

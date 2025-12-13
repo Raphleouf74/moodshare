@@ -65,5 +65,14 @@
   "seconds": "Sekonda",
   "fb_xss_detected": "Skripti u zbulua në mesazh. Është <b>i ndaluar zyrtarisht</b> përfshirja e shkrimit në postime.",
   "fb_xss_ban_warning": "Jeni ndaluar përkohësisht nga publikimi i veçorive për shkak të përpjekjeve të përsëritura të injektimit të skriptit. Ju lutemi respektoni rregullat e përdorimit.",
-  "fb_xss_unblocked": "Veçoritë e publikimit janë riaktivizuar."
+  "fb_xss_unblocked": "Veçoritë e publikimit janë riaktivizuar.",
+  "settings-performance": "Performanca e modalitetit",
+  "perf-auto": "Auto (zbulim)",
+  "perf-low": "Forcues i nivelit të ulët",
+  "perf-unactive": "I paaftë",
+  "login_btn": "Identifikohu",
+  "register_btn": "Regjistrohu",
+  "guest_btn": "Vazhdo si mysafir",
+  "logout_btn": "Dilni",
+  "login-message": "Moodshare është edhe më argëtues kur je i lidhur!"
 }

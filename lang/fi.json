@@ -65,5 +65,14 @@
   "seconds": "Sekuntia",
   "fb_xss_detected": "Viestissä havaittu komentosarja. Käsikirjoituksen sisällyttäminen viesteihin on <b>virallisesti kiellettyä</b>.",
   "fb_xss_ban_warning": "Sinut on väliaikaisesti kielletty julkaisemasta ominaisuuksia toistuvien kirjoitusyritysten vuoksi. Noudata käyttösääntöjä.",
-  "fb_xss_unblocked": "Julkaisuominaisuudet on otettu uudelleen käyttöön."
+  "fb_xss_unblocked": "Julkaisuominaisuudet on otettu uudelleen käyttöön.",
+  "settings-performance": "Tilan suorituskyky",
+  "perf-auto": "Automaattinen (tunnistus)",
+  "perf-low": "Forcer low-end",
+  "perf-unactive": "Ei käytössä",
+  "login_btn": "Kirjaudu sisään",
+  "register_btn": "Rekisteröidy",
+  "guest_btn": "Jatka vieraana",
+  "logout_btn": "Kirjaudu ulos",
+  "login-message": "Moodshare on vielä hauskempaa, kun olet yhteydessä!"
 }

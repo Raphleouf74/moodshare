@@ -94,10 +94,15 @@ header.scrolled {
     border-radius: 50%;
     height: 85px;
     width: 85px;
+    transform: translateX(0);
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
 }
 
 #accountheader.scrolled {
-    border-radius: 15px;
+    top: 5px;
+    right:5px;
     -webkit-backdrop-filter: blur(-25px);
     backdrop-filter: blur(25px);
 }
@@ -108,19 +113,11 @@ header.scrolled {
     backdrop-filter: blur(25px);
 }
 
-#accountheader h1 {
+#accountheader span {
     opacity: 1;
+    font-size: 30px;
+    font-weight: 800;
     display: flex;
-}
-
-#accountheader.scrolled h1 {
-    opacity: 0;
-    transform: translateY(-3px);
-}
-
-#accountheader.scrolled .accounticon {
-    opacity: .8;
-    transform: scale(.8);
 }
 
 
@@ -138,6 +135,68 @@ header.scrolled h1 {
 header.scrolled .logodraw {
     scale: .8;
 }
+
+@media (max-width: 769px) {
+    header {
+        width: 150px;
+        height: 50px;
+        top: 10px;
+        left: 10px;
+    }
+
+    header.scrolled {
+        width: 100px;
+        height: 30px;
+    }
+
+    #accountheader {
+        right: -100%;
+        opacity: 0;
+    }
+}
+#authModal {
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    background-color: rgb(200,255,255,0.4);
+}
+#authActions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: space-evenly;
+    width: 500px;
+    height: 500px;
+    padding: 15px;
+    border-radius: 15px;
+    background-color: rgb(200,255,205);
+}
+
+#authActions button {
+    padding: 10px;
+    border: 0px black;
+    background: transparent;
+    border-radius: 10px;
+    width: 75%;
+    background: rgb(0,0,0,0.2);
+    height: 75px;
+    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+#authActions button:hover {
+    background-color: rgb(100,150,150,0.9);
+    color: white;
+}
+
 
 .mainlogo {
     display: flex;

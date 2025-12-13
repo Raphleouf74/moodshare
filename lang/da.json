@@ -65,5 +65,14 @@
   "seconds": "Sekunder",
   "fb_xss_detected": "Script fundet i meddelelsen. Det er <b>formelt forbudt</b> at inkludere script i indlæg.",
   "fb_xss_ban_warning": "Du er blevet midlertidigt udelukket fra at udgive funktioner på grund af gentagne forsøg på indsprøjtning af script. Respekter venligst brugsreglerne.",
-  "fb_xss_unblocked": "Udgivelsesfunktioner er blevet genaktiveret."
+  "fb_xss_unblocked": "Udgivelsesfunktioner er blevet genaktiveret.",
+  "settings-performance": "Tilstands ydeevne",
+  "perf-auto": "Auto (registrering)",
+  "perf-low": "Forcer low-end",
+  "perf-unactive": "Handicappet",
+  "login_btn": "Log ind",
+  "register_btn": "Register",
+  "guest_btn": "Fortsæt som gæst",
+  "logout_btn": "Log ud",
+  "login-message": "Moodshare er endnu sjovere, når du er forbundet!"
 }

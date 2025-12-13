@@ -65,5 +65,14 @@
   "seconds": "초",
   "fb_xss_detected": "메시지에서 스크립트가 감지되었습니다. 게시물에 스크립트를 포함하는 것은 <b>공식적으로 금지</b>됩니다.",
   "fb_xss_ban_warning": "반복적인 스크립트 삽입 시도로 인해 기능 게시가 일시적으로 금지되었습니다. 이용규칙을 지켜주세요.",
-  "fb_xss_unblocked": "게시 기능이 다시 활성화되었습니다."
+  "fb_xss_unblocked": "게시 기능이 다시 활성화되었습니다.",
+  "settings-performance": "모드 성능",
+  "perf-auto": "자동(감지)",
+  "perf-low": "포서 로우엔드",
+  "perf-unactive": "장애가 있는",
+  "login_btn": "로그인",
+  "register_btn": "등록하다",
+  "guest_btn": "게스트로 계속",
+  "logout_btn": "로그아웃",
+  "login-message": "Moodshare는 연결되어 있을 때 더욱 재미있습니다!"
 }

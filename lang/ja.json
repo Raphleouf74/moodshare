@@ -65,5 +65,14 @@
   "seconds": "秒",
   "fb_xss_detected": "メッセージ内でスクリプトが検出されました。 投稿にスクリプトを含めることは<b>正式に禁止</b>されています。",
   "fb_xss_ban_warning": "スクリプトインジェクションが繰り返し試行されたため、機能の公開が一時的に禁止されました。 利用規約を遵守してください。",
-  "fb_xss_unblocked": "公開機能が再び有効になりました。"
+  "fb_xss_unblocked": "公開機能が再び有効になりました。",
+  "settings-performance": "モード性能",
+  "perf-auto": "自動（検出）",
+  "perf-low": "フォーサーローエンド",
+  "perf-unactive": "無効",
+  "login_btn": "ログイン",
+  "register_btn": "登録する",
+  "guest_btn": "ゲストとして続行",
+  "logout_btn": "ログアウト",
+  "login-message": "接続すると、ムードシェアがさらに楽しくなります。"
 }

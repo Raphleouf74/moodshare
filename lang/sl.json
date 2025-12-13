@@ -74,5 +74,14 @@
   "seconds": "sekund",
   "fb_xss_detected": "V sporočilu zaznan skript. Vključevanje skripta v objave je <b>uradno prepovedano</b>.",
   "fb_xss_ban_warning": "Začasno vam je bilo prepovedano objavljanje funkcij zaradi ponavljajočih se poskusov vstavljanja skripta. Prosimo, da upoštevate pravila uporabe.",
-  "fb_xss_unblocked": "Funkcije objavljanja so bile znova omogočene."
+  "fb_xss_unblocked": "Funkcije objavljanja so bile znova omogočene.",
+  "settings-performance": "Način delovanja",
+  "perf-auto": "Samodejno (zaznavanje)",
+  "perf-low": "Forcer nižjega razreda",
+  "perf-unactive": "Onemogočen",
+  "login_btn": "Prijavite se",
+  "register_btn": "Registrirajte se",
+  "guest_btn": "Nadaljujte kot gost",
+  "logout_btn": "Odjava",
+  "login-message": "Moodshare je še bolj zabaven, ko ste povezani!"
 }

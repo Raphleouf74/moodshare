@@ -65,5 +65,14 @@
   "seconds": "Sekundes",
   "fb_xss_detected": "Ziņojumā konstatēts skripts. Skriptu iekļaušana ziņās ir <b>formāli aizliegts</b>.",
   "fb_xss_ban_warning": "Atkārtotu skripta ievadīšanas mēģinājumu dēļ jums ir īslaicīgi aizliegts publicēt funkcijas. Lūdzu, ievērojiet lietošanas noteikumus.",
-  "fb_xss_unblocked": "Publicēšanas funkcijas ir atkārtoti iespējotas."
+  "fb_xss_unblocked": "Publicēšanas funkcijas ir atkārtoti iespējotas.",
+  "settings-performance": "Režīma veiktspēja",
+  "perf-auto": "Automātiski (atklāšana)",
+  "perf-low": "Forcer zemas klases",
+  "perf-unactive": "Atspējots",
+  "login_btn": "Piesakieties",
+  "register_btn": "Reģistrēties",
+  "guest_btn": "Turpināt kā viesis",
+  "logout_btn": "Atteikties",
+  "login-message": "Moodshare ir vēl jautrāka, kad esat savienots!"
 }

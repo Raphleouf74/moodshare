@@ -74,5 +74,14 @@
   "seconds": "秒数",
   "fb_xss_detected": "在消息中检测到脚本。 <b>正式禁止</b>在帖子中包含脚本。",
   "fb_xss_ban_warning": "由于多次尝试注入脚本，您已被暂时禁止发布功能。 请遵守使用规则。",
-  "fb_xss_unblocked": "发布功能已重新启用。"
+  "fb_xss_unblocked": "发布功能已重新启用。",
+  "settings-performance": "模式性能",
+  "perf-auto": "自动（检测）",
+  "perf-low": "强制低端",
+  "perf-unactive": "残疾人",
+  "login_btn": "登录",
+  "register_btn": "登记",
+  "guest_btn": "继续以访客身份",
+  "logout_btn": "退出",
+  "login-message": "当您联网时，Moodshare 会变得更加有趣！"
 }

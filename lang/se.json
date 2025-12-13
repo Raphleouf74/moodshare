@@ -74,5 +74,14 @@
   "seconds": "Nuppit",
   "fb_xss_detected": "Script fuomášuvvon boasttuvuođas. Lea <b>formálalaččat gildojuvvon</b> váldit mielde čállosa poasttaide.",
   "fb_xss_ban_warning": "Don leat gaskaboddosaččat gielddus almmuhit funkšuvnnaid fas čállosa injekšuvdnageahččalemiid geažil. Ávžžuhit geavahannjuolggadusaid.",
-  "fb_xss_unblocked": "Almmuhanfálaldagat leat ođđasit álggahuvvon."
+  "fb_xss_unblocked": "Almmuhanfálaldagat leat ođđasit álggahuvvon.",
+  "settings-performance": "Mode-ovdanbuktin",
+  "perf-auto": "Auto (fuomášupmi)",
+  "perf-low": "Fámolaš alladási",
+  "perf-unactive": "Bargonávccaheapme",
+  "login_btn": "Loga",
+  "register_btn": "Registtar",
+  "guest_btn": "Joatkit guossin",
+  "logout_btn": "Loga",
+  "login-message": "Moodshare lea ain somá go leat čadnon!"
 }

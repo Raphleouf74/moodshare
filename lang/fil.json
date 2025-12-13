@@ -65,5 +65,14 @@
   "seconds": "Segundo",
   "fb_xss_detected": "Ang script na napansin sa mensahe. Ito ay <b> pormal na ipinagbabawal </b> na isama ang script sa mga post.",
   "fb_xss_ban_warning": "Pansamantalang pinagbawalan ka mula sa pag -publish ng mga tampok dahil sa paulit -ulit na mga pagtatangka sa iniksyon ng script. Mangyaring igalang ang mga patakaran ng paggamit.",
-  "fb_xss_unblocked": "Ang mga tampok sa pag-publish ay muling pinagana."
+  "fb_xss_unblocked": "Ang mga tampok sa pag-publish ay muling pinagana.",
+  "settings-performance": "Pagganap ng mode",
+  "perf-auto": "Auto (Detection)",
+  "perf-low": "Forcer low-end",
+  "perf-unactive": "Hindi pinagana",
+  "login_btn": "Mag -log in",
+  "register_btn": "Magrehistro",
+  "guest_btn": "Magpatuloy bilang panauhin",
+  "logout_btn": "Mag -log out",
+  "login-message": "Mas masaya ang Moodshare kapag nakakonekta ka!"
 }

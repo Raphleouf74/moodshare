@@ -65,5 +65,14 @@
   "seconds": "sekundės",
   "fb_xss_detected": "Pranešime aptiktas scenarijus. Į įrašus įtraukti scenarijų <b>oficialiai draudžiama</b>.",
   "fb_xss_ban_warning": "Jums buvo laikinai uždrausta skelbti funkcijas dėl pasikartojančių bandymų įterpti scenarijų. Prašome laikytis naudojimo taisyklių.",
-  "fb_xss_unblocked": "Paskelbimo funkcijos vėl įgalintos."
+  "fb_xss_unblocked": "Paskelbimo funkcijos vėl įgalintos.",
+  "settings-performance": "Režimo našumas",
+  "perf-auto": "Automatinis (aptikimas)",
+  "perf-low": "Forcer žemos klasės",
+  "perf-unactive": "Išjungta",
+  "login_btn": "Prisijunkite",
+  "register_btn": "Registruotis",
+  "guest_btn": "Tęsti kaip svečias",
+  "logout_btn": "Atsijungti",
+  "login-message": "„Moodshare“ yra dar smagiau, kai esate prisijungę!"
 }

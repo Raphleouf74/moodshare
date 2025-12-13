@@ -250,7 +250,9 @@ app.post("/api/stories", async (req, res) => {
     res.status(400).json({ error: "Invalid content" });
   }
 });
-
+app.get("/api/auth/me", requireAuth, (req, res) => {
+  res.json({ user: req.user });
+});
 // LIKE / UNLIKE
 app.post("/api/posts/:id/like", (req, res) => {
   const post = posts.find(p => p.id == req.params.id);

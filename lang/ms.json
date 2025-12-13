@@ -74,5 +74,14 @@
   "seconds": "Saat",
   "fb_xss_detected": "Skrip yang dikesan dalam mesej. Ia adalah <b> dilarang secara rasmi </b> untuk memasukkan skrip dalam jawatan.",
   "fb_xss_ban_warning": "Anda telah diharamkan sementara dari ciri -ciri penerbitan kerana percubaan suntikan skrip berulang. Sila hormati peraturan penggunaan.",
-  "fb_xss_unblocked": "Ciri-ciri penerbitan telah diaktifkan semula."
+  "fb_xss_unblocked": "Ciri-ciri penerbitan telah diaktifkan semula.",
+  "settings-performance": "Prestasi mod",
+  "perf-auto": "Auto (Pengesanan)",
+  "perf-low": "Forcer rendah",
+  "perf-unactive": "Kurang upaya",
+  "login_btn": "Log masuk",
+  "register_btn": "Daftar",
+  "guest_btn": "Teruskan sebagai tetamu",
+  "logout_btn": "Log keluar",
+  "login-message": "Moodshare lebih menyeronokkan apabila anda bersambung!"
 }

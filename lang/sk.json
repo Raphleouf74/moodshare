@@ -74,5 +74,14 @@
   "seconds": "sekúnd",
   "fb_xss_detected": "V správe bol zistený skript. Je <b>formálne zakázané</b> vkladať skript do príspevkov.",
   "fb_xss_ban_warning": "Z dôvodu opakovaných pokusov o vloženie skriptu vám bolo dočasne zakázané zverejňovať funkcie. Prosíme o rešpektovanie pravidiel používania.",
-  "fb_xss_unblocked": "Funkcie publikovania boli znova povolené."
+  "fb_xss_unblocked": "Funkcie publikovania boli znova povolené.",
+  "settings-performance": "Režim Výkon",
+  "perf-auto": "Auto (detekcia)",
+  "perf-low": "Low-end Forcer",
+  "perf-unactive": "Zakázané",
+  "login_btn": "Prihláste sa",
+  "register_btn": "Zaregistrujte sa",
+  "guest_btn": "Pokračujte ako hosť",
+  "logout_btn": "Odhláste sa",
+  "login-message": "Moodshare je ešte zábavnejšia, keď ste pripojení!"
 }

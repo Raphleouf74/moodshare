@@ -65,5 +65,14 @@
   "seconds": "Seconds",
   "fb_xss_detected": "Script detected in message. It is <b>formally prohibited</b> to include script in posts.",
   "fb_xss_ban_warning": "You have been temporarily banned from publishing features due to repeated script injection attempts. Please respect the rules of use.",
-  "fb_xss_unblocked": "Publishing features have been re-enabled."
+  "fb_xss_unblocked": "Publishing features have been re-enabled.",
+  "settings-performance": "Mode Performance",
+  "perf-auto": "Auto (detection)",
+  "perf-low": "Forcer low-end",
+  "perf-unactive": "Disabled",
+  "login_btn": "Log in",
+  "register_btn": "Register",
+  "guest_btn": "Continue as guest",
+  "logout_btn": "Log out",
+  "login-message": "Moodshare is even more fun when you're connected!"
 }

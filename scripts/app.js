@@ -1128,3 +1128,9 @@ function openStoryViewer(story, sourceEl) {
         clone.addEventListener('click', close);
     });
 }
+
+const profilename = document.getElementById('userName');
+if (profilename) {
+    const storedName = localStorage.getItem('username') || 'Invité';
+    profilename.textContent = storedName;
+}

@@ -65,5 +65,14 @@
   "seconds": "Artículos de segunda clase",
   "fb_xss_detected": "Secuencia de comandos detectada en el mensaje. Está <b>formalmente prohibido</b> incluir guiones en las publicaciones.",
   "fb_xss_ban_warning": "Se le ha prohibido temporalmente la publicación de funciones debido a repetidos intentos de inyección de script. Por favor respete las reglas de uso.",
-  "fb_xss_unblocked": "Se han vuelto a habilitar las funciones de publicación."
+  "fb_xss_unblocked": "Se han vuelto a habilitar las funciones de publicación.",
+  "settings-performance": "Modo de rendimiento",
+  "perf-auto": "Automático (detección)",
+  "perf-low": "Forcer gama baja",
+  "perf-unactive": "Desactivado",
+  "login_btn": "Acceso",
+  "register_btn": "Registro",
+  "guest_btn": "Continuar como invitado",
+  "logout_btn": "Finalizar la sesión",
+  "login-message": "¡Moodshare es aún más divertido cuando estás conectado!"
 }

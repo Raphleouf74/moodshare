@@ -65,5 +65,14 @@
   "seconds": "Sekundid",
   "fb_xss_detected": "Sõnumis tuvastati skript. Skripti lisamine postitustesse on <b>ametlikult keelatud</b>.",
   "fb_xss_ban_warning": "Korduvate skriptisüstide katsete tõttu on teil funktsioonide avaldamine ajutiselt keelatud. Palun järgige kasutusreegleid.",
-  "fb_xss_unblocked": "Avaldamisfunktsioonid on uuesti lubatud."
+  "fb_xss_unblocked": "Avaldamisfunktsioonid on uuesti lubatud.",
+  "settings-performance": "Režiimi jõudlus",
+  "perf-auto": "Automaatne (tuvastus)",
+  "perf-low": "Forcer odav",
+  "perf-unactive": "Keelatud",
+  "login_btn": "Logi sisse",
+  "register_btn": "Registreeru",
+  "guest_btn": "Jätka külalisena",
+  "logout_btn": "Logi välja",
+  "login-message": "Moodshare on veelgi lõbusam, kui olete ühenduses!"
 }

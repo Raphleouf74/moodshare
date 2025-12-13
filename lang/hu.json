@@ -65,5 +65,14 @@
   "seconds": "Másodpercek",
   "fb_xss_detected": "Szkript észlelve az üzenetben. <b>Formálisan tilos</b> szkriptet elhelyezni a bejegyzésekben.",
   "fb_xss_ban_warning": "A többszöri szkript-injektálási kísérletek miatt ideiglenesen kitiltották a funkciók közzétételéből. Kérjük, tartsa be a használati szabályokat.",
-  "fb_xss_unblocked": "A közzétételi funkciók újra engedélyezve lettek."
+  "fb_xss_unblocked": "A közzétételi funkciók újra engedélyezve lettek.",
+  "settings-performance": "Mód teljesítmény",
+  "perf-auto": "Automatikus (észlelés)",
+  "perf-low": "Forcer low-end",
+  "perf-unactive": "Letiltva",
+  "login_btn": "Jelentkezzen be",
+  "register_btn": "Nyilvántartás",
+  "guest_btn": "Továbbra is vendégként",
+  "logout_btn": "Jelentkezzen ki",
+  "login-message": "A Moodshare még szórakoztatóbb, ha kapcsolatban vagy!"
 }

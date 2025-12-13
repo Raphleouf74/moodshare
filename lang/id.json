@@ -65,5 +65,14 @@
   "seconds": "Detik",
   "fb_xss_detected": "Skrip terdeteksi dalam pesan. <b>Dilarang secara resmi</b> untuk menyertakan skrip dalam postingan.",
   "fb_xss_ban_warning": "Anda telah dilarang untuk sementara menerbitkan fitur karena upaya injeksi skrip berulang kali. Harap hormati aturan penggunaan.",
-  "fb_xss_unblocked": "Fitur penerbitan telah diaktifkan kembali."
+  "fb_xss_unblocked": "Fitur penerbitan telah diaktifkan kembali.",
+  "settings-performance": "Modus Kinerja",
+  "perf-auto": "Otomatis (deteksi)",
+  "perf-low": "Paksa kelas bawah",
+  "perf-unactive": "Dengan disabilitas",
+  "login_btn": "Masuk",
+  "register_btn": "Daftar",
+  "guest_btn": "Lanjutkan sebagai tamu",
+  "logout_btn": "Keluar",
+  "login-message": "Moodshare bahkan lebih menyenangkan ketika Anda terhubung!"
 }
