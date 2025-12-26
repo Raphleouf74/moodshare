@@ -1653,8 +1653,11 @@ section#profileTab {
     justify-content: space-evenly;
 }
 
-#accountinfo footer button {
+footer button {
     height: 500px;
+}
+footer {
+    margin-bottom: 350px;
 }
 
 #MoreAccSettings {

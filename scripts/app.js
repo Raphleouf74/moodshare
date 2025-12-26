@@ -6,7 +6,7 @@ const API = "https://moodshare-7dd7.onrender.com/api";
 
 document.addEventListener('DOMContentLoaded', async () => {
     // load recommended users on home
-    await loadRecommended();
+    // await loadRecommended();
     // try to restore session for UI (auth.js already handles initial state)
     const user = await getCurrentUser();
     if (user) {
