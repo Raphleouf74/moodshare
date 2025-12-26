@@ -18,7 +18,7 @@ const fsPromises = require("fs/promises");
 
 const authRoutes = require("./routes/auth.cjs");
 const usersRoutes = require("./routes/users.cjs");
-const db = require("./db/db.cjs");
+const db = require("./db.cjs");
 const requireAuth = require("./middleware/authMiddleware.cjs");
 
 

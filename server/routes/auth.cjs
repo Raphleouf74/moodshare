@@ -2,7 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const validator = require("validator");
-const db = require("../db/db.cjs");
+const db = require("../db.cjs");
 const router = express.Router();
 const userModel = require('../models/user.cjs');
 
@@ -39,8 +39,12 @@ router.post("/register", express.json(), async (req, res) => {
     );
     res.status(201).json({ success: true, user: insert.rows[0] });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Erreur serveur" });
+    console.error('🔐 auth register error:', err);
+    // si erreur de connexion pg
+    if (err.code === 'ECONNREFUSED' || (err.message && err.message.includes('No database pool'))) {
+      return res.status(503).json({ error: 'Database unreachable' });
+    }
+    return res.status(400).json({ error: err.message || 'Registration failed' });
   }
 });
 
