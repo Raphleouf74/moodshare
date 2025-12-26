@@ -34,9 +34,13 @@ export async function registerUser(username, password) {
   const res = await fetch(`${API}/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify({ username, password })
   });
-  if (!res.ok) throw new Error('Register failed');
+  if (!res.ok) {
+    const txt = await res.text().catch(()=>null);
+    throw new Error(txt || 'Register failed');
+  }
   const data = await res.json();
   setToken(data.token);
   return data.user;
@@ -46,17 +50,27 @@ export async function loginUser(username, password) {
   const res = await fetch(`${API}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify({ username, password })
   });
-  if (!res.ok) throw new Error('Login failed');
+  if (!res.ok) {
+    const txt = await res.text().catch(()=>null);
+    throw new Error(txt || 'Login failed');
+  }
   const data = await res.json();
   setToken(data.token);
   return data.user;
 }
 
 export async function loginGuest() {
-  const res = await fetch(`${API}/auth/guest`, { method: 'POST' });
-  if (!res.ok) throw new Error('Guest failed');
+  const res = await fetch(`${API}/auth/guest`, {
+    method: 'POST',
+    credentials: 'include'
+  });
+  if (!res.ok) {
+    const txt = await res.text().catch(()=>null);
+    throw new Error(txt || 'Guest failed');
+  }
   const data = await res.json();
   setToken(data.token);
   return data.user;

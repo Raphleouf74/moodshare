@@ -271,6 +271,17 @@ app.post("/api/posts/:id/unlike", (req, res) => {
 });
 
 /// AUTH & USER ROUTES
+app.use("/api/auth", (req, res, next) => {
+  try {
+    console.log("🔐 [AUTH DEBUG] %s %s Origin=%s Content-Type=%s", req.method, req.originalUrl, req.headers.origin || 'none', req.headers['content-type']);
+    // body est disponible grâce à express.json() plus haut
+    console.log("🔐 [AUTH DEBUG] body:", JSON.stringify(req.body));
+  } catch (err) {
+    console.error("🔐 [AUTH DEBUG] error printing body:", err);
+  }
+  next();
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api", usersRoutes);
 
