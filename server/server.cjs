@@ -19,7 +19,7 @@ const fsPromises = require("fs/promises");
 const authRoutes = require("./routes/auth.cjs");
 const usersRoutes = require("./routes/users.cjs");
 const db = require("./db/db.cjs");
-const { requireAuth } = require("./middleware/authMiddleware.cjs");
+const requireAuth = require("./middleware/authMiddleware.cjs");
 
 
 process.on("uncaughtException", err => console.error("❌ Exception non attrapée:", err));

@@ -160,7 +160,7 @@ header.scrolled .logodraw {
     position: fixed;
     top: 0;
     left: 0;
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
     z-index: 10000;
@@ -197,6 +197,58 @@ header.scrolled .logodraw {
     color: white;
 }
 
+#authModalForm {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(0,0,0,0.75);
+    -webkit-backdrop-filter: blur(15px);
+    backdrop-filter: blur(15px);
+    z-index: 10000;
+    scale: 1.2;
+    opacity: 0;
+    pointer-events: none;
+}
+#authModalForm.shown {
+    scale: 1;
+    opacity: 1;
+    pointer-events: all;
+}
+
+#authForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 400px;
+    height: 400px;
+    background-color: rgba(255, 255, 255);
+    border-radius: 15px;
+    padding: 15px;
+}
+
+#authForm input {
+    margin: 10px;
+    padding: 10px;
+    width: 80%;
+    border-radius: 10px;
+    border: 2px solid black;
+}
+
+#authForm button {
+    margin-top: 15px;
+    padding: 5px;
+    width: 30%;
+    border-radius: 10px;
+    border: 2px solid black;
+    background: transparent;
+    font-weight: 600;
+}
 
 .mainlogo {
     display: flex;
@@ -650,7 +702,6 @@ section {
 
 /* Animation au hover */
 .post:hover {
-    margin-top: 15px;
     margin-bottom: 60px;
     box-shadow:
         0 8px 12px rgba(0, 0, 0, 0.15),
@@ -661,7 +712,6 @@ section {
 
 .WelcomeMood:hover {
     margin-bottom: 1rem;
-    margin-top: 0;
 }
 
 .WelcomeMood #postoptions {
@@ -1929,7 +1979,7 @@ body #circleback {
 
 
 /* placer le squareback RELATIVEMENT à .loader-content et corriger transform */
-#loader #squareback {
+#loader #squareback{
     position: absolute;
     /* déjà absolute, OK */
     width: 200px;
@@ -1945,6 +1995,7 @@ body #circleback {
     will-change: transform, opacity;
 }
 
+
 #loader #circleback {
     position: absolute;
     width: 150px;
@@ -1958,6 +2009,7 @@ body #circleback {
     pointer-events: none;
     will-change: transform, opacity;
 }
+
 
 /* si tu veux un léger slide-in pour le squareback */
 @keyframes squarebackIn {
@@ -1995,6 +2047,11 @@ body #circleback {
     animation-delay: .6s;
 }
 
+
+#authForm #squareback , #authForm #circleback {
+    background-color: rgba(100, 255, 255, 0.28);
+    z-index: -1;
+}
 
 /* Animation LIKE 💥 */
 @keyframes likePop {
@@ -2202,6 +2259,7 @@ body #circleback {
 
 .low-end .post {
     box-shadow: none;
+    -webkit-backdrop-filter: none;
     backdrop-filter: none;
     border: 1px solid rgba(0, 0, 0, 0.06);
 }

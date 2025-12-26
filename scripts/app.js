@@ -278,6 +278,9 @@ function displayMood(mood) {
     moodcard.className = "post";
     moodcard.dataset.id = mood.id;
     wall.prepend(moodcard);
+    if (mood.id == "1") {
+        moodcard.classList.add('WelcomeMood');
+    }
 
     // ---- POST CONTENT ----
     const content = document.createElement("div");
@@ -376,9 +379,7 @@ function displayMood(mood) {
     if (likedPosts.includes(String(mood.id))) {
         likeBtn.classList.add("liked");
     }
-    if (mood.id === "0") {
-        mood.classList.add('WelcomeMood');
-    }
+    
 }
 
 // Chargement initial

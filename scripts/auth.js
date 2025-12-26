@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const openRegister = document.getElementById('openRegister');
   const guestBtn = document.getElementById('guestLogin');
   const authModal = document.getElementById('authModal');
-  const authForm = document.getElementById('authForm');
+  const authForm = document.getElementById('authModalForm');
   const authTitle = document.getElementById('authFormTitle');
   const usernameInput = document.getElementById('authUsername');
   const passwordInput = document.getElementById('authPassword');
@@ -94,17 +94,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function showModal(register = false) {
     isRegister = register;
-    authTitle.textContent = register ? "S'inscrire" : 'Connexion';
-    authModal.classList.remove('hidden');
+    authTitle.textContent = register ? "Inscription" : 'Connexion';
+    authForm.classList.add('shown');
+    authModal.classList.add('remove');
   }
   function hideModal() {
-    authModal.classList.add('hidden');
+    authForm.classList.remove('shown');
     usernameInput.value = '';
     passwordInput.value = '';
   }
 
-  openLogin.addEventListener('click', () => showModal(false));
-  openRegister.addEventListener('click', () => showModal(true));
+  openLogin.addEventListener('click', () => {
+    showModal(false);
+  });
+  openRegister.addEventListener('click', () => {
+    showModal(true);
+  });
   cancelBtn.addEventListener('click', hideModal);
 
   authForm.addEventListener('submit', async (ev) => {
