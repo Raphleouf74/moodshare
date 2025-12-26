@@ -30,12 +30,12 @@ export async function fetchWithAuth(path, opts = {}) {
   return fetch(url, { ...opts, headers, credentials: 'include' });
 }
 
-export async function registerUser(username, password) {
+export async function registerUser(username, password, email) {
   const res = await fetch(`${API}/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify({ username, password })
+    body: JSON.stringify({ username, email, password })
   });
   if (!res.ok) {
     const txt = await res.text().catch(()=>null);
@@ -98,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const authForm = document.getElementById('authModalForm');
   const authTitle = document.getElementById('authFormTitle');
   const usernameInput = document.getElementById('authUsername');
+  const emailInput = document.getElementById('authEmail');
   const passwordInput = document.getElementById('authPassword');
   const cancelBtn = document.getElementById('authCancel');
   const userMenu = document.getElementById('userMenu');
@@ -130,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ev.preventDefault();
     try {
       if (isRegister) {
-        const user = await registerUser(usernameInput.value, passwordInput.value);
+        const user = await registerUser(usernameInput.value, passwordInput.value, emailInput.value);
         userName.textContent = user.username;
       } else {
         const user = await loginUser(usernameInput.value, passwordInput.value);
