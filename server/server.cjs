@@ -108,9 +108,9 @@ let posts = [
     ephemeral: false,
     expiresAt: null,
     id: 0
-  } //,
+  }// ,
   // {
-  //   text: 'CECI EST UN TEST DE DEBUG',
+  //   text: 'CECI EST UN TEST DE GROS CACA BOUDI',
   //   color: '#492d08ff',
   //   date: '69/69/6969',
   //   emoji: '💩',
@@ -263,19 +263,39 @@ app.get("/api/auth/me", requireAuth, (req, res) => {
   res.json({ user: req.user });
 });
 // LIKE / UNLIKE
-app.post("/api/posts/:id/like", (req, res) => {
+app.post("/api/posts/:id/like", async (req, res) => {
   const post = posts.find(p => p.id == req.params.id);
   if (!post) return res.status(404).json({ error: "Post not found" });
 
   post.likes++;
+  // Persist posts
+  try {
+    await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
+  } catch (err) {
+    console.error('❌ Error saving posts after like:', err);
+  }
+
+  // Notify clients
+  try { sendSSE('post_update', post); } catch (e) { console.error('❌ SSE error:', e); }
+
   res.json(post);
 });
 
-app.post("/api/posts/:id/unlike", (req, res) => {
+app.post("/api/posts/:id/unlike", async (req, res) => {
   const post = posts.find(p => p.id == req.params.id);
   if (!post) return res.status(404).json({ error: "Post not found" });
 
   post.likes = Math.max(0, post.likes - 1);
+  // Persist posts
+  try {
+    await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
+  } catch (err) {
+    console.error('❌ Error saving posts after unlike:', err);
+  }
+
+  // Notify clients
+  try { sendSSE('post_update', post); } catch (e) { console.error('❌ SSE error:', e); }
+
   res.json(post);
 });
 

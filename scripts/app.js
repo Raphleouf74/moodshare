@@ -4,6 +4,45 @@ import { fetchWithAuth, getCurrentUser } from './auth.js';
 // Détection backend : local en dev, prod sinon
 const API = "https://moodshare-7dd7.onrender.com/api";
 
+// --- Live updates via Server-Sent Events (SSE) ---
+try {
+    const streamUrl = `${API}/stream`;
+    const es = new EventSource(streamUrl, { withCredentials: true });
+
+    es.addEventListener('new_post', (e) => {
+        try {
+            const post = JSON.parse(e.data);
+            // Avoid duplicates
+            if (!document.querySelector(`.post[data-id="${post.id}"]`)) {
+                displayMood(post);
+            }
+        } catch (err) { console.warn('Invalid new_post event', err); }
+    });
+
+    es.addEventListener('post_update', (e) => {
+        try {
+            const post = JSON.parse(e.data);
+            const el = document.querySelector(`.post[data-id="${post.id}"]`);
+            if (el) {
+                const likeCount = el.querySelector('.like-count');
+                if (likeCount) likeCount.textContent = (post.likes || 0);
+            }
+        } catch (err) { console.warn('Invalid post_update event', err); }
+    });
+
+    es.addEventListener('new_story', (e) => {
+        try { const story = JSON.parse(e.data); addStoryToList(story); } catch (err) { console.warn('Invalid new_story event', err); }
+    });
+
+    es.addEventListener('stories_update', (e) => {
+        try { const stories = JSON.parse(e.data); /* optional: refresh story list */ stories.forEach(addStoryToList); } catch (err) { console.warn('Invalid stories_update event', err); }
+    });
+
+    es.addEventListener('connected', (e) => { /* connected */ });
+} catch (err) {
+    console.warn('SSE not supported or failed to connect', err);
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     // load recommended users on home
     // await loadRecommended();
