@@ -889,7 +889,6 @@ if (openBtn) {
 }
 
 
-console.log(`%c⚠ Avertissement: Le site est en développement, des erreurs ou des bugs peuvent survenir !`, "color: yellow; font-size: 25px; font-family: impact");
 console.log(`%c⚠ Attention: Ne rentrez JAMAIS de commande ici sans connaître son but !`, "color: orange; font-size: 25px; font-family: impact");
 
 // Générer les skeleton loaders avec cercles/carrés défilants

@@ -108,7 +108,16 @@ let posts = [
     ephemeral: false,
     expiresAt: null,
     id: 0
-  }
+  } //,
+  // {
+  //   text: 'CECI EST UN TEST DE DEBUG',
+  //   color: '#492d08ff',
+  //   date: '69/69/6969',
+  //   emoji: '💩',
+  //   ephemeral: false,
+  //   expiresAt: null,
+  //   id: 69
+  // }
 ];
 
 const dataDir = path.join(__dirname, "data");

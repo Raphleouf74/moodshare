@@ -44,6 +44,7 @@ main {
 
 /* header */
 header {
+    pointer-events: none;
     text-align: center;
     padding: 1rem;
     width: 250px;
@@ -73,6 +74,7 @@ header.scrolled {
 
 /* header */
 #accountheader {
+    pointer-events: all;
     text-align: center;
     padding: 1rem;
     width: 400px;
@@ -152,6 +154,7 @@ header.scrolled .logodraw {
     #accountheader {
         right: -100%;
         opacity: 0;
+        pointer-events: none;
     }
 }
 #authModal {

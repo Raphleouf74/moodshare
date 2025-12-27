@@ -5,7 +5,7 @@ const API_BASE = "https://moodshare-7dd7.onrender.com";
 const API = API_BASE + '/api';
 
 // debug : vérifier à l'exécution quelle API est utilisée
-console.log('API base:', API, 'hostname:', location.hostname);
+// console.log('API base:', API, 'hostname:', location.hostname);
 
 export function getToken() {
   return localStorage.getItem('moodshare_token');
