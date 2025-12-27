@@ -148,6 +148,33 @@ try {
   console.error("❌ Error loading stories:", err);
 }
 
+// === SSE (Server-Sent Events) clients ===
+let sseClients = [];
+
+function sendSSE(event, data) {
+  const payload = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
+  sseClients.forEach(c => {
+    try { c.res.write(payload); } catch (err) { console.error('❌ SSE send error', err); }
+  });
+}
+
+app.get('/api/stream', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  if (res.flushHeaders) res.flushHeaders();
+
+  const clientId = `${Date.now()}_${Math.random()}`;
+  sseClients.push({ id: clientId, res });
+
+  // initial snapshot
+  res.write(`event: connected\ndata: ${JSON.stringify({ ok: true })}\n\n`);
+  res.write(`event: initial_posts\ndata: ${JSON.stringify(posts)}\n\n`);
+  res.write(`event: initial_stories\ndata: ${JSON.stringify(stories)}\n\n`);
+
+  req.on('close', () => { sseClients = sseClients.filter(c => c.id !== clientId); });
+});
+
 app.get("/api/stories", (req, res) => {
   try {
     // Filtrer les stories expirées
@@ -161,6 +188,8 @@ app.get("/api/stories", (req, res) => {
       fsPromises.writeFile(storiesFile, JSON.stringify(stories, null, 2)).catch(err => {
         console.error("❌ Error saving stories after purge:", err);
       });
+      // broadcast updated stories list
+      try { sendSSE('stories_update', stories); } catch (e) { console.error('❌ SSE error:', e); }
     }
 
     res.json(active);
@@ -207,6 +236,7 @@ app.post("/api/posts", async (req, res) => {
 
     posts.unshift(newPost);
     await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
+    try { sendSSE('new_post', newPost); } catch (e) { console.error('❌ SSE error:', e); }
 
     res.status(201).json(newPost);
 
@@ -251,6 +281,9 @@ app.post("/api/stories", async (req, res) => {
 
     // Enregistrer
     await fsPromises.writeFile(storiesFile, JSON.stringify(stories, null, 2));
+
+    // notify clients
+    try { sendSSE('new_story', newStory); } catch (e) { console.error('❌ SSE error:', e); }
 
     // Répondre avec la story créée
     res.status(201).json(newStory);
