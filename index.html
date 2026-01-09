@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MoodShare</title>
+  <link rel="icon" href="/assets/logo/logo_dark.jpg" />
+  <link rel="stylesheet" href="/styles/main.css" />
+  <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+</head>
+
+<body>
+  <div id="squareback"></div>
+  <div id="circleback"></div>
+  <div id="loader">
+    <div class="logo-container">
+      <div id="square"></div>
+      <div id="circle"></div>
+    </div>
+  </div>
+
+  <header>
+    <div class="logo">
+      <div class="mainlogo">
+        <div class="logodraw">
+          <div id="square"></div>
+          <div id="circle"></div>
+        </div>
+        <h1 data-i18n="header_title" style="pointer-events: none;">MoodShare</h1>
+      </div>
+    </div>
+  </header>
+  <div id="accountheader" onclick="document.getElementById('authModal').style.display = 'block';">
+    <span id="userName">UserName</span>
+    <img src="/assets/logo/logo_dark.jpg" alt="LOGO" class="accounticon" height="50px" />
+  </div>
+  <!-- Auth / Profile actions -->
+  <div id="authModal">
+    <div class="auth-actions" id="authActions">
+      <button onclick="document.getElementById('authModal').style.display = 'none';">
+        <span>X</span>
+      </button>
+      <h1 data-i18n="login-message">
+        Moodshare est encore plus fun quand vous êtes connecté !
+      </h1>
+      <button id="openLogin" class="hoverable" data-i18n="login_btn">
+        Se connecter
+      </button>
+      <button id="openRegister" class="hoverable" data-i18n="register_btn">
+        S'inscrire
+      </button>
+      <button id="guestLogin" class="hoverable" data-i18n="guest_btn">
+        Continuer en invité
+      </button>
+      <button id="logoutBtn" class="hoverable" data-i18n="logout_btn">
+        Se déconnecter
+      </button>
+    </div>
+  </div>
+  <!-- Login / Register Modal (hidden by default) -->
+  <div id="authModalForm" class="modal hidden">
+    <form id="authForm">
+      <div id="squareback"></div>
+      <div id="circleback"></div>
+      <h3 id="authFormTitle">Connexion</h3>
+      <input id="authUsername" placeholder="Pseudo" />
+      <input id="authEmail" placeholder="Email (pour inscription)" type="email" />
+      <input id="authPassword" placeholder="Mot de passe" type="password" required />
+      <button id="authSubmit" type="submit" class="hoverable">Valider</button>
+      <button id="authCancel" type="button" class="hoverable">Annuler</button>
+    </form>
+  </div>
+
+  <nav class="menu" role="navigation" aria-label="Menu">
+    <a class="hoverable link active" id="homeTab">
+      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="link-icon">
+        <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
+        <path
+          d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      </svg>
+      <p class="link-title" data-i18n="nav_home">Accueil</p>
+    </a>
+    <a class="hoverable link" id="createTab">
+      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="link-icon">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M8 12h8" />
+        <path d="M12 8v8" />
+      </svg>
+      <p class="link-title" data-i18n="nav_create">Créer</p>
+    </a>
+    <a class="hoverable link" id="inboxTab">
+      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="link-icon">
+        <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+        <path
+          d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+      </svg>
+      <p class="link-title" data-i18n="nav_inbox">Notifications</p>
+    </a>
+    <a class="hoverable link" id="profileTab">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="link-icon">
+        <circle cx="12" cy="8" r="5" />
+        <path d="M20 21a8 8 0 0 0-16 0" />
+      </svg>
+      <p class="link-title" data-i18n="nav_profile">Profil</p>
+    </a>
+  </nav>
+  <section id="homeTab" class="tab active">
+    <div class="stories">
+      <h2 data-i18n="home_stories">Stories</h2>
+      <div class="stories-list">
+        <div class="story add-story" id="addStoryBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-plus-icon lucide-plus">
+            <path d="M5 12h14" />
+            <path d="M12 5v14" />
+          </svg>
+        </div>
+        <div class="story skeleton"></div>
+      </div>
+    </div>
+
+    <div class="posts-section">
+      <h2 data-i18n="home_recent_posts">Posts récents</h2>
+      <div id="moodWall"></div>
+    </div>
+    <div class="suggested-accounts">
+      <h2 data-i18n="home_suggested_accounts">Comptes à suivre</h2>
+      <div class="accounts-list">
+        <div class="account skeleton"></div>
+        <div class="account skeleton"></div>
+        <div class="account skeleton"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="postsTab" class="tab hidden"></section>
+
+  <section id="createTab" class="tab hidden">
+    <div id="postModal">
+      <textarea id="moodInput" maxlength="200" placeholder="Comment tu te sens ?"
+        data-i18n="create_placeholder"></textarea>
+      <div class="mood-options">
+        <div class="inputdiv">
+          <input type="color" id="moodColor" value="#ffffff" />
+          <label for="moodColor" data-i18n="create_bg">Fond</label>
+        </div>
+        <div class="inputdiv">
+          <input type="color" id="textColor" value="#000000" />
+          <label for="textColor" data-i18n="create_color">Couleur</label>
+        </div>
+
+        <div class="inputdiv">
+          <input type="text" class="moodEmoji" id="editEmojiBtn" placeholder="" readonly />
+          <label for="editEmojiBtn">Emoji</label>
+        </div>
+
+        <div id="emojiPickerContainer">
+          <emoji-picker id="emojiPicker"></emoji-picker>
+          <p><i>Séléctionnez un emoji ou cliquez autour pour fermer.</i></p>
+        </div>
+      </div>
+      <!-- Aperçu du post -->
+      <div id="previewdiv">
+        <p data-i18n="create_preview">Aperçu de votre post</p>
+        <div id="previewMood" class="mood-card">
+          <span id="previewEmoji"></span>
+          <span id="previewText"></span>
+        </div>
+      </div>
+      <button class="hoverable" id="submitMood" data-i18n="create_share">
+        Partager
+      </button>
+      <!-- Ajouter après mood-options dans la section createTab -->
+      <div class="ephemeral-options">
+        <label class="container">
+          <input type="checkbox" id="ephemeralToggle" />
+          <svg viewBox="0 0 64 64" height="2em" width="2em">
+            <path
+              d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+              pathLength="575.0541381835938" class="path"></path>
+          </svg>
+          <p data-i18n="create_ephemeral">Message éphémère</p>
+        </label>
+        <div id="durationPicker" class="duration-picker">
+          <div class="duration-input">
+            <input type="number" id="durationYear" min="0" max="10" placeholder="aa" />
+            <label for="durationYear" data-i18n="years">Années</label>
+          </div>
+          <div class="duration-input">
+            <input type="number" id="durationMonths" min="0" max="11" placeholder="mm" />
+            <label for="durationMonths" data-i18n="months">Mois</label>
+          </div>
+          <div class="duration-input">
+            <input type="number" id="durationDays" min="0" max="31" placeholder="jj" />
+            <label for="durationDays" data-i18n="days">Jours</label>
+          </div>
+          <div class="duration-input">
+            <input type="number" id="durationHours" min="0" max="23" placeholder="hh" />
+            <label for="durationHours" data-i18n="hours">Heures</label>
+          </div>
+          <div class="duration-input">
+            <input type="number" id="durationMinutes" min="0" max="59" placeholder="mm" />
+            <label for="durationMinutes" data-i18n="minutes">Minutes</label>
+          </div>
+          <div class="duration-input">
+            <input type="number" id="durationSeconds" min="0" max="59" placeholder="ss" />
+            <label for="durationSeconds" data-i18n="seconds">Secondes</label>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: row; align-items: center;
+          ">
+          <p data-i18n="create_expire_at">:</p><span id="msgdeletetime"></span>
+        </div>
+      </div>
+      <label class="container storyinput">
+        <input type="checkbox" id="storyModeToggle" />
+        <svg viewBox="0 0 64 64" height="2em" width="2em">
+          <path
+            d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
+            pathLength="575.0541381835938" class="path"></path>
+        </svg>
+        <p data-i18n="create_story">Mettre en story</p>
+      </label>
+    </div>
+  </section>
+
+  <section id="inboxTab" class="tab hidden">
+    <h1 data-i18n="inbox_title">Boîte de récéption</h1>
+    <div id="inboxdiv">
+      <i data-i18n="inbox_empty">Vos notifications apparaîtront ici.</i>
+    </div>
+  </section>
+
+  <section id="profileTab" class="tab hidden">
+    <div id="accountinfo">
+      <img src="/assets/logo/logo_dark.jpg" alt="AccountAvatar" id="accountavatar" />
+      <p data-i18n="profile_avatar">Votre avatar</p>
+
+      <!-- <button class="hoverable" id="editProfileBtn">
+        <span class="material-symbols-rounded">edit</span>Modifier le profil
+      </button class="hoverable">
+
+      <div class="accountname">
+        <input id="profileUsername" placeholder="Votre pseudo" disabled />
+        <input id="profileFullName" placeholder="Votre nom" disabled />
+      </div>
+
+      <div class="plusinfos">
+        <h4>Informations complémentaires</h4>
+        <input id="profileEmail" placeholder="votre@email.com" disabled />
+        <input id="profilePhone" placeholder="Votre numéro de téléphone" disabled />
+        <input id="profilePassword" placeholder="Votre*mot*de*passe" type="password" disabled />
+      </div> -->
+
+      <div id="socialStats">
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-users-icon lucide-users">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <path d="M16 3.128a4 4 0 0 1 0 7.744" />
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+            <circle cx="9" cy="7" r="4" />
+          </svg>
+          <span id="countFollowers">0</span>
+        </p>
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-heart-icon lucide-heart">
+            <path
+              d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
+          </svg>
+          <span id="countLikes">0</span>
+        </p>
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-newspaper-icon lucide-newspaper">
+            <path d="M15 18h-5" />
+            <path d="M18 14h-8" />
+            <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2" />
+            <rect width="8" height="4" x="10" y="6" rx="1" />
+          </svg>
+          <span id="countPosts">0</span>
+        </p>
+      </div>
+      <div id="userPostsSection">
+        <h2 data-i18n="profile_posts">Vos posts</h2>
+        <div id="userPostsWall"><i>Chargement des posts...</i></div>
+      </div>
+    </div>
+
+    <!-- 🧠 Section des posts du profil -->
+
+    <div id="MoreAccSettings">
+      <p><b>Paramètres supplémentaires</b></p>
+      <a href="https://github.com/Raphleouf74/moodshare">
+        <button class="hoverable" data-i18n="github_access">
+          Accéder au GitHub
+        </button></a>
+      <a href="https://ko-fi.com/moodshare" target="_blank" class="donate-btn" rel="noopener">
+        <button class="hoverable" data-i18n="donate">Faire un don</button>
+      </a>
+      <a href="Legal/TERMS_OF_SERVICE.html"><button class="hoverable">
+          <p data-i18n="CGU_title">Conditions générales du service</p>
+        </button></a>
+      <a href="Legal/PRIVACY_POLICY.html"><button class="hoverable">
+          <p data-i18n="Policy_title">Politique de confidentialité</p>
+        </button></a>
+      <button class="hoverable" id="goToSettingsBtn" onclick="goToSettings()">
+        <b>
+          <p data-i18n="nav_settings">Paramètres</p>
+        </b>
+      </button>
+      <!-- <button class="hoverable" id="logoutBtn">Se déconnecter</button class="hoverable">
+      <p><b>Gestion du compte</b></p>
+      <button class="hoverable" id="editAccountBtn">Modifier les informations</button class="hoverable">
+      <button class="hoverable" id="disableAccountBtn">Désactiver le compte</button class="hoverable">
+      <button class="hoverable" id="clearContentBtn">Supprimer le contenu</button class="hoverable">
+      <button class="hoverable" id="deleteAccountBtn">Supprimer le compte</button class="hoverable"> -->
+    </div>
+
+    <footer>
+      <p>
+        <span id="SiteVersion">...</span> Build
+        <span id="BuildVersion">...</span>
+      </p>
+    </footer>
+  </section>
+
+  <section id="settingsTab" class="tab hidden">
+    <div id="appSettings">
+      <h3 data-i18n="settings_app">Paramètres de l'application</h3>
+      <!-- Language Picker -->
+      <div class="language-picker">
+        <p data-i18n="settings_language" class="lp-title">Langue</p>
+
+        <div class="lp-control">
+          <button class="lp-button" id="lpOpenBtn" aria-haspopup="dialog" aria-expanded="false">
+            <span id="lpCurrentFlag" class="lp-flag">🌐</span>
+            <span id="lpCurrentLabel">Français</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"
+              class="lucide lucide-arrow-down-icon lucide-arrow-down">
+              <path d="M12 5v14" />
+              <path d="m19 12-7 7-7-7" />
+            </svg>
+          </button>
+          <div id="lpPopup" class="lp-popup" role="dialog" aria-label="Language selector">
+            <div class="search">
+              <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-search-icon lucide-search">
+                <path d="m21 21-4.34-4.34" />
+                <circle cx="11" cy="11" r="8" />
+              </svg>
+              <input resizable id="lpSearch" class="lp-search" data-i18n="search_language"
+                aria-label="Search language" />
+            </div>
+            <div id="lpGrid" class="lp-grid" tabindex="0"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lowend-settings">
+        <h4 data-i18n="settings-performance">Mode performance</h4>
+        <p class="lp-title">
+          Mode "low‑end" (détection automatique ou manuel)
+        </p>
+
+        <div class="lowend-controls" role="radiogroup" aria-label="Low end mode">
+          <label>
+            <input type="radio" name="lowEndMode" id="lowEndAuto" value="auto" />
+            <p data-i18n="perf-auto">Auto (détection)</p>
+          </label>
+          <label>
+            <input type="radio" name="lowEndMode" id="lowEndForce" value="on" />
+            <p data-i18n="perf-low">Forcer low-end</p>
+          </label>
+          <label>
+            <input type="radio" name="lowEndMode" id="lowEndOff" value="off" />
+            <p data-i18n="perf-unactive">Désactiver</p>
+          </label>
+        </div>
+      </div>
+
+      <div class="app-sounds">
+        <h4 data-i18n="settings_sound">Sons</h4>
+        <label class="container">
+          <input type="checkbox" id="soundToggle" />
+          <p data-i18n="settings_sound_toggle">
+            Activer les sons de l'application
+          </p>
+        </label>
+      </div>
+    </div>
+  </section>
+</body>
+<script type="module" src="scripts/app.js"></script>
+<script type="module" src="scripts/auth.js"></script>
+<script type="module" src="scripts/profile.js"></script>
+<script type="module" src="/scripts/lang-picker.js"></script>
+
+</html>

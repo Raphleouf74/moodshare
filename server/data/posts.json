@@ -1,0 +1,22 @@
+[
+  {
+    "id": "1764268862506",
+    "text": "Comment tu te sens ?uiu",
+    "color": "#ffffff",
+    "emoji": "",
+    "ephemeral": false,
+    "expiresAt": null,
+    "likes": 0,
+    "comments": [],
+    "createdAt": "2025-11-27T18:41:02.506Z"
+  },
+  {
+    "text": "Bienvenue dans Moodshare !",
+    "color": "#00cfeb",
+    "date": "01/01/2025",
+    "emoji": "👋",
+    "ephemeral": false,
+    "expiresAt": null,
+    "id": 1
+  }
+]

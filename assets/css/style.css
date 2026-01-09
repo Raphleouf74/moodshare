@@ -1,0 +1,48 @@
+/* basics */
+body {
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: #0f1724;
+    color: #e6eef8;
+    margin: 0;
+}
+
+/* auth pages minimal */
+.auth-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.auth-form {
+    background: rgba(10, 12, 18, 0.6);
+    padding: 28px;
+    border-radius: 12px;
+    width: 320px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.auth-form input {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: none;
+    background: #0b1220;
+    color: #fff;
+}
+
+.auth-form button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background: #06b6d4;
+    color: #001;
+    font-weight: 600;
+}
+
+.profile-page {
+    padding: 40px;
+}
