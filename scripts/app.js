@@ -378,6 +378,20 @@ function displayMood(mood) {
     buttons.className = "buttons";
     options.appendChild(buttons);
 
+
+    // Date
+    const dateP = document.createElement("p");
+    dateP.className = "postdate";
+
+    const createdDate = new Date(mood.createdAt).toLocaleString("fr-FR", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+
+
     // Like button
     const likeBtn = document.createElement("button");
     likeBtn.className = "likebtn";
@@ -393,21 +407,6 @@ function displayMood(mood) {
     likeBtn.appendChild(likeCount);
 
     buttons.appendChild(likeBtn);
-
-    // Date
-    const dateP = document.createElement("p");
-    dateP.className = "postdate";
-
-    const createdDate = new Date(mood.createdAt).toLocaleString("fr-FR", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit"
-    });
-
-    dateP.textContent = "Créé le " + createdDate;
-    buttons.appendChild(dateP);
 
     // ---- Restaurer les likes ----
     const likedPosts = JSON.parse(localStorage.getItem("likedPosts") || "[]");
@@ -427,13 +426,13 @@ function displayMood(mood) {
                 likeCount.textContent = mood.likes;
                 likeBtn.classList.toggle('liked');
                 // persist locally
-                let arr = JSON.parse(localStorage.getItem('likedPosts')||'[]');
-                if (!isLiked) { arr.push(String(mood.id)); } else { arr = arr.filter(x=>x!==String(mood.id)); }
+                let arr = JSON.parse(localStorage.getItem('likedPosts') || '[]');
+                if (!isLiked) { arr.push(String(mood.id)); } else { arr = arr.filter(x => x !== String(mood.id)); }
                 localStorage.setItem('likedPosts', JSON.stringify(arr));
             } else {
-                showFeedback('warning','not_logged_in');
+                showFeedback('warning', 'not_logged_in');
             }
-        } catch (e) { console.error(e); showFeedback('error','network_error'); }
+        } catch (e) { console.error(e); showFeedback('error', 'network_error'); }
     });
 
     // ---- ACTIONS: comment / share / report / repost ----
@@ -441,22 +440,22 @@ function displayMood(mood) {
     actionBar.className = 'post-actions';
 
     const commentToggle = document.createElement('button');
-    commentToggle.textContent = '💬';
+    commentToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-icon lucide-message-circle"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></svg>';
     commentToggle.title = 'Commenter';
     actionBar.appendChild(commentToggle);
 
     const shareBtn = document.createElement('button');
-    shareBtn.textContent = '🔗';
+    shareBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link-icon lucide-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
     shareBtn.title = 'Partager';
     actionBar.appendChild(shareBtn);
 
     const reportBtn = document.createElement('button');
-    reportBtn.textContent = '⚠';
+    reportBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>';
     reportBtn.title = 'Signaler';
     actionBar.appendChild(reportBtn);
 
     const repostBtn = document.createElement('button');
-    repostBtn.textContent = '⤴';
+    repostBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-repeat2-icon lucide-repeat-2"><path d="m2 9 3-3 3 3"/><path d="M13 18H7a2 2 0 0 1-2-2V6"/><path d="m22 15-3 3-3-3"/><path d="M11 6h6a2 2 0 0 1 2 2v10"/></svg>';
     repostBtn.title = 'Reposter';
     actionBar.appendChild(repostBtn);
 
@@ -504,11 +503,11 @@ function displayMood(mood) {
 
             const reportC = document.createElement('button');
             reportC.className = 'comment-report';
-            reportC.textContent = '⚠';
+            reportC.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>';
             reportC.title = 'Signaler ce commentaire';
             reportC.addEventListener('click', async () => {
                 const reason = prompt('Motif du signalement (optionnel)');
-                await fetch(`${API}/posts/${mood.id}/report`, { method: 'POST', credentials: 'include', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ commentId: c.id, reason }) });
+                await fetch(`${API}/posts/${mood.id}/report`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ commentId: c.id, reason }) });
                 showFeedback('info', 'reported');
             });
             item.appendChild(reportC);
@@ -530,7 +529,7 @@ function displayMood(mood) {
             const val = input.value.trim();
             if (!val) return;
             try {
-                const res = await fetch(`${API}/posts/${mood.id}/comments`, { method: 'POST', credentials: 'include', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ text: val }) });
+                const res = await fetch(`${API}/posts/${mood.id}/comments`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: val }) });
                 if (res.status === 201) {
                     const created = await res.json();
                     mood.comments = mood.comments || [];
@@ -549,7 +548,8 @@ function displayMood(mood) {
 
     // initial render
     renderComments();
-
+    dateP.textContent = "Créé le " + createdDate;
+    buttons.appendChild(dateP);
     // toggles
     commentToggle.addEventListener('click', () => {
         commentsContainer.style.display = commentsContainer.style.display === 'none' ? 'block' : 'none';
@@ -558,16 +558,16 @@ function displayMood(mood) {
     shareBtn.addEventListener('click', () => {
         const url = `${location.origin}${location.pathname}#post-${mood.id}`;
         if (navigator.share) {
-            navigator.share({ title: 'MoodShare', text: mood.text, url }).catch(()=>{});
+            navigator.share({ title: 'MoodShare', text: mood.text, url }).catch(() => { });
         } else {
-            navigator.clipboard.writeText(url).then(()=> showFeedback('success','copied_link'));
+            navigator.clipboard.writeText(url).then(() => showFeedback('success', 'copied_link'));
         }
     });
 
     reportBtn.addEventListener('click', async () => {
         const reason = prompt('Motif du signalement (optionnel)');
-        await fetch(`${API}/posts/${mood.id}/report`, { method: 'POST', credentials: 'include', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ reason }) });
-        showFeedback('info','reported');
+        await fetch(`${API}/posts/${mood.id}/report`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reason }) });
+        showFeedback('info', 'reported');
     });
 
     repostBtn.addEventListener('click', async () => {
@@ -577,8 +577,8 @@ function displayMood(mood) {
         if (res.status === 201) {
             const newp = await res.json();
             displayMood(newp);
-            showFeedback('success','reposted');
-        } else showFeedback('error','repost_failed');
+            showFeedback('success', 'reposted');
+        } else showFeedback('error', 'repost_failed');
     });
 
 }
@@ -1141,6 +1141,33 @@ async function applyLowEndMode() {
     document.documentElement.classList.toggle('low-end', isLow);
 }
 applyLowEndMode();
+
+// === Theme (dark mode) ===
+function applyTheme(theme) {
+    if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.body.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+        document.body.classList.remove('dark');
+    }
+}
+
+// Initialise le thème depuis localStorage
+(function initTheme() {
+    const pref = localStorage.getItem('theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    applyTheme(pref);
+
+    const darkToggle = document.getElementById('darkModeToggle');
+    if (darkToggle) {
+        darkToggle.checked = (pref === 'dark');
+        darkToggle.addEventListener('change', (e) => {
+            const t = e.target.checked ? 'dark' : 'light';
+            localStorage.setItem('theme', t);
+            applyTheme(t);
+        });
+    }
+})();
 
 // gestion propre du contrôle radio "low-end"
 (async function initLowEndUI() {

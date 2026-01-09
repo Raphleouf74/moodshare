@@ -11,6 +11,15 @@
     --muted: #6b7280;
     --radius: 16px;
 }
+/* Dark theme overrides */
+html.dark, body.dark {
+    --bg: #081122;
+    --menu-bg: rgba(6,8,12,0.6);
+    --border: rgba(255,255,255,0.06);
+    --accent: #60a5fa;
+    --text: #e6eef8;
+    --muted: #9aa4b2;
+}
 
 /* STYLES GLOBAUX */
 * {
@@ -655,6 +664,35 @@ section {
     margin-top: 1rem;
     min-height: 60px;
 }
+/* Comments UI */
+.comments-container {
+    margin-top: 8px;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+}
+
+.comments-list .comment {
+    padding: 8px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    border: 1px solid var(--border);
+}
+
+.comments-list .comment b { color: var(--accent); }
+.comment .comment-like, .comment .comment-report { margin-left: auto; background: transparent; border: none; cursor: pointer; }
+
+.comment-form { display:flex; gap:8px; margin-top:8px; }
+.comment-form input { flex:1; padding:8px; border-radius:8px; border:1px solid var(--border); background:transparent; color:var(--text); }
+.comment-form button { padding:8px 12px; border-radius:8px; background:var(--accent); color:#fff; border:none; }
+
+/* Dark tweaks for comment backgrounds */
+html.dark .comments-list .comment { background: linear-gradient(180deg, rgba(20,26,36,0.6), rgba(12,16,24,0.45)); }
+html.dark .comment-form input { background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); }
 
 @keyframes fadeIn {
     from {
@@ -767,11 +805,11 @@ section {
 #postoptions {
     position: absolute;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: space-evenly;
     justify-content: space-evenly;
     align-self: center;
-    top: 0;
+    top: 0px;
     right: 0;
     height: 125px;
     width: 100%;
@@ -786,6 +824,22 @@ section {
     -webkit-backdrop-filter: blur(15px);
     backdrop-filter: blur(15px);
     pointer-events: none;
+}
+.post-actions {
+    display: flex;
+    flex-direction: row;
+}
+
+.post-actions button svg, #postoptions button svg {
+    width: 24px;
+    height: 24px;
+}
+
+.post-actions button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
 }
 
 .post-dates,

@@ -69,6 +69,7 @@
     "perf-auto": "Auto (détéction)",
     "perf-low": "Forcer low-end",
     "perf-unactive": "Désactivé",
+    "settings_theme": "Apparence",
     "login_btn": "Se connecter",
     "register_btn": "S'inscrire",
     "guest_btn": "Continuer en tant qu'invité",

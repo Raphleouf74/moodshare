@@ -70,6 +70,7 @@
   "perf-auto": "Auto (detection)",
   "perf-low": "Forcer low-end",
   "perf-unactive": "Disabled",
+  "settings_theme": "Appearance",
   "login_btn": "Log in",
   "register_btn": "Register",
   "guest_btn": "Continue as guest",
