@@ -11,11 +11,13 @@
     --muted: #6b7280;
     --radius: 16px;
 }
+
 /* Dark theme overrides */
-html.dark, body.dark {
+html.dark,
+body.dark {
     --bg: #081122;
-    --menu-bg: rgba(6,8,12,0.6);
-    --border: rgba(255,255,255,0.06);
+    --menu-bg: rgba(6, 8, 12, 0.6);
+    --border: rgba(255, 255, 255, 0.06);
     --accent: #60a5fa;
     --text: #e6eef8;
     --muted: #9aa4b2;
@@ -34,12 +36,15 @@ body {
     background-attachment: fixed;
     overflow-x: hidden;
 }
-main, body {
+
+main,
+body {
     overflow-x: hidden;
     overflow-y: auto;
     max-width: 100vw;
     height: 100vh;
 }
+
 button {
     cursor: pointer;
 }
@@ -646,7 +651,7 @@ section {
 #moodWall {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(auto, 1fr));
-   
+
     left: 0;
     width: 95vw;
     margin: 0;
@@ -664,17 +669,19 @@ section {
     margin-top: 1rem;
     min-height: 60px;
 }
+
 /* Comments UI */
 .comments-container {
     margin-top: 8px;
     border-top: 1px solid var(--border);
     padding-top: 8px;
+    display: none;
 }
 
 .comments-list .comment {
     padding: 8px;
     border-radius: 10px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.4));
     color: var(--text);
     display: flex;
     align-items: center;
@@ -683,16 +690,128 @@ section {
     border: 1px solid var(--border);
 }
 
-.comments-list .comment b { color: var(--accent); }
-.comment .comment-like, .comment .comment-report { margin-left: auto; background: transparent; border: none; cursor: pointer; }
+.comments-list .comment b {
+    color: var(--accent);
+}
 
-.comment-form { display:flex; gap:8px; margin-top:8px; }
-.comment-form input { flex:1; padding:8px; border-radius:8px; border:1px solid var(--border); background:transparent; color:var(--text); }
-.comment-form button { padding:8px 12px; border-radius:8px; background:var(--accent); color:#fff; border:none; }
+.comment .comment-like,
+.comment .comment-report {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.comment-form {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.comment-form input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+}
+
+.comment-form button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+}
 
 /* Dark tweaks for comment backgrounds */
-html.dark .comments-list .comment { background: linear-gradient(180deg, rgba(20,26,36,0.6), rgba(12,16,24,0.45)); }
-html.dark .comment-form input { background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); }
+html.dark .comments-list .comment {
+    background: linear-gradient(180deg, rgba(20, 26, 36, 0.6), rgba(12, 16, 24, 0.45));
+}
+
+html.dark .comment-form input {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Comments modal / side panel */
+.comments-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: transparent;
+    display: flex;
+    justify-content: flex-end;
+    z-index: 4000;
+}
+
+
+
+.comments-modal-panel {
+    width: 450px;
+    height: 80vh;
+    border-radius: 15px;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,50, 0.8);
+    box-shadow: -8px 0 24px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.comments-modal-overlay.hidden  {
+    transform: translateX(500px);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.comments-modal-overlay.visible {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: all;
+}
+
+.comments-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.comments-modal-header h3 {
+    margin: 0;
+    color: var(--text);
+    font-size: 1.05rem;
+}
+
+.comments-modal-close {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: var(--muted);
+}
+
+.comments-modal-content {
+    padding: 12px 16px;
+    overflow: auto;
+    flex: 1;
+}
+
+@media (max-width: 600px) {
+    .comments-modal-panel {
+        width: 100%;
+        height: 60%;
+        border-radius: 12px 12px 0 0;
+        align-self: flex-end;
+    }
+
+    .comments-modal-overlay {
+        align-items: flex-end;
+    }
+}
 
 @keyframes fadeIn {
     from {
@@ -723,7 +842,7 @@ html.dark .comment-form input { background: rgba(255,255,255,0.02); border:1px s
 
 
 
-.likebtn.liked svg{
+.likebtn.liked svg {
     color: #e74c3c;
     stroke: #e74c3c;
     fill: #e74c3c;
@@ -825,12 +944,14 @@ html.dark .comment-form input { background: rgba(255,255,255,0.02); border:1px s
     backdrop-filter: blur(15px);
     pointer-events: none;
 }
+
 .post-actions {
     display: flex;
     flex-direction: row;
 }
 
-.post-actions button svg, #postoptions button svg {
+.post-actions button svg,
+#postoptions button svg {
     width: 24px;
     height: 24px;
 }
@@ -979,6 +1100,7 @@ html.dark .comment-form input { background: rgba(255,255,255,0.02); border:1px s
     animation: scrollShapes 3s linear infinite;
     pointer-events: none;
 }
+
 
 /* Formes individuelles (carrés et cercles) */
 .skeleton-circle {
@@ -1926,15 +2048,18 @@ section#settingsTab a {
     animation-delay: 0.05s;
     pointer-events: none;
 }
+
 @keyframes grow {
     0% {
         scale: 0.4;
         opacity: 1;
     }
+
     85% {
         scale: 1.3;
         opacity: 1;
     }
+
     100% {
         scale: 9;
         opacity: 0;
@@ -1946,18 +2071,22 @@ section#settingsTab a {
     0% {
         background: rgba(0, 0, 0);
     }
+
     85% {
-        background: rgb(10,10,75);
+        background: rgb(10, 10, 75);
         opacity: 1;
     }
+
     90% {
         background: transparent;
     }
+
     110% {
         background: transparent;
         opacity: 0;
     }
 }
+
 /* animation du carré : centre -> orbite -> centre (inverse du cercle) */
 /* Quand le loader est actif, cache le contenu principal */
 body.loading>*:not(#loader) {
@@ -2186,11 +2315,13 @@ nav svg {
     font-weight: 600;
     color: var(--text);
 }
+
 section#homeTab {
     width: auto;
     max-width: 100vw;
     height: 100vh;
 }
+
 .lp-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);

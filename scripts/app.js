@@ -430,9 +430,9 @@ function displayMood(mood) {
                 if (!isLiked) { arr.push(String(mood.id)); } else { arr = arr.filter(x => x !== String(mood.id)); }
                 localStorage.setItem('likedPosts', JSON.stringify(arr));
             } else {
-                showFeedback('warning', 'not_logged_in');
+                showFeedback("warning", "not_logged_in");
             }
-        } catch (e) { console.error(e); showFeedback('error', 'network_error'); }
+        } catch (e) { console.error(e); showFeedback("error", "network_error"); }
     });
 
     // ---- ACTIONS: comment / share / report / repost ----
@@ -495,7 +495,7 @@ function displayMood(mood) {
                         c.likes = updated.likes;
                         renderComments();
                     } else {
-                        showFeedback('error', 'not_logged_in');
+                        showFeedback("error", "not_logged_in");
                     }
                 } catch (e) { console.error(e); }
             });
@@ -508,7 +508,7 @@ function displayMood(mood) {
             reportC.addEventListener('click', async () => {
                 const reason = prompt('Motif du signalement (optionnel)');
                 await fetch(`${API}/posts/${mood.id}/report`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ commentId: c.id, reason }) });
-                showFeedback('info', 'reported');
+                showFeedback("info", "reported_post");
             });
             item.appendChild(reportC);
 
@@ -537,11 +537,11 @@ function displayMood(mood) {
                     input.value = '';
                     renderComments();
                 } else if (res.status === 401) {
-                    showFeedback('warning', 'not_logged_in');
+                    showFeedback("warning", "not_logged_in");
                 } else {
-                    showFeedback('error', 'comment_failed');
+                    showFeedback("error", "comment_failed");
                 }
-            } catch (e) { console.error(e); showFeedback('error', 'network_error'); }
+            } catch (e) { console.error(e); showFeedback("error", "network_error"); }
         });
         commentsContainer.appendChild(form);
     }
@@ -550,9 +550,71 @@ function displayMood(mood) {
     renderComments();
     dateP.textContent = "Créé le " + createdDate;
     buttons.appendChild(dateP);
-    // toggles
+    // toggles: open comments in a floating modal / side panel
     commentToggle.addEventListener('click', () => {
-        commentsContainer.style.display = commentsContainer.style.display === 'none' ? 'block' : 'none';
+        // create modal overlay if missing
+        let overlay = document.getElementById('commentsModalOverlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'commentsModalOverlay';
+            overlay.className = 'comments-modal-overlay hidden';
+
+            const panel = document.createElement('div');
+            panel.id = 'commentsModalPanel';
+            panel.className = 'comments-modal-panel';
+
+            const header = document.createElement('div');
+            header.className = 'comments-modal-header';
+            const title = document.createElement('h3');
+            title.textContent = t('home_recent_posts') || 'Comments';
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'comments-modal-close';
+            closeBtn.textContent = '✕';
+            header.appendChild(title);
+            header.appendChild(closeBtn);
+
+            panel.appendChild(header);
+
+            const content = document.createElement('div');
+            content.id = 'commentsModalContent';
+            content.className = 'comments-modal-content';
+            panel.appendChild(content);
+
+            overlay.appendChild(panel);
+            document.body.appendChild(overlay);
+
+            // close behaviour
+            closeBtn.addEventListener('click', () => {
+                // move comments container back to the post
+                const originalHolder = moodcard;
+                const modalContent = document.getElementById('commentsModalContent');
+                const moved = modalContent.querySelector('.comments-container');
+                if (moved) {
+                    moved.style.display = 'none';
+                    originalHolder.appendChild(moved);
+                }
+                overlay.classList.add('hidden');
+            });
+
+            // click outside to close
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) closeBtn.click();
+            });
+        }
+
+        // move the commentsContainer into the modal content
+        const modalContent = document.getElementById('commentsModalContent');
+        if (!modalContent) return;
+        // if already visible for this post, close
+        if (!overlay.classList.contains('hidden')) {
+            overlay.querySelector('.comments-modal-close').click();
+            return;
+        }
+
+        // append
+        commentsContainer.style.display = 'block';
+        modalContent.appendChild(commentsContainer);
+        overlay.classList.remove('hidden');
     });
 
     shareBtn.addEventListener('click', () => {
@@ -560,14 +622,14 @@ function displayMood(mood) {
         if (navigator.share) {
             navigator.share({ title: 'MoodShare', text: mood.text, url }).catch(() => { });
         } else {
-            navigator.clipboard.writeText(url).then(() => showFeedback('success', 'copied_link'));
+            navigator.clipboard.writeText(url).then(() => showFeedback("success", "copied_link"));
         }
     });
 
     reportBtn.addEventListener('click', async () => {
         const reason = prompt('Motif du signalement (optionnel)');
         await fetch(`${API}/posts/${mood.id}/report`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reason }) });
-        showFeedback('info', 'reported');
+        showFeedback("info", "reported_post");
     });
 
     repostBtn.addEventListener('click', async () => {
@@ -577,8 +639,8 @@ function displayMood(mood) {
         if (res.status === 201) {
             const newp = await res.json();
             displayMood(newp);
-            showFeedback('success', 'reposted');
-        } else showFeedback('error', 'repost_failed');
+            showFeedback("success", "reposted");
+        } else showFeedback("error", "repost_failed");
     });
 
 }
@@ -1354,3 +1416,7 @@ if (profilename) {
     const storedName = localStorage.getItem('username') || 'Invité';
     profilename.textContent = storedName;
 }
+
+addInboxNotification("info", "update_title", "update_info", "update", "Voir", () => {
+    window.location.href = "index.html";
+});
