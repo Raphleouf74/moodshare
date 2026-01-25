@@ -29,7 +29,7 @@ body.dark {
     transition: all 0.2s ease-in-out;
 }
 
-body {
+body:not(.dark) {
     font-family: "Inter", sans-serif;
     margin: 0;
     background: linear-gradient(135deg, rgba(155, 255, 255, 0.50), #28013793);
@@ -37,7 +37,6 @@ body {
     overflow-x: hidden;
 }
 body.dark {
-    background-color: black;
     background: linear-gradient(135deg, rgba(0, 23, 51), #100016);
     color: white;
 }

@@ -108,16 +108,7 @@ let posts = [
     ephemeral: false,
     expiresAt: null,
     id: 0
-  }// ,
-  // {
-  //   text: 'CECI EST UN TEST DE GROS CACA BOUDI',
-  //   color: '#492d08ff',
-  //   date: '69/69/6969',
-  //   emoji: '💩',
-  //   ephemeral: false,
-  //   expiresAt: null,
-  //   id: 69
-  // }
+  }
 ];
 
 const dataDir = path.join(__dirname, "data");
@@ -133,7 +124,7 @@ try {
     posts = JSON.parse(fs.readFileSync(postsFile, "utf8"));
   }
 } catch (err) {
-  console.error("❌ Error loading posts");
+  console.error("❌ Erreur lors du chargement des posts");
 }
 
 // ---- Ajout : STORIES STORAGE (placer AVANT app.get("/api/stories")) ----
@@ -145,7 +136,7 @@ try {
     stories = JSON.parse(fs.readFileSync(storiesFile, "utf8"));
   }
 } catch (err) {
-  console.error("❌ Error loading stories:", err);
+  console.error("❌ Erreur lors du chargement des stories:", err);
 }
 
 // === REPORTS STORAGE ===
@@ -156,7 +147,7 @@ try {
     reports = JSON.parse(fs.readFileSync(reportsFile, "utf8"));
   }
 } catch (err) {
-  console.error("❌ Error loading reports:", err);
+  console.error("❌ Erreur lors du chargement des signalements:", err);
 }
 
 // === SSE (Server-Sent Events) clients ===
@@ -165,7 +156,7 @@ let sseClients = [];
 function sendSSE(event, data) {
   const payload = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
   sseClients.forEach(c => {
-    try { c.res.write(payload); } catch (err) { console.error('❌ SSE send error', err); }
+    try { c.res.write(payload); } catch (err) { console.error('❌ Erreur envoi SSE:', err); }
   });
 }
 
@@ -197,16 +188,16 @@ app.get("/api/stories", (req, res) => {
     if (expiredExists) {
       stories = active;
       fsPromises.writeFile(storiesFile, JSON.stringify(stories, null, 2)).catch(err => {
-        console.error("❌ Error saving stories after purge:", err);
+        console.error("❌ Erreur lors de la sauvegarde des stories après la purge:", err);
       });
       // broadcast updated stories list
-      try { sendSSE('stories_update', stories); } catch (e) { console.error('❌ SSE error:', e); }
+      try { sendSSE('stories_update', stories); } catch (e) { console.error('❌ Erreur SSE:', e); }
     }
 
     res.json(active);
   } catch (err) {
-    console.error("❌ Error getting stories:", err);
-    res.status(500).json({ error: "Internal error" });
+    console.error("❌ Erreur lors de la récupération des stories:", err);
+    res.status(500).json({ error: "Erreur interne" });
   }
 });
 // GET POSTS
@@ -220,7 +211,7 @@ function sanitizeText(text) {
   const forbiddenPattern = /(script|javascript:|onerror=|onclick=|onload=|<iframe|<img|<svg|document\.|window\.)/i;
 
   if (forbiddenPattern.test(text)) {
-    throw new Error("Forbidden content detected");
+    throw new Error("Contenu interdit detecté");
   }
 
   // Sanitize quand même :
@@ -238,6 +229,7 @@ app.post("/api/posts", async (req, res) => {
       text: cleanText,
       emoji: cleanEmoji,
       color: req.body.color,
+      textColor: req.body.textColor,
       id: Date.now().toString(),
       ...req.body,
       likes: 0,
@@ -247,12 +239,12 @@ app.post("/api/posts", async (req, res) => {
 
     posts.unshift(newPost);
     await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
-    try { sendSSE('new_post', newPost); } catch (e) { console.error('❌ SSE error:', e); }
+    try { sendSSE('new_post', newPost); } catch (e) { console.error('❌ Erreur SSE:', e); }
 
     res.status(201).json(newPost);
 
   } catch (err) {
-    return res.status(400).json({ error: "Invalid content" });
+    return res.status(400).json({ error: "Contenu invalide" });
   }
 });
 
@@ -260,10 +252,10 @@ app.post("/api/posts", async (req, res) => {
 app.post("/api/posts/:id/comments", requireAuth, async (req, res) => {
   try {
     const post = posts.find(p => p.id == req.params.id);
-    if (!post) return res.status(404).json({ error: "Post not found" });
+    if (!post) return res.status(404).json({ error: "Post non trouvé" });
 
     const rawText = String(req.body.text || "").trim();
-    if (!rawText) return res.status(400).json({ error: "Empty comment" });
+    if (!rawText) return res.status(400).json({ error: "Commentaire vide" });
 
     const cleanText = sanitizeText(rawText);
 
@@ -279,12 +271,12 @@ app.post("/api/posts/:id/comments", requireAuth, async (req, res) => {
     post.comments.push(comment);
 
     await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
-    try { sendSSE('post_update', post); } catch (e) { console.error('❌ SSE error:', e); }
+    try { sendSSE('post_update', post); } catch (e) { console.error('❌ Erreur SSE:', e); }
 
     res.status(201).json(comment);
   } catch (err) {
-    console.error('❌ Error creating comment:', err);
-    res.status(400).json({ error: 'Invalid content' });
+    console.error('❌ Erreur lors de la création du commentaire:', err);
+    res.status(400).json({ error: 'Contenu invalide' });
   }
 });
 
@@ -292,38 +284,38 @@ app.post("/api/posts/:id/comments", requireAuth, async (req, res) => {
 app.post('/api/posts/:postId/comments/:commentId/like', requireAuth, async (req, res) => {
   try {
     const post = posts.find(p => p.id == req.params.postId);
-    if (!post) return res.status(404).json({ error: 'Post not found' });
+    if (!post) return res.status(404).json({ error: 'Post non trouvé' });
     post.comments = post.comments || [];
     const cm = post.comments.find(c => c.id == req.params.commentId);
-    if (!cm) return res.status(404).json({ error: 'Comment not found' });
+    if (!cm) return res.status(404).json({ error: 'Commentaire non trouvé' });
 
     cm.likes = (cm.likes || 0) + 1;
     await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
-    try { sendSSE('post_update', post); } catch (e) { console.error('❌ SSE error:', e); }
+    try { sendSSE('post_update', post); } catch (e) { console.error('❌ Erreur SSE:', e); }
     res.json(cm);
-  } catch (err) { console.error('❌ Error liking comment:', err); res.status(500).json({ error: 'Internal' }); }
+  } catch (err) { console.error('❌ Erreur de like du commentaire:', err); res.status(500).json({ error: 'Interne' }); }
 });
 
 app.post('/api/posts/:postId/comments/:commentId/unlike', requireAuth, async (req, res) => {
   try {
     const post = posts.find(p => p.id == req.params.postId);
-    if (!post) return res.status(404).json({ error: 'Post not found' });
+    if (!post) return res.status(404).json({ error: 'Post non trouvé' });
     post.comments = post.comments || [];
     const cm = post.comments.find(c => c.id == req.params.commentId);
-    if (!cm) return res.status(404).json({ error: 'Comment not found' });
+    if (!cm) return res.status(404).json({ error: 'Commentaire non trouvé' });
 
     cm.likes = Math.max(0, (cm.likes || 0) - 1);
     await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
-    try { sendSSE('post_update', post); } catch (e) { console.error('❌ SSE error:', e); }
+    try { sendSSE('post_update', post); } catch (e) { console.error('❌ Erreur SSE:', e); }
     res.json(cm);
-  } catch (err) { console.error('❌ Error unliking comment:', err); res.status(500).json({ error: 'Internal' }); }
+  } catch (err) { console.error('❌ Erreur de suppression du like du commentaire:', err); res.status(500).json({ error: 'Interne' }); }
 });
 
 // Report a post or comment
 app.post('/api/posts/:id/report', requireAuth, async (req, res) => {
   try {
     const targetPost = posts.find(p => p.id == req.params.id);
-    if (!targetPost) return res.status(404).json({ error: 'Post not found' });
+    if (!targetPost) return res.status(404).json({ error: 'Post non trouvé' });
 
     const { reason = '', commentId = null } = req.body;
     const report = {
@@ -339,17 +331,17 @@ app.post('/api/posts/:id/report', requireAuth, async (req, res) => {
     await fsPromises.writeFile(reportsFile, JSON.stringify(reports, null, 2));
 
     // Notify admins / clients via SSE
-    try { sendSSE('report', report); } catch (e) { console.error('❌ SSE error:', e); }
+    try { sendSSE('report', report); } catch (e) { console.error('❌ Erreur SSE:', e); }
 
     res.json({ ok: true });
-  } catch (err) { console.error('❌ Error reporting:', err); res.status(500).json({ error: 'Internal' }); }
+  } catch (err) { console.error('❌ Erreur de signalement:', err); res.status(500).json({ error: 'Interne' }); }
 });
 
 // Repost (create a new post duplicating an existing one)
 app.post('/api/posts/:id/repost', requireAuth, async (req, res) => {
   try {
     const orig = posts.find(p => p.id == req.params.id);
-    if (!orig) return res.status(404).json({ error: 'Post not found' });
+    if (!orig) return res.status(404).json({ error: 'Post non trouvé' });
 
     const newPost = {
       text: orig.text,
@@ -366,10 +358,10 @@ app.post('/api/posts/:id/repost', requireAuth, async (req, res) => {
 
     posts.unshift(newPost);
     await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
-    try { sendSSE('new_post', newPost); } catch (e) { console.error('❌ SSE error:', e); }
+    try { sendSSE('new_post', newPost); } catch (e) { console.error('❌ Erreur SSE:', e); }
 
     res.status(201).json(newPost);
-  } catch (err) { console.error('❌ Error reposting:', err); res.status(500).json({ error: 'Internal' }); }
+  } catch (err) { console.error('❌ Erreur de republication:', err); res.status(500).json({ error: 'Interne' }); }
 });
 
 
@@ -385,7 +377,7 @@ app.post("/api/stories", async (req, res) => {
 
     // Validation basique
     if (!text && !emoji) {
-      return res.status(400).json({ error: "Empty story" });
+      return res.status(400).json({ error: "Story vide" });
     }
 
     // Sanitization stricte (réutilise sanitizeText)
@@ -410,13 +402,13 @@ app.post("/api/stories", async (req, res) => {
     await fsPromises.writeFile(storiesFile, JSON.stringify(stories, null, 2));
 
     // notify clients
-    try { sendSSE('new_story', newStory); } catch (e) { console.error('❌ SSE error:', e); }
+    try { sendSSE('new_story', newStory); } catch (e) { console.error('❌ Erreur SSE:', e); }
 
     // Répondre avec la story créée
     res.status(201).json(newStory);
   } catch (err) {
-    console.error("❌ Error creating story:", err);
-    res.status(400).json({ error: "Invalid content" });
+    console.error("❌ Erreur lors de la création de la story:", err);
+    res.status(400).json({ error: "Contenu Invalide" });
   }
 });
 app.get("/api/auth/me", requireAuth, (req, res) => {
@@ -425,36 +417,36 @@ app.get("/api/auth/me", requireAuth, (req, res) => {
 // LIKE / UNLIKE
 app.post("/api/posts/:id/like", async (req, res) => {
   const post = posts.find(p => p.id == req.params.id);
-  if (!post) return res.status(404).json({ error: "Post not found" });
+  if (!post) return res.status(404).json({ error: "Post non trouvé" });
 
   post.likes++;
   // Persist posts
   try {
     await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
   } catch (err) {
-    console.error('❌ Error saving posts after like:', err);
+    console.error('❌ Erreur de la sauvegarde des posts après le like:', err);
   }
 
   // Notify clients
-  try { sendSSE('post_update', post); } catch (e) { console.error('❌ SSE error:', e); }
+  try { sendSSE('post_update', post); } catch (e) { console.error('❌ Erreur SSE:', e); }
 
   res.json(post);
 });
 
 app.post("/api/posts/:id/unlike", async (req, res) => {
   const post = posts.find(p => p.id == req.params.id);
-  if (!post) return res.status(404).json({ error: "Post not found" });
+  if (!post) return res.status(404).json({ error: "Post non trouvé" });
 
   post.likes = Math.max(0, post.likes - 1);
   // Persist posts
   try {
     await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
   } catch (err) {
-    console.error('❌ Error saving posts after unlike:', err);
+    console.error('❌ Erreur de la sauvegarde des posts après le unlike:', err);
   }
 
   // Notify clients
-  try { sendSSE('post_update', post); } catch (e) { console.error('❌ SSE error:', e); }
+  try { sendSSE('post_update', post); } catch (e) { console.error('❌ Erreur SSE:', e); }
 
   res.json(post);
 });
@@ -462,11 +454,11 @@ app.post("/api/posts/:id/unlike", async (req, res) => {
 /// AUTH & USER ROUTES
 app.use("/api/auth", (req, res, next) => {
   try {
-    console.log("🔐 [AUTH DEBUG] %s %s Origin=%s Content-Type=%s", req.method, req.originalUrl, req.headers.origin || 'none', req.headers['content-type']);
+    console.log("🔐 [Auth debug] %s %s Origine=%s Type de contenu=%s", req.method, req.originalUrl, req.headers.origin || 'none', req.headers['content-type']);
     // body est disponible grâce à express.json() plus haut
     // console.log("🔐 [AUTH DEBUG] body:", JSON.stringify(req.body));
   } catch (err) {
-    console.error("🔐 [AUTH DEBUG] error printing body:", err);
+    console.error("🔐 [Auth Debug] Erreur pour afficher le body:", err);
   }
   next();
 });
@@ -490,7 +482,7 @@ function listRoutes() {
       });
     }
   });
-  console.log('📡 Routes enregistrées:\n' + routes.join('\n'));
+  console.log('Paths enregistrées:\n' + routes.join('\n'));
 }
 listRoutes();
 
@@ -502,6 +494,6 @@ app.get("/api/health", (req, res) => {
 
 // Start server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Le serveur tourne sur le port ${PORT}`));
 
 module.exports = app;
