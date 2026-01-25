@@ -1,0 +1,5 @@
+ Release v1.5
+Date: 2026-01-09 19:54
+Build: patch 1.5 a1
+ Changelog:
+Nouvelle version 1.5 ! Republication, signalement, commentaires, partages... et d'autres corrections ! Et enfin le mode sombre !

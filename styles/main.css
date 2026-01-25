@@ -36,6 +36,16 @@ body {
     background-attachment: fixed;
     overflow-x: hidden;
 }
+body.dark {
+    background-color: black;
+    background: linear-gradient(135deg, rgba(0, 23, 51), #100016);
+    color: white;
+}
+
+body.dark header .logodraw #square, body.dark header .logodraw #circle {
+    background-color: white;
+}
+
 
 main,
 body {
@@ -349,6 +359,9 @@ nav.scrolled {
     border-radius: 15px;
     background: rgb(200, 200, 200, 0.4);
     height: 30px;
+}
+nav.dark.scrolled {
+    background: rgb(50, 50, 50, 0.4);
 }
 
 
@@ -1374,12 +1387,13 @@ textarea {
     z-index: 1000;
     opacity: 0;
     transform: translateY(-15px);
-
+    flex-direction: column;
     border-radius: 15px;
 }
 
-#emojiPickerContainer div {
-    border-radius: 15px;
+#emojiPickerContainer emoji-picker {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
 }
 
 #emojiPickerContainer.shown {
@@ -1621,7 +1635,13 @@ input[type="number"] {
     backdrop-filter: blur(10px);
     animation: slideInOut 3.5s ease forwards;
 }
-
+@media screen and (max-width: 600px) {
+    .upload-feedback {
+        width: 90%;
+        padding: 1rem;
+        font-size: 0.9rem;
+    }
+}
 /* Déclinaisons */
 .feedback-success {
     background: rgba(46, 213, 115, 0.9);
@@ -1832,6 +1852,16 @@ section#profileTab {
     gap: 15px;
 }
 
+.dark #userPostsSection{
+    color: #1e1e1e;
+    background: #c9c9c9;
+}
+
+.dark #userPostsSection div div{
+    background: #1e1e1e;
+    color: #f0f0f0;
+}
+
 .user-post {
     background: white;
     border-radius: 15px;
@@ -1859,15 +1889,16 @@ section#profileTab {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    width: 80%;
     gap: 5px;
     font-size: 1.75rem;
 }
 
 #socialStats p {
     background-color: grey;
-    padding: 10px;
-    width: 125px;
+    padding: 15px;
+    font-size: 45px;
+    width: calc(100% /3);
     height: 50px;
     color: white;
     display: flex;
@@ -2168,6 +2199,10 @@ body #circleback {
     transform: scale(10);
     pointer-events: none;
     animation: moveCircle 60s linear infinite;
+}
+
+body.dark #circleback, body.dark #squareback {
+    background-color: rgba(55, 55, 55, 0.15);
 }
 
 @keyframes moveCircle {
@@ -2497,4 +2532,17 @@ section#homeTab {
     flex-direction: row;
     justify-content: center;
     align-items: center;
+}
+
+#profile-customization {
+    display: none;
+    /* flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem; */
+}
+
+.dark #MoreAccSettings a button, .dark #goToSettingsBtn{
+    color: white;
 }

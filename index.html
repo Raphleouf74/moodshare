@@ -72,7 +72,7 @@
     </form>
   </div>
 
-  <nav class="menu" role="navigation" aria-label="Menu">
+  <nav id="nav" class="menu" role="navigation" aria-label="Menu">
     <a class="hoverable link active" id="homeTab">
       <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="link-icon">
@@ -239,25 +239,7 @@
 
   <section id="profileTab" class="tab hidden">
     <div id="accountinfo">
-      <img src="/assets/logo/logo_dark.jpg" alt="AccountAvatar" id="accountavatar" />
-      <p data-i18n="profile_avatar">Votre avatar</p>
-
-      <!-- <button class="hoverable" id="editProfileBtn">
-        <span class="material-symbols-rounded">edit</span>Modifier le profil
-      </button class="hoverable">
-
-      <div class="accountname">
-        <input id="profileUsername" placeholder="Votre pseudo" disabled />
-        <input id="profileFullName" placeholder="Votre nom" disabled />
-      </div>
-
-      <div class="plusinfos">
-        <h4>Informations complémentaires</h4>
-        <input id="profileEmail" placeholder="votre@email.com" disabled />
-        <input id="profilePhone" placeholder="Votre numéro de téléphone" disabled />
-        <input id="profilePassword" placeholder="Votre*mot*de*passe" type="password" disabled />
-      </div> -->
-
+      <h2 data-i18n="profile_your_profile">Votre profil</h2>
       <div id="socialStats">
         <p>
           <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
@@ -314,7 +296,7 @@
       <a href="Legal/PRIVACY_POLICY.html"><button class="hoverable">
           <p data-i18n="Policy_title">Politique de confidentialité</p>
         </button></a>
-      <button class="hoverable" id="goToSettingsBtn" onclick="goToSettings()">
+      <button class="hoverable" id="goToSettingsBtn">
         <b>
           <p data-i18n="nav_settings">Paramètres</p>
         </b>

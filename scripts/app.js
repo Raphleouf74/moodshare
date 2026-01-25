@@ -633,14 +633,23 @@ function displayMood(mood) {
     });
 
     repostBtn.addEventListener('click', async () => {
-        const ok = confirm('Reposter ce post sur votre mur ?');
-        if (!ok) return;
-        const res = await fetch(`${API}/posts/${mood.id}/repost`, { method: 'POST', credentials: 'include' });
-        if (res.status === 201) {
-            const newp = await res.json();
-            displayMood(newp);
-            showFeedback("success", "reposted");
-        } else showFeedback("error", "repost_failed");
+        try {
+            const res = await fetchWithAuth(`/posts/${mood.id}/repost`, { method: 'POST' });
+            if (res.status === 201) {
+                const newp = await res.json();
+                displayMood(newp);
+                showFeedback("success", "reposted");
+            } else if (res.status === 401) {
+                showFeedback("error", "login_required");
+            } else {
+                const errData = await res.json().catch(() => ({}));
+                console.error('❌ Repost error:', res.status, errData);
+                showFeedback("error", "repost_failed");
+            }
+        } catch (err) {
+            console.error('❌ Repost fetch error:', err);
+            showFeedback("error", "repost_failed");
+        }
     });
 
 }
@@ -790,7 +799,7 @@ function showFeedback(type, messageKey, vars = {}) {
 
     const feedback = document.createElement("div");
     feedback.className = `upload-feedback feedback-${type}`;
-
+    
     const icons = {
         success: "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"36\" height=\"36\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-circle-check-icon lucide-circle-check\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/></svg>",
         error: "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"36\" height=\"36\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-circle-x-icon lucide-circle-x\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m15 9-6 6\"/><path d=\"m9 9 6 6\"/></svg>",
@@ -908,7 +917,7 @@ async function addInboxNotification(
 
 async function loadUserPosts() {
     const wall = document.getElementById("userPostsWall");
-    wall.textContent = "<i>Chargement des posts...</i>";
+    wall.innerHTML = "<i>Chargement des posts...</i>";
 
     try {
         // ⚙️ Si tu as une API user spécifique :
@@ -1209,9 +1218,11 @@ function applyTheme(theme) {
     if (theme === 'dark') {
         document.documentElement.classList.add('dark');
         document.body.classList.add('dark');
+        document.getElementById('nav').classList.add('dark');
     } else {
         document.documentElement.classList.remove('dark');
         document.body.classList.remove('dark');
+        document.getElementById('nav').classList.remove('dark');
     }
 }
 

@@ -355,6 +355,7 @@ app.post('/api/posts/:id/repost', requireAuth, async (req, res) => {
       text: orig.text,
       emoji: orig.emoji,
       color: orig.color,
+      textColor: orig.textColor,
       id: Date.now().toString(),
       likes: 0,
       comments: [],
