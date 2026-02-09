@@ -36,12 +36,14 @@ body:not(.dark) {
     background-attachment: fixed;
     overflow-x: hidden;
 }
+
 body.dark {
     background: linear-gradient(135deg, rgba(0, 23, 51), #100016);
     color: white;
 }
 
-body.dark header .logodraw #square, body.dark header .logodraw #circle {
+body.dark header .logodraw #square,
+body.dark header .logodraw #circle {
     background-color: white;
 }
 
@@ -349,7 +351,40 @@ nav {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     display: flex;
     gap: 14px;
-    transition: all 0.3s ease;
+}
+
+@media screen and (min-width:760px) {
+    nav:not(:hover) {
+        bottom: 5px;
+        right: 0;
+        width: 100px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 15px;
+        transition: width .6s ease-in-out, height 0.1s ease-in-out;
+    }
+
+    nav:not(:hover) .link {
+        height: 12.5px;
+        width: 12.5px;
+        border-radius: 50%;
+        background-color: rgba(128, 128, 128, 0.3);
+        pointer-events: none;
+    }
+
+    nav:not(:hover) .link svg {
+        opacity: 0;
+        scale: .1;
+    }
+
+
+    nav:not(:hover) .link.active {
+        height: 15px;
+        width: 15px;
+        border-radius: 50%;
+        background-color: white;
+    }
+
 }
 
 nav.scrolled {
@@ -359,6 +394,7 @@ nav.scrolled {
     background: rgb(200, 200, 200, 0.4);
     height: 30px;
 }
+
 nav.dark.scrolled {
     background: rgb(50, 50, 50, 0.4);
 }
@@ -765,14 +801,14 @@ html.dark .comment-form input {
     border-radius: 15px;
     top: 10px;
     right: 10px;
-    background: rgba(0,0,50, 0.8);
+    background: rgba(0, 0, 50, 0.8);
     box-shadow: -8px 0 24px rgba(0, 0, 0, 0.4);
     display: flex;
     flex-direction: column;
     transition: all 0.3s ease;
 }
 
-.comments-modal-overlay.hidden  {
+.comments-modal-overlay.hidden {
     transform: translateX(500px);
     opacity: 0;
     pointer-events: none;
@@ -1634,6 +1670,7 @@ input[type="number"] {
     backdrop-filter: blur(10px);
     animation: slideInOut 3.5s ease forwards;
 }
+
 @media screen and (max-width: 600px) {
     .upload-feedback {
         width: 90%;
@@ -1641,6 +1678,7 @@ input[type="number"] {
         font-size: 0.9rem;
     }
 }
+
 /* Déclinaisons */
 .feedback-success {
     background: rgba(46, 213, 115, 0.9);
@@ -1851,12 +1889,12 @@ section#profileTab {
     gap: 15px;
 }
 
-.dark #userPostsSection{
+.dark #userPostsSection {
     color: #1e1e1e;
     background: #c9c9c9;
 }
 
-.dark #userPostsSection div div{
+.dark #userPostsSection div div {
     background: #1e1e1e;
     color: #f0f0f0;
 }
@@ -2200,7 +2238,8 @@ body #circleback {
     animation: moveCircle 60s linear infinite;
 }
 
-body.dark #circleback, body.dark #squareback {
+body.dark #circleback,
+body.dark #squareback {
     background-color: rgba(55, 55, 55, 0.15);
 }
 
@@ -2542,6 +2581,7 @@ section#homeTab {
     margin-top: 1rem; */
 }
 
-.dark #MoreAccSettings a button, .dark #goToSettingsBtn{
+.dark #MoreAccSettings a button,
+.dark #goToSettingsBtn {
     color: white;
 }
