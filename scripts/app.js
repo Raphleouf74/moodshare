@@ -112,13 +112,11 @@ window.addEventListener('scroll', () => {
 
     // Scroll vers le bas : cache la nav
     if (currentScroll > 50) {
-        nav.classList.add('scrolled');
         header.classList.add('scrolled');
         profileheader.classList.add('scrolled');
     }
     // Scroll vers le haut : affiche la nav
     else {
-        nav.classList.remove('scrolled');
         header.classList.remove('scrolled');
         profileheader.classList.remove('scrolled');
     }
@@ -439,20 +437,10 @@ function displayMood(mood) {
     const actionBar = document.createElement('div');
     actionBar.className = 'post-actions';
 
-    const commentToggle = document.createElement('button');
-    commentToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-circle-icon lucide-message-circle"><path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/></svg>';
-    commentToggle.title = 'Commenter';
-    actionBar.appendChild(commentToggle);
-
     const shareBtn = document.createElement('button');
     shareBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link-icon lucide-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
     shareBtn.title = 'Partager';
     actionBar.appendChild(shareBtn);
-
-    const reportBtn = document.createElement('button');
-    reportBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>';
-    reportBtn.title = 'Signaler';
-    actionBar.appendChild(reportBtn);
 
     const repostBtn = document.createElement('button');
     repostBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-repeat2-icon lucide-repeat-2"><path d="m2 9 3-3 3 3"/><path d="M13 18H7a2 2 0 0 1-2-2V6"/><path d="m22 15-3 3-3-3"/><path d="M11 6h6a2 2 0 0 1 2 2v10"/></svg>';
@@ -461,161 +449,8 @@ function displayMood(mood) {
 
     buttons.appendChild(actionBar);
 
-    // ---- COMMENTS UI ----
-    const commentsContainer = document.createElement('div');
-    commentsContainer.className = 'comments-container';
-    moodcard.appendChild(commentsContainer);
-
-    // existing comments
-    function renderComments() {
-        commentsContainer.innerHTML = '';
-        const list = document.createElement('div');
-        list.className = 'comments-list';
-        (mood.comments || []).forEach(c => {
-            const item = document.createElement('div');
-            item.className = 'comment';
-            item.dataset.commentId = c.id;
-
-            const author = document.createElement('b');
-            author.textContent = (c.author && c.author.username) ? c.author.username : (c.author || 'anon');
-            item.appendChild(author);
-
-            const txt = document.createElement('span');
-            txt.textContent = ' ' + c.text;
-            item.appendChild(txt);
-
-            const likeC = document.createElement('button');
-            likeC.className = 'comment-like';
-            likeC.textContent = `❤ ${c.likes || 0}`;
-            likeC.addEventListener('click', async () => {
-                try {
-                    const res = await fetch(`${API}/posts/${mood.id}/comments/${c.id}/like`, { method: 'POST', credentials: 'include' });
-                    if (res.ok) {
-                        const updated = await res.json();
-                        c.likes = updated.likes;
-                        renderComments();
-                    } else {
-                        showFeedback("error", "not_logged_in");
-                    }
-                } catch (e) { console.error(e); }
-            });
-            item.appendChild(likeC);
-
-            const reportC = document.createElement('button');
-            reportC.className = 'comment-report';
-            reportC.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>';
-            reportC.title = 'Signaler ce commentaire';
-            reportC.addEventListener('click', async () => {
-                const reason = prompt('Motif du signalement (optionnel)');
-                await fetch(`${API}/posts/${mood.id}/report`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ commentId: c.id, reason }) });
-                showFeedback("info", "reported_post");
-            });
-            item.appendChild(reportC);
-
-            list.appendChild(item);
-        });
-        commentsContainer.appendChild(list);
-
-        // comment form
-        const form = document.createElement('div');
-        form.className = 'comment-form';
-        const input = document.createElement('input');
-        input.placeholder = 'Ajouter un commentaire...';
-        form.appendChild(input);
-        const send = document.createElement('button');
-        send.textContent = 'Envoyer';
-        form.appendChild(send);
-        send.addEventListener('click', async () => {
-            const val = input.value.trim();
-            if (!val) return;
-            try {
-                const res = await fetch(`${API}/posts/${mood.id}/comments`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: val }) });
-                if (res.status === 201) {
-                    const created = await res.json();
-                    mood.comments = mood.comments || [];
-                    mood.comments.push(created);
-                    input.value = '';
-                    renderComments();
-                } else if (res.status === 401) {
-                    showFeedback("warning", "not_logged_in");
-                } else {
-                    showFeedback("error", "comment_failed");
-                }
-            } catch (e) { console.error(e); showFeedback("error", "network_error"); }
-        });
-        commentsContainer.appendChild(form);
-    }
-
-    // initial render
-    renderComments();
     dateP.textContent = "Créé le " + createdDate;
     buttons.appendChild(dateP);
-    // toggles: open comments in a floating modal / side panel
-    commentToggle.addEventListener('click', () => {
-        // create modal overlay if missing
-        let overlay = document.getElementById('commentsModalOverlay');
-        if (!overlay) {
-            overlay = document.createElement('div');
-            overlay.id = 'commentsModalOverlay';
-            overlay.className = 'comments-modal-overlay hidden';
-
-            const panel = document.createElement('div');
-            panel.id = 'commentsModalPanel';
-            panel.className = 'comments-modal-panel';
-
-            const header = document.createElement('div');
-            header.className = 'comments-modal-header';
-            const title = document.createElement('h3');
-            title.textContent = t('home_recent_posts') || 'Comments';
-            const closeBtn = document.createElement('button');
-            closeBtn.className = 'comments-modal-close';
-            closeBtn.textContent = '✕';
-            header.appendChild(title);
-            header.appendChild(closeBtn);
-
-            panel.appendChild(header);
-
-            const content = document.createElement('div');
-            content.id = 'commentsModalContent';
-            content.className = 'comments-modal-content';
-            panel.appendChild(content);
-
-            overlay.appendChild(panel);
-            document.body.appendChild(overlay);
-
-            // close behaviour
-            closeBtn.addEventListener('click', () => {
-                // move comments container back to the post
-                const originalHolder = moodcard;
-                const modalContent = document.getElementById('commentsModalContent');
-                const moved = modalContent.querySelector('.comments-container');
-                if (moved) {
-                    moved.style.display = 'none';
-                    originalHolder.appendChild(moved);
-                }
-                overlay.classList.add('hidden');
-            });
-
-            // click outside to close
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) closeBtn.click();
-            });
-        }
-
-        // move the commentsContainer into the modal content
-        const modalContent = document.getElementById('commentsModalContent');
-        if (!modalContent) return;
-        // if already visible for this post, close
-        if (!overlay.classList.contains('hidden')) {
-            overlay.querySelector('.comments-modal-close').click();
-            return;
-        }
-
-        // append
-        commentsContainer.style.display = 'block';
-        modalContent.appendChild(commentsContainer);
-        overlay.classList.remove('hidden');
-    });
 
     shareBtn.addEventListener('click', () => {
         const url = `${location.origin}${location.pathname}#post-${mood.id}`;
@@ -624,12 +459,6 @@ function displayMood(mood) {
         } else {
             navigator.clipboard.writeText(url).then(() => showFeedback("success", "copied_link"));
         }
-    });
-
-    reportBtn.addEventListener('click', async () => {
-        const reason = prompt('Motif du signalement (optionnel)');
-        await fetch(`${API}/posts/${mood.id}/report`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reason }) });
-        showFeedback("info", "reported_post");
     });
 
     repostBtn.addEventListener('click', async () => {
@@ -799,7 +628,7 @@ function showFeedback(type, messageKey, vars = {}) {
 
     const feedback = document.createElement("div");
     feedback.className = `upload-feedback feedback-${type}`;
-    
+
     const icons = {
         success: "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"36\" height=\"36\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-circle-check-icon lucide-circle-check\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/></svg>",
         error: "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"36\" height=\"36\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-circle-x-icon lucide-circle-x\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m15 9-6 6\"/><path d=\"m9 9 6 6\"/></svg>",
@@ -1427,7 +1256,6 @@ if (profilename) {
     const storedName = localStorage.getItem('username') || 'Invité';
     profilename.textContent = storedName;
 }
-
-addInboxNotification("info", "update_title", "update_info", "update", "Voir", () => {
-    window.location.href = "index.html";
-});
+setTimeout(() => {
+    addInboxNotification("info", "update_title", "update_info");
+}, 500);
