@@ -447,6 +447,18 @@ function displayMood(mood) {
     repostBtn.title = 'Reposter';
     actionBar.appendChild(repostBtn);
 
+    // ---- Report button ----
+    const reportBtn = document.createElement('button');
+    reportBtn.className = 'reportbtn';
+    reportBtn.title = 'Signaler ce post';
+    reportBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>';
+    actionBar.appendChild(reportBtn);
+
+    reportBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openReportModal(mood.id);
+    });
+
     buttons.appendChild(actionBar);
 
     dateP.textContent = "Créé le " + createdDate;
@@ -483,7 +495,103 @@ function displayMood(mood) {
 
 }
 
-// Chargement initial
+// ============================================================
+// REPORT MODAL
+// ============================================================
+function openReportModal(postId) {
+    const overlay = document.getElementById('reportModalOverlay');
+    if (!overlay) return;
+
+    // Reset form
+    document.getElementById('reportCategory').value = '';
+    document.getElementById('reportDetail').value = '';
+    document.getElementById('reportCharCount').textContent = '0 / 500';
+    document.getElementById('reportError').style.display = 'none';
+    document.getElementById('reportSuccess').style.display = 'none';
+    document.getElementById('reportSubmitBtn').disabled = false;
+    document.getElementById('reportSubmitBtn').textContent = 'Envoyer le signalement';
+
+    // Store post id on the form
+    overlay.dataset.postId = postId;
+
+    overlay.classList.remove('hidden');
+    overlay.classList.add('visible');
+    // Slight delay so animation fires
+    requestAnimationFrame(() => overlay.querySelector('.report-modal-panel').classList.add('open'));
+}
+
+function closeReportModal() {
+    const overlay = document.getElementById('reportModalOverlay');
+    if (!overlay) return;
+    overlay.querySelector('.report-modal-panel').classList.remove('open');
+    setTimeout(() => {
+        overlay.classList.remove('visible');
+        overlay.classList.add('hidden');
+    }, 280);
+}
+
+async function submitReport() {
+    const overlay = document.getElementById('reportModalOverlay');
+    const postId = overlay.dataset.postId;
+    const category = document.getElementById('reportCategory').value;
+    const detail = document.getElementById('reportDetail').value.trim();
+    const errorEl = document.getElementById('reportError');
+    const successEl = document.getElementById('reportSuccess');
+    const submitBtn = document.getElementById('reportSubmitBtn');
+
+    errorEl.style.display = 'none';
+
+    if (!category) {
+        errorEl.textContent = 'Veuillez choisir une catégorie.';
+        errorEl.style.display = 'block';
+        return;
+    }
+    if (!detail || detail.length < 5) {
+        errorEl.textContent = 'Merci de décrire le problème (5 caractères minimum).';
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Envoi…';
+
+    const reason = `[${category}] ${detail}`;
+
+    try {
+        const res = await fetch(`${API}/posts/${postId}/report`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ reason })
+        });
+
+        if (res.ok) {
+            successEl.style.display = 'block';
+            submitBtn.textContent = 'Signalement envoyé ✓';
+            setTimeout(() => closeReportModal(), 1800);
+        } else if (res.status === 401) {
+            errorEl.textContent = 'Vous devez être connecté pour signaler un post.';
+            errorEl.style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Envoyer le signalement';
+        } else {
+            const data = await res.json().catch(() => ({}));
+            errorEl.textContent = data.error || 'Une erreur est survenue.';
+            errorEl.style.display = 'block';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Envoyer le signalement';
+        }
+    } catch (err) {
+        errorEl.textContent = 'Erreur réseau. Réessaie dans quelques secondes.';
+        errorEl.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Envoyer le signalement';
+    }
+}
+
+// Expose to global scope for inline HTML handlers
+window.closeReportModal = closeReportModal;
+window.submitReport = submitReport;
 (async () => {
     const res = await fetch(`${API}/posts`);
     const moods = await res.json();
@@ -1042,34 +1150,6 @@ async function applyLowEndMode() {
 }
 applyLowEndMode();
 
-// === Theme (dark mode) ===
-function applyTheme(theme) {
-    if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-        document.body.classList.add('dark');
-        document.getElementById('nav').classList.add('dark');
-    } else {
-        document.documentElement.classList.remove('dark');
-        document.body.classList.remove('dark');
-        document.getElementById('nav').classList.remove('dark');
-    }
-}
-
-// Initialise le thème depuis localStorage
-(function initTheme() {
-    const pref = localStorage.getItem('theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    applyTheme(pref);
-
-    const darkToggle = document.getElementById('darkModeToggle');
-    if (darkToggle) {
-        darkToggle.checked = (pref === 'dark');
-        darkToggle.addEventListener('change', (e) => {
-            const t = e.target.checked ? 'dark' : 'light';
-            localStorage.setItem('theme', t);
-            applyTheme(t);
-        });
-    }
-})();
 
 // gestion propre du contrôle radio "low-end"
 (async function initLowEndUI() {

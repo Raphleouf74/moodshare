@@ -297,7 +297,6 @@ app.post('/api/posts/:id/report', requireAuth, async (req, res) => {
     const { reason = '', commentId = null } = req.body;
     const report = {
       id: Date.now().toString(),
-      reporter: { id: req.user.id, username: req.user.username || req.user.name || 'user' },
       postId: req.params.id,
       commentId,
       reason: String(reason).slice(0, 1000),
