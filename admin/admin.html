@@ -1,0 +1,2174 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MoodShare — Admin Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ===== RESET & ROOT ===== */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #0a0a0f;
+        --surface: #111118;
+        --surface2: #18181f;
+        --border: #2a2a3a;
+        --accent: #00cfeb;
+        --accent2: #7c3aed;
+        --danger: #ef4444;
+        --warn: #f59e0b;
+        --success: #22c55e;
+        --text: #e2e8f0;
+        --muted: #64748b;
+        --red: #ff3b5c;
+        --font-mono: "Space Mono", monospace;
+        --font-main: "Syne", sans-serif;
+      }
+
+      html,
+      body {
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font-main);
+      }
+
+      /* ===== SCROLLBAR ===== */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--muted);
+      }
+
+      /* ===========================
+       LOGIN SCREEN
+    =========================== */
+      #login-screen {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      #login-screen::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 60% 50% at 20% 50%,
+            rgba(0, 207, 235, 0.12) 0%,
+            transparent 70%
+          ),
+          radial-gradient(
+            ellipse 50% 60% at 80% 30%,
+            rgba(124, 58, 237, 0.1) 0%,
+            transparent 70%
+          );
+        pointer-events: none;
+      }
+
+      /* Animated grid */
+      #login-screen::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(0, 207, 235, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 207, 235, 0.04) 1px, transparent 1px);
+        background-size: 48px 48px;
+        animation: gridShift 20s linear infinite;
+        pointer-events: none;
+      }
+
+      @keyframes gridShift {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: 48px 48px;
+        }
+      }
+
+      .login-card {
+        position: relative;
+        z-index: 1;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 48px 40px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow:
+          0 0 0 1px rgba(0, 207, 235, 0.08),
+          0 32px 80px rgba(0, 0, 0, 0.5);
+        animation: cardIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+
+      @keyframes cardIn {
+        from {
+          opacity: 0;
+          transform: translateY(24px) scale(0.97);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .login-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--accent);
+        background: rgba(0, 207, 235, 0.08);
+        border: 1px solid rgba(0, 207, 235, 0.2);
+        border-radius: 100px;
+        padding: 4px 12px;
+        margin-bottom: 24px;
+      }
+
+      .login-badge::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 8px var(--accent);
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      .login-title {
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 6px;
+        line-height: 1.1;
+      }
+
+      .login-title span {
+        color: var(--accent);
+      }
+
+      .login-sub {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 36px;
+        font-family: var(--font-mono);
+      }
+
+      .field {
+        margin-bottom: 16px;
+      }
+
+      .field label {
+        display: block;
+        font-size: 11px;
+        font-family: var(--font-mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+
+      .field input {
+        width: 100%;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 16px;
+        color: var(--text);
+        font-family: var(--font-mono);
+        font-size: 13px;
+        outline: none;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .field input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(0, 207, 235, 0.12);
+      }
+
+      .login-btn {
+        width: 100%;
+        margin-top: 8px;
+        padding: 14px;
+        background: var(--accent);
+        color: var(--bg);
+        border: none;
+        border-radius: 10px;
+        font-family: var(--font-main);
+        font-weight: 700;
+        font-size: 14px;
+        letter-spacing: 0.05em;
+        cursor: pointer;
+        transition:
+          opacity 0.2s,
+          transform 0.15s,
+          box-shadow 0.2s;
+        box-shadow: 0 0 24px rgba(0, 207, 235, 0.25);
+      }
+
+      .login-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+        box-shadow: 0 0 32px rgba(0, 207, 235, 0.35);
+      }
+      .login-btn:active {
+        transform: translateY(0);
+      }
+
+      .login-error {
+        display: none;
+        margin-top: 14px;
+        padding: 10px 14px;
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        border-radius: 8px;
+        color: var(--danger);
+        font-size: 12px;
+        font-family: var(--font-mono);
+        text-align: center;
+      }
+
+      .login-error.show {
+        display: block;
+        animation: shake 0.3s ease both;
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-6px);
+        }
+        75% {
+          transform: translateX(6px);
+        }
+      }
+
+      /* ===========================
+       ADMIN LAYOUT
+    =========================== */
+      #admin-screen {
+        display: none;
+        min-height: 100vh;
+      }
+
+      #admin-screen.show {
+        display: flex;
+      }
+
+      /* SIDEBAR */
+      .sidebar {
+        width: 240px;
+        flex-shrink: 0;
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        padding: 24px 0;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+      }
+
+      .sidebar-logo {
+        padding: 0 20px 24px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 16px;
+      }
+
+      .sidebar-logo-label {
+        font-size: 11px;
+        font-family: var(--font-mono);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+
+      .sidebar-logo-name {
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .sidebar-logo-name span {
+        color: var(--accent);
+      }
+
+      .sidebar-section {
+        font-size: 10px;
+        font-family: var(--font-mono);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--muted);
+        padding: 8px 20px 4px;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 20px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted);
+        cursor: pointer;
+        border-left: 2px solid transparent;
+        transition:
+          color 0.2s,
+          border-color 0.2s,
+          background 0.2s;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+
+      .nav-item:hover {
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .nav-item.active {
+        color: var(--accent);
+        border-left-color: var(--accent);
+        background: rgba(0, 207, 235, 0.05);
+      }
+
+      .nav-item svg {
+        flex-shrink: 0;
+        opacity: 0.7;
+      }
+      .nav-item.active svg {
+        opacity: 1;
+      }
+
+      .nav-badge {
+        margin-left: auto;
+        background: var(--danger);
+        color: #fff;
+        font-size: 10px;
+        font-family: var(--font-mono);
+        padding: 2px 6px;
+        border-radius: 100px;
+        min-width: 18px;
+        text-align: center;
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+        padding: 16px 20px 0;
+        border-top: 1px solid var(--border);
+      }
+
+      .admin-tag {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        font-family: var(--font-mono);
+        color: var(--muted);
+        margin-bottom: 12px;
+      }
+
+      .admin-tag-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--success);
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--success);
+        flex-shrink: 0;
+      }
+
+      .logout-btn {
+        width: 100%;
+        padding: 9px;
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        border-radius: 8px;
+        color: var(--danger);
+        font-size: 12px;
+        font-family: var(--font-mono);
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          border-color 0.2s;
+      }
+
+      .logout-btn:hover {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: rgba(239, 68, 68, 0.4);
+      }
+
+      /* MAIN CONTENT */
+      .main {
+        flex: 1;
+        overflow-y: auto;
+        padding: 32px;
+        min-width: 0;
+      }
+
+      /* PAGE */
+      .page {
+        display: none;
+        animation: fadeUp 0.25s ease both;
+      }
+      .page.active {
+        display: block;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* PAGE HEADER */
+      .page-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+      }
+
+      .page-title {
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .page-subtitle {
+        font-size: 12px;
+        color: var(--muted);
+        font-family: var(--font-mono);
+        margin-top: 4px;
+      }
+
+      /* STAT CARDS */
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 32px;
+      }
+
+      .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+        transition:
+          border-color 0.2s,
+          transform 0.2s;
+      }
+
+      .stat-card:hover {
+        border-color: rgba(0, 207, 235, 0.25);
+        transform: translateY(-2px);
+      }
+
+      .stat-label {
+        font-size: 10px;
+        font-family: var(--font-mono);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+
+      .stat-value {
+        font-size: 32px;
+        font-weight: 800;
+        letter-spacing: -0.04em;
+        line-height: 1;
+      }
+
+      .stat-value.accent {
+        color: var(--accent);
+      }
+      .stat-value.danger {
+        color: var(--danger);
+      }
+      .stat-value.warn {
+        color: var(--warn);
+      }
+      .stat-value.success {
+        color: var(--success);
+      }
+
+      /* TABLE */
+      .table-wrapper {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .table-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .table-title {
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+
+      .table-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 14px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 700;
+        font-family: var(--font-main);
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.2s;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: var(--bg);
+        box-shadow: 0 0 16px rgba(0, 207, 235, 0.2);
+      }
+      .btn-primary:hover {
+        opacity: 0.85;
+        box-shadow: 0 0 24px rgba(0, 207, 235, 0.3);
+      }
+
+      .btn-ghost {
+        background: transparent;
+        border-color: var(--border);
+        color: var(--text);
+      }
+      .btn-ghost:hover {
+        background: var(--surface2);
+      }
+
+      .btn-danger {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.25);
+        color: var(--danger);
+      }
+      .btn-danger:hover {
+        background: rgba(239, 68, 68, 0.2);
+        border-color: rgba(239, 68, 68, 0.5);
+      }
+
+      .btn-warn {
+        background: rgba(245, 158, 11, 0.1);
+        border-color: rgba(245, 158, 11, 0.25);
+        color: var(--warn);
+      }
+      .btn-warn:hover {
+        background: rgba(245, 158, 11, 0.2);
+        border-color: rgba(245, 158, 11, 0.5);
+      }
+
+      .btn-sm {
+        padding: 5px 10px;
+        font-size: 11px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+
+      thead tr {
+        background: var(--surface2);
+      }
+
+      th {
+        padding: 11px 16px;
+        text-align: left;
+        font-size: 10px;
+        font-family: var(--font-mono);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 400;
+        white-space: nowrap;
+      }
+
+      td {
+        padding: 12px 16px;
+        border-top: 1px solid var(--border);
+        vertical-align: middle;
+      }
+
+      tr:hover td {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .post-preview {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .post-color-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 4px;
+        flex-shrink: 0;
+      }
+
+      .post-text-preview {
+        max-width: 260px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 12px;
+      }
+
+      .post-emoji-badge {
+        font-size: 18px;
+        line-height: 1;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 9px;
+        border-radius: 100px;
+        font-size: 10px;
+        font-family: var(--font-mono);
+        letter-spacing: 0.05em;
+      }
+
+      .chip-ephemeral {
+        background: rgba(124, 58, 237, 0.12);
+        border: 1px solid rgba(124, 58, 237, 0.25);
+        color: #a78bfa;
+      }
+      .chip-normal {
+        background: rgba(100, 116, 139, 0.1);
+        border: 1px solid rgba(100, 116, 139, 0.2);
+        color: var(--muted);
+      }
+      .chip-reported {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        color: var(--danger);
+      }
+
+      .actions-row {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      /* REPORTS */
+      .report-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--danger);
+        border-radius: 12px;
+        padding: 18px 20px;
+        margin-bottom: 12px;
+        transition: border-color 0.2s;
+        animation: fadeUp 0.2s ease both;
+      }
+
+      .report-card:hover {
+        border-color: var(--danger);
+      }
+
+      .report-meta {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+        font-size: 11px;
+        font-family: var(--font-mono);
+        color: var(--muted);
+      }
+
+      .report-meta strong {
+        color: var(--text);
+      }
+
+      .report-reason {
+        font-size: 13px;
+        color: var(--text);
+        margin-bottom: 14px;
+        background: var(--surface2);
+        border-radius: 8px;
+        padding: 10px 14px;
+        border-left: 2px solid var(--danger);
+      }
+
+      .report-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      /* MODAL */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        z-index: 100;
+        align-items: center;
+        justify-content: center;
+        -webkit-backdrop-filter: blur(4px);
+        backdrop-filter: blur(4px);
+      }
+
+      .modal-overlay.show {
+        display: flex;
+      }
+
+      .modal {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 32px;
+        width: 100%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: modalIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+
+      @keyframes modalIn {
+        from {
+          opacity: 0;
+          transform: scale(0.93);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .modal-title {
+        font-size: 18px;
+        font-weight: 800;
+        margin-bottom: 20px;
+        letter-spacing: -0.02em;
+      }
+
+      .modal-field {
+        margin-bottom: 16px;
+      }
+
+      .modal-field label {
+        display: block;
+        font-size: 11px;
+        font-family: var(--font-mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 8px;
+      }
+
+      .modal-field input,
+      .modal-field textarea {
+        width: 100%;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 14px;
+        color: var(--text);
+        font-family: var(--font-mono);
+        font-size: 13px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      .modal-field input:focus,
+      .modal-field textarea:focus {
+        border-color: var(--accent);
+      }
+
+      .modal-field textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      .modal-field input[type="color"] {
+        height: 42px;
+        padding: 4px 6px;
+        cursor: pointer;
+      }
+
+      .modal-row {
+        display: flex;
+        gap: 12px;
+      }
+      .modal-row .modal-field {
+        flex: 1;
+      }
+
+      .modal-footer {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 20px;
+      }
+
+      /* TOAST */
+      #toast-container {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        pointer-events: none;
+      }
+
+      .toast {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 16px;
+        font-size: 12px;
+        font-family: var(--font-mono);
+        min-width: 240px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        animation: toastIn 0.3s ease both;
+        pointer-events: all;
+      }
+
+      @keyframes toastIn {
+        from {
+          opacity: 0;
+          transform: translateX(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .toast-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .toast.success .toast-dot {
+        background: var(--success);
+        box-shadow: 0 0 8px var(--success);
+      }
+      .toast.error .toast-dot {
+        background: var(--danger);
+        box-shadow: 0 0 8px var(--danger);
+      }
+      .toast.info .toast-dot {
+        background: var(--accent);
+        box-shadow: 0 0 8px var(--accent);
+      }
+      .toast.warn .toast-dot {
+        background: var(--warn);
+        box-shadow: 0 0 8px var(--warn);
+      }
+
+      /* EMPTY STATE */
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--muted);
+      }
+
+      .empty-state-icon {
+        font-size: 40px;
+        margin-bottom: 12px;
+      }
+      .empty-state p {
+        font-size: 13px;
+        font-family: var(--font-mono);
+      }
+
+      /* LOADING */
+      .spinner {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--border);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        vertical-align: middle;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* SEARCH */
+      .search-input {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 7px 12px;
+        color: var(--text);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        outline: none;
+        width: 200px;
+        transition: border-color 0.2s;
+      }
+      .search-input:focus {
+        border-color: var(--accent);
+      }
+
+      /* POST PREVIEW CARD */
+      .preview-bubble {
+        border-radius: 12px;
+        padding: 14px 16px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 6px;
+        max-width: 100%;
+      }
+
+      /* DATETIME */
+      .date-muted {
+        font-size: 11px;
+        font-family: var(--font-mono);
+        color: var(--muted);
+      }
+
+      /* LIKE BADGE */
+      .like-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        font-family: var(--font-mono);
+        color: #f43f5e;
+      }
+
+      /* Divider */
+      .divider {
+        height: 1px;
+        background: var(--border);
+        margin: 24px 0;
+      }
+
+      /* DASH quick actions */
+      .quick-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+        margin-bottom: 32px;
+      }
+
+      .quick-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 18px;
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          transform 0.2s,
+          background 0.2s;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .quick-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        background: rgba(0, 207, 235, 0.04);
+      }
+
+      .quick-card-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+      }
+
+      .quick-card-label {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+
+      .quick-card-sub {
+        font-size: 11px;
+        color: var(--muted);
+        font-family: var(--font-mono);
+      }
+
+      .refresh-icon {
+        cursor: pointer;
+        transition: transform 0.3s;
+      }
+      .refresh-icon.spinning {
+        transform: rotate(360deg);
+      }
+
+      /* RESPONSIVE */
+      @media (max-width: 720px) {
+        .sidebar {
+          width: 56px;
+          padding: 12px 0;
+        }
+        .sidebar-logo,
+        .sidebar-section {
+          display: none;
+        }
+        .nav-item span.nav-label {
+          display: none;
+        }
+        .nav-item {
+          justify-content: center;
+          padding: 12px;
+        }
+        .nav-badge {
+          display: none;
+        }
+        .sidebar-footer {
+          padding: 12px 8px;
+        }
+        .logout-btn {
+          font-size: 10px;
+          padding: 6px 4px;
+        }
+        .admin-tag .admin-tag-text {
+          display: none;
+        }
+        .main {
+          padding: 20px 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ===== LOGIN SCREEN ===== -->
+    <div id="login-screen">
+      <div class="login-card">
+        <div class="login-badge">Administration</div>
+        <h1 class="login-title">MoodShare<br /><span>Admin Panel</span></h1>
+        <p class="login-sub">Accès réservé aux administrateurs.</p>
+
+        <div class="field">
+          <label>Identifiant</label>
+          <input
+            type="text"
+            id="login-id"
+            placeholder="ID"
+            autocomplete="off"
+          />
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input
+            type="email"
+            id="login-email"
+            placeholder="Email"
+            autocomplete="off"
+          />
+        </div>
+        <div class="field">
+          <label>Mot de passe</label>
+          <input type="password" id="login-password" placeholder="Mot de passe" />
+        </div>
+
+        <button class="login-btn" onclick="attemptLogin()">Connexion →</button>
+        <div class="login-error" id="login-error">
+          Identifiants invalides. Accès refusé.
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ADMIN SCREEN ===== -->
+    <div id="admin-screen">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-label">MoodShare</div>
+          <div class="sidebar-logo-name"><span>Admin</span> Panel</div>
+        </div>
+
+        <div class="sidebar-section">Navigation</div>
+
+        <div
+          class="nav-item active"
+          onclick="showPage('dashboard')"
+          data-page="dashboard"
+        >
+          <svg
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
+          <span class="nav-label">Tableau de bord</span>
+        </div>
+
+        <div class="nav-item" onclick="showPage('posts')" data-page="posts">
+          <svg
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+            />
+          </svg>
+          <span class="nav-label">Posts</span>
+        </div>
+
+        <div class="nav-item" onclick="showPage('reports')" data-page="reports">
+          <svg
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+            />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          <span class="nav-label">Signalements</span>
+          <span class="nav-badge" id="reports-badge" style="display: none"
+            >0</span
+          >
+        </div>
+
+        <div class="nav-item" onclick="showPage('stories')" data-page="stories">
+          <svg
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          <span class="nav-label">Stories</span>
+        </div>
+
+        <div class="nav-item" onclick="showPage('create')" data-page="create">
+          <svg
+            width="16"
+            height="16"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="16" />
+            <line x1="8" y1="12" x2="16" y2="12" />
+          </svg>
+          <span class="nav-label">Créer un post</span>
+        </div>
+
+        <div class="sidebar-footer">
+          <div class="admin-tag">
+            <div class="admin-tag-dot"></div>
+            <span class="admin-tag-text" style="font-size: 11px"
+              ><a
+                href="/cdn-cgi/l/email-protection"
+                class="__cf_email__"
+                data-cfemail="82e3e6efebecc2efedede6f1eae3f0e7ace1edef"
+                >[email&#160;protected]</a
+              ></span
+            >
+          </div>
+          <button class="logout-btn" onclick="doLogout()">Déconnexion</button>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="main">
+        <!-- DASHBOARD PAGE -->
+        <div class="page active" id="page-dashboard">
+          <div class="page-header">
+            <div>
+              <div class="page-title">Tableau de bord</div>
+              <div class="page-subtitle">Vue d'ensemble de MoodShare</div>
+            </div>
+            <button class="btn btn-ghost" onclick="loadAll()">
+              <span id="refresh-spinner" style="display: none"
+                ><span class="spinner"></span
+              ></span>
+              Actualiser
+            </button>
+          </div>
+
+          <div class="stat-grid" id="stat-grid">
+            <div class="stat-card">
+              <div class="stat-label">Posts totaux</div>
+              <div class="stat-value accent" id="stat-posts">—</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Stories actives</div>
+              <div class="stat-value success" id="stat-stories">—</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Signalements</div>
+              <div class="stat-value danger" id="stat-reports">—</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Posts éphémères</div>
+              <div class="stat-value warn" id="stat-ephemeral">—</div>
+            </div>
+          </div>
+
+          <div class="quick-grid">
+            <div class="quick-card" onclick="showPage('create')">
+              <div
+                class="quick-card-icon"
+                style="background: rgba(0, 207, 235, 0.1)"
+              >
+                ✍️
+              </div>
+              <div class="quick-card-label">Créer un post</div>
+              <div class="quick-card-sub">Publier en tant qu'admin</div>
+            </div>
+            <div class="quick-card" onclick="showPage('reports')">
+              <div
+                class="quick-card-icon"
+                style="background: rgba(239, 68, 68, 0.1)"
+              >
+                🚨
+              </div>
+              <div class="quick-card-label">Voir les signalements</div>
+              <div class="quick-card-sub">Modérer le contenu</div>
+            </div>
+            <div class="quick-card" onclick="showPage('posts')">
+              <div
+                class="quick-card-icon"
+                style="background: rgba(34, 197, 94, 0.1)"
+              >
+                📋
+              </div>
+              <div class="quick-card-label">Gérer les posts</div>
+              <div class="quick-card-sub">Éditer ou supprimer</div>
+            </div>
+            <div class="quick-card" onclick="showPage('stories')">
+              <div
+                class="quick-card-icon"
+                style="background: rgba(245, 158, 11, 0.1)"
+              >
+                ⏰
+              </div>
+              <div class="quick-card-label">Voir les stories</div>
+              <div class="quick-card-sub">Stories en cours</div>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <div class="table-header">
+              <div class="table-title">Derniers posts</div>
+            </div>
+            <div id="dash-recent"></div>
+          </div>
+        </div>
+
+        <!-- POSTS PAGE -->
+        <div class="page" id="page-posts">
+          <div class="page-header">
+            <div>
+              <div class="page-title">Posts</div>
+              <div class="page-subtitle">Gestion complète des posts</div>
+            </div>
+            <div class="table-actions">
+              <input
+                class="search-input"
+                type="text"
+                id="post-search"
+                placeholder="Rechercher…"
+                oninput="filterPosts()"
+              />
+              <button class="btn btn-primary" onclick="showPage('create')">
+                + Nouveau post
+              </button>
+            </div>
+          </div>
+          <div class="table-wrapper">
+            <div class="table-header">
+              <div class="table-title">Tous les posts</div>
+              <span id="posts-count" class="date-muted"></span>
+            </div>
+            <div id="posts-table"></div>
+          </div>
+        </div>
+
+        <!-- REPORTS PAGE -->
+        <div class="page" id="page-reports">
+          <div class="page-header">
+            <div>
+              <div class="page-title">Signalements</div>
+              <div class="page-subtitle">
+                Contenu signalé par les utilisateurs
+              </div>
+            </div>
+            <button class="btn btn-ghost" onclick="renderReports()">
+              Actualiser
+            </button>
+          </div>
+          <div id="reports-list"></div>
+        </div>
+
+        <!-- STORIES PAGE -->
+        <div class="page" id="page-stories">
+          <div class="page-header">
+            <div>
+              <div class="page-title">Stories</div>
+              <div class="page-subtitle">Stories actuellement actives</div>
+            </div>
+          </div>
+          <div id="stories-table"></div>
+        </div>
+
+        <!-- CREATE POST PAGE -->
+        <div class="page" id="page-create">
+          <div class="page-header">
+            <div>
+              <div class="page-title">Créer un post</div>
+              <div class="page-subtitle">
+                Publication admin — bypass des restrictions
+              </div>
+            </div>
+          </div>
+
+          <div class="table-wrapper" style="max-width: 600px">
+            <div class="table-header">
+              <div class="table-title">Nouveau post</div>
+            </div>
+            <div style="padding: 24px">
+              <div class="modal-field">
+                <label>Texte du post</label>
+                <textarea
+                  id="create-text"
+                  placeholder="Mood"
+                  rows="3"
+                  style="
+                    width: 100%;
+                    background: var(--surface2);
+                    border: 1px solid var(--border);
+                    border-radius: 10px;
+                    padding: 10px 14px;
+                    color: var(--text);
+                    font-family: var(--font-mono);
+                    font-size: 13px;
+                    outline: none;
+                    resize: vertical;
+                  "
+                ></textarea>
+              </div>
+              <div class="modal-row">
+                <div class="modal-field">
+                  <label>Emoji</label>
+                  <input
+                    type="text"
+                    id="create-emoji"
+                    placeholder="😊"
+                    maxlength="8"
+                    style="font-size: 22px"
+                  />
+                </div>
+                <div class="modal-field">
+                  <label>Couleur fond</label>
+                  <input type="color" id="create-color" value="#00cfeb" />
+                </div>
+                <div class="modal-field">
+                  <label>Couleur texte</label>
+                  <input type="color" id="create-textcolor" value="#000000" />
+                </div>
+              </div>
+
+              <!-- Live preview -->
+              <div style="margin: 16px 0 8px">
+                <div class="modal-field" style="margin: 0">
+                  <label>Aperçu</label>
+                  <div
+                    id="create-preview"
+                    class="preview-bubble"
+                    style="background: #00cfeb; color: #000"
+                  >
+                    <span id="prev-emoji">😊</span>
+                    <span id="prev-text">Texte du post…</span>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                style="
+                  display: flex;
+                  gap: 12px;
+                  margin-top: 20px;
+                  flex-wrap: wrap;
+                "
+              >
+                <button class="btn btn-primary" onclick="adminCreatePost()">
+                  Publier le post →
+                </button>
+                <button class="btn btn-ghost" onclick="showPage('posts')">
+                  Annuler
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- EDIT MODAL -->
+    <div class="modal-overlay" id="edit-modal">
+      <div class="modal">
+        <div class="modal-title">✏️ Modifier le post</div>
+        <input type="hidden" id="edit-post-id" />
+        <div class="modal-field">
+          <label>Texte</label>
+          <textarea id="edit-text" rows="3"></textarea>
+        </div>
+        <div class="modal-row">
+          <div class="modal-field">
+            <label>Emoji</label>
+            <input
+              type="text"
+              id="edit-emoji"
+              maxlength="8"
+              style="font-size: 20px"
+            />
+          </div>
+          <div class="modal-field">
+            <label>Couleur fond</label>
+            <input type="color" id="edit-color" />
+          </div>
+          <div class="modal-field">
+            <label>Couleur texte</label>
+            <input type="color" id="edit-textcolor" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-ghost" onclick="closeModal('edit-modal')">
+            Annuler
+          </button>
+          <button class="btn btn-primary" onclick="saveEdit()">
+            Sauvegarder
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONFIRM DELETE MODAL -->
+    <div class="modal-overlay" id="delete-modal">
+      <div class="modal" style="max-width: 380px">
+        <div class="modal-title">🗑️ Supprimer le post ?</div>
+        <p
+          style="
+            font-size: 13px;
+            color: var(--muted);
+            font-family: var(--font-mono);
+            margin-bottom: 20px;
+          "
+        >
+          Cette action est irréversible. Le post sera définitivement supprimé.
+        </p>
+        <input type="hidden" id="delete-post-id" />
+        <div class="modal-footer">
+          <button class="btn btn-ghost" onclick="closeModal('delete-modal')">
+            Annuler
+          </button>
+          <button class="btn btn-danger" onclick="confirmDelete()">
+            Supprimer
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container"></div>
+
+    <script
+      data-cfasync="false"
+      src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
+    ></script>
+    <script>
+      // ======================
+      // CONSTANTS
+      // ======================
+      const API = "https://moodshare-7dd7.onrender.com/api";
+
+      const ADMIN_CREDS = {
+        id: "admin123",
+        email: "admin@moodshare.com",
+        password: "admin12345",
+      };
+
+      // Doit correspondre à la variable d'env ADMIN_SECRET sur Render.
+      // Change cette valeur après avoir configuré la variable sur Render.
+      const ADMIN_SECRET = "260110080310";
+
+      function adminHeaders() {
+        return {
+          "Content-Type": "application/json",
+          "X-Admin-Secret": ADMIN_SECRET,
+        };
+      }
+
+      // In-memory state
+      let allPosts = [];
+      let allReports = [];
+      let allStories = [];
+
+      // ======================
+      // LOGIN
+      // ======================
+      function attemptLogin() {
+        const id = document.getElementById("login-id").value.trim();
+        const em = document.getElementById("login-email").value.trim();
+        const pw = document.getElementById("login-password").value;
+        const err = document.getElementById("login-error");
+
+        err.classList.remove("show");
+
+        if (
+          id === ADMIN_CREDS.id &&
+          em === ADMIN_CREDS.email &&
+          pw === ADMIN_CREDS.password
+        ) {
+          sessionStorage.setItem("ms_admin", "1");
+          document.getElementById("login-screen").style.display = "none";
+          document.getElementById("admin-screen").classList.add("show");
+          loadAll();
+        } else {
+          err.classList.add("show");
+        }
+      }
+
+      // Allow Enter key on login
+      document.addEventListener("keydown", (e) => {
+        if (
+          e.key === "Enter" &&
+          document.getElementById("login-screen").style.display !== "none"
+        ) {
+          attemptLogin();
+        }
+      });
+
+      function doLogout() {
+        sessionStorage.removeItem("ms_admin");
+        document.getElementById("admin-screen").classList.remove("show");
+        document.getElementById("login-screen").style.display = "";
+      }
+
+      // ======================
+      // NAVIGATION
+      // ======================
+      function showPage(name) {
+        document
+          .querySelectorAll(".page")
+          .forEach((p) => p.classList.remove("active"));
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((n) => n.classList.remove("active"));
+        document.getElementById("page-" + name).classList.add("active");
+        document
+          .querySelector(`[data-page="${name}"]`)
+          ?.classList.add("active");
+
+        if (name === "posts") renderPosts();
+        if (name === "reports") renderReports();
+        if (name === "stories") renderStories();
+        if (name === "create") bindCreatePreview();
+      }
+
+      // ======================
+      // DATA LOADING
+      // ======================
+      async function loadAll() {
+        const sp = document.getElementById("refresh-spinner");
+        if (sp) sp.style.display = "inline";
+
+        try {
+          const [pRes, sRes] = await Promise.all([
+            fetch(`${API}/posts`),
+            fetch(`${API}/stories`),
+          ]);
+
+          allPosts = await pRes.json();
+          allStories = await sRes.json();
+
+          // Reports: endpoint admin sécurisé
+          try {
+            const rRes = await fetch(`${API}/admin/reports`, {
+              headers: adminHeaders(),
+              credentials: "include",
+            });
+            if (rRes.ok) allReports = await rRes.json();
+          } catch (_) {
+            /* SSE fallback */
+          }
+        } catch (err) {
+          toast("Erreur de connexion à l'API", "error");
+        }
+
+        if (sp) sp.style.display = "none";
+        updateStats();
+        renderDashRecent();
+        renderPosts();
+        renderReports();
+        renderStories();
+      }
+
+      // ======================
+      // STATS
+      // ======================
+      function updateStats() {
+        document.getElementById("stat-posts").textContent = allPosts.length;
+        document.getElementById("stat-stories").textContent = allStories.length;
+        document.getElementById("stat-reports").textContent = allReports.length;
+        document.getElementById("stat-ephemeral").textContent = allPosts.filter(
+          (p) => p.ephemeral,
+        ).length;
+
+        const badge = document.getElementById("reports-badge");
+        if (allReports.length > 0) {
+          badge.textContent = allReports.length;
+          badge.style.display = "inline-block";
+        } else {
+          badge.style.display = "none";
+        }
+      }
+
+      // ======================
+      // DASHBOARD RECENT
+      // ======================
+      function renderDashRecent() {
+        const el = document.getElementById("dash-recent");
+        const recent = [...allPosts].slice(0, 5);
+
+        if (!recent.length) {
+          el.innerHTML = emptyState("Aucun post");
+          return;
+        }
+
+        el.innerHTML = `
+      <table>
+        <thead><tr>
+          <th>Post</th>
+          <th>Likes</th>
+          <th>Commentaires</th>
+          <th>Date</th>
+          <th>Type</th>
+        </tr></thead>
+        <tbody>
+          ${recent.map((p) => postRow(p, true)).join("")}
+        </tbody>
+      </table>`;
+      }
+
+      // ======================
+      // POSTS TABLE
+      // ======================
+      function renderPosts() {
+        const el = document.getElementById("posts-table");
+        const q = (
+          document.getElementById("post-search")?.value || ""
+        ).toLowerCase();
+        const posts = allPosts.filter(
+          (p) =>
+            !q || p.text?.toLowerCase().includes(q) || p.emoji?.includes(q),
+        );
+
+        const ct = document.getElementById("posts-count");
+        if (ct)
+          ct.textContent = `${posts.length} post${posts.length !== 1 ? "s" : ""}`;
+
+        if (!posts.length) {
+          el.innerHTML = emptyState("Aucun post trouvé");
+          return;
+        }
+
+        el.innerHTML = `
+      <table>
+        <thead><tr>
+          <th>Post</th>
+          <th>Likes</th>
+          <th>Cmts</th>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Actions</th>
+        </tr></thead>
+        <tbody>
+          ${posts.map((p) => postRow(p, false)).join("")}
+        </tbody>
+      </table>`;
+      }
+
+      function filterPosts() {
+        renderPosts();
+      }
+
+      function postRow(p, minimal) {
+        const date = p.createdAt
+          ? new Date(p.createdAt).toLocaleDateString("fr-FR")
+          : "—";
+        const type = p.ephemeral
+          ? `<span class="chip chip-ephemeral">⏳ éphémère</span>`
+          : `<span class="chip chip-normal">normal</span>`;
+
+        const text = p.text || "";
+        const actions = minimal
+          ? ""
+          : `
+      <td>
+        <div class="actions-row">
+          <button class="btn btn-ghost btn-sm" onclick="openEdit('${p.id}')">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="openDelete('${p.id}')">🗑️</button>
+        </div>
+      </td>`;
+
+        return `
+      <tr>
+        <td>
+          <div class="post-preview">
+            <div class="post-color-dot" style="background:${p.color || "#ccc"}"></div>
+            <span class="post-emoji-badge">${p.emoji || ""}</span>
+            <span class="post-text-preview" title="${text}">${text || '<em style="color:var(--muted)">Sans texte</em>'}</span>
+          </div>
+        </td>
+        <td><span class="like-badge">❤️ ${p.likes || 0}</span></td>
+        <td><span class="date-muted">${(p.comments || []).length}</span></td>
+        <td><span class="date-muted">${date}</span></td>
+        <td>${type}</td>
+        ${actions}
+      </tr>`;
+      }
+
+      // ======================
+      // REPORTS
+      // ======================
+      function renderReports() {
+        const el = document.getElementById("reports-list");
+
+        if (!allReports.length) {
+          el.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-state-icon">✅</div>
+          <p>Aucun signalement pour le moment. Tout est calme !</p>
+        </div>`;
+          return;
+        }
+
+        el.innerHTML = allReports
+          .map((r) => {
+            const post = allPosts.find((p) => p.id == r.postId);
+            const postText = post
+              ? post.text || "[sans texte]"
+              : "Post introuvable";
+            const date = r.createdAt
+              ? new Date(r.createdAt).toLocaleString("fr-FR")
+              : "—";
+
+            return `
+        <div class="report-card" id="report-${r.id}">
+          <div class="report-meta">
+            <strong>🚨 Signalement #${r.id}</strong>
+            <span>·</span>
+            <span>par <strong>${r.reporter?.username || "inconnu"}</strong></span>
+            <span>·</span>
+            <span>${date}</span>
+            ${r.commentId ? `<span class="chip chip-reported">commentaire</span>` : `<span class="chip chip-reported">post</span>`}
+          </div>
+          <div class="report-reason">
+            <strong>Raison :</strong> ${r.reason || "Aucune raison fournie."}
+          </div>
+          <div style="font-size:12px;color:var(--muted);font-family:var(--font-mono);margin-bottom:12px;">
+            Post concerné : <em>"${postText.slice(0, 80)}${postText.length > 80 ? "…" : ""}"</em>
+          </div>
+          <div class="report-actions">
+            <button class="btn btn-danger btn-sm" onclick="forceDeleteFromReport('${r.postId}', '${r.id}')">🗑️ Supprimer le post</button>
+            <button class="btn btn-ghost btn-sm" onclick="dismissReport('${r.id}')">✅ Ignorer</button>
+          </div>
+        </div>`;
+          })
+          .join("");
+      }
+
+      async function dismissReport(rid) {
+        try {
+          await fetch(`${API}/admin/reports/${rid}`, {
+            method: "DELETE",
+            headers: adminHeaders(),
+            credentials: "include",
+          });
+        } catch (_) {
+          /* si réseau down, on retire quand même localement */
+        }
+
+        allReports = allReports.filter((r) => r.id != rid);
+        updateStats();
+        renderReports();
+        toast("Signalement supprimé ✅", "info");
+      }
+
+      async function forceDeleteFromReport(postId, reportId) {
+        await deletePost(postId);
+        dismissReport(reportId);
+      }
+
+      // ======================
+      // STORIES
+      // ======================
+      function renderStories() {
+        const el = document.getElementById("stories-table");
+        if (!allStories.length) {
+          el.innerHTML = emptyState("Aucune story active");
+          return;
+        }
+        el.innerHTML = `
+      <div class="table-wrapper">
+        <table>
+          <thead><tr>
+            <th>Story</th>
+            <th>Créée le</th>
+            <th>Expire le</th>
+          </tr></thead>
+          <tbody>
+            ${allStories
+              .map((s) => {
+                const created = s.createdAt
+                  ? new Date(s.createdAt).toLocaleString("fr-FR")
+                  : "—";
+                const expires = s.expiresAt
+                  ? new Date(s.expiresAt).toLocaleString("fr-FR")
+                  : "Permanente";
+                return `<tr>
+                <td>
+                  <div class="post-preview">
+                    <div class="post-color-dot" style="background:${s.color || "#ccc"}"></div>
+                    <span class="post-emoji-badge">${s.emoji || ""}</span>
+                    <span class="post-text-preview">${s.text || ""}</span>
+                  </div>
+                </td>
+                <td><span class="date-muted">${created}</span></td>
+                <td><span class="date-muted ${s.expiresAt ? "warn" : ""}">${expires}</span></td>
+              </tr>`;
+              })
+              .join("")}
+          </tbody>
+        </table>
+      </div>`;
+      }
+
+      // ======================
+      // EDIT POST
+      // ======================
+      function openEdit(id) {
+        const post = allPosts.find((p) => p.id == id);
+        if (!post) return toast("Post introuvable", "error");
+
+        document.getElementById("edit-post-id").value = id;
+        document.getElementById("edit-text").value = post.text || "";
+        document.getElementById("edit-emoji").value = post.emoji || "";
+        document.getElementById("edit-color").value =
+          post.color && post.color.startsWith("#") ? post.color : "#ffffff";
+        document.getElementById("edit-textcolor").value =
+          post.textColor && post.textColor.startsWith("#")
+            ? post.textColor
+            : "#000000";
+        openModal("edit-modal");
+      }
+
+      async function saveEdit() {
+        const id = document.getElementById("edit-post-id").value;
+        const text = document.getElementById("edit-text").value.trim();
+        const emoji = document.getElementById("edit-emoji").value.trim();
+        const color = document.getElementById("edit-color").value;
+        const textColor = document.getElementById("edit-textcolor").value;
+
+        try {
+          const res = await fetch(`${API}/admin/posts/${id}`, {
+            method: "PUT",
+            headers: adminHeaders(),
+            credentials: "include",
+            body: JSON.stringify({ text, emoji, color, textColor }),
+          });
+
+          if (res.ok) {
+            const updated = await res.json();
+            const idx = allPosts.findIndex((p) => p.id == id);
+            if (idx !== -1) allPosts[idx] = { ...allPosts[idx], ...updated };
+            toast("Post modifié avec succès ✏️", "success");
+            closeModal("edit-modal");
+            renderPosts();
+            renderDashRecent();
+          } else {
+            const err = await res.json().catch(() => ({}));
+            toast(`Erreur : ${err.error || res.status}`, "error");
+          }
+        } catch (err) {
+          toast("Erreur réseau lors de la modification", "error");
+        }
+      }
+
+      // ======================
+      // DELETE POST
+      // ======================
+      function openDelete(id) {
+        document.getElementById("delete-post-id").value = id;
+        openModal("delete-modal");
+      }
+
+      async function confirmDelete() {
+        const id = document.getElementById("delete-post-id").value;
+        await deletePost(id);
+        closeModal("delete-modal");
+      }
+
+      async function deletePost(id) {
+        try {
+          const res = await fetch(`${API}/admin/posts/${id}`, {
+            method: "DELETE",
+            headers: adminHeaders(),
+            credentials: "include",
+          });
+
+          if (res.ok) {
+            allPosts = allPosts.filter((p) => p.id != id);
+            toast("Post supprimé définitivement 🗑️", "success");
+          } else {
+            const err = await res.json().catch(() => ({}));
+            toast(`Erreur suppression : ${err.error || res.status}`, "error");
+            return; // ne pas retirer localement si le serveur a refusé
+          }
+        } catch (_) {
+          toast("Erreur réseau — suppression impossible", "error");
+          return;
+        }
+
+        updateStats();
+        renderPosts();
+        renderDashRecent();
+      }
+
+      // ======================
+      // CREATE POST
+      // ======================
+      function bindCreatePreview() {
+        const text = document.getElementById("create-text");
+        const emoji = document.getElementById("create-emoji");
+        const color = document.getElementById("create-color");
+        const tc = document.getElementById("create-textcolor");
+
+        const update = () => {
+          const bubble = document.getElementById("create-preview");
+          bubble.style.background = color.value;
+          bubble.style.color = tc.value;
+          document.getElementById("prev-emoji").textContent =
+            emoji.value || "😊";
+          document.getElementById("prev-text").textContent =
+            text.value || "Texte du post…";
+        };
+
+        text.addEventListener("input", update);
+        emoji.addEventListener("input", update);
+        color.addEventListener("input", update);
+        tc.addEventListener("input", update);
+        update();
+      }
+
+      async function adminCreatePost() {
+        const text = document.getElementById("create-text").value.trim();
+        const emoji = document.getElementById("create-emoji").value.trim();
+        const color = document.getElementById("create-color").value;
+        const textColor = document.getElementById("create-textcolor").value;
+
+        if (!text && !emoji)
+          return toast("Le post ne peut pas être vide", "error");
+
+        try {
+          const res = await fetch(`${API}/posts`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+              text,
+              emoji,
+              color,
+              textColor,
+              ephemeral: false,
+            }),
+          });
+
+          if (res.ok) {
+            const newPost = await res.json();
+            allPosts.unshift(newPost);
+            toast("Post publié !", "success");
+            document.getElementById("create-text").value = "";
+            document.getElementById("create-emoji").value = "";
+            showPage("posts");
+            updateStats();
+          } else {
+            toast("Erreur lors de la publication", "error");
+          }
+        } catch (err) {
+          toast("Erreur réseau", "error");
+        }
+      }
+
+      // ======================
+      // MODAL HELPERS
+      // ======================
+      function openModal(id) {
+        document.getElementById(id).classList.add("show");
+      }
+      function closeModal(id) {
+        document.getElementById(id).classList.remove("show");
+      }
+
+      document.querySelectorAll(".modal-overlay").forEach((o) => {
+        o.addEventListener("click", (e) => {
+          if (e.target === o) o.classList.remove("show");
+        });
+      });
+
+      // ======================
+      // TOAST
+      // ======================
+      function toast(msg, type = "info") {
+        const c = document.getElementById("toast-container");
+        const t = document.createElement("div");
+        t.className = `toast ${type}`;
+        t.innerHTML = `<div class="toast-dot"></div><span>${msg}</span>`;
+        c.appendChild(t);
+        setTimeout(() => {
+          t.style.opacity = "0";
+          t.style.transform = "translateX(20px)";
+          t.style.transition = "all .3s";
+          setTimeout(() => t.remove(), 300);
+        }, 3500);
+      }
+
+      // ======================
+      // EMPTY STATE
+      // ======================
+      function emptyState(msg) {
+        return `<div class="empty-state"><div class="empty-state-icon">📭</div><p>${msg}</p></div>`;
+      }
+
+      // ======================
+      // SSE: listen for reports in real time
+      // ======================
+      const es = new EventSource(`${API}/stream`);
+      es.addEventListener("report", (e) => {
+        try {
+          const report = JSON.parse(e.data);
+          if (!allReports.find((r) => r.id === report.id)) {
+            allReports.unshift(report);
+            updateStats();
+            renderReports();
+            toast("🚨 Nouveau signalement reçu !", "error");
+          }
+        } catch (_) {}
+      });
+
+      // ======================
+      // SESSION RESTORE
+      // ======================
+    </script>
+  </body>
+</html>
