@@ -39,53 +39,30 @@ app.get('/ping', (req, res) => {
   res.json({ ok: true, time: Date.now() });
 });
 
-// CORS
-// CORS — liste des origines autorisées
-const allowedOrigins = [
-  "https://moodsharing.netlify.app",
-  "http://127.0.0.1:5500",
-  "http://127.0.0.1:5501",
-  "http://127.0.0.1:5502",
-  "http://localhost:5500",
-  "http://localhost:5501",
-  "http://localhost:5502",
-  "http://localhost:3000"
-];
-
-app.use(cors({
+// CORS — config unique, propre, avec support du header X-Admin-Secret
+const corsOptions = {
   origin: function (origin, callback) {
-    // Autorise les requêtes server-side (no origin)
     if (!origin) return callback(null, true);
-
-    // Origines de production précises
     const allowedHosts = [
       "https://moodsharing.netlify.app",
       "https://moodshare-7dd7.onrender.com"
     ];
-
-    // Autorise localhost / 127.0.0.1 / ::1 sur n'importe quel port (dev)
     const localhostRegex = /^https?:\/\/(localhost|127\.0\.0\.1|::1)(:\d+)?$/;
-
     if (localhostRegex.test(origin) || allowedHosts.includes(origin)) {
       return callback(null, true);
     }
-
     console.log("❌ Bloqué par le CORS:", origin);
     return callback(new Error("Non accepté par le CORS"));
   },
   credentials: true,
   methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization','X-Requested-With']
-}));
+  // X-Admin-Secret ajouté pour les routes /api/admin/*
+  allowedHeaders: ['Content-Type','Authorization','X-Requested-With','X-Admin-Secret']
+};
 
-// DEBUG DEV ONLY: autorise toutes origines et credentials (ne pas laisser en prod)
-app.use(require('cors')({
-  origin: true,
-  credentials: true,
-  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization','X-Requested-With']
-}));
-app.options('*', require('cors')());
+app.use(cors(corsOptions));
+// Preflight explicite — indispensable pour les custom headers comme X-Admin-Secret
+app.options('*', cors(corsOptions));
 
 app.use(helmet());
 app.use(express.json());

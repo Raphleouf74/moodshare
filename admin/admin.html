@@ -362,7 +362,6 @@
           color 0.2s,
           border-color 0.2s,
           background 0.2s;
-        -webkit-user-select: none;
         user-select: none;
       }
 
@@ -780,7 +779,6 @@
         z-index: 100;
         align-items: center;
         justify-content: center;
-        -webkit-backdrop-filter: blur(4px);
         backdrop-filter: blur(4px);
       }
 
@@ -1136,7 +1134,7 @@
           <input
             type="text"
             id="login-id"
-            placeholder="ID"
+            placeholder="admin123"
             autocomplete="off"
           />
         </div>
@@ -1145,13 +1143,13 @@
           <input
             type="email"
             id="login-email"
-            placeholder="Email"
+            placeholder="admin@moodshare.com"
             autocomplete="off"
           />
         </div>
         <div class="field">
           <label>Mot de passe</label>
-          <input type="password" id="login-password" placeholder="Mot de passe" />
+          <input type="password" id="login-password" placeholder="••••••••••" />
         </div>
 
         <button class="login-btn" onclick="attemptLogin()">Connexion →</button>
@@ -1440,7 +1438,7 @@
                 <label>Texte du post</label>
                 <textarea
                   id="create-text"
-                  placeholder="Mood"
+                  placeholder="Écris ton mood ici…"
                   rows="3"
                   style="
                     width: 100%;
@@ -2080,33 +2078,44 @@
         if (!text && !emoji)
           return toast("Le post ne peut pas être vide", "error");
 
+        // Body strict — on n'envoie que les champs remplis pour eviter
+        // que le serveur rejette a cause d'un emoji vide ou undefined
+        const body = {
+          color,
+          textColor,
+          ephemeral: false,
+          likes: 0,
+          comments: [],
+        };
+        if (text) body.text = text;
+        if (emoji) body.emoji = emoji;
+
         try {
           const res = await fetch(`${API}/posts`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
-            body: JSON.stringify({
-              text,
-              emoji,
-              color,
-              textColor,
-              ephemeral: false,
-            }),
+            body: JSON.stringify(body),
           });
 
           if (res.ok) {
             const newPost = await res.json();
             allPosts.unshift(newPost);
-            toast("Post publié !", "success");
+            toast("Post publié ! ✅", "success");
             document.getElementById("create-text").value = "";
             document.getElementById("create-emoji").value = "";
             showPage("posts");
             updateStats();
+            renderDashRecent();
           } else {
-            toast("Erreur lors de la publication", "error");
+            const errData = await res.json().catch(() => ({}));
+            toast(
+              "Erreur publication : " + (errData.error || res.status),
+              "error",
+            );
           }
         } catch (err) {
-          toast("Erreur réseau", "error");
+          toast("Erreur réseau : " + err.message, "error");
         }
       }
 
