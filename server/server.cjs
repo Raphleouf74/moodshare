@@ -451,6 +451,109 @@ app.post("/api/posts/:id/unlike", async (req, res) => {
   res.json(post);
 });
 
+// ============================================================
+// ADMIN MIDDLEWARE
+// Vérifie que la requête vient bien du panneau admin.
+// Le panel envoie l'header X-Admin-Secret dont la valeur doit
+// correspondre à la variable d'env ADMIN_SECRET (à définir sur
+// Render dans Environment > Add Environment Variable).
+// Si ADMIN_SECRET n'est pas défini, la route est bloquée.
+// ============================================================
+function requireAdmin(req, res, next) {
+  const secret = process.env.ADMIN_SECRET;
+  if (!secret) {
+    console.warn('⚠️  ADMIN_SECRET non défini — routes admin désactivées');
+    return res.status(503).json({ error: 'Admin non configuré côté serveur' });
+  }
+  const provided = req.headers['x-admin-secret'];
+  if (!provided || provided !== secret) {
+    console.warn('🚫 Tentative d\'accès admin refusée — mauvais secret');
+    return res.status(403).json({ error: 'Accès refusé' });
+  }
+  next();
+}
+
+// ============================================================
+// DELETE /api/admin/posts/:id — Suppression forcée d'un post
+// ============================================================
+app.delete('/api/admin/posts/:id', requireAdmin, async (req, res) => {
+  try {
+    const idx = posts.findIndex(p => p.id == req.params.id);
+    if (idx === -1) return res.status(404).json({ error: 'Post non trouvé' });
+
+    const [deleted] = posts.splice(idx, 1);
+    await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
+
+    // Notifie les clients SSE
+    try { sendSSE('post_deleted', { id: deleted.id }); } catch (e) { console.error('❌ Erreur SSE:', e); }
+
+    console.log(`🗑️  [ADMIN] Post ${deleted.id} supprimé`);
+    res.json({ ok: true, deleted: deleted.id });
+  } catch (err) {
+    console.error('❌ Erreur suppression admin:', err);
+    res.status(500).json({ error: 'Erreur interne' });
+  }
+});
+
+// ============================================================
+// PUT /api/admin/posts/:id — Modification forcée d'un post
+// ============================================================
+app.put('/api/admin/posts/:id', requireAdmin, async (req, res) => {
+  try {
+    const post = posts.find(p => p.id == req.params.id);
+    if (!post) return res.status(404).json({ error: 'Post non trouvé' });
+
+    const { text, emoji, color, textColor } = req.body;
+
+    // Sanitize les champs textuels
+    if (text      !== undefined) post.text      = sanitizeText(String(text));
+    if (emoji     !== undefined) post.emoji     = sanitizeText(String(emoji));
+    if (color     !== undefined) post.color     = String(color).slice(0, 20);
+    if (textColor !== undefined) post.textColor = String(textColor).slice(0, 20);
+    post.editedAt = new Date().toISOString();
+
+    await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
+    try { sendSSE('post_update', post); } catch (e) { console.error('❌ Erreur SSE:', e); }
+
+    console.log(`✏️  [ADMIN] Post ${post.id} modifié`);
+    res.json(post);
+  } catch (err) {
+    console.error('❌ Erreur modification admin:', err);
+    res.status(400).json({ error: err.message || 'Erreur interne' });
+  }
+});
+
+// ============================================================
+// GET /api/admin/reports — Liste complète des signalements
+// ============================================================
+app.get('/api/admin/reports', requireAdmin, (req, res) => {
+  try {
+    res.json(reports);
+  } catch (err) {
+    console.error('❌ Erreur récupération reports admin:', err);
+    res.status(500).json({ error: 'Erreur interne' });
+  }
+});
+
+// ============================================================
+// DELETE /api/admin/reports/:id — Supprimer un signalement
+// ============================================================
+app.delete('/api/admin/reports/:id', requireAdmin, async (req, res) => {
+  try {
+    const idx = reports.findIndex(r => r.id == req.params.id);
+    if (idx === -1) return res.status(404).json({ error: 'Signalement non trouvé' });
+
+    reports.splice(idx, 1);
+    await fsPromises.writeFile(reportsFile, JSON.stringify(reports, null, 2));
+
+    console.log(`✅ [ADMIN] Signalement ${req.params.id} supprimé`);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('❌ Erreur suppression report admin:', err);
+    res.status(500).json({ error: 'Erreur interne' });
+  }
+});
+
 /// AUTH & USER ROUTES
 app.use("/api/auth", (req, res, next) => {
   try {
