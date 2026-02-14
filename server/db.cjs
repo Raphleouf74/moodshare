@@ -5,7 +5,7 @@ const { Pool } = (() => {
   try { return require('pg'); } catch (e) { return { Pool: null }; }
 })();
 
-const connectionString = process.env.DATABASE_URL || null;
+const connectionString = 'https://moodshare-7dd7.onrender.com';
 
 let pool = null;
 const usersFile = path.join(__dirname, 'users.json');
