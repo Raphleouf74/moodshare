@@ -480,8 +480,6 @@ function displayMood(mood) {
                 const newp = await res.json();
                 displayMood(newp);
                 showFeedback("success", "reposted");
-            } else if (res.status === 401) {
-                showFeedback("error", "login_required");
             } else {
                 const errData = await res.json().catch(() => ({}));
                 console.error('❌ Repost error:', res.status, errData);
@@ -561,7 +559,6 @@ async function submitReport() {
         const res = await fetch(`${API}/posts/${postId}/report`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
             body: JSON.stringify({ reason })
         });
 

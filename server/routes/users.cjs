@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const userModel = require('../models/user.cjs');
-const authMiddleware = require('../middleware/authMiddleware.cjs');
 
 
 // GET /api/users/me
@@ -47,7 +46,7 @@ router.get('/users/:id', async (req, res) => {
   res.json({ id: u.id, username: u.username, avatar: u.avatar, bio: u.bio });
 });
 
-router.patch('/users/:id', authMiddleware, express.json(), async (req, res) => {
+router.patch('/users/:id', express.json(), async (req, res) => {
   const { id } = req.params;
   if (!req.user || req.user.id !== id) return res.status(403).json({ message: 'Forbidden' });
   const patch = {};

@@ -17,7 +17,6 @@ const fsPromises = require("fs/promises");
 const authRoutes = require("./routes/auth.cjs");
 const usersRoutes = require("./routes/users.cjs");
 const db = require("./db.cjs");
-const requireAuth = require("./middleware/authMiddleware.cjs");
 
 // ============================================================
 // MONGODB — persistance inter-redémarrages
@@ -320,7 +319,7 @@ app.post("/api/posts", async (req, res) => {
 });
 
 // --- COMMENTS ---
-app.post("/api/posts/:id/comments", requireAuth, async (req, res) => {
+app.post("/api/posts/:id/comments", async (req, res) => {
   try {
     const post = posts.find(p => p.id == req.params.id);
     if (!post) return res.status(404).json({ error: "Post non trouvé" });
@@ -352,7 +351,7 @@ app.post("/api/posts/:id/comments", requireAuth, async (req, res) => {
 });
 
 // Like a comment
-app.post('/api/posts/:postId/comments/:commentId/like', requireAuth, async (req, res) => {
+app.post('/api/posts/:postId/comments/:commentId/like', async (req, res) => {
   try {
     const post = posts.find(p => p.id == req.params.postId);
     if (!post) return res.status(404).json({ error: 'Post non trouvé' });
@@ -367,7 +366,7 @@ app.post('/api/posts/:postId/comments/:commentId/like', requireAuth, async (req,
   } catch (err) { console.error('❌ Erreur de like du commentaire:', err); res.status(500).json({ error: 'Interne' }); }
 });
 
-app.post('/api/posts/:postId/comments/:commentId/unlike', requireAuth, async (req, res) => {
+app.post('/api/posts/:postId/comments/:commentId/unlike', async (req, res) => {
   try {
     const post = posts.find(p => p.id == req.params.postId);
     if (!post) return res.status(404).json({ error: 'Post non trouvé' });
@@ -383,7 +382,7 @@ app.post('/api/posts/:postId/comments/:commentId/unlike', requireAuth, async (re
 });
 
 // Report a post or comment
-app.post('/api/posts/:id/report', requireAuth, async (req, res) => {
+app.post('/api/posts/:id/report', async (req, res) => {
   try {
     const targetPost = posts.find(p => p.id == req.params.id);
     if (!targetPost) return res.status(404).json({ error: 'Post non trouvé' });
@@ -408,7 +407,7 @@ app.post('/api/posts/:id/report', requireAuth, async (req, res) => {
 });
 
 // Repost (create a new post duplicating an existing one)
-app.post('/api/posts/:id/repost', requireAuth, async (req, res) => {
+app.post('/api/posts/:id/repost', async (req, res) => {
   try {
     const orig = posts.find(p => p.id == req.params.id);
     if (!orig) return res.status(404).json({ error: 'Post non trouvé' });
@@ -481,7 +480,7 @@ app.post("/api/stories", async (req, res) => {
     res.status(400).json({ error: "Contenu Invalide" });
   }
 });
-app.get("/api/auth/me", requireAuth, (req, res) => {
+app.get("/api/auth/me", (req, res) => {
   res.json({ user: req.user });
 });
 // LIKE / UNLIKE
@@ -506,7 +505,6 @@ app.post("/api/posts/:id/unlike", async (req, res) => {
 });
 
 // ============================================================
-// ADMIN MIDDLEWARE
 // Vérifie que la requête vient bien du panneau admin.
 // Le panel envoie l'header X-Admin-Secret dont la valeur doit
 // correspondre à la variable d'env ADMIN_SECRET (à définir sur
@@ -682,7 +680,6 @@ app.use("/api/auth", (req, res, next) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api", usersRoutes);
-
 // Debug : lister les routes enregistrées (utile pour vérifier les chemins)
 function listRoutes() {
   const routes = [];
@@ -714,3 +711,12 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Le serveur tourne sur le port ${PORT}`));
 
 module.exports = app;
+app.use('/api', (req, res, next) => {
+  // Autoriser report sans login
+  if (req.path.includes('/report')) return next();
+
+  if (!req.session?.user) {
+    return res.status(401).json({ error: 'Non autorisé' });
+  }
+  next();
+});
