@@ -4,6 +4,8 @@ const path = require("path");
 // --- CHANGEMENT : garantir un chemin users.json utilisable en local ---
 // si une variable USERS_FILE n'est pas fournie (ex: en dev), pointe par défaut
 // vers le fichier server/users.json du repo.
+const mongoose = require("mongoose");
+
 process.env.USERS_FILE = process.env.USERS_FILE || path.join(__dirname, "users.json");
 
 const express = require("express");
@@ -21,6 +23,101 @@ const usersRoutes = require("./routes/users.cjs");
 const db = require("./db.cjs");
 const requireAuth = require("./middleware/authMiddleware.cjs");
 
+// ============================================================
+// MONGODB — persistance inter-redémarrages
+// Ajouter MONGO_URI dans Environment > Render pour activer.
+// Format : mongodb+srv://<user>:<pass>@cluster.mongodb.net/moodshare
+// ============================================================
+const MONGO_URI = process.env.MONGO_URI || null;
+
+const postSchema = new mongoose.Schema({
+  _id: { type: String, default: () => Date.now().toString() },
+  text: String,
+  emoji: String,
+  color: String,
+  textColor: String,
+  likes: { type: Number, default: 0 },
+  comments: { type: Array, default: [] },
+  ephemeral: { type: Boolean, default: false },
+  expiresAt: { type: Date, default: null },
+  repostedFrom: String,
+  repostedBy: Object,
+  createdAt: { type: Date, default: Date.now },
+  editedAt: Date,
+  pinned: { type: Boolean, default: false },
+  pinnedLabel: { type: String, default: '' }
+}, { _id: false });
+
+const PostModel = mongoose.models.Post || mongoose.model('Post', postSchema);
+
+let mongoReady = false;
+
+if (MONGO_URI) {
+  mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 6000 })
+    .then(async () => {
+      mongoReady = true;
+      console.log('✅ MongoDB connecté');
+      await loadPostsFromMongo();
+    })
+    .catch(err => {
+      console.error('❌ MongoDB connexion échouée — fallback JSON:', err.message);
+    });
+} else {
+  console.warn('⚠️  MONGO_URI absent — persistance JSON seule (éphémère sur Render Free)');
+}
+
+async function loadPostsFromMongo() {
+  try {
+    const docs = await PostModel.find({}).sort({ pinned: -1, createdAt: -1 }).lean();
+    if (docs.length > 0) {
+      posts = docs.map(d => ({ ...d, id: d._id }));
+      console.log(`📦 \${posts.length} posts chargés depuis MongoDB`);
+    }
+  } catch (err) {
+    console.error('❌ loadPostsFromMongo:', err.message);
+  }
+}
+
+async function saveToDB(post) {
+  if (!mongoReady) return;
+  try {
+    const doc = { ...post, _id: String(post.id) };
+    delete doc.id;
+    await PostModel.findOneAndUpdate({ _id: doc._id }, doc, { upsert: true, new: true });
+  } catch (err) {
+    console.error('❌ saveToDB:', err.message);
+  }
+}
+
+async function deleteFromDB(id) {
+  if (!mongoReady) return;
+  try {
+    await PostModel.deleteOne({ _id: String(id) });
+  } catch (err) {
+    console.error('❌ deleteFromDB:', err.message);
+  }
+}
+
+async function savePostsToFile() {
+  try {
+    await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
+  } catch (err) {
+    console.error('❌ savePostsToFile:', err.message);
+  }
+}
+
+// Persiste partout (JSON + MongoDB)
+async function persistPost(post) {
+  await savePostsToFile();
+  await saveToDB(post);
+}
+
+// Supprime de la mémoire + partout
+async function unpersistPost(id) {
+  posts = posts.filter(p => String(p.id) !== String(id));
+  await savePostsToFile();
+  await deleteFromDB(id);
+}
 
 process.on("uncaughtException", err => console.error("❌ Exception non attrapée:", err));
 process.on("unhandledRejection", err => console.error("❌ Rejection non faite:", err));
@@ -55,9 +152,9 @@ const corsOptions = {
     return callback(new Error("Non accepté par le CORS"));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
   // X-Admin-Secret ajouté pour les routes /api/admin/*
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Admin-Secret']
+  allowedHeaders: ['Content-Type','Authorization','X-Requested-With','X-Admin-Secret']
 };
 
 app.use(cors(corsOptions));
@@ -482,9 +579,9 @@ app.put('/api/admin/posts/:id', requireAdmin, async (req, res) => {
     const { text, emoji, color, textColor } = req.body;
 
     // Sanitize les champs textuels
-    if (text !== undefined) post.text = sanitizeText(String(text));
-    if (emoji !== undefined) post.emoji = sanitizeText(String(emoji));
-    if (color !== undefined) post.color = String(color).slice(0, 20);
+    if (text      !== undefined) post.text      = sanitizeText(String(text));
+    if (emoji     !== undefined) post.emoji     = sanitizeText(String(emoji));
+    if (color     !== undefined) post.color     = String(color).slice(0, 20);
     if (textColor !== undefined) post.textColor = String(textColor).slice(0, 20);
     post.editedAt = new Date().toISOString();
 
