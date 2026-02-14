@@ -20,13 +20,12 @@ const db = require("./db.cjs");
 const requireAuth = require("./middleware/authMiddleware.cjs");
 
 // ============================================================
-// MONGODB — connexion et schémas
-// MONGO_URI doit être défini dans les variables d'env Render.
+// MONGODB — persistance inter-redémarrages
+// Ajouter MONGO_URI dans Environment > Render pour activer.
 // Format : mongodb+srv://<user>:<pass>@cluster.mongodb.net/moodshare
 // ============================================================
 const MONGO_URI = process.env.MONGO_URI || null;
 
-// Schéma Post — stocke tous les posts utilisateurs
 const postSchema = new mongoose.Schema({
   _id: { type: String, default: () => Date.now().toString() },
   text: String,
@@ -42,42 +41,39 @@ const postSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   editedAt: Date,
   pinned: { type: Boolean, default: false },
-  pinnedLabel: { type: String, default: "" }
+  pinnedLabel: { type: String, default: '' }
 }, { _id: false });
 
-const PostModel = mongoose.models.Post || mongoose.model("Post", postSchema);
+const PostModel = mongoose.models.Post || mongoose.model('Post', postSchema);
 
-// Connexion MongoDB — non bloquante au démarrage
 let mongoReady = false;
+
 if (MONGO_URI) {
-  mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 5000 })
+  mongoose.connect(MONGO_URI, { serverSelectionTimeoutMS: 6000 })
     .then(async () => {
       mongoReady = true;
-      console.log("✅ MongoDB connecté");
-      // Charger les posts depuis MongoDB au démarrage
+      console.log('✅ MongoDB connecté');
       await loadPostsFromMongo();
     })
     .catch(err => {
-      console.error("❌ MongoDB connexion échouée — fallback JSON:", err.message);
+      console.error('❌ MongoDB connexion échouée — fallback JSON:', err.message);
     });
 } else {
-  console.warn("⚠️  MONGO_URI non défini — persistance JSON uniquement (non persistant sur Render Free)");
+  console.warn('⚠️  MONGO_URI absent — persistance JSON seule (éphémère sur Render Free)');
 }
 
 async function loadPostsFromMongo() {
   try {
     const docs = await PostModel.find({}).sort({ pinned: -1, createdAt: -1 }).lean();
     if (docs.length > 0) {
-      // Normalise _id → id pour la compat frontend
       posts = docs.map(d => ({ ...d, id: d._id }));
-      console.log(`📦 ${posts.length} posts chargés depuis MongoDB`);
+      console.log(`📦 \${posts.length} posts chargés depuis MongoDB`);
     }
   } catch (err) {
-    console.error("❌ Erreur chargement MongoDB:", err.message);
+    console.error('❌ loadPostsFromMongo:', err.message);
   }
 }
 
-// Sauvegarde un post dans MongoDB (upsert)
 async function saveToDB(post) {
   if (!mongoReady) return;
   try {
@@ -85,38 +81,36 @@ async function saveToDB(post) {
     delete doc.id;
     await PostModel.findOneAndUpdate({ _id: doc._id }, doc, { upsert: true, new: true });
   } catch (err) {
-    console.error("❌ Erreur sauvegarde MongoDB:", err.message);
+    console.error('❌ saveToDB:', err.message);
   }
 }
 
-// Supprime un post dans MongoDB
 async function deleteFromDB(id) {
   if (!mongoReady) return;
   try {
     await PostModel.deleteOne({ _id: String(id) });
   } catch (err) {
-    console.error("❌ Erreur suppression MongoDB:", err.message);
+    console.error('❌ deleteFromDB:', err.message);
   }
 }
 
-// Sauvegarde le tableau complet dans JSON (fallback local)
 async function savePostsToFile() {
   try {
     await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
   } catch (err) {
-    console.error("❌ Erreur écriture posts.json:", err.message);
+    console.error('❌ savePostsToFile:', err.message);
   }
 }
 
-// Sauvegarde partout (JSON + MongoDB)
+// Persiste partout (JSON + MongoDB)
 async function persistPost(post) {
   await savePostsToFile();
   await saveToDB(post);
 }
 
-// Supprime partout
+// Supprime de la mémoire + partout
 async function unpersistPost(id) {
-  posts = posts.filter(p => p.id != id);
+  posts = posts.filter(p => String(p.id) !== String(id));
   await savePostsToFile();
   await deleteFromDB(id);
 }
@@ -320,7 +314,6 @@ app.post("/api/posts", async (req, res) => {
     try { sendSSE('new_post', newPost); } catch (e) { console.error('❌ Erreur SSE:', e); }
 
     res.status(201).json(newPost);
-
   } catch (err) {
     return res.status(400).json({ error: "Contenu invalide" });
   }
@@ -535,54 +528,8 @@ function requireAdmin(req, res, next) {
 }
 
 // ============================================================
-// DELETE /api/admin/posts/:id — Suppression forcée d'un post
-// ============================================================
-app.delete('/api/admin/posts/:id', requireAdmin, async (req, res) => {
-  try {
-    const idx = posts.findIndex(p => p.id == req.params.id);
-    if (idx === -1) return res.status(404).json({ error: 'Post non trouvé' });
-
-    const deleted = posts[idx];
-    await unpersistPost(deleted.id);
-    try { sendSSE('post_deleted', { id: deleted.id }); } catch (e) { console.error('❌ Erreur SSE:', e); }
-
-    console.log(`🗑️  [ADMIN] Post ${deleted.id} supprimé`);
-    res.json({ ok: true, deleted: deleted.id });
-  } catch (err) {
-    console.error('❌ Erreur suppression admin:', err);
-    res.status(500).json({ error: 'Erreur interne' });
-  }
-});
-
-// ============================================================
-// PUT /api/admin/posts/:id — Modification forcée d'un post
-// ============================================================
-app.put('/api/admin/posts/:id', requireAdmin, async (req, res) => {
-  try {
-    const post = posts.find(p => p.id == req.params.id);
-    if (!post) return res.status(404).json({ error: 'Post non trouvé' });
-
-    const { text, emoji, color, textColor } = req.body;
-    if (text !== undefined) post.text = sanitizeText(String(text));
-    if (emoji !== undefined) post.emoji = sanitizeText(String(emoji));
-    if (color !== undefined) post.color = String(color).slice(0, 20);
-    if (textColor !== undefined) post.textColor = String(textColor).slice(0, 20);
-    post.editedAt = new Date().toISOString();
-
-    await persistPost(post);
-    try { sendSSE('post_update', post); } catch (e) { console.error('❌ Erreur SSE:', e); }
-
-    console.log(`✏️  [ADMIN] Post ${post.id} modifié`);
-    res.json(post);
-  } catch (err) {
-    console.error('❌ Erreur modification admin:', err);
-    res.status(400).json({ error: err.message || 'Erreur interne' });
-  }
-});
-
-// ============================================================
 // POST /api/admin/posts/pinned — Créer un post épinglé (annonce)
-// Ce post est marqué pinned:true et survit aux redémarrages via MongoDB
+// DOIT être déclaré AVANT /api/admin/posts/:id pour éviter le conflit
 // ============================================================
 app.post('/api/admin/posts/pinned', requireAdmin, async (req, res) => {
   try {
@@ -607,7 +554,6 @@ app.post('/api/admin/posts/pinned', requireAdmin, async (req, res) => {
       createdAt: new Date().toISOString()
     };
 
-    // Les posts épinglés toujours en tête
     posts.unshift(pinnedPost);
     await persistPost(pinnedPost);
     try { sendSSE('new_post', pinnedPost); } catch (e) { console.error('❌ Erreur SSE:', e); }
@@ -621,7 +567,7 @@ app.post('/api/admin/posts/pinned', requireAdmin, async (req, res) => {
 });
 
 // ============================================================
-// GET /api/admin/posts/pinned — Liste tous les posts épinglés
+// GET /api/admin/posts/pinned — Liste les posts épinglés
 // ============================================================
 app.get('/api/admin/posts/pinned', requireAdmin, (req, res) => {
   res.json(posts.filter(p => p.pinned));
@@ -632,18 +578,62 @@ app.get('/api/admin/posts/pinned', requireAdmin, (req, res) => {
 // ============================================================
 app.delete('/api/admin/posts/pinned/:id', requireAdmin, async (req, res) => {
   try {
-    const idx = posts.findIndex(p => p.id == req.params.id && p.pinned);
-    if (idx === -1) return res.status(404).json({ error: 'Post épinglé non trouvé' });
+    const post = posts.find(p => String(p.id) === String(req.params.id) && p.pinned);
+    if (!post) return res.status(404).json({ error: 'Post épinglé non trouvé' });
 
-    const deleted = posts[idx];
-    await unpersistPost(deleted.id);
-    try { sendSSE('post_deleted', { id: deleted.id }); } catch (e) { console.error('❌ Erreur SSE:', e); }
+    await unpersistPost(post.id);
+    try { sendSSE('post_deleted', { id: post.id }); } catch (e) { console.error('❌ Erreur SSE:', e); }
 
-    console.log(`🗑️  [ADMIN] Post épinglé ${deleted.id} supprimé`);
+    console.log(`🗑️  [ADMIN] Post épinglé ${post.id} supprimé`);
     res.json({ ok: true });
   } catch (err) {
     console.error('❌ Erreur suppression post épinglé:', err);
     res.status(500).json({ error: 'Erreur interne' });
+  }
+});
+
+// ============================================================
+// DELETE /api/admin/posts/:id — Suppression forcée d'un post
+// ============================================================
+app.delete('/api/admin/posts/:id', requireAdmin, async (req, res) => {
+  try {
+    const post = posts.find(p => String(p.id) === String(req.params.id));
+    if (!post) return res.status(404).json({ error: 'Post non trouvé' });
+
+    await unpersistPost(post.id);
+    try { sendSSE('post_deleted', { id: post.id }); } catch (e) { console.error('❌ Erreur SSE:', e); }
+
+    console.log(`🗑️  [ADMIN] Post ${post.id} supprimé`);
+    res.json({ ok: true, deleted: post.id });
+  } catch (err) {
+    console.error('❌ Erreur suppression admin:', err);
+    res.status(500).json({ error: 'Erreur interne' });
+  }
+});
+
+// ============================================================
+// PUT /api/admin/posts/:id — Modification forcée d'un post
+// ============================================================
+app.put('/api/admin/posts/:id', requireAdmin, async (req, res) => {
+  try {
+    const post = posts.find(p => String(p.id) === String(req.params.id));
+    if (!post) return res.status(404).json({ error: 'Post non trouvé' });
+
+    const { text, emoji, color, textColor } = req.body;
+    if (text !== undefined) post.text = sanitizeText(String(text));
+    if (emoji !== undefined) post.emoji = sanitizeText(String(emoji));
+    if (color !== undefined) post.color = String(color).slice(0, 20);
+    if (textColor !== undefined) post.textColor = String(textColor).slice(0, 20);
+    post.editedAt = new Date().toISOString();
+
+    await persistPost(post);
+    try { sendSSE('post_update', post); } catch (e) { console.error('❌ Erreur SSE:', e); }
+
+    console.log(`✏️  [ADMIN] Post ${post.id} modifié`);
+    res.json(post);
+  } catch (err) {
+    console.error('❌ Erreur modification admin:', err);
+    res.status(400).json({ error: err.message || 'Erreur interne' });
   }
 });
 

@@ -592,6 +592,7 @@ async function submitReport() {
 // Expose to global scope for inline HTML handlers
 window.closeReportModal = closeReportModal;
 window.submitReport = submitReport;
+window.openReportModal = openReportModal;
 (async () => {
     const res = await fetch(`${API}/posts`);
     const moods = await res.json();
