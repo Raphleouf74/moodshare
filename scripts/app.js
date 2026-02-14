@@ -569,11 +569,6 @@ async function submitReport() {
             successEl.style.display = 'block';
             submitBtn.textContent = 'Signalement envoyé ✓';
             setTimeout(() => closeReportModal(), 1800);
-        } else if (res.status === 401) {
-            errorEl.textContent = 'Vous devez être connecté pour signaler un post.';
-            errorEl.style.display = 'block';
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Envoyer le signalement';
         } else {
             const data = await res.json().catch(() => ({}));
             errorEl.textContent = data.error || 'Une erreur est survenue.';
@@ -592,7 +587,6 @@ async function submitReport() {
 // Expose to global scope for inline HTML handlers
 window.closeReportModal = closeReportModal;
 window.submitReport = submitReport;
-window.openReportModal = openReportModal;
 (async () => {
     const res = await fetch(`${API}/posts`);
     const moods = await res.json();
