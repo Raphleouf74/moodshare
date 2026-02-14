@@ -490,7 +490,8 @@ app.post("/api/posts/:id/like", async (req, res) => {
 
   post.likes++;
   await persistPost(post);
-  try { sendSSE('post_update', post); } catch (e) { console.error('❌ Erreur SSE:', e); }
+  // Pas de sendSSE ici — le client met à jour son compteur
+  // depuis la réponse HTTP pour éviter le double-comptage
   res.json(post);
 });
 
@@ -500,7 +501,7 @@ app.post("/api/posts/:id/unlike", async (req, res) => {
 
   post.likes = Math.max(0, post.likes - 1);
   await persistPost(post);
-  try { sendSSE('post_update', post); } catch (e) { console.error('❌ Erreur SSE:', e); }
+  // Pas de sendSSE ici — même raison
   res.json(post);
 });
 

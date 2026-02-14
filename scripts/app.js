@@ -24,8 +24,13 @@ try {
             const post = JSON.parse(e.data);
             const el = document.querySelector(`.post[data-id="${post.id}"]`);
             if (el) {
-                const likeCount = el.querySelector('.like-count');
-                if (likeCount) likeCount.textContent = (post.likes || 0);
+                // Les likes sont mis à jour uniquement via la réponse HTTP du click
+                // pour éviter le double-comptage SSE + HTTP.
+                // On met à jour ici uniquement les commentaires.
+                const commentCount = el.querySelector('.comment-count');
+                if (commentCount && post.comments) {
+                    commentCount.textContent = post.comments.length;
+                }
             }
         } catch (err) { console.warn('Invalid post_update event', err); }
     });
@@ -413,13 +418,19 @@ function displayMood(mood) {
     }
 
     // handle post like click
+    let likePending = false;
     likeBtn.addEventListener('click', async () => {
+        if (likePending) return;          // ignore si déjà en cours
+        likePending = true;
+        likeBtn.style.pointerEvents = 'none';
+
         const isLiked = likeBtn.classList.contains('liked');
         try {
             const endpoint = isLiked ? `${API}/posts/${mood.id}/unlike` : `${API}/posts/${mood.id}/like`;
             const res = await fetch(endpoint, { method: 'POST', credentials: 'include' });
             if (res.ok) {
                 const updated = await res.json();
+                // Source de vérité = la réponse serveur (pas d'update local optimiste)
                 mood.likes = updated.likes;
                 likeCount.textContent = mood.likes;
                 likeBtn.classList.toggle('liked');
@@ -431,6 +442,10 @@ function displayMood(mood) {
                 showFeedback("warning", "not_logged_in");
             }
         } catch (e) { console.error(e); showFeedback("error", "network_error"); }
+        finally {
+            likePending = false;
+            likeBtn.style.pointerEvents = '';
+        }
     });
 
     // ---- ACTIONS: comment / share / report / repost ----

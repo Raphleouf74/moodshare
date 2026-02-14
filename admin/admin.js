@@ -152,7 +152,7 @@ function updateStats() {
 // ======================
 function renderDashRecent() {
     const el = document.getElementById("dash-recent");
-    const recent = [...allPosts].slice(0, 5);
+    const recent = [...allPosts].slice(0, 15);
 
     if (!recent.length) {
         el.innerHTML = emptyState("Aucun post");

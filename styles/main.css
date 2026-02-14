@@ -206,7 +206,8 @@ header.scrolled .logodraw {
     background: rgba(255, 255, 255, 0.9);
     -webkit-backdrop-filter: blur(24px);
     backdrop-filter: blur(24px);
-
+    left: calc(50% - 410px);
+    top: calc(50% - 240px);
     border: 1px solid rgba(255, 255, 255, 0.7);
     border-radius: 24px;
     overflow: hidden;
@@ -299,6 +300,7 @@ header.scrolled .logodraw {
     width: 100%;
     position: relative;
     z-index: 1;
+    background: linear-gradient(140deg, #1e40af 0%, #7c3aed 100%);
 }
 
 /* ---- Branding (gauche) ---- */
@@ -345,9 +347,9 @@ header.scrolled .logodraw {
 .auth-logo-circle {
     width: 32px;
     height: 32px;
-    background: rgba(255, 255, 255, 0.6);
+    background: white;
     border-radius: 50%;
-    margin-left: -12px;
+    margin-left: -1px;
 }
 
 .auth-brand-name {
@@ -402,6 +404,9 @@ header.scrolled .logodraw {
     flex-direction: column;
     justify-content: center;
     gap: 12px;
+    border-radius: 15px;
+    background: white;
+    height: 83.5%;
 }
 
 .auth-actions-label {
@@ -682,16 +687,16 @@ header.scrolled .logodraw {
 .afl-sq {
     width: 22px;
     height: 22px;
-    background: #2563eb;
+    background: #000;
     border-radius: 5px;
 }
 
 .afl-ci {
     width: 22px;
     height: 22px;
-    background: #7c3aed;
+    background: #000;
     border-radius: 50%;
-    margin-left: -8px;
+    margin-left: -1px;
     opacity: 0.85;
 }
 
@@ -1474,7 +1479,8 @@ section {
 }
 
 .post {
-    height: 120px;
+    height: auto;
+    min-height: 125px;
     max-width: 98%;
     border-radius: 1rem;
     background: rgba(255, 255, 255, 0.2);
