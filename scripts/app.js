@@ -354,7 +354,7 @@ function displayMood(mood) {
 
         expiration.appendChild(icon);
         document.getElementById('msgdeletetime').textContent = " Expire le " + expirationDate;
-
+        
         content.appendChild(expiration);
     }
 

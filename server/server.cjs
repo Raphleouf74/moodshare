@@ -161,11 +161,22 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.json());
 
-// Rate Limit
-app.use(rateLimit({
+// Rate Limit — exempter les routes admin et SSE
+const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 200
-}));
+  max: 500,
+  skip: (req, res) => {
+    // Exempter les routes admin (protégées par le secret)
+    if (req.path.startsWith('/api/admin')) return true;
+    // Exempter le SSE (connexion persistante)
+    if (req.path === '/api/stream') return true;
+    // Exempter les routes auth
+    if (req.path.startsWith('/api/auth')) return true;
+    return false;
+  }
+});
+
+app.use(generalLimiter);
 
 /// POSTS STORAGE
 let posts = [
@@ -600,6 +611,47 @@ app.delete('/api/admin/reports/:id', requireAdmin, async (req, res) => {
     console.error('❌ Erreur suppression report admin:', err);
     res.status(500).json({ error: 'Erreur interne' });
   }
+});
+
+// ============================================================
+// GET /api/admin/status — Statut du serveur et MongoDB
+// ============================================================
+app.get('/api/admin/status', requireAdmin, (req, res) => {
+  const serverStartTime = process.uptime() * 1000;
+  const uptime = Math.floor(process.uptime());
+  const environment = process.env.RENDER ? 'Render' : 'Local';
+  
+  res.json({
+    ok: true,
+    environment,
+    uptime: `${Math.floor(uptime / 3600)}h ${Math.floor((uptime % 3600) / 60)}m ${uptime % 60}s`,
+    uptimeSeconds: uptime,
+    mongodb: {
+      connected: mongoReady,
+      uri: MONGO_URI ? '✅ Configuré' : '❌ Non configuré',
+      status: mongoReady ? '✅ Connecté' : '❌ Déconnecté'
+    },
+    database: {
+      posts: posts.length,
+      stories: stories.length,
+      reports: reports.length,
+      pinned: posts.filter(p => p.pinned).length
+    },
+    node: {
+      version: process.version,
+      platform: process.platform,
+      memory: {
+        used: `${Math.round(process.memoryUsage().heapUsed / 1024 / 1024)} MB`,
+        total: `${Math.round(process.memoryUsage().heapTotal / 1024 / 1024)} MB`
+      }
+    },
+    api: {
+      corsEnabled: true,
+      adminSecretConfigured: !!process.env.ADMIN_SECRET,
+      rateLimit: '200 req/15min'
+    },
+    timestamp: new Date().toISOString()
+  });
 });
 
 /// AUTH & USER ROUTES

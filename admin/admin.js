@@ -5,9 +5,8 @@
 const API = "https://moodshare-7dd7.onrender.com/api";
 
 const ADMIN_CREDS = {
-    id: "admin123",
-    email: "admin@moodshare.com",
-    password: "admin12345",
+    id: "rmladmin",
+    password: "Jem4ppelleraphael!",
 };
 
 // Doit correspondre à la variable d'env ADMIN_SECRET sur Render.
@@ -32,7 +31,6 @@ let allStories = [];
 document.getElementById("attemptlogin").addEventListener(("click"), () => attemptLogin());
 function attemptLogin() {
     const id = document.getElementById("login-id").value.trim();
-    const em = document.getElementById("login-email").value.trim();
     const pw = document.getElementById("login-password").value;
     const err = document.getElementById("login-error");
 
@@ -40,7 +38,6 @@ function attemptLogin() {
 
     if (
         id === ADMIN_CREDS.id &&
-        em === ADMIN_CREDS.email &&
         pw === ADMIN_CREDS.password
     ) {
         sessionStorage.setItem("ms_admin", "1");
@@ -87,6 +84,7 @@ function showPage(name) {
     if (name === "reports") renderReports();
     if (name === "stories") renderStories();
     if (name === "create") bindCreatePreview();
+    if (name === "settings") renderSettings();
 }
 
 // ======================
@@ -109,7 +107,6 @@ async function loadAll() {
         try {
             const rRes = await fetch(`${API}/admin/reports`, {
                 headers: adminHeaders(),
-                credentials: "include",
             });
             if (rRes.ok) allReports = await rRes.json();
         } catch (_) {
@@ -307,7 +304,6 @@ async function dismissReport(rid) {
         await fetch(`${API}/admin/reports/${rid}`, {
             method: "DELETE",
             headers: adminHeaders(),
-            credentials: "include",
         });
     } catch (_) {
         /* si réseau down, on retire quand même localement */
@@ -322,6 +318,159 @@ async function dismissReport(rid) {
 async function forceDeleteFromReport(postId, reportId) {
     await deletePost(postId);
     dismissReport(reportId);
+}
+
+// ======================
+// SETTINGS
+// ======================
+async function renderSettings() {
+    const el = document.getElementById("settings-content");
+    el.innerHTML = `<div class="loading-state">
+        <div class="spinner"></div>
+        <p>Chargement du statut serveur...</p>
+    </div>`;
+
+    try {
+        const res = await fetch(`${API}/admin/status`, {
+            method: "GET",
+            headers: adminHeaders(),
+        });
+
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({ error: res.statusText }));
+            throw new Error(`[${res.status}] ${errData.error || errData.message || 'Erreur de requête'}`);
+        }
+        const status = await res.json();
+
+        el.innerHTML = `
+            <div class="settings-grid">
+                <!-- MONGODB -->
+                <div class="settings-card">
+                    <div class="settings-card-title">🗄️ MongoDB</div>
+                    <div class="settings-status">
+                        <div class="status-row">
+                            <span>Connexion</span>
+                            <span class="status-badge ${status.mongodb.connected ? 'success' : 'danger'}">
+                                ${status.mongodb.status}
+                            </span>
+                        </div>
+                        <div class="status-row">
+                            <span>Configuration</span>
+                            <span class="status-text">${status.mongodb.uri}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ENVIRONMENT -->
+                <div class="settings-card">
+                    <div class="settings-card-title">🌍 Environnement</div>
+                    <div class="settings-status">
+                        <div class="status-row">
+                            <span>Plateforme</span>
+                            <span class="status-text">${status.environment}</span>
+                        </div>
+                        <div class="status-row">
+                            <span>Uptime</span>
+                            <span class="status-text">${status.uptime}</span>
+                        </div>
+                        <div class="status-row">
+                            <span>Node.js</span>
+                            <span class="status-text">${status.node.version}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DATABASE STATS -->
+                <div class="settings-card">
+                    <div class="settings-card-title">📊 Base de données</div>
+                    <div class="settings-status">
+                        <div class="status-row">
+                            <span>Posts</span>
+                            <span class="status-badge count">${status.database.posts}</span>
+                        </div>
+                        <div class="status-row">
+                            <span>Stories</span>
+                            <span class="status-badge count">${status.database.stories}</span>
+                        </div>
+                        <div class="status-row">
+                            <span>Signalements</span>
+                            <span class="status-badge count">${status.database.reports}</span>
+                        </div>
+                        <div class="status-row">
+                            <span>Posts épinglés</span>
+                            <span class="status-badge count">${status.database.pinned}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MEMORY -->
+                <div class="settings-card">
+                    <div class="settings-card-title">🚀 Mémoire serveur</div>
+                    <div class="settings-status">
+                        <div class="status-row">
+                            <span>Utilisée</span>
+                            <span class="status-text">${status.node.memory.used}</span>
+                        </div>
+                        <div class="status-row">
+                            <span>Allouée</span>
+                            <span class="status-text">${status.node.memory.total}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- API CONFIG -->
+                <div class="settings-card">
+                    <div class="settings-card-title">🔐 API</div>
+                    <div class="settings-status">
+                        <div class="status-row">
+                            <span>CORS</span>
+                            <span class="status-badge success">✅ Activé</span>
+                        </div>
+                        <div class="status-row">
+                            <span>Admin Secret</span>
+                            <span class="status-badge ${status.api.adminSecretConfigured ? 'success' : 'danger'}">
+                                ${status.api.adminSecretConfigured ? '✅ Configuré' : '❌ Manquant'}
+                            </span>
+                        </div>
+                        <div class="status-row">
+                            <span>Rate Limit</span>
+                            <span class="status-text">${status.api.rateLimit}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HEALTH CHECK -->
+                <div class="settings-card">
+                    <div class="settings-card-title">❤️ Santé du système</div>
+                    <div class="settings-status">
+                        <div class="status-row" style="margin-bottom: 12px;">
+                            <span style="font-weight: 600;">Statut global</span>
+                            <span class="status-badge success">✅ En ligne</span>
+                        </div>
+                        <div style="font-size: 11px; color: var(--muted); font-family: monospace;">
+                            ${status.timestamp}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap;">
+                <button class="btn btn-ghost" onclick="renderSettings()">🔄 Actualiser</button>
+                <button class="btn btn-ghost" onclick="showPage('dashboard')">← Retour</button>
+            </div>
+        `;
+    } catch (err) {
+        el.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-state-icon">⚠️</div>
+                <p>Impossible de charger le statut serveur</p>
+                <p style="font-size: 12px; color: var(--muted); margin-top: 8px;">${err.message}</p>
+            </div>
+            <div style="margin-top: 16px;">
+                <button class="btn btn-ghost" onclick="renderSettings()">🔄 Réessayer</button>
+            </div>
+        `;
+    }
 }
 
 // ======================
@@ -398,7 +547,6 @@ async function saveEdit() {
         const res = await fetch(`${API}/admin/posts/${id}`, {
             method: "PUT",
             headers: adminHeaders(),
-            credentials: "include",
             body: JSON.stringify({ text, emoji, color, textColor }),
         });
 
@@ -438,7 +586,6 @@ async function deletePost(id) {
         const res = await fetch(`${API}/admin/posts/${id}`, {
             method: "DELETE",
             headers: adminHeaders(),
-            credentials: "include",
         });
 
         if (res.ok) {
@@ -608,7 +755,6 @@ async function loadPinned() {
     try {
         const res = await fetch(`${API}/admin/posts/pinned`, {
             headers: adminHeaders(),
-            credentials: "include",
         });
         if (res.ok) allPinned = await res.json();
     } catch (_) { }
@@ -691,7 +837,6 @@ async function createPinnedPost() {
         const res = await fetch(`${API}/admin/posts/pinned`, {
             method: "POST",
             headers: adminHeaders(),
-            credentials: "include",
             body: JSON.stringify({
                 text,
                 emoji,
@@ -722,7 +867,6 @@ async function deletePinnedPost(id) {
         const res = await fetch(`${API}/admin/posts/pinned/${id}`, {
             method: "DELETE",
             headers: adminHeaders(),
-            credentials: "include",
         });
         if (res.ok) {
             allPinned = allPinned.filter((p) => p.id !== id);

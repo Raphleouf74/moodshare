@@ -19,22 +19,18 @@
           <input
             type="text"
             id="login-id"
-            placeholder="admin123"
+            placeholder="Identifiant admin"
             autocomplete="off"
           />
         </div>
-        <div class="field">
-          <label>Email</label>
-          <input
-            type="email"
-            id="login-email"
-            placeholder="admin@moodshare.com"
-            autocomplete="off"
-          />
-        </div>
+
         <div class="field">
           <label>Mot de passe</label>
-          <input type="password" id="login-password" placeholder="••••••••••" />
+          <input
+            type="password"
+            id="login-password"
+            placeholder="Mot de passe admin"
+          />
         </div>
 
         <button id="attemptlogin" class="login-btn">Connexion →</button>
@@ -159,11 +155,31 @@
           </svg>
           <span class="nav-label">Annonces</span>
         </div>
+        <div
+          class="nav-item"
+          onclick="showPage('settings')"
+          data-page="settings"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"
+            />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          <span class="nav-label">Paramètres serveur</span>
+        </div>
 
         <div class="sidebar-footer">
           <div class="admin-tag">
             <div class="admin-tag-dot"></div>
-            <span class="admin-tag-text" style="font-size: 15px; color: white;"
+            <span class="admin-tag-text" style="font-size: 15px; color: white"
               >Admin</span
             >
           </div>
@@ -447,6 +463,19 @@
           </div>
 
           <div id="pinned-list"></div>
+        </div>
+        <div class="page" id="page-settings">
+          <div class="page-header">
+            <div>
+              <div class="page-title">⚙️ Paramètres serveur</div>
+              <div class="page-subtitle">
+                Configuration et état de la connexion à MongoDB
+              </div>
+            </div>
+          </div>
+          <div id="settings-content" style="max-width: 600px; margin-top: 12px">
+            
+          </div>
         </div>
       </main>
     </div>

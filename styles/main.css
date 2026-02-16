@@ -2084,10 +2084,6 @@ textarea {
 }
 
 
-input[type="number"] {
-    background: red;
-    font-size: 20px;
-}
 
 /* Feedback générique */
 .upload-feedback {
@@ -2156,8 +2152,9 @@ input[type="number"] {
     justify-content: center;
     cursor: pointer;
     flex-shrink: 0;
-    transition: border-color .2s, background .2s, transform .2s;
+    transition: all .2s;
     opacity: .7;
+    rotate: 0;
 }
 
 .story.add-story:hover {
@@ -2165,17 +2162,16 @@ input[type="number"] {
     background: rgba(37, 99, 235, .07);
     opacity: 1;
     transform: scale(1.06);
-    rotate: 0;
+    rotate: 90deg;
 }
 
 .story.add-story:hover svg {
-    transform: none;
-    rotate: 0;
+    rotate: -90deg;
     stroke-width: 2.5;
 }
 
 .story.add-story svg {
-    transition: transform .2s;
+    transition: all .2s;
 }
 
 /* ── Bulle story ── */
