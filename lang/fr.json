@@ -84,6 +84,4 @@
     "comment_failed": "Échec du commentaire",
     "not_logged_in": "Vous n'êtes pas connecté(e)",
     "update_title": "Nouvelle mise à jour disponible !",
-    "update_info": "La nouvelle version 1.5 de MoodShare est disponible avec de nombreuses améliorations! Vous pouvez désormais effectuer encore plus d'actions sur les posts, vous pouvez désormais les commenter, les partager, les signaler et les republier ! Vous pouvez tester ces fonctions des maintenant mais gardez à l'esprit que ces fonctions sont très récentes et peuvent ne pas marcher correctement: des patchs seront disponibles si c'est le cas."
-
 }

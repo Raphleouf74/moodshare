@@ -19,28 +19,17 @@ try {
         } catch (err) { console.warn('Invalid new_post event', err); }
     });
 
-    es.addEventListener('post_update', (e) => {
-        try {
-            const post = JSON.parse(e.data);
-            const el = document.querySelector(`.post[data-id="${post.id}"]`);
-            if (el) {
-                // Les likes sont mis à jour uniquement via la réponse HTTP du click
-                // pour éviter le double-comptage SSE + HTTP.
-                // On met à jour ici uniquement les commentaires.
-                const commentCount = el.querySelector('.comment-count');
-                if (commentCount && post.comments) {
-                    commentCount.textContent = post.comments.length;
-                }
-            }
-        } catch (err) { console.warn('Invalid post_update event', err); }
-    });
+
 
     es.addEventListener('new_story', (e) => {
         try { const story = JSON.parse(e.data); addStoryToList(story); } catch (err) { console.warn('Invalid new_story event', err); }
     });
 
     es.addEventListener('stories_update', (e) => {
-        try { const stories = JSON.parse(e.data); /* optional: refresh story list */ stories.forEach(addStoryToList); } catch (err) { console.warn('Invalid stories_update event', err); }
+        try {
+            const stories = JSON.parse(e.data);
+            stories.forEach(s => addStoryToList(s)); // addStoryToList déduplique déjà
+        } catch (err) { console.warn('Invalid stories_update event', err); }
     });
 
     es.addEventListener('connected', (e) => { /* connected */ });
@@ -91,7 +80,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // (OPTIONNEL) → Au bout de 3 tentatives, on bloque temporairement :
             if (securityStrike >= 3) {
                 showFeedback("error", "fb_xss_ban_warning");
-                addInboxNotification("critical", ":(", "fb_xss_ban_warning");
+                addInboxNotification("critical", null, "fb_xss_ban_warning");
                 moodInput.disabled = true;
 
                 // Tu peux réactiver après 5 minutes :
@@ -191,7 +180,6 @@ async function checkSiteVersion() {
 }
 
 // scripts/app.js
-import './social/feed.js';
 const wall = document.getElementById("moodWall");
 const modal = document.getElementById("postModal");
 const submitBtn = document.getElementById("submitMood");
@@ -448,7 +436,7 @@ function displayMood(mood) {
         }
     });
 
-    // ---- ACTIONS: comment / share / report / repost ----
+    // ---- ACTIONS:  share / report / repost ----
     const actionBar = document.createElement('div');
     actionBar.className = 'post-actions';
 
@@ -600,9 +588,22 @@ async function submitReport() {
 window.closeReportModal = closeReportModal;
 window.submitReport = submitReport;
 (async () => {
-    const res = await fetch(`${API}/posts`);
-    const moods = await res.json();
-    moods.reverse().forEach(displayMood);
+    try {
+        const res = await fetch(`${API}/posts`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const text = await res.text();
+        let moods;
+        try {
+            moods = JSON.parse(text);
+        } catch (jsonErr) {
+            console.error('❌ Posts JSON corrompu:', jsonErr.message, '— position:', text.substring(4080, 4095));
+            return;
+        }
+        if (!Array.isArray(moods)) return;
+        moods.reverse().forEach(displayMood);
+    } catch (err) {
+        console.error('❌ Erreur chargement posts:', err);
+    }
 })();
 const tabs = document.querySelectorAll("nav a");
 const sections = document.querySelectorAll(".tab");
@@ -792,7 +793,7 @@ async function addInboxNotification(
     type,
     titleKey,
     messageKey,
-    icon = "notifications",
+    icon = "!",
     actionLabel,
     actionFn
 ) {
@@ -1188,161 +1189,199 @@ applyLowEndMode();
     }
 })();
 
-// Affichage des stories dans la liste
+// ============================================================
+// STORIES — tableau global + chargement initial
+// ============================================================
+let _allStories = [];
+let _storyViewerActive = false;
+let _storyIndex = 0;
+let _storyTimer = null;
+
+// Chargement initial depuis l'API
+(async function _loadStories() {
+    try {
+        const res = await fetch(`${API}/stories`);
+        if (!res.ok) return;
+        const stories = await res.json();
+        // Supprimer le skeleton si présent
+        document.querySelectorAll('.story.skeleton').forEach(el => el.remove());
+        stories.forEach(s => {
+            if (!_allStories.find(x => x.id === s.id)) {
+                _allStories.push(s);
+                _renderStoryBubble(s, false);
+            }
+        });
+    } catch (e) { console.warn('Stories load error:', e); }
+})();
+
 function addStoryToList(story) {
-    const storiesList = document.querySelector('.stories-list');
-    if (!storiesList) return;
-
-    const storyDiv = document.createElement('div');
-    storyDiv.className = 'story-item';
-
-    const emojiSpan = document.createElement('span');
-    emojiSpan.className = 'story-emoji';
-    emojiSpan.textContent = story.emoji || '📸';
-
-    const textSpan = document.createElement('span');
-    textSpan.className = 'sr-only';
-    textSpan.textContent = story.text || '';
-
-    storyDiv.appendChild(emojiSpan);
-    storyDiv.appendChild(textSpan);
-
-    // Appliquer style: fond + couleur texte (si fournie sinon contraste)
-    if (story.color) storyDiv.style.background = story.color;
-    const sTextColor = story.textColor || ((story.color && getBrightness(story.color) < 128) ? "#FFFFFF" : "#000000");
-    emojiSpan.style.color = sTextColor;
-    textSpan.style.color = sTextColor;
-
-    storiesList.appendChild(storyDiv);
-
-    // passe l'élément source à la visionneuse pour l'animation
-    storyDiv.addEventListener('click', () => openStoryViewer(story, storyDiv));
+    // Déduplique les events SSE
+    if (_allStories.find(s => s.id === story.id)) return;
+    _allStories.unshift(story);
+    _renderStoryBubble(story, true);
 }
 
-// Visionneuse simple
-function openStoryViewer(story, sourceEl) {
-    if (!sourceEl) {
-        // fallback simple
-        const viewer = document.createElement('div');
-        viewer.className = 'story-viewer';
-        const content = document.createElement('div');
-        content.className = 'story-content';
-        content.style.background = story.color || '#111';
-        const emojiEl = document.createElement('span');
-        emojiEl.style.fontSize = '3rem';
-        emojiEl.textContent = story.emoji || '';
-        const p = document.createElement('p');
-        p.textContent = story.text || '';
+function _renderStoryBubble(story, prepend) {
+    const list = document.querySelector('.stories-list');
+    if (!list) return;
 
-        // couleur texte pour le viewer
-        const vTextColor = story.textColor || ((story.color && getBrightness(story.color) < 128) ? "#FFFFFF" : "#000000");
-        emojiEl.style.color = vTextColor;
-        p.style.color = vTextColor;
+    const wrap = document.createElement('button');
+    wrap.className = 'sv-bubble';
+    wrap.type = 'button';
+    wrap.dataset.sid = story.id;
 
-        content.appendChild(emojiEl);
-        content.appendChild(p);
-        viewer.appendChild(content);
-        document.body.appendChild(viewer);
-        viewer.addEventListener('click', () => viewer.remove());
-        setTimeout(() => viewer.remove(), 4000);
-        return;
+    const c = story.color || '#00cfeb';
+
+    wrap.innerHTML = `
+      <span class="sv-bubble__ring" style="--sc:${c};">
+        <span class="sv-bubble__face" style="background:${c};">
+          <span class="sv-bubble__emoji">${story.emoji || '📸'}</span>
+        </span>
+      </span>
+      <span class="sv-bubble__label">${(story.text || 'Story').split(' ').slice(0, 2).join(' ')}</span>
+    `;
+
+    wrap.addEventListener('click', () => {
+        const idx = _allStories.findIndex(s => s.id === story.id);
+        _openViewer(idx >= 0 ? idx : 0);
+    });
+
+    // Insérer juste après le bouton "+"
+    const addBtn = list.querySelector('#addStoryBtn');
+    if (prepend && addBtn) {
+        addBtn.insertAdjacentElement('afterend', wrap);
+    } else {
+        list.appendChild(wrap);
     }
-
-    // clone la bulle source et place en position fixe
-    const rect = sourceEl.getBoundingClientRect();
-    const clone = sourceEl.cloneNode(true);
-    clone.style.position = 'fixed';
-    clone.style.left = rect.left + 'px';
-    clone.style.top = rect.top + 'px';
-    clone.style.width = rect.width + 'px';
-    clone.style.height = rect.height + 'px';
-    clone.style.zIndex = 9999;
-    clone.style.display = 'flex';
-    clone.style.alignItems = 'center';
-    clone.style.justifyContent = 'center';
-    clone.style.overflow = 'hidden';
-    clone.style.transition = 'all 450ms cubic-bezier(.2,.8,.2,1)';
-    clone.style.borderRadius = '50%';
-    clone.style.boxShadow = '0 0 0px 0px rgba(0,0,0,0.3)';
-    // applique couleur si fournie
-    clone.style.background = story.color || getComputedStyle(sourceEl).backgroundColor || '#111';
-    // force le rendu
-    document.body.appendChild(clone);
-    clone.getBoundingClientRect();
-
-    // calcule taille cible (centre écran)
-    const targetW = Math.min(window.innerWidth * 0.9, 900);
-    const targetH = Math.min(window.innerHeight * 0.82, 700);
-    const targetLeft = (window.innerWidth - targetW) / 2;
-    const targetTop = (window.innerHeight - targetH) / 2;
-
-    // anime vers le centre et passe en rectangle
-    requestAnimationFrame(() => {
-        clone.style.left = targetLeft + 'px';
-        clone.style.top = targetTop + 'px';
-        clone.style.width = targetW + 'px';
-        clone.style.height = targetH + 'px';
-        clone.style.borderRadius = '12px';
-        clone.style.boxShadow = '0 0 8000px 2400px rgba(0,0,0,0.3)';
-    });
-
-    // après l'animation, affiche le contenu détaillé dans le clone
-    clone.addEventListener('transitionend', function handler() {
-        clone.removeEventListener('transitionend', handler);
-
-        // remplace l'intérieur par le viewer réel
-        clone.innerHTML = '';
-        clone.style.cursor = 'pointer';
-        const wrapper = document.createElement('div');
-        wrapper.style.display = 'flex';
-        wrapper.style.flexDirection = 'column';
-        wrapper.style.alignItems = 'center';
-        wrapper.style.justifyContent = 'center';
-        wrapper.style.padding = '20px';
-        wrapper.style.width = '100%';
-        wrapper.style.height = '100%';
-        wrapper.style.boxSizing = 'border-box';
-        const emojiEl = document.createElement('span');
-        emojiEl.style.fontSize = '4rem';
-        emojiEl.textContent = story.emoji || '';
-        const p = document.createElement('p');
-        p.textContent = story.text || '';
-        p.style.marginTop = '12px';
-        p.style.textAlign = 'center';
-        p.style.wordBreak = 'break-word';
-
-        // appliquer couleur texte fournie ou automatique
-        const viewerTextColor = story.textColor || ((story.color && getBrightness(story.color) < 128) ? "#FFFFFF" : "#000000");
-        emojiEl.style.color = viewerTextColor;
-        p.style.color = viewerTextColor;
-
-        wrapper.appendChild(emojiEl);
-        wrapper.appendChild(p);
-        clone.appendChild(wrapper);
-
-        // ferme avec animation de retour
-        let autoTimeout = setTimeout(close, 4000);
-        function close() {
-            clearTimeout(autoTimeout);
-            const srcRect = sourceEl.getBoundingClientRect();
-            clone.style.transition = 'all 320ms ease';
-            clone.style.left = srcRect.left + 'px';
-            clone.style.top = srcRect.top + 'px';
-            clone.style.width = srcRect.width + 'px';
-            clone.style.height = srcRect.height + 'px';
-            clone.style.borderRadius = '50%';
-            clone.addEventListener('transitionend', () => clone.remove(), { once: true });
-        }
-
-        clone.addEventListener('click', close);
-    });
 }
+
+// ============================================================
+// STORY VIEWER — visionneuse fullscreen avec nav + progress
+// ============================================================
+function _openViewer(startIdx) {
+    if (_storyViewerActive || !_allStories.length) return;
+    _storyViewerActive = true;
+    _storyIndex = Math.max(0, Math.min(startIdx, _allStories.length - 1));
+    _buildViewer();
+}
+
+function _buildViewer() {
+    document.getElementById('_svOverlay')?.remove();
+    clearTimeout(_storyTimer);
+
+    const story = _allStories[_storyIndex];
+    if (!story) { _closeViewer(); return; }
+
+    const tc = story.textColor ||
+        ((story.color && getBrightness(story.color) < 128) ? '#fff' : '#1a1a1a');
+    const c = story.color || '#00cfeb';
+
+    const ago = _timeAgo(story.createdAt);
+
+    const ov = document.createElement('div');
+    ov.id = '_svOverlay';
+    ov.className = 'sv-overlay';
+
+    // Barres de progression
+    const barsHtml = _allStories.map((_, i) => `
+      <div class="sv-bar-track">
+        <div class="sv-bar-fill ${i < _storyIndex ? 'sv-bar--done' : i === _storyIndex ? 'sv-bar--active' : ''}"></div>
+      </div>`).join('');
+
+    ov.innerHTML = `
+      <div class="sv-backdrop"></div>
+      <div class="sv-card" style="background:${c};">
+        <div class="sv-bars">${barsHtml}</div>
+        <div class="sv-header">
+          <div class="sv-avatar" style="background:${c}; border-color:${tc}30;">
+            <span>${story.emoji || '📸'}</span>
+          </div>
+          <div class="sv-meta">
+            <span class="sv-meta-time" style="color:${tc}99;">${ago}</span>
+          </div>
+          <button class="sv-close-btn" aria-label="Fermer" style="color:${tc};">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+        <div class="sv-body">
+          <div class="sv-big-emoji" style="color:${tc};">${story.emoji || ''}</div>
+          <p class="sv-text" style="color:${tc};">${story.text || ''}</p>
+        </div>
+        <button class="sv-nav sv-nav--prev" aria-label="Précédente" ${_storyIndex === 0 ? 'disabled' : ''}>
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="sv-nav sv-nav--next" aria-label="Suivante">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
+      </div>`;
+
+    document.body.appendChild(ov);
+
+    // Animer l'entrée
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => ov.classList.add('sv-open'));
+    });
+
+    // Progress bar animation
+    const fill = ov.querySelector('.sv-bar--active');
+    if (fill) {
+        fill.style.transition = 'width 5s linear';
+        requestAnimationFrame(() => { requestAnimationFrame(() => { fill.style.width = '100%'; }); });
+    }
+    _storyTimer = setTimeout(() => _storyGo(1), 5000);
+
+    // Events
+    ov.querySelector('.sv-close-btn').addEventListener('click', _closeViewer);
+    ov.querySelector('.sv-nav--prev').addEventListener('click', e => { e.stopPropagation(); _storyGo(-1); });
+    ov.querySelector('.sv-nav--next').addEventListener('click', e => { e.stopPropagation(); _storyGo(1); });
+    ov.querySelector('.sv-backdrop').addEventListener('click', _closeViewer);
+
+    // Clavier
+    ov._onKey = e => {
+        if (e.key === 'ArrowRight') _storyGo(1);
+        else if (e.key === 'ArrowLeft') _storyGo(-1);
+        else if (e.key === 'Escape') _closeViewer();
+    };
+    document.addEventListener('keydown', ov._onKey);
+}
+
+function _storyGo(dir) {
+    clearTimeout(_storyTimer);
+    const next = _storyIndex + dir;
+    if (next < 0 || next >= _allStories.length) { _closeViewer(); return; }
+    _storyIndex = next;
+    _buildViewer();
+}
+
+function _closeViewer() {
+    clearTimeout(_storyTimer);
+    const ov = document.getElementById('_svOverlay');
+    if (ov) {
+        if (ov._onKey) document.removeEventListener('keydown', ov._onKey);
+        ov.classList.remove('sv-open');
+        ov.classList.add('sv-closing');
+        setTimeout(() => ov.remove(), 260);
+    }
+    _storyViewerActive = false;
+}
+
+function _timeAgo(dateStr) {
+    if (!dateStr) return '';
+    const m = Math.floor((Date.now() - new Date(dateStr)) / 60000);
+    if (m < 1) return "à l'instant";
+    if (m < 60) return `il y a ${m}min`;
+    const h = Math.floor(m / 60);
+    if (h < 24) return `il y a ${h}h`;
+    return `il y a ${Math.floor(h / 24)}j`;
+}
+
+// Alias rétrocompat
+function openStoryViewer(story) { _openViewer(_allStories.findIndex(s => s.id === story?.id) || 0); }
 
 const profilename = document.getElementById('userName');
 if (profilename) {
     const storedName = localStorage.getItem('username') || 'Invité';
     profilename.textContent = storedName;
 }
-setTimeout(() => {
-    addInboxNotification("info", "update_title", "update_info");
-}, 500);

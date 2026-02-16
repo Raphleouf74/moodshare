@@ -164,7 +164,6 @@ function renderDashRecent() {
         <thead><tr>
           <th>Post</th>
           <th>Likes</th>
-          <th>Commentaires</th>
           <th>Date</th>
           <th>Type</th>
         </tr></thead>
@@ -173,24 +172,8 @@ function renderDashRecent() {
         </tbody>
       </table>`;
     const postTable = document.getElementById('post-table');
-    postTable.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        showCardMenu(e.pageX, e.pageY);
-    });
+    
 }
-
-const menu = document.getElementById('cardMenu');
-let currentCardIndex = null;
-
-function showCardMenu(x, y, index) {
-    currentCardIndex = index;
-    menu.style.left = x + 'px';
-    menu.style.top = y + 'px';
-    menu.style.display = 'flex';
-}
-
-// fermer menu si clic ailleurs
-document.addEventListener('click', () => menu.style.display = 'none');
 
 // ======================
 // POSTS TABLE
@@ -263,7 +246,6 @@ function postRow(p, minimal) {
           </div>
         </td>
         <td><span class="like-badge">❤️ ${p.likes || 0}</span></td>
-        <td><span class="date-muted">${(p.comments || []).length}</span></td>
         <td><span class="date-muted">${date}</span></td>
         <td>${type}</td>
         ${actions}
@@ -519,7 +501,6 @@ async function adminCreatePost() {
         textColor,
         ephemeral: false,
         likes: 0,
-        comments: [],
     };
     if (text) body.text = text;
     if (emoji) body.emoji = emoji;

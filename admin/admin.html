@@ -163,13 +163,8 @@
         <div class="sidebar-footer">
           <div class="admin-tag">
             <div class="admin-tag-dot"></div>
-            <span class="admin-tag-text" style="font-size: 11px"
-              ><a
-                href="/cdn-cgi/l/email-protection"
-                class="__cf_email__"
-                data-cfemail="82e3e6efebecc2efedede6f1eae3f0e7ace1edef"
-                >[email&#160;protected]</a
-              ></span
+            <span class="admin-tag-text" style="font-size: 15px; color: white;"
+              >Admin</span
             >
           </div>
           <button class="logout-btn" onclick="doLogout()">Déconnexion</button>
@@ -608,20 +603,6 @@
 
     <!-- TOAST CONTAINER -->
     <div id="toast-container"></div>
-    <div id="cardMenu" class="card-menu">
-      <p>
-        <i><b>Options rapides</b></i>
-      </p>
-      <button id="dupCard" onclick="openEdit('${p.id}')">
-        Modifier le post
-      </button>
-      <button onclick="openDelete('${p.id}')">Supprimer le post</button>
-    </div>
-
-    <script
-      data-cfasync="false"
-      src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
-    ></script>
     <script src="admin.js"></script>
   </body>
 </html>

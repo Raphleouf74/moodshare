@@ -47,7 +47,7 @@
         height="50px"
       />
     </div>
-    
+
     <div id="authModal">
       <div id="authActions" class="auth-actions">
         <!-- Fond décoratif -->
@@ -492,24 +492,26 @@
       <div class="stories">
         <h2 data-i18n="home_stories">Stories</h2>
         <div class="stories-list">
-          <div class="story add-story" id="addStoryBtn">
+          <div
+            class="story add-story"
+            id="addStoryBtn"
+            title="Ajouter une story"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
+              width="22"
+              height="22"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
-              class="lucide lucide-plus-icon lucide-plus"
             >
               <path d="M5 12h14" />
               <path d="M12 5v14" />
             </svg>
           </div>
-          <div class="story skeleton"></div>
         </div>
       </div>
 
@@ -750,12 +752,6 @@
       <!-- 🧠 Section des posts du profil -->
 
       <div id="MoreAccSettings">
-        <p><b>Paramètres supplémentaires</b></p>
-        <a href="https://github.com/Raphleouf74/moodshare">
-          <button class="hoverable" data-i18n="github_access">
-            Accéder au GitHub
-          </button></a
-        >
         <a
           href="https://ko-fi.com/moodshare"
           target="_blank"
@@ -774,11 +770,13 @@
             <p data-i18n="Policy_title">Politique de confidentialité</p>
           </button></a
         >
-        <button class="hoverable" id="goToSettingsBtn">
-          <b>
-            <p data-i18n="nav_settings">Paramètres</p>
-          </b>
-        </button>
+        <a>
+          <button class="hoverable" id="goToSettingsBtn">
+            <b>
+              <p data-i18n="nav_settings">Paramètres</p>
+            </b>
+          </button></a
+        >
         <!-- <button class="hoverable" id="logoutBtn">Se déconnecter</button class="hoverable">
       <p><b>Gestion du compte</b></p>
       <button class="hoverable" id="editAccountBtn">Modifier les informations</button class="hoverable">
@@ -788,6 +786,10 @@
       </div>
 
       <footer>
+        <p>
+          <b>Moodshare &copy; 2025-2026.</b> Toute reproduction partielle ou
+          totale est strictement interdite.
+        </p>
         <p>
           <span id="SiteVersion">...</span> Build
           <span id="BuildVersion">...</span>

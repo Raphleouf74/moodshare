@@ -32,7 +32,6 @@ const postSchema = new mongoose.Schema({
   color: String,
   textColor: String,
   likes: { type: Number, default: 0 },
-  comments: { type: Array, default: [] },
   ephemeral: { type: Boolean, default: false },
   expiresAt: { type: Date, default: null },
   repostedFrom: String,
@@ -189,36 +188,35 @@ if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
 
-try {
-  if (fs.existsSync(postsFile)) {
-    posts = JSON.parse(fs.readFileSync(postsFile, "utf8"));
+function safeLoadJSON(filePath, fallback, label) {
+  try {
+    if (fs.existsSync(filePath)) {
+      const raw = fs.readFileSync(filePath, "utf8");
+      const parsed = JSON.parse(raw);
+      // Vérifie que c'est bien un tableau
+      if (!Array.isArray(parsed)) throw new Error("Not an array");
+      console.log(`✅ ${label}: ${parsed.length} entrées chargées`);
+      return parsed;
+    }
+  } catch (err) {
+    console.error(`❌ ${label} corrompu (${err.message}) — réinitialisation`);
+    // Écrase le fichier corrompu avec un tableau vide propre
+    try { fs.writeFileSync(filePath, JSON.stringify(fallback, null, 2)); } catch (_) { }
   }
-} catch (err) {
-  console.error("❌ Erreur lors du chargement des posts");
+  return fallback;
 }
 
-// ---- Ajout : STORIES STORAGE (placer AVANT app.get("/api/stories")) ----
+posts = safeLoadJSON(postsFile, posts, "posts.json");
+
+// ---- STORIES STORAGE ----
 let stories = [];
 const storiesFile = path.join(dataDir, "stories.json");
-
-try {
-  if (fs.existsSync(storiesFile)) {
-    stories = JSON.parse(fs.readFileSync(storiesFile, "utf8"));
-  }
-} catch (err) {
-  console.error("❌ Erreur lors du chargement des stories:", err);
-}
+stories = safeLoadJSON(storiesFile, stories, "stories.json");
 
 // === REPORTS STORAGE ===
 let reports = [];
 const reportsFile = path.join(dataDir, "reports.json");
-try {
-  if (fs.existsSync(reportsFile)) {
-    reports = JSON.parse(fs.readFileSync(reportsFile, "utf8"));
-  }
-} catch (err) {
-  console.error("❌ Erreur lors du chargement des signalements:", err);
-}
+reports = safeLoadJSON(reportsFile, reports, "reports.json");
 
 // === SSE (Server-Sent Events) clients ===
 let sseClients = [];
@@ -303,7 +301,6 @@ app.post("/api/posts", async (req, res) => {
       id: Date.now().toString(),
       ...req.body,
       likes: 0,
-      comments: [],
       pinned: false,
       createdAt: new Date().toISOString()
     };
@@ -318,68 +315,9 @@ app.post("/api/posts", async (req, res) => {
   }
 });
 
-// --- COMMENTS ---
-app.post("/api/posts/:id/comments", async (req, res) => {
-  try {
-    const post = posts.find(p => p.id == req.params.id);
-    if (!post) return res.status(404).json({ error: "Post non trouvé" });
 
-    const rawText = String(req.body.text || "").trim();
-    if (!rawText) return res.status(400).json({ error: "Commentaire vide" });
 
-    const cleanText = sanitizeText(rawText);
 
-    const comment = {
-      id: Date.now().toString(),
-      text: cleanText,
-      author: { id: req.user.id, username: req.user.username || req.user.name || 'user' },
-      likes: 0,
-      createdAt: new Date().toISOString()
-    };
-
-    post.comments = post.comments || [];
-    post.comments.push(comment);
-
-    await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
-    try { sendSSE('post_update', post); } catch (e) { console.error('❌ Erreur SSE:', e); }
-
-    res.status(201).json(comment);
-  } catch (err) {
-    console.error('❌ Erreur lors de la création du commentaire:', err);
-    res.status(400).json({ error: 'Contenu invalide' });
-  }
-});
-
-// Like a comment
-app.post('/api/posts/:postId/comments/:commentId/like', async (req, res) => {
-  try {
-    const post = posts.find(p => p.id == req.params.postId);
-    if (!post) return res.status(404).json({ error: 'Post non trouvé' });
-    post.comments = post.comments || [];
-    const cm = post.comments.find(c => c.id == req.params.commentId);
-    if (!cm) return res.status(404).json({ error: 'Commentaire non trouvé' });
-
-    cm.likes = (cm.likes || 0) + 1;
-    await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
-    try { sendSSE('post_update', post); } catch (e) { console.error('❌ Erreur SSE:', e); }
-    res.json(cm);
-  } catch (err) { console.error('❌ Erreur de like du commentaire:', err); res.status(500).json({ error: 'Interne' }); }
-});
-
-app.post('/api/posts/:postId/comments/:commentId/unlike', async (req, res) => {
-  try {
-    const post = posts.find(p => p.id == req.params.postId);
-    if (!post) return res.status(404).json({ error: 'Post non trouvé' });
-    post.comments = post.comments || [];
-    const cm = post.comments.find(c => c.id == req.params.commentId);
-    if (!cm) return res.status(404).json({ error: 'Commentaire non trouvé' });
-
-    cm.likes = Math.max(0, (cm.likes || 0) - 1);
-    await fsPromises.writeFile(postsFile, JSON.stringify(posts, null, 2));
-    try { sendSSE('post_update', post); } catch (e) { console.error('❌ Erreur SSE:', e); }
-    res.json(cm);
-  } catch (err) { console.error('❌ Erreur de suppression du like du commentaire:', err); res.status(500).json({ error: 'Interne' }); }
-});
 
 // Report a post or comment
 app.post('/api/posts/:id/report', async (req, res) => {
@@ -387,11 +325,10 @@ app.post('/api/posts/:id/report', async (req, res) => {
     const targetPost = posts.find(p => p.id == req.params.id);
     if (!targetPost) return res.status(404).json({ error: 'Post non trouvé' });
 
-    const { reason = '', commentId = null } = req.body;
+    const { reason = '' } = req.body;
     const report = {
       id: Date.now().toString(),
       postId: req.params.id,
-      commentId,
       reason: String(reason).slice(0, 1000),
       createdAt: new Date().toISOString()
     };
@@ -419,7 +356,6 @@ app.post('/api/posts/:id/repost', async (req, res) => {
       textColor: orig.textColor,
       id: Date.now().toString(),
       likes: 0,
-      comments: [],
       repostedFrom: orig.id,
       repostedBy: { id: req.user.id, username: req.user.username || req.user.name || 'user' },
       createdAt: new Date().toISOString()
@@ -547,7 +483,6 @@ app.post('/api/admin/posts/pinned', requireAdmin, async (req, res) => {
       pinnedLabel: String(pinnedLabel || 'Annonce').slice(0, 60),
       pinned: true,
       likes: 0,
-      comments: [],
       ephemeral: false,
       expiresAt: null,
       createdAt: new Date().toISOString()
