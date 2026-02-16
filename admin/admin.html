@@ -473,8 +473,8 @@
               </div>
             </div>
           </div>
-          <div id="settings-content" style="max-width: 600px; margin-top: 12px">
-            
+          <div id="settings-content" style="margin-top: 12px">
+
           </div>
         </div>
       </main>
@@ -625,6 +625,52 @@
           </button>
           <button class="btn btn-primary" onclick="createPinnedPost()">
             📌 Épingler
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMERGENCY RESTART MODAL -->
+    <div class="modal-overlay" id="emergency-modal">
+      <div class="modal" style="max-width: 420px">
+        <div class="modal-title">🚨 Redémarrage d'urgence</div>
+        <p style="font-size: 12px; color: var(--muted); margin: 0 0 16px">
+          Cette action redémarre les connexions (MongoDB, SSE, etc.).
+          <strong>Cette action est critique.</strong>
+        </p>
+
+        <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 10px; padding: 12px; margin-bottom: 16px; font-size: 12px; color: var(--warn);">
+          ⚠️ <strong>Tous les clients connectés seront déconnectés.</strong>
+        </div>
+
+        <div class="modal-field">
+          <label>Mot de passe admin</label>
+          <input 
+            type="password" 
+            id="emergency-password" 
+            placeholder="Mot de passe admin"
+            style="width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; color: var(--text); font-size: 13px; outline: none;"
+          />
+        </div>
+
+        <div class="modal-field">
+          <label>Commande de confirmation</label>
+          <input 
+            type="text" 
+            id="emergency-command" 
+            placeholder="Tapez RESTART_NOW"
+            style="width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; color: var(--text); font-size: 13px; outline: none; font-family: monospace; font-weight: 600;"
+          />
+        </div>
+
+        <div id="emergency-error" style="display: none; color: var(--danger); font-size: 12px; margin-bottom: 12px; padding: 10px; background: rgba(239, 68, 68, 0.1); border-radius: 6px; border-left: 3px solid var(--danger);"></div>
+
+        <div class="modal-footer">
+          <button class="btn btn-ghost" onclick="closeModal('emergency-modal')">
+            Annuler
+          </button>
+          <button class="btn btn-danger" onclick="confirmEmergencyRestart()">
+            🚨 Confirmer le redémarrage
           </button>
         </div>
       </div>

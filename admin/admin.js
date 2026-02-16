@@ -14,10 +14,12 @@ const ADMIN_CREDS = {
 const ADMIN_SECRET = "260110080310";
 
 function adminHeaders() {
-    return {
+    const headers = {
         "Content-Type": "application/json",
         "X-Admin-Secret": ADMIN_SECRET,
     };
+    console.log('[ADMIN] Headers sent:', { 'X-Admin-Secret': ADMIN_SECRET ? '✅ présent' : '❌ absent' });
+    return headers;
 }
 
 // In-memory state
@@ -456,6 +458,7 @@ async function renderSettings() {
 
             <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; gap: 12px; flex-wrap: wrap;">
                 <button class="btn btn-ghost" onclick="renderSettings()">🔄 Actualiser</button>
+                <button class="btn btn-danger" onclick="openEmergencyRestart()" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3);">🚨 Redémarrage d'urgence</button>
                 <button class="btn btn-ghost" onclick="showPage('dashboard')">← Retour</button>
             </div>
         `;
@@ -472,6 +475,77 @@ async function renderSettings() {
         `;
     }
 }
+
+// ======================
+// EMERGENCY RESTART
+// ======================
+function openEmergencyRestart() {
+    document.getElementById("emergency-password").value = "";
+    document.getElementById("emergency-command").value = "";
+    document.getElementById("emergency-error").style.display = "none";
+    openModal("emergency-modal");
+}
+
+async function confirmEmergencyRestart() {
+    const password = document.getElementById("emergency-password").value;
+    const command = document.getElementById("emergency-command").value.trim();
+    const errorEl = document.getElementById("emergency-error");
+
+    // Vérifier les credentials
+    if (password !== ADMIN_CREDS.password) {
+        errorEl.textContent = "❌ Mot de passe incorrect";
+        errorEl.style.display = "block";
+        return;
+    }
+
+    // La commande doit être "RESTART_NOW" pour l'autoriser
+    if (command !== "RESTART_NOW") {
+        errorEl.textContent = "❌ Commande incorrecte (tapez RESTART_NOW)";
+        errorEl.style.display = "block";
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API}/admin/emergency-restart`, {
+            method: "POST",
+            headers: adminHeaders(),
+        });
+
+        if (res.ok) {
+            const result = await res.json();
+            toast("🚨 Redémarrage d'urgence effectué ✅", "success");
+            closeModal("emergency-modal");
+            
+            // Recharger les données après un délai
+            setTimeout(() => {
+                loadAll();
+                renderSettings();
+            }, 1000);
+        } else {
+            const err = await res.json().catch(() => ({ error: res.statusText }));
+            const errorMsg = err.error || err.message || `Erreur ${res.status}`;
+            errorEl.textContent = `❌ [${res.status}] ${errorMsg}`;
+            errorEl.style.display = "block";
+            console.error('[EMERGENCY] Erreur:', res.status, err);
+            toast(`Erreur: ${errorMsg}`, "error");
+        }
+    } catch (err) {
+        errorEl.textContent = `❌ Erreur réseau: ${err.message}`;
+        errorEl.style.display = "block";
+        console.error('[EMERGENCY] Erreur réseau:', err);
+        toast("Erreur réseau lors du redémarrage", "error");
+    }
+}
+
+// Permettre Enter pour confirmer
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && document.getElementById("emergency-modal")?.classList.contains("show")) {
+        const focusedEl = document.activeElement;
+        if (focusedEl?.id === "emergency-command") {
+            confirmEmergencyRestart();
+        }
+    }
+});
 
 // ======================
 // STORIES

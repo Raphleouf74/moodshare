@@ -1164,14 +1164,20 @@ tr:hover td {
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 16px;
     margin-bottom: 24px;
+    width: 100%;
 }
 
 .settings-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
+    width: 100%;
     padding: 18px;
     animation: fadeUp 0.3s ease-out;
+}
+
+#settings-content {
+    width: 100%;
 }
 
 .settings-card-title {
@@ -1266,4 +1272,41 @@ tr:hover td {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* EMERGENCY RESTART STYLES */
+.btn.btn-danger {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+#emergency-modal .modal {
+    border: 2px solid rgba(239, 68, 68, 0.3);
+}
+
+#emergency-modal .modal-title {
+    color: var(--danger);
+}
+
+#emergency-modal input {
+    transition: all 0.2s;
+}
+
+#emergency-modal input:focus {
+    border-color: var(--danger);
+    background: var(--surface2);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+#emergency-password {
+    text-shadow: 0 0 0 var(--text);
+}
+
+#emergency-command::placeholder {
+    color: var(--muted);
+}
+
+#emergency-command {
+    letter-spacing: 0.05em;
 }

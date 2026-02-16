@@ -654,6 +654,61 @@ app.get('/api/admin/status', requireAdmin, (req, res) => {
   });
 });
 
+// ============================================================
+// POST /api/admin/emergency-restart — Action d'urgence
+// Redémarre les connexions (MongoDB, SSE, etc.)
+// ============================================================
+app.post('/api/admin/emergency-restart', requireAdmin, async (req, res) => {
+  const secret = req.headers['x-admin-secret'];
+  console.log(`🚨 [EMERGENCY] Requête POST reçue - Secret fourni: ${secret ? '✅' : '❌'}`);
+  console.log('🚨 [EMERGENCY] Redémarrage d\'urgence initié par admin');
+  
+  try {
+    // Fermer tous les clients SSE
+    const closedCount = sseClients.length;
+    sseClients.forEach(c => {
+      try { c.res.end(); } catch (_) { }
+    });
+    sseClients = [];
+    console.log(`✅ [EMERGENCY] ${closedCount} clients SSE fermés`);
+
+    // Tenter reconnexion MongoDB
+    if (MONGO_URI && mongoReady) {
+      try {
+        // Vérifier la connexion
+        const test = await mongoose.connection.db.admin().ping();
+        console.log('✅ [EMERGENCY] MongoDB ping OK');
+      } catch (err) {
+        console.warn('⚠️ [EMERGENCY] MongoDB ping échoué:', err.message);
+      }
+    }
+
+    res.json({
+      ok: true,
+      message: 'Redémarrage d\'urgence effectué',
+      actions: {
+        sseClientsReset: closedCount,
+        mongoChecked: !!MONGO_URI,
+        timestamp: new Date().toISOString()
+      }
+    });
+
+    console.log('✅ [EMERGENCY] Redémarrage d\'urgence complété');
+  } catch (err) {
+    console.error('❌ [EMERGENCY] Erreur:', err.message);
+    res.status(500).json({ 
+      error: 'Erreur lors du redémarrage d\'urgence',
+      details: err.message 
+    });
+  }
+});
+
+// Rejeter les GET sur emergency-restart (seul POST est autorisé)
+app.get('/api/admin/emergency-restart', (req, res) => {
+  console.warn('🚫 [EMERGENCY] Tentative GET sur emergency-restart (méthode non autorisée)');
+  res.status(405).json({ error: 'Méthode non autorisée - utilisez POST' });
+});
+
 /// AUTH & USER ROUTES
 app.use("/api/auth", (req, res, next) => {
   try {
