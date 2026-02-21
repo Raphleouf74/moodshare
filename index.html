@@ -13,6 +13,7 @@
   </head>
 
   <body>
+    
     <div id="squareback"></div>
     <div id="circleback"></div>
     <div id="loader">
@@ -519,154 +520,338 @@
         <h2 data-i18n="home_recent_posts">Posts récents</h2>
         <div id="moodWall"></div>
       </div>
-      <div class="suggested-accounts">
-        <h2 data-i18n="home_suggested_accounts">Comptes à suivre</h2>
-        <div class="accounts-list">
-          <div class="account skeleton"></div>
-          <div class="account skeleton"></div>
-          <div class="account skeleton"></div>
-        </div>
-      </div>
+      
     </section>
 
     <section id="postsTab" class="tab hidden"></section>
 
     <section id="createTab" class="tab hidden">
-      <div id="postModal">
-        <textarea
-          id="moodInput"
-          maxlength="200"
-          placeholder="Comment tu te sens ?"
-          data-i18n="create_placeholder"
-        ></textarea>
-        <div class="mood-options">
-          <div class="inputdiv">
-            <input type="color" id="moodColor" value="#ffffff" />
-            <label for="moodColor" data-i18n="create_bg">Fond</label>
-          </div>
-          <div class="inputdiv">
-            <input type="color" id="textColor" value="#000000" />
-            <label for="textColor" data-i18n="create_color">Couleur</label>
-          </div>
+      <div class="create-container">
+        <!-- Titre -->
+        <div class="create-header">
+          <h2 data-i18n="create_title">Créer un post</h2>
+          <p class="create-subtitle" data-i18n="create_subtitle">
+            Exprime ce que tu ressens
+          </p>
+        </div>
 
-          <div class="inputdiv">
-            <input
-              type="text"
-              class="moodEmoji"
-              id="editEmojiBtn"
-              placeholder=""
-              readonly
-            />
-            <label for="editEmojiBtn">Emoji</label>
-          </div>
-
-          <div id="emojiPickerContainer">
-            <emoji-picker id="emojiPicker"></emoji-picker>
-            <p><i>Séléctionnez un emoji ou cliquez autour pour fermer.</i></p>
+        <!-- Zone de saisie -->
+        <div class="create-input-group">
+          <textarea
+            id="moodInput"
+            class="create-textarea"
+            maxlength="200"
+            placeholder="Comment tu te sens ?"
+            data-i18n="create_placeholder"
+            rows="4"
+          ></textarea>
+          <div class="create-char-count">
+            <span id="charCount">0</span><span>/200</span>
           </div>
         </div>
-        <!-- Aperçu du post -->
-        <div id="previewdiv">
-          <p data-i18n="create_preview">Aperçu de votre post</p>
-          <div id="previewMood" class="mood-card">
-            <span id="previewEmoji"></span>
-            <span id="previewText"></span>
-          </div>
-        </div>
-        <button class="hoverable" id="submitMood" data-i18n="create_share">
-          Partager
-        </button>
-        <!-- Ajouter après mood-options dans la section createTab -->
-        <div class="ephemeral-options">
-          <label class="container">
-            <input type="checkbox" id="ephemeralToggle" />
-            <svg viewBox="0 0 64 64" height="2em" width="2em">
-              <path
-                d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-                pathLength="575.0541381835938"
-                class="path"
-              ></path>
+
+        <!-- Barre d'outils -->
+        <div class="create-toolbar">
+          <!-- Emoji picker button -->
+          <button
+            type="button"
+            class="create-tool-btn"
+            id="emojiToolBtn"
+            title="Ajouter un emoji"
+          >
+            <svg
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+              <line x1="9" y1="9" x2="9.01" y2="9" />
+              <line x1="15" y1="9" x2="15.01" y2="9" />
             </svg>
-            <p data-i18n="create_ephemeral">Message éphémère</p>
+            <span>Emoji</span>
+          </button>
+
+          <!-- Sticker picker button -->
+          <!-- <button
+            type="button"
+            class="create-tool-btn"
+            id="stickerToolBtn"
+            title="Ajouter un sticker GIF"
+          >
+            <svg
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+            <span>Sticker</span>
+          </button> -->
+
+          <!-- Color presets -->
+          <div class="create-color-group">
+            <button
+              type="button"
+              class="create-color-preset"
+              data-color="#ffffff"
+              style="background: #ffffff"
+              title="Blanc"
+            ></button>
+            <button
+              type="button"
+              class="create-color-preset"
+              data-color="#fef3c7"
+              style="background: #fef3c7"
+              title="Jaune pastel"
+            ></button>
+            <button
+              type="button"
+              class="create-color-preset"
+              data-color="#fecaca"
+              style="background: #fecaca"
+              title="Rouge pastel"
+            ></button>
+            <button
+              type="button"
+              class="create-color-preset"
+              data-color="#bfdbfe"
+              style="background: #bfdbfe"
+              title="Bleu pastel"
+            ></button>
+            <button
+              type="button"
+              class="create-color-preset"
+              data-color="#d9f99d"
+              style="background: #d9f99d"
+              title="Vert pastel"
+            ></button>
+            <button
+              type="button"
+              class="create-color-preset"
+              data-color="#e9d5ff"
+              style="background: #e9d5ff"
+              title="Violet pastel"
+            ></button>
+            <button
+              type="button"
+              class="create-color-preset"
+              data-color="#1f2937"
+              style="background: #1f2937"
+              title="Noir"
+            ></button>
+            <input
+              type="color"
+              id="moodColor"
+              value="#ffffff"
+              class="create-color-custom"
+              title="Couleur personnalisée"
+            />
+          </div>
+        </div>
+
+        <!-- Emoji picker overlay (hidden by default) -->
+        <div
+          id="emojiPickerOverlay"
+          class="create-picker-overlay"
+          style="display: none"
+        >
+          <div class="create-picker-panel">
+            <div class="create-picker-header">
+              <span>Choisir un emoji</span>
+              <button
+                type="button"
+                class="create-picker-close"
+                aria-label="Fermer"
+              >
+                ×
+              </button>
+            </div>
+            <emoji-picker id="emojiPicker"></emoji-picker>
+          </div>
+        </div>
+        
+        <!-- Sticker picker overlay (hidden by default) -->
+        <!-- <div
+          id="stickerPickerOverlay"
+          class="create-picker-overlay"
+          style="display: none"
+        >
+          <div class="create-picker-panel">
+            <div class="create-picker-header">
+              <span>Rechercher un sticker</span>
+              <button
+                type="button"
+                class="create-picker-close"
+                aria-label="Fermer"
+              >
+                ×
+              </button>
+            </div>
+            <div class="sticker-search">
+              <input
+                type="text"
+                id="stickerSearchInput"
+                placeholder="Rechercher sur Tenor..."
+              />
+              <button type="button" id="stickerSearchBtn">
+                <svg
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  viewBox="0 0 24 24"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.35-4.35" />
+                </svg>
+              </button>
+            </div>
+            <div id="stickerResults" class="sticker-results"></div>
+            <div class="tenor-credit">
+              Powered by <a href="https://tenor.com" target="_blank">Tenor</a>
+            </div>
+          </div>
+        </div> -->
+
+        <!-- Preview live -->
+        <div class="create-preview">
+          <div class="create-preview-label" data-i18n="create_preview">
+            Aperçu
+          </div>
+          <div id="previewMood" class="create-preview-card">
+            <div class="create-preview-emoji" id="previewEmoji">👋</div>
+            <div class="create-preview-text" id="previewText">
+              Ton message apparaîtra ici...
+            </div>
+            <img
+              id="previewSticker"
+              class="create-preview-sticker"
+              style="display: none"
+              alt="Sticker"
+            />
+          </div>
+        </div>
+
+        <!-- Options avancées -->
+        <div class="create-advanced">
+          <!-- Story toggle -->
+          <label class="create-toggle">
+            <input type="checkbox" id="storyModeToggle" />
+            <span class="create-toggle-slider"></span>
+            <span class="create-toggle-label">
+              <svg
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 6v6l4 2" />
+              </svg>
+              <span data-i18n="create_story">Story 24h</span>
+            </span>
           </label>
-          <div id="durationPicker" class="duration-picker">
-            <div class="duration-input">
-              <input
-                type="number"
-                id="durationYear"
-                min="0"
-                max="5"
-                placeholder="a"
-              />
-              <label for="durationYear" data-i18n="years">Années</label>
-            </div>
-            <div class="duration-input">
-              <input
-                type="number"
-                id="durationMonths"
-                min="0"
-                max="11"
-                placeholder="mm"
-              />
-              <label for="durationMonths" data-i18n="months">Mois</label>
-            </div>
-            <div class="duration-input">
+
+          <!-- Ephemeral toggle -->
+          <label class="create-toggle">
+            <input type="checkbox" id="ephemeralToggle" />
+            <span class="create-toggle-slider"></span>
+            <span class="create-toggle-label">
+              <svg
+                width="16"
+                height="16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <polyline points="1 4 1 10 7 10" />
+                <polyline points="23 20 23 14 17 14" />
+                <path
+                  d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"
+                />
+              </svg>
+              <span data-i18n="create_ephemeral">Message éphémère</span>
+            </span>
+          </label>
+        </div>
+
+        <!-- Duration picker (shown when ephemeral is on) -->
+        <div id="durationPicker" class="create-duration" style="display: none">
+          <div class="create-duration-inputs">
+            <div class="create-duration-field">
               <input
                 type="number"
                 id="durationDays"
                 min="0"
                 max="30"
-                placeholder="jj"
+                placeholder="0"
               />
-              <label for="durationDays" data-i18n="days">Jours</label>
+              <label data-i18n="days">jours</label>
             </div>
-            <div class="duration-input">
+            <div class="create-duration-field">
               <input
                 type="number"
                 id="durationHours"
                 min="0"
                 max="23"
-                placeholder="hh"
+                placeholder="0"
               />
-              <label for="durationHours" data-i18n="hours">Heures</label>
+              <label data-i18n="hours">heures</label>
             </div>
-            <div class="duration-input">
+            <div class="create-duration-field">
               <input
                 type="number"
                 id="durationMinutes"
                 min="0"
                 max="59"
-                placeholder="mm"
+                placeholder="0"
               />
-              <label for="durationMinutes" data-i18n="minutes">Minutes</label>
-            </div>
-            <div class="duration-input">
-              <input
-                type="number"
-                id="durationSeconds"
-                min="0"
-                max="59"
-                placeholder="ss"
-              />
-              <label for="durationSeconds" data-i18n="seconds">Secondes</label>
+              <label data-i18n="minutes">minutes</label>
             </div>
           </div>
-          <div style="display: flex; flex-direction: row; align-items: center">
-            <p data-i18n="create_expire_at">:</p>
-            <span id="msgdeletetime"></span>
+          <div class="create-duration-preview">
+            <span data-i18n="create_expire_at">Expire le :</span>
+            <strong id="msgdeletetime">—</strong>
           </div>
         </div>
-        <label class="container storyinput">
-          <input type="checkbox" id="storyModeToggle" />
-          <svg viewBox="0 0 64 64" height="2em" width="2em">
-            <path
-              d="M 0 16 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 16 L 32 48 L 64 16 V 8 A 8 8 90 0 0 56 0 H 8 A 8 8 90 0 0 0 8 V 56 A 8 8 90 0 0 8 64 H 56 A 8 8 90 0 0 64 56 V 16"
-              pathLength="575.0541381835938"
-              class="path"
-            ></path>
+
+        <!-- Hidden inputs for compatibility -->
+        <input
+          type="color"
+          id="textColor"
+          value="#000000"
+          style="display: none"
+        />
+        <input type="text" class="moodEmoji" style="display: none" readonly />
+
+        <!-- Submit button -->
+        <button type="button" class="create-submit-btn" id="submitMood">
+          <svg
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            viewBox="0 0 24 24"
+          >
+            <path d="m22 2-7 20-4-9-9-4Z" />
+            <path d="M22 2 11 13" />
           </svg>
-          <p data-i18n="create_story">Mettre en story</p>
-        </label>
+          <span data-i18n="create_share">Partager</span>
+        </button>
       </div>
     </section>
 
@@ -854,30 +1039,6 @@
               role="dialog"
               aria-label="Language selector"
             >
-              <div class="search">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="36"
-                  height="36"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.25"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-search-icon lucide-search"
-                >
-                  <path d="m21 21-4.34-4.34" />
-                  <circle cx="11" cy="11" r="8" />
-                </svg>
-                <input
-                  resizable
-                  id="lpSearch"
-                  class="lp-search"
-                  data-i18n="search_language"
-                  aria-label="Search language"
-                />
-              </div>
               <div id="lpGrid" class="lp-grid" tabindex="0"></div>
             </div>
           </div>

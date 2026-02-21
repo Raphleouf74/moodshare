@@ -80,14 +80,8 @@ async function translateAll({ overwrite = false } = {}) {
         if (!code) continue;
         if (code === SOURCE_CODE) continue;
 
-        // Map manifest codes to Google Translate supported codes
-        const CODE_MAP = {
-            "al": "sq",
-            "by": "be",
-            "me": "sr",
-            "fil": "tl"
-        };
-        const mappedCode = CODE_MAP[code] || code;
+        
+        const mappedCode = code;
 
         const targetFile = path.join(LANG_DIR, lang.file || `${code}.json`);
         const existing = await loadJson(targetFile) || {};

@@ -315,8 +315,12 @@ function displayMood(mood) {
     content.className = "post-content";
     content.style.background = mood.color;
 
+    // Wrapper pour centrer emoji + texte
+    const innerWrap = document.createElement("div");
+    innerWrap.className = "post-inner";
+
     const emojiSpan = document.createElement("span");
-    emojiSpan.textContent = mood.emoji + " ";
+    emojiSpan.textContent = mood.emoji;
     emojiSpan.className = "post-emoji";
 
     const textSpan = document.createElement("span");
@@ -324,20 +328,28 @@ function displayMood(mood) {
     textSpan.className = "post-text";
 
     // Appliquer couleur de texte si fournie, sinon choisir automatiquement
-    const textColor = mood.textColor || (() => {
-        try {
-            return (getBrightness(mood.color || "#ffffff") < 128) ? "#FFFFFF" : "#000000";
-        } catch (e) { return "#000000"; }
-    })();
+    const textColor = mood.textColor || (() => {return getBrightness(mood.color || "#ffffff") < 128 ?"#FFFFFF" : "#000000";})();
 
     emojiSpan.style.color = textColor;
     textSpan.style.color = textColor;
 
-    content.appendChild(emojiSpan);
-    content.appendChild(textSpan);
+    innerWrap.appendChild(emojiSpan);
+    innerWrap.appendChild(textSpan);
+
+    // Sticker GIF if present
+    if (mood.stickerUrl) {
+        const stickerImg = document.createElement("img");
+        stickerImg.src = mood.stickerUrl;
+        stickerImg.className = "post-sticker";
+        stickerImg.alt = "Sticker";
+        innerWrap.appendChild(stickerImg);
+    }
+
+    content.appendChild(innerWrap);
 
     // Expiration
     if (mood.ephemeral && mood.expiresAt) {
+        moodcard.classList.add('ephemeral');
         const expiration = document.createElement("p");
         expiration.className = "expiration-date";
 
@@ -354,7 +366,7 @@ function displayMood(mood) {
 
         expiration.appendChild(icon);
         document.getElementById('msgdeletetime').textContent = " Expire le " + expirationDate;
-        
+
         content.appendChild(expiration);
     }
 
@@ -654,33 +666,6 @@ if (goToSettingsBtn) {
     });
 };
 
-const editBtn = document.getElementById('editEmojiBtn');
-const pickerContainer = document.getElementById('emojiPickerContainer');
-const pickerContent = document.getElementById('emojiPicker');
-
-// Ouvre/ferme le picker quand on clique sur le bouton
-editBtn.addEventListener('click', () => {
-    pickerContainer.classList.toggle('shown');
-});
-
-// Ferme le picker quand on clique à l'extérieur
-pickerContainer.addEventListener('click', (e) => {
-    if (e.target === pickerContainer) {
-        pickerContainer.classList.remove('shown');
-    }
-});
-
-// Empêche de fermer quand on clique dans le picker
-pickerContent.addEventListener('click', (e) => {
-    e.stopPropagation();
-});
-
-// Quand on sélectionne un emoji
-pickerContent.addEventListener('emoji-click', (event) => {
-    document.querySelector('.moodEmoji').value = event.detail.unicode;
-    pickerContainer.classList.remove('shown');
-});
-
 
 const previewMood = document.getElementById('previewMood');
 const previewEmoji = document.getElementById('previewEmoji');
@@ -917,7 +902,7 @@ if (submitBtn) {
         try {
             const text = document.getElementById("moodInput").value.trim();
             const color = document.getElementById("moodColor").value;
-            const emoji = document.querySelector(".moodEmoji").value;
+            const emoji = document.querySelector(".moodEmoji").value || _selectedEmoji;
             const isStory = storyModeToggle?.checked;
 
             if (!text) {
@@ -935,6 +920,7 @@ if (submitBtn) {
                     color,
                     textColor: document.getElementById('textColor')?.value || null,
                     emoji,
+                    stickerUrl: _selectedStickerUrl || null,
                     createdAt: new Date().toISOString(),
                     expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
                 };
@@ -977,6 +963,7 @@ if (submitBtn) {
                     color,
                     textColor: document.getElementById('textColor')?.value || null,
                     emoji,
+                    stickerUrl: _selectedStickerUrl || null,
                     ephemeral: ephemeralToggle.checked,
                     expiresAt
                 };
@@ -993,10 +980,10 @@ if (submitBtn) {
                 showFeedback("success", "fb_post_shared"); // au lieu d'un texte brut
             }
 
-            // Réinitialisation du formulaire
-            modal.classList.add("hidden");
             document.getElementById("moodInput").value = "";
             document.querySelector(".moodEmoji").value = "";
+            _selectedEmoji = '👋';
+            _selectedStickerUrl = null;
             ephemeralToggle.checked = false;
             if (storyModeToggle) storyModeToggle.checked = false;
             updateMsgDeleteTime();
@@ -1050,7 +1037,6 @@ const openBtn = document.getElementById("currentLangLabel");
 
 const langPopup = document.getElementById("langPopup");
 const langGrid = document.getElementById("langGrid");
-const searchInput = document.getElementById("langSearch");
 
 async function initLanguageSelector() {
     const langs = await loadLanguages();
@@ -1076,18 +1062,6 @@ async function initLanguageSelector() {
         });
     }
 
-    // Search filter
-    if (searchInput) {
-        searchInput.addEventListener("input", () => {
-            const q = searchInput.value.toLowerCase();
-            const filtered = langs.filter(l =>
-                l.name.toLowerCase().includes(q) ||
-                l.code.toLowerCase().includes(q)
-            );
-            render(filtered);
-        });
-    }
-
 }
 
 initLanguageSelector();
@@ -1099,37 +1073,6 @@ if (openBtn) {
 
 
 console.log(`%c⚠ Attention: Ne rentrez JAMAIS de commande ici sans connaître son but !`, "color: orange; font-size: 25px; font-family: impact");
-
-// Générer les skeleton loaders avec cercles/carrés défilants
-function enhanceSkeletons() {
-    document.querySelectorAll('.skeleton').forEach(skeleton => {
-        if (skeleton.dataset.enhanced) return;
-
-        skeleton.textContent = '';
-        skeleton.dataset.enhanced = 'true';
-
-        // Créer 5 formes (alternance carré/cercle)
-        for (let i = 0; i < 7; i++) {
-            const shape = document.createElement('div');
-            shape.className = 'skeleton-circle';
-
-            const isCircle = i % 2 === 0;
-            const borderRadius = isCircle ? '50%' : '15px';
-
-            shape.style.cssText = `
-                width: 60px;
-                height: 60px;
-                border-radius: ${borderRadius};
-                transform: scale(1) translateY(-22px);
-            `;
-
-            skeleton.appendChild(shape);
-        }
-    });
-}
-
-// Lancer après le chargement du DOM
-document.addEventListener('DOMContentLoaded', enhanceSkeletons);
 
 function detectLowEnd() {
     const mem = navigator.deviceMemory || 1; // GB
@@ -1379,6 +1322,249 @@ function _timeAgo(dateStr) {
 
 // Alias rétrocompat
 function openStoryViewer(story) { _openViewer(_allStories.findIndex(s => s.id === story?.id) || 0); }
+
+// ============================================================
+// CREATE POST — Nouvelle UI
+// ============================================================
+
+// Compteur caractères live
+const _moodInput = document.getElementById('moodInput');
+const _charCount = document.getElementById('charCount');
+if (_moodInput && _charCount) {
+    _moodInput.addEventListener('input', () => {
+        _charCount.textContent = _moodInput.value.length;
+        _updatePreview();
+    });
+}
+
+// Color presets
+document.querySelectorAll('.create-color-preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const color = btn.dataset.color;
+        document.getElementById('moodColor').value = color;
+        document.querySelectorAll('.create-color-preset').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        _updatePreview();
+    });
+});
+
+// Custom color picker
+const _customColor = document.getElementById('moodColor');
+if (_customColor) {
+    _customColor.addEventListener('change', () => {
+        document.querySelectorAll('.create-color-preset').forEach(b => b.classList.remove('active'));
+        _updatePreview();
+    });
+}
+
+// Emoji picker overlay
+const _emojiToolBtn = document.getElementById('emojiToolBtn');
+const _emojiOverlay = document.getElementById('emojiPickerOverlay');
+const _emojiPicker = document.getElementById('emojiPicker');
+let _selectedEmoji = '👋';
+
+if (_emojiToolBtn && _emojiOverlay) {
+    _emojiToolBtn.addEventListener('click', () => {
+        _emojiOverlay.style.display = 'flex';
+    });
+
+    _emojiOverlay.querySelector('.create-picker-close').addEventListener('click', () => {
+        _emojiOverlay.style.display = 'none';
+    });
+
+    _emojiOverlay.addEventListener('click', (e) => {
+        if (e.target === _emojiOverlay) _emojiOverlay.style.display = 'none';
+    });
+}
+
+if (_emojiPicker) {
+    _emojiPicker.addEventListener('emoji-click', (e) => {
+        _selectedEmoji = e.detail.unicode;
+        document.querySelector('.moodEmoji').value = _selectedEmoji;
+        _updatePreview();
+        _emojiOverlay.style.display = 'none';
+    });
+}
+
+// Sticker picker with Tenor API
+const _stickerToolBtn = document.getElementById('stickerToolBtn');
+const _stickerOverlay = document.getElementById('stickerPickerOverlay');
+const _stickerSearchInput = document.getElementById('stickerSearchInput');
+const _stickerSearchBtn = document.getElementById('stickerSearchBtn');
+const _stickerResults = document.getElementById('stickerResults');
+let _selectedStickerUrl = null;
+
+// Clés API Tenor - v2 (Google Cloud) préférée, v1 en fallback
+const TENOR_API_KEY = 'YOUR_TENOR_API_KEY_HERE'; // ⚠️ Remplace avec ta clé depuis https://tenor.com/developer/dashboard
+const TENOR_V1_KEY = 'LIVDSRZULELA'; // Votre clé de l'exemple
+
+if (_stickerToolBtn && _stickerOverlay) {
+    _stickerToolBtn.addEventListener('click', () => {
+        _stickerOverlay.style.display = 'flex';
+        if (_stickerResults.children.length === 0) {
+            _loadTrendingStickers(); // Trending au premier load
+        }
+    });
+
+    _stickerOverlay.querySelector('.create-picker-close').addEventListener('click', () => {
+        _stickerOverlay.style.display = 'none';
+    });
+
+    _stickerOverlay.addEventListener('click', (e) => {
+        if (e.target === _stickerOverlay) _stickerOverlay.style.display = 'none';
+    });
+}
+
+if (_stickerSearchBtn && _stickerSearchInput) {
+    _stickerSearchBtn.addEventListener('click', () => {
+        const q = _stickerSearchInput.value.trim();
+        if (q) _searchStickers(q);
+    });
+
+    _stickerSearchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const q = _stickerSearchInput.value.trim();
+            if (q) _searchStickers(q);
+        }
+    });
+}
+
+async function _loadTrendingStickers() {
+    try {
+        _stickerResults.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text);opacity:.6;">Chargement des tendances...</div>';
+
+        // Tenter v2 en premier
+        const res = await fetch(`https://tenor.googleapis.com/v2/featured?key=${TENOR_V2_KEY}&client_key=moodshare&limit=20&media_filter=gif`);
+
+        if (!res.ok) throw new Error('V2 failed');
+
+        const data = await res.json();
+        _renderStickers(data.results, 'v2');
+    } catch (err) {
+        console.warn('⚠️ Tenor v2 failed, trying v1:', err);
+        // Fallback v1
+        try {
+            const res = await fetch(`https://g.tenor.com/v1/trending?key=${TENOR_V1_KEY}&limit=20`);
+            const data = await res.json();
+            _renderStickers(data.results, 'v1');
+        } catch (err2) {
+            console.error('❌ Both Tenor APIs failed:', err2);
+            _stickerResults.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text);opacity:.6;">Impossible de charger les stickers</div>';
+        }
+    }
+}
+
+async function _searchStickers(query) {
+    try {
+        _stickerResults.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text);opacity:.6;">Recherche...</div>';
+
+        // Tenter v2 en premier
+        const res = await fetch(`https://tenor.googleapis.com/v2/search?q=${encodeURIComponent(query)}&key=${TENOR_V2_KEY}&client_key=moodshare&limit=20&media_filter=gif`);
+
+        if (!res.ok) throw new Error('V2 failed');
+
+        const data = await res.json();
+
+        if (!data.results || data.results.length === 0) {
+            _stickerResults.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text);opacity:.6;">Aucun résultat</div>';
+            return;
+        }
+
+        _renderStickers(data.results, 'v2');
+    } catch (err) {
+        console.warn('⚠️ Tenor v2 failed, trying v1:', err);
+        // Fallback v1
+        try {
+            const res = await fetch(`https://g.tenor.com/v1/search?q=${encodeURIComponent(query)}&key=${TENOR_V1_KEY}&limit=20`);
+            const data = await res.json();
+
+            if (!data.results || data.results.length === 0) {
+                _stickerResults.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text);opacity:.6;">Aucun résultat</div>';
+                return;
+            }
+
+            _renderStickers(data.results, 'v1');
+        } catch (err2) {
+            console.error('❌ Both Tenor APIs failed:', err2);
+            _stickerResults.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text);opacity:.6;">Erreur de recherche</div>';
+        }
+    }
+}
+
+function _renderStickers(results, apiVersion) {
+    _stickerResults.innerHTML = '';
+
+    results.forEach(item => {
+        let previewUrl, fullUrl;
+
+        if (apiVersion === 'v2') {
+            // v2: media_formats.nanogif pour preview, gif pour share
+            previewUrl = item.media_formats?.nanogif?.url || item.media_formats?.gif?.url;
+            fullUrl = item.media_formats?.gif?.url;
+        } else {
+            // v1: media[0].nanogif pour preview, tinygif pour share
+            previewUrl = item.media?.[0]?.nanogif?.url || item.media?.[0]?.tinygif?.url;
+            fullUrl = item.media?.[0]?.tinygif?.url || item.media?.[0]?.gif?.url;
+        }
+
+        if (!previewUrl || !fullUrl) return;
+
+        const div = document.createElement('div');
+        div.className = 'sticker-item';
+        div.innerHTML = `<img src="${previewUrl}" alt="${item.content_description || item.title || ''}" />`;
+        div.addEventListener('click', () => {
+            _selectedStickerUrl = fullUrl;
+            _updatePreview();
+            _stickerOverlay.style.display = 'none';
+        });
+        _stickerResults.appendChild(div);
+    });
+}
+
+// Preview live
+function _updatePreview() {
+    const text = _moodInput.value || 'Ton message apparaîtra ici...';
+    const bgColor = document.getElementById('moodColor').value;
+    const previewCard = document.getElementById('previewCard');
+    const previewEmoji = document.getElementById('previewEmoji');
+    const previewText = document.getElementById('previewText');
+    const previewSticker = document.getElementById('previewSticker');
+
+    
+    previewEmoji.textContent = _selectedEmoji;
+    previewText.textContent = text;
+
+    // Auto text color based on brightness
+    const brightness = _getBrightness(bgColor);
+    const textColor = brightness > 128 ? '#1a1a1a' : '#ffffff';
+    previewText.style.color = textColor;
+    previewEmoji.style.color = textColor;
+
+    // Sticker
+    if (_selectedStickerUrl) {
+        previewSticker.src = _selectedStickerUrl;
+        previewSticker.style.display = 'block';
+    } else {
+        previewSticker.style.display = 'none';
+    }
+}
+
+function _getBrightness(hex) {
+    const rgb = parseInt(hex.slice(1), 16);
+    const r = (rgb >> 16) & 0xff;
+    const g = (rgb >> 8) & 0xff;
+    const b = (rgb >> 0) & 0xff;
+    return (r * 299 + g * 587 + b * 114) / 1000;
+}
+
+// Ephemeral toggle
+const _ephemeralToggle = document.getElementById('ephemeralToggle');
+const _durationPicker = document.getElementById('durationPicker');
+if (_ephemeralToggle && _durationPicker) {
+    _ephemeralToggle.addEventListener('change', () => {
+        _durationPicker.style.display = _ephemeralToggle.checked ? 'block' : 'none';
+    });
+}
 
 const profilename = document.getElementById('userName');
 if (profilename) {

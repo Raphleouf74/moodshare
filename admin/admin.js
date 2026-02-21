@@ -201,7 +201,6 @@ function renderPosts() {
         <thead><tr>
           <th>Post</th>
           <th>Likes</th>
-          <th>Cmts</th>
           <th>Date</th>
           <th>Type</th>
           <th>Actions</th>
