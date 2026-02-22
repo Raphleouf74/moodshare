@@ -1987,9 +1987,8 @@ body.dark .sv-bubble__face {
 .sv-card {
     position: relative;
     z-index: 1;
-    width: 100%;
-    max-width: 400px;
-    height: min(680px, 88svh);
+    width: 75%;
+    height: 90%;
     border-radius: 22px;
     overflow: hidden;
     display: flex;
@@ -2870,6 +2869,34 @@ section#homeTab {
 .low-end #circleback {
     display: none;
 }
+
+#circleback {
+    position: fixed;
+    scale: 10;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    top: -50px;
+    left: 50px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+#squareback {
+    position: fixed;
+    scale: 8;
+    rotate: -10deg;
+    width: 200px;
+    height: 200px;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.3);
+    bottom: -50px;
+    right: 100px;
+    pointer-events: none;
+    z-index: -1;
+}
+
 
 .lowend-controls {
     display: flex;

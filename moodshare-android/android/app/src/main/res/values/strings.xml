@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MoodShare</string>
+    <string name="title_activity_main">MoodShare</string>
+    <string name="package_name">com.moodshare.app</string>
+    <string name="custom_url_scheme">com.moodshare.app</string>
+</resources>
