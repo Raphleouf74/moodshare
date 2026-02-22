@@ -45,7 +45,8 @@
     <div id="squareback"></div>
     <div
       id="accountheader"
-      onclick="document.getElementById('authModal').style.display = 'block'">
+      onclick="document.getElementById('authModal').style.display = 'block'"
+    >
       <span id="userName">UserName</span>
     </div>
 
@@ -968,7 +969,28 @@
       <button class="hoverable" id="clearContentBtn">Supprimer le contenu</button class="hoverable">
       <button class="hoverable" id="deleteAccountBtn">Supprimer le compte</button class="hoverable"> -->
       </div>
-
+      <button style="background-color: transparent; border:none;">
+        <a
+          href="moodshare.apk"
+          download
+          style="
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: black;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-family: sans-serif;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+          "
+        >
+          <span style="margin-right: 10px">🤖</span> Installer l'App (.apk)
+        </a>
+      </button>
       <footer>
         <p data-i18n="copyright">
           <b>Moodshare &copy; 2025-2026.</b> Toute reproduction partielle ou
