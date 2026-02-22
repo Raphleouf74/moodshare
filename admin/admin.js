@@ -4,10 +4,10 @@
 // ======================
 const API = "https://moodshare-7dd7.onrender.com/api";
 
-const ADMIN_CREDS = {
-    id: "rmladmin",
-    password: "Jem4ppelleraphael!",
-};
+const ADMIN_CREDS = [
+    { id: "rmladmin", password: "Jem4ppelleraphael!" },
+    { id: "Benjamin A", password: "benben17000" }
+];
 
 // Doit correspondre à la variable d'env ADMIN_SECRET sur Render.
 // Change cette valeur après avoir configuré la variable sur Render.
@@ -38,10 +38,10 @@ function attemptLogin() {
 
     err.classList.remove("show");
 
-    if (
-        id === ADMIN_CREDS.id &&
-        pw === ADMIN_CREDS.password
-    ) {
+    // Vérifier si les credentials correspondent à au moins un admin dans le tableau
+    const isValidAdmin = ADMIN_CREDS.some(admin => admin.id === id && admin.password === pw);
+
+    if (isValidAdmin) {
         sessionStorage.setItem("ms_admin", "1");
         document.getElementById("login-screen").style.display = "none";
         document.getElementById("admin-screen").classList.add("show");
@@ -491,7 +491,8 @@ async function confirmEmergencyRestart() {
     const errorEl = document.getElementById("emergency-error");
 
     // Vérifier les credentials
-    if (password !== ADMIN_CREDS.password) {
+    const isValidAdmin = ADMIN_CREDS.some(admin => admin.password === password);
+    if (!isValidAdmin) {
         errorEl.textContent = "❌ Mot de passe incorrect";
         errorEl.style.display = "block";
         return;
