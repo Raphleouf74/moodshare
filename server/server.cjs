@@ -33,7 +33,6 @@ const postSchema = new mongoose.Schema({
   ephemeral: { type: Boolean, default: false },
   expiresAt: { type: Date, default: null },
   repostedFrom: String,
-  repostedBy: Object,
   createdAt: { type: Date, default: Date.now },
   editedAt: Date,
   pinned: { type: Boolean, default: false },
@@ -396,7 +395,6 @@ app.post('/api/posts/:id/repost', async (req, res) => {
       id: Date.now().toString(),
       likes: 0,
       repostedFrom: orig.id,
-      repostedBy: { username: req.user.username || req.user.name || 'user' },
       createdAt: new Date().toISOString()
     };
 
