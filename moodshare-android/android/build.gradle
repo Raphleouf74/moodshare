@@ -1,11 +1,21 @@
-// fichier android/build.gradle racine
 buildscript {
+    ext.kotlin_version = '1.9.0' // Add this line (or your preferred version)
+    ext {
+        androidxAppCompatVersion = "1.6.1"
+        buildToolsVersion = "34.0.0"
+        minSdkVersion = 21
+        compileSdkVersion = 34
+        targetSdkVersion = 34
+        googlePlayServicesVersion = "18.0.0"
+        androidMapsUtilsVersion = "3.4.0"
+    }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.1.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -14,24 +24,4 @@ allprojects {
         google()
         mavenCentral()
     }
-}
-android {
-    compileSdkVersion 36
-
-    defaultConfig {
-        applicationId "com.moodshare.app"
-        minSdkVersion 24
-        targetSdkVersion 36
-        versionCode 1
-        versionName "1.0"
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-}
-
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
