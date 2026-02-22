@@ -1,5 +1,5 @@
 .netlify
-node_modules
-node_modules
+/node_modules
 push.ps1
-moodshare-android
+/moodshare-android
+capacitor.config.json.

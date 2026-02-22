@@ -15,8 +15,8 @@ echo "🏗️ Compilation de l'APK..."
 
 if [ $? -eq 0 ]; then
     echo "✅ Build réussi !"
-    cp app/build/outputs/apk/debug/app-debug.apk ../../moodshare-android.apk
-    echo "💾 APK copiée à la racine du projet : moodshare-android.apk"
+    cp app/build/outputs/apk/debug/app-debug.apk ../../moodshare.apk
+    echo "💾 APK copiée à la racine du projet : moodshare.apk"
 else
     echo "❌ Le build a échoué."
     exit 1
