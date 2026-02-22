@@ -2,8 +2,6 @@ require("dotenv").config();
 const path = require("path");
 const mongoose = require("mongoose");
 
-process.env.USERS_FILE = process.env.USERS_FILE || path.join(__dirname, "users.json");
-
 const express = require("express");
 const cors = require("cors");
 const session = require("express-session");
@@ -14,7 +12,7 @@ const rateLimit = require("express-rate-limit");
 const fs = require("fs");
 const fsPromises = require("fs/promises");
 
-const authRoutes = require("./routes/auth.cjs");
+// Routes externes (users)
 const usersRoutes = require("./routes/users.cjs");
 const db = require("./db.cjs");
 
@@ -43,6 +41,21 @@ const postSchema = new mongoose.Schema({
 }, { _id: false });
 
 const PostModel = mongoose.models.Post || mongoose.model('Post', postSchema);
+
+// ============================================================
+// USER SCHEMA pour MongoDB
+// ============================================================
+const userSchema = new mongoose.Schema({
+  _id: { type: String, default: () => Date.now().toString() },
+  displayName: { type: String, required: true },
+  email: { type: String, required: true, unique: true, lowercase: true },
+  password: { type: String, required: true },
+  isGuest: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now },
+  lastLogin: { type: Date, default: Date.now }
+}, { _id: false });
+
+const UserModel = mongoose.models.User || mongoose.model('User', userSchema);
 
 let mongoReady = false;
 
@@ -160,6 +173,21 @@ app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.json());
+
+// ============================================================
+// SESSION — Configuration express-session
+// ============================================================
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'moodshare-secret-change-me-in-production',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // HTTPS only en prod
+    httpOnly: true,
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+  }
+}));
 
 // Rate Limit — exempter les routes admin et SSE
 const generalLimiter = rateLimit({
@@ -620,7 +648,7 @@ app.get('/api/admin/status', requireAdmin, (req, res) => {
   const serverStartTime = process.uptime() * 1000;
   const uptime = Math.floor(process.uptime());
   const environment = process.env.RENDER ? 'Render' : 'Local';
-  
+
   res.json({
     ok: true,
     environment,
@@ -662,7 +690,7 @@ app.post('/api/admin/emergency-restart', requireAdmin, async (req, res) => {
   const secret = req.headers['x-admin-secret'];
   console.log(`🚨 [EMERGENCY] Requête POST reçue - Secret fourni: ${secret ? '✅' : '❌'}`);
   console.log('🚨 [EMERGENCY] Redémarrage d\'urgence initié par admin');
-  
+
   try {
     // Fermer tous les clients SSE
     const closedCount = sseClients.length;
@@ -696,9 +724,9 @@ app.post('/api/admin/emergency-restart', requireAdmin, async (req, res) => {
     console.log('✅ [EMERGENCY] Redémarrage d\'urgence complété');
   } catch (err) {
     console.error('❌ [EMERGENCY] Erreur:', err.message);
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Erreur lors du redémarrage d\'urgence',
-      details: err.message 
+      details: err.message
     });
   }
 });
@@ -709,19 +737,171 @@ app.get('/api/admin/emergency-restart', (req, res) => {
   res.status(405).json({ error: 'Méthode non autorisée - utilisez POST' });
 });
 
-/// AUTH & USER ROUTES
+/// AUTH ROUTES — MongoDB implementation
+const crypto = require('crypto');
+
+// Helper: hash password
+function hashPassword(password) {
+  return crypto.createHash('sha256').update(password).digest('hex');
+}
+
 app.use("/api/auth", (req, res, next) => {
-  try {
-    console.log("🔐 [Auth debug] %s %s Origine=%s Type de contenu=%s", req.method, req.originalUrl, req.headers.origin || 'none', req.headers['content-type']);
-    // body est disponible grâce à express.json() plus haut
-    // console.log("🔐 [AUTH DEBUG] body:", JSON.stringify(req.body));
-  } catch (err) {
-    console.error("🔐 [Auth Debug] Erreur pour afficher le body:", err);
-  }
+  console.log("🔐 [Auth] %s %s", req.method, req.path);
   next();
 });
 
-app.use("/api/auth", authRoutes);
+// POST /api/auth/register
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { displayName, email, password } = req.body;
+
+    if (!displayName || !email || !password) {
+      return res.status(400).json({ error: 'Tous les champs sont requis' });
+    }
+
+    // Check if MongoDB is ready
+    if (!mongoReady) {
+      return res.status(503).json({ error: 'Base de données non disponible' });
+    }
+
+    // Check if user exists
+    const existing = await UserModel.findOne({ email: email.toLowerCase() });
+    if (existing) {
+      return res.status(400).json({ error: 'Email déjà utilisé' });
+    }
+
+    // Create user
+    const newUser = new UserModel({
+      _id: Date.now().toString(),
+      displayName,
+      email: email.toLowerCase(),
+      password: hashPassword(password),
+      createdAt: new Date(),
+      lastLogin: new Date()
+    });
+
+    await newUser.save();
+
+    // Auto-login après inscription
+    req.session.user = {
+      id: newUser._id,
+      displayName: newUser.displayName,
+      email: newUser.email
+    };
+
+    console.log('✅ User registered:', email);
+    res.json({
+      user: {
+        id: newUser._id,
+        displayName: newUser.displayName,
+        email: newUser.email
+      }
+    });
+  } catch (err) {
+    console.error('❌ Register error:', err);
+    res.status(500).json({ error: 'Erreur inscription' });
+  }
+});
+
+// POST /api/auth/login
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, displayName, password } = req.body;
+    const identifier = email || displayName;
+
+    if (!identifier || !password) {
+      return res.status(400).json({ error: 'Email/pseudo et mot de passe requis' });
+    }
+
+    if (!mongoReady) {
+      return res.status(503).json({ error: 'Base de données non disponible' });
+    }
+
+    // Find user by email or displayName (case insensitive)
+    const user = await UserModel.findOne({
+      $or: [
+        { email: identifier.toLowerCase() },
+        { displayName: { $regex: new RegExp(`^${identifier}$`, 'i') } }
+      ]
+    });
+
+    if (!user || user.password !== hashPassword(password)) {
+      return res.status(401).json({ error: 'Identifiants incorrects' });
+    }
+
+    // Update last login
+    user.lastLogin = new Date();
+    await user.save();
+
+    // Set session
+    req.session.user = {
+      id: user._id,
+      displayName: user.displayName,
+      email: user.email
+    };
+
+    console.log('✅ User logged in:', user.email);
+    res.json({
+      user: {
+        id: user._id,
+        displayName: user.displayName,
+        email: user.email
+      },
+      token: user._id // Token simple basé sur l'ID
+    });
+  } catch (err) {
+    console.error('❌ Login error:', err);
+    res.status(500).json({ error: 'Erreur connexion' });
+  }
+});
+
+// POST /api/auth/guest
+app.post('/api/auth/guest', async (req, res) => {
+  try {
+    const guestId = 'guest_' + Date.now();
+
+    // Optionnel: créer aussi les invités dans MongoDB pour tracking
+    if (mongoReady) {
+      const guestUser = new UserModel({
+        _id: guestId,
+        displayName: 'Invité',
+        email: `${guestId}@guest.local`,
+        password: hashPassword(Math.random().toString()),
+        isGuest: true,
+        createdAt: new Date(),
+        lastLogin: new Date()
+      });
+      await guestUser.save().catch(() => { }); // Ignore errors pour guest
+    }
+
+    req.session.user = { id: guestId, displayName: 'Invité', isGuest: true };
+    console.log('✅ Guest login:', guestId);
+    res.json({
+      user: { id: guestId, displayName: 'Invité' },
+      token: guestId
+    });
+  } catch (err) {
+    console.error('❌ Guest error:', err);
+    res.status(500).json({ error: 'Erreur connexion invité' });
+  }
+});
+
+// POST /api/auth/logout
+app.post('/api/auth/logout', (req, res) => {
+  req.session.destroy();
+  res.json({ ok: true });
+});
+
+// GET /api/auth/me
+app.get('/api/auth/me', (req, res) => {
+  if (!req.session?.user) {
+    return res.status(401).json({ error: 'Non authentifié' });
+  }
+  res.json({ user: req.session.user });
+});
+
+// Remove old routes mounting
+// app.use("/api/auth", authRoutes);
 app.use("/api", usersRoutes);
 // Debug : lister les routes enregistrées (utile pour vérifier les chemins)
 function listRoutes() {

@@ -5,11 +5,11 @@
   "loader_loading": "Cargando...",
   "header_title": "MoodShare",
   "header_subtitle": "Estado de ánimo exprime tonelada",
-  "nav_home": "Bienvenido",
+  "nav_home": "Inicio",
   "nav_posts": "Publicaciones",
   "nav_create": "Crear",
   "nav_inbox": "Notificaciones",
-  "nav_profile": "Perfil",
+  "nav_profile": "Más",
   "nav_settings": "Ajustes",
   "home_stories": "Historias",
   "home_recent_posts": "Publicaciones recientes",
@@ -26,7 +26,7 @@
   "inbox_empty": "Tus notificaciones aparecerán aquí.",
   "profile_avatar": "Tu avatar",
   "profile_posts": "Vos publicaciones",
-  "settings_app": "Configuración de la aplicación",
+  "settings_app": "Configuración del sitio",
   "settings_darkmode": "tema oscuro",
   "settings_notifications": "Notificaciones",
   "settings_language": "Idioma",
@@ -74,5 +74,6 @@
   "register_btn": "Registro",
   "guest_btn": "Continuar como invitado",
   "logout_btn": "Finalizar la sesión",
-  "login-message": "¡Moodshare es aún más divertido cuando estás conectado!"
+  "login-message": "¡Moodshare es aún más divertido cuando estás conectado!",
+  "copyright": "Moodshare © 2025-2026. Queda estrictamente prohibida cualquier reproducción, total o parcial."
 }

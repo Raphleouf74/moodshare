@@ -13,13 +13,18 @@
   </head>
 
   <body>
-    
-    <div id="squareback"></div>
-    <div id="circleback"></div>
-    <div id="loader">
-      <div class="logo-container">
-        <div id="square"></div>
-        <div id="circle"></div>
+    <!-- Nouveau loader minimaliste -->
+    <div id="loader" class="loader-active">
+      <div class="loader-gradient"></div>
+      <div class="loader-content">
+        <div class="loader-logo">
+          <span class="loader-logo-text"
+            >Mood<span class="loader-accent">Share</span></span
+          >
+        </div>
+        <div class="loader-bar">
+          <div class="loader-bar-fill"></div>
+        </div>
       </div>
     </div>
 
@@ -36,18 +41,11 @@
         </div>
       </div>
     </header>
-    <div
+    <!-- <div
       id="accountheader"
-      onclick="document.getElementById('authModal').style.display = 'block'"
-    >
+      onclick="document.getElementById('authModal').style.display = 'block'">
       <span id="userName">UserName</span>
-      <img
-        src="/assets/logo/logo_dark.jpg"
-        alt="LOGO"
-        class="accounticon"
-        height="50px"
-      />
-    </div>
+    </div> -->
 
     <div id="authModal">
       <div id="authActions" class="auth-actions">
@@ -483,10 +481,10 @@
           stroke-linejoin="round"
           class="link-icon"
         >
-          <circle cx="12" cy="8" r="5" />
-          <path d="M20 21a8 8 0 0 0-16 0" />
+          <path d="M5 12h14" />
+          <path d="M12 5v14" />
         </svg>
-        <p class="link-title" data-i18n="nav_profile">Profil</p>
+        <p class="link-title" data-i18n="nav_profile">Plus</p>
       </a>
     </nav>
     <section id="homeTab" class="tab active">
@@ -520,7 +518,6 @@
         <h2 data-i18n="home_recent_posts">Posts récents</h2>
         <div id="moodWall"></div>
       </div>
-      
     </section>
 
     <section id="postsTab" class="tab hidden"></section>
@@ -678,7 +675,7 @@
             <emoji-picker id="emojiPicker"></emoji-picker>
           </div>
         </div>
-        
+
         <!-- Sticker picker overlay (hidden by default) -->
         <!-- <div
           id="stickerPickerOverlay"
@@ -863,7 +860,7 @@
     </section>
 
     <section id="profileTab" class="tab hidden">
-      <div id="accountinfo">
+      <!-- <div id="accountinfo">
         <h2 data-i18n="profile_your_profile">Votre profil</h2>
         <div id="socialStats">
           <p>
@@ -932,7 +929,7 @@
           <h2 data-i18n="profile_posts">Vos posts</h2>
           <div id="userPostsWall"><i>Chargement des posts...</i></div>
         </div>
-      </div>
+      </div> -->
 
       <!-- 🧠 Section des posts du profil -->
 
@@ -971,7 +968,7 @@
       </div>
 
       <footer>
-        <p>
+        <p data-i18n="copyright">
           <b>Moodshare &copy; 2025-2026.</b> Toute reproduction partielle ou
           totale est strictement interdite.
         </p>

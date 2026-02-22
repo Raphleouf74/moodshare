@@ -5,11 +5,11 @@
   "loader_loading": "Loading...",
   "header_title": "MoodShare",
   "header_subtitle": "Exprime ton mood",
-  "nav_home": "Welcome",
+  "nav_home": "Home",
   "nav_posts": "Posts",
   "nav_create": "Create",
   "nav_inbox": "Notifications",
-  "nav_profile": "Profile",
+  "nav_profile": "More",
   "nav_settings": "Settings",
   "home_stories": "Stories",
   "home_recent_posts": "Recent posts",
@@ -75,5 +75,6 @@
   "register_btn": "Register",
   "guest_btn": "Continue as guest",
   "logout_btn": "Log out",
-  "login-message": "Moodshare is even more fun when you're connected!"
+  "login-message": "Moodshare is even more fun when you're connected!",
+  "copyright": "Moodshare © 2025-2026. Any reproduction, total or partial, is strictly prohibited."
 }

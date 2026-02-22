@@ -5,11 +5,11 @@
   "loader_loading": "Caricamento...",
   "header_title": "MoodShare",
   "header_subtitle": "Umore di tonnellata espressa",
-  "nav_home": "Benvenuto",
+  "nav_home": "Home",
   "nav_posts": "Messaggi",
   "nav_create": "Creare",
   "nav_inbox": "Notifiche",
-  "nav_profile": "Profilo",
+  "nav_profile": "Di più",
   "nav_settings": "Impostazioni",
   "home_stories": "Storie",
   "home_recent_posts": "Post recenti",
@@ -26,7 +26,7 @@
   "inbox_empty": "Le tue notifiche verranno visualizzate qui.",
   "profile_avatar": "Il tuo avatar",
   "profile_posts": "Vos post",
-  "settings_app": "Impostazioni dell'applicazione",
+  "settings_app": "Impostazioni del sito",
   "settings_darkmode": "Tema oscuro",
   "settings_notifications": "Notifiche",
   "settings_language": "Lingua",
@@ -74,5 +74,6 @@
   "register_btn": "Registro",
   "guest_btn": "Continua come ospite",
   "logout_btn": "Esci",
-  "login-message": "Moodshare è ancora più divertente quando sei connesso!"
+  "login-message": "Moodshare è ancora più divertente quando sei connesso!",
+  "copyright": "Moodshare © 2025-2026. Qualsiasi riproduzione, totale o parziale, è severamente vietata."
 }

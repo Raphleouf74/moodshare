@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const user = await getCurrentUser();
     if (user) {
       const uname = (user && (user.displayName || user.display_name || user.username)) || localProfile.displayName || 'UserName';
-      userName.textContent = uname;
+      // userName.textContent = uname;
       saveProfileLocal({ displayName: uname });
       if (openLogin) openLogin.classList.add('hidden');
       if (openRegister) openRegister.classList.add('hidden');

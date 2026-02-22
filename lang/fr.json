@@ -9,7 +9,7 @@
     "nav_posts": "Posts",
     "nav_create": "Créer",
     "nav_inbox": "Notifications",
-    "nav_profile": "Profil",
+    "nav_profile": "Plus",
     "nav_settings": "Paramètres",
     "home_stories": "Stories",
     "home_recent_posts": "Posts récents",
@@ -83,5 +83,6 @@
     "network_error": "Erreur réseau",
     "comment_failed": "Échec du commentaire",
     "not_logged_in": "Vous n'êtes pas connecté(e)",
-    "update_title": "Nouvelle mise à jour disponible !"
+    "update_title": "Nouvelle mise à jour disponible !",
+    "copyright": "Moodshare © 2025-2026. Toute reproduction partielle ou totale est strictement interdite."
 }

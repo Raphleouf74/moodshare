@@ -99,51 +99,41 @@ header.scrolled {
 #accountheader {
     pointer-events: all;
     text-align: center;
-    padding: 1rem;
-    width: 400px;
-    top: 20px;
-    right: 15px;
-    border-radius: 15px;
-    height: 75px;
-    background: transparent;
+    overflow: hidden;
     position: fixed;
+    color: white;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: center;
     z-index: 2000;
-    -webkit-backdrop-filter: blur(0);
-    backdrop-filter: blur(0);
-}
-
-#accountheader .accounticon {
-    border-radius: 50%;
-    height: 85px;
-    width: 85px;
-    transform: translateX(0);
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-}
-
-#accountheader.scrolled {
     top: 5px;
     right: 5px;
-    -webkit-backdrop-filter: blur(-25px);
-    backdrop-filter: blur(25px);
-}
-
-#accountheader:hover {
-    background: rgb(255, 255, 255, 0.4);
+    width: 250px;
+    font-size: 0.25rem;
+    height: 75px;
+    border-radius: 15px;
+    padding: 0;
+    background: linear-gradient(to right, rgb(0, 0, 50, 0.5) 25%, transparent);
     -webkit-backdrop-filter: blur(25px);
     backdrop-filter: blur(25px);
 }
 
 #accountheader span {
     opacity: 1;
-    font-size: 30px;
     font-weight: 800;
     display: flex;
+    font-size: 1.2rem;
 }
+
+#accountheader.scrolled img {
+    opacity: 0;
+}
+
+#accountheader:hover {
+    -webkit-backdrop-filter: blur(25px);
+    backdrop-filter: blur(25px);
+}
+
 
 
 
@@ -2519,129 +2509,171 @@ section#settingsTab #appSettings {
     height: 60px;
 }
 
-/* loader */
+/* ============================================================
+   LOADER — Minimaliste fluide
+   ============================================================ */
 
 #loader {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    inset: 0;
+    z-index: 99999;
     display: flex;
-    justify-content: center;
     align-items: center;
-    z-index: 9999;
-    animation: disappear 1.5s forwards;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    opacity: 1;
+    visibility: visible;
+    transition: opacity .6s ease, visibility .6s;
 }
 
-
-#loader.hidden {
+#loader.loader-hidden {
     opacity: 0;
     visibility: hidden;
+    pointer-events: none;
 }
 
-/* Cercle en orbite */
-
-
-
-
-/* Loader : orbite + échange de place toutes les 2s (cycle total 4s) */
-.logo-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    gap: 8px;
-    font-family: 'Arial Black', sans-serif;
-    font-size: 80px;
-    font-weight: bold;
-    height: 100vh;
-    width: 40vw;
-}
-
-/* Mettre les deux éléments en absolute pour pouvoir animer leur orbite/centre */
-.logo-container #square,
-.logo-container #circle {
+/* Gradient animé en fond */
+.loader-gradient {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    transform-origin: center center;
-    transform: translate(-50%, -50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    inset: 0;
+    background:
+        radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(249, 168, 212, 0.2) 0%, transparent 50%);
+    animation: loaderGradientShift 8s ease-in-out infinite;
 }
 
-/* Carré (centre par défaut) */
-.logo-container #square {
-    z-index: 2;
-    width: 100px;
-    height: 100px;
-    background-color: white;
-    transform: translateX(-50px);
-    color: #667eea;
-    font-size: 60px;
-    border-radius: 12px;
-    animation: 1.5s grow forwards;
-    pointer-events: none;
-}
+@keyframes loaderGradientShift {
 
-/* Cercle (orbite par défaut) */
-.logo-container #circle {
-    z-index: 1;
-    width: 100px;
-    height: 100px;
-    background-color: white;
-    color: #764ba2;
-    font-size: 46px;
-    transform: translateX(50px);
-    border-radius: 50%;
-    animation: 1.5s grow forwards;
-    animation-delay: 0.05s;
-    pointer-events: none;
-}
-
-@keyframes grow {
-    0% {
-        scale: 0.4;
-        opacity: 1;
+    0%,
+    100% {
+        transform: translate(0, 0) scale(1);
+        opacity: .6;
     }
 
-    85% {
-        scale: 1.3;
+    50% {
+        transform: translate(20px, -20px) scale(1.1);
+        opacity: .8;
+    }
+}
+
+/* Contenu central */
+.loader-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    animation: loaderContentIn .8s cubic-bezier(.34, 1.56, .64, 1) both;
+}
+
+@keyframes loaderContentIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(.92);
+    }
+
+    to {
         opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Logo texte */
+.loader-logo {
+    position: relative;
+}
+
+.loader-logo-text {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.03em;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, .2);
+    display: block;
+    animation: loaderTextPulse 2s ease-in-out infinite;
+}
+
+.loader-accent {
+    background: linear-gradient(135deg, #2456fb, #161af9);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 8px rgba(36, 191, 251, .4));
+}
+
+@keyframes loaderTextPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: .85;
+        transform: scale(1.02);
+    }
+}
+
+/* Barre de progression */
+.loader-bar {
+    width: 300px;
+    height: 10px;
+    background: rgba(255, 255, 255, .2);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, .15);
+}
+
+.loader-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, .6) 0%,
+            rgba(255, 255, 255, .95) 50%,
+            rgba(255, 255, 255, .6) 100%);
+    background-size: 200% 100%;
+    border-radius: 2px;
+    animation:
+        loaderBarFill 2s cubic-bezier(.4, 0, .2, 1) forwards,
+        loaderBarShimmer 1.5s linear infinite;
+    box-shadow: 0 0 12px rgba(255, 255, 255, .5);
+}
+
+@keyframes loaderBarFill {
+    from {
+        width: 0%;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes loaderBarShimmer {
+    0% {
+        background-position: -200% 0;
     }
 
     100% {
-        scale: 9;
-        opacity: 0;
-        pointer-events: none;
+        background-position: 200% 0;
     }
 }
 
-@keyframes disappear {
-    0% {
-        background: rgba(0, 0, 0);
+/* Responsive */
+@media (max-width: 640px) {
+    .loader-logo-text {
+        font-size: 2.5rem;
     }
 
-    85% {
-        background: rgb(10, 10, 75);
-        opacity: 1;
-    }
-
-    90% {
-        background: transparent;
-    }
-
-    110% {
-        background: transparent;
-        opacity: 0;
+    .loader-bar {
+        width: 180px;
     }
 }
 
-/* animation du carré : centre -> orbite -> centre (inverse du cercle) */
-/* Quand le loader est actif, cache le contenu principal */
+/* Hide body content while loading */
 body.loading>*:not(#loader) {
     display: none;
 }
@@ -2652,178 +2684,13 @@ body.loading {
 
 
 
-/* IMPORTANT: position:relative pour que les enfants absolute soient
-   confinés et masqués par overflow: hidden */
-.loader-content {
-    position: relative;
-    height: 50%;
-    padding: 15px;
-    border-radius: 15px;
-    width: 500px;
-    background-color: transparent;
-    transform: translateY(18px);
-    opacity: 0;
-    animation: loaderEnter 480ms cubic-bezier(.22, .9, .36, 1) forwards;
+50% {
+    transform: scale(1.4);
 }
 
-/* entrée smooth */
-@keyframes loaderEnter {
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+100% {
+    transform: scale(1);
 }
-
-#loader.hidden {
-    opacity: 0;
-    visibility: hidden;
-}
-
-body #squareback {
-    pointer-events: none;
-    position: fixed;
-    top: -300px;
-    left: 150px;
-    z-index: -1;
-    width: 200px;
-    height: 200px;
-    background-color: rgba(255, 255, 255, 0.15);
-    border-radius: 20px;
-    /* scale/rotate corrigés dans transform */
-    transform: scale(7) rotate(5deg);
-    pointer-events: none;
-    animation: moveSquare 35s linear infinite;
-}
-
-@keyframes moveSquare {
-    0% {
-        transform: translateX(0) translateY(0) scale(7) rotate(0deg);
-    }
-
-    50% {
-        transform: translateX(50px) translateY(50px) scale(7) rotate(10deg);
-    }
-
-    100% {
-        transform: translateX(0) translateY(0) scale(7) rotate(0deg);
-    }
-}
-
-body #circleback {
-    position: fixed;
-    width: 150px;
-    height: 150px;
-    background-color: rgba(255, 255, 255, 0.15);
-    border-radius: 50%;
-    /* centrer par rapport au conteneur loader-content */
-    bottom: -300px;
-    right: 150px;
-    z-index: -1;
-    transform: scale(10);
-    pointer-events: none;
-    animation: moveCircle 60s linear infinite;
-}
-
-
-
-@keyframes moveCircle {
-    0% {
-        transform: translateX(0) translateY(0) scale(10);
-    }
-
-    50% {
-        transform: translateX(-50px) translateY(-50px) scale(10);
-    }
-
-    100% {
-        transform: translateX(0) translateY(0) scale(10);
-    }
-}
-
-
-/* placer le squareback RELATIVEMENT à .loader-content et corriger transform */
-#loader #squareback {
-    position: absolute;
-    /* déjà absolute, OK */
-    width: 200px;
-    height: 200px;
-    background-color: rgba(255, 255, 255, 0.28);
-    border-radius: 20px;
-    /* centrer par rapport au conteneur loader-content */
-    top: 50%;
-    left: 50%;
-    /* scale/rotate corrigés dans transform */
-    transform: translate(-50%, -50%) scale(10) rotate(0deg);
-    pointer-events: none;
-    will-change: transform, opacity;
-}
-
-
-#loader #circleback {
-    position: absolute;
-    width: 150px;
-    height: 150px;
-    background-color: rgba(255, 255, 255, 0.4);
-    border-radius: 50%;
-    /* centrer par rapport au conteneur loader-content */
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(1.5);
-    pointer-events: none;
-    will-change: transform, opacity;
-}
-
-
-/* si tu veux un léger slide-in pour le squareback */
-@keyframes squarebackIn {
-    from {
-        opacity: 0;
-        transform: translateX(-1000px) translateY(-300px) scale(5) rotate(40deg)
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(-905px) translateY(-500px) scale(7.5) rotate(10deg);
-    }
-}
-
-/* si tu veux un léger slide-in pour le squareback */
-@keyframes circlebackIn {
-    from {
-        opacity: 0;
-        transform: translateX(500px) translateY(300px) scale(2) rotate(0deg)
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(500px) translateY(150px) scale(7.5) rotate(10deg);
-    }
-}
-
-.loader-content #squareback {
-    animation: squarebackIn 560ms cubic-bezier(.22, .9, .36, 1) both;
-    animation-delay: .2s;
-}
-
-.loader-content #circleback {
-    animation: circlebackIn 560ms cubic-bezier(.22, .9, .36, 1) both;
-    animation-delay: .6s;
-}
-
-
-/* Animation LIKE 💥 */
-@keyframes likePop {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.4);
-    }
-
-    100% {
-        transform: scale(1);
-    }
 }
 
 /* Language picker */
@@ -2857,7 +2724,7 @@ nav svg {
     padding: 10px 12px;
     border-radius: 12px;
     border: black 2px solid;
-    background-color: rgb(255,255,255);
+    background-color: rgb(255, 255, 255);
     cursor: pointer;
     font-weight: 600;
     color: var(--text);
@@ -2896,14 +2763,14 @@ section#homeTab {
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
     transform-origin: top center;
     opacity: 0;
-    transform: translateY(-6px) scale(.98);
+    transform: translateY(-25px);
     pointer-events: none;
     z-index: 200;
 }
 
 .lp-popup.open {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(-10px);
     pointer-events: auto;
 }
 
@@ -3836,6 +3703,7 @@ body.dark .likebtn:hover {
     justify-content: center;
     cursor: pointer;
 }
+
 .post-actions button:active {
     transform: translateY(1px);
     opacity: .8;
@@ -3876,7 +3744,7 @@ body.dark .post-actions button:hover {
     position: absolute;
     top: 0px;
     right: 60px;
-    width: 200px;
+    width: 180px;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -3896,7 +3764,7 @@ body.dark .post-actions button:hover {
 }
 
 .post.ephemeral #postoptions {
-    background-color: rgb(255,0,0,0.5);
+    background-color: rgb(255, 0, 0, 0.5);
 }
 
 .post.pinned #postoptions {

@@ -4,8 +4,8 @@ import { loadLanguage } from "./lang.js"; // ton loader existant
 // helper: mapping couleurs / gradients par code (simplifié — tu peux compléter)
 const flagBackgrounds = {
     "fr": "linear-gradient(90deg,#0055A4,#EDF0F6, #C8102E)",            
-    "en": "linear-gradient(180deg,#012169,#C8102E, #EDF0F6)", 
-    "es": "linear-gradient(90deg,#C60B1E,#F1BF00, #C60B1E)",         
+    "en": "linear-gradient(45deg,#012169,#C8102E, #EDF0F6)", 
+    "es": "linear-gradient(180deg,#C60B1E,#F1BF00, #C60B1E)",         
     "de": "linear-gradient(180deg,#000,#DD0000, #F1BF00)",              
     "it": "linear-gradient(90deg,#008C45,#F4F4F4, #C8102E)"
 };

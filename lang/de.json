@@ -5,11 +5,11 @@
   "loader_loading": "Laden...",
   "header_title": "MoodShare",
   "header_subtitle": "Exprime Ton-Stimmung",
-  "nav_home": "Willkommen",
+  "nav_home": "Startseite",
   "nav_posts": "Beiträge",
   "nav_create": "Erstellen",
-  "nav_inbox": "Benachrichtigungen",
-  "nav_profile": "Profil",
+  "nav_inbox": "Nachrichten",
+  "nav_profile": "Mehr",
   "nav_settings": "Einstellungen",
   "home_stories": "Geschichten",
   "home_recent_posts": "Aktuelle Beiträge",
@@ -26,7 +26,7 @@
   "inbox_empty": "Ihre Benachrichtigungen werden hier angezeigt.",
   "profile_avatar": "Dein Avatar",
   "profile_posts": "Vos-Beiträge",
-  "settings_app": "Anwendungseinstellungen",
+  "settings_app": "Site-Einstellungen",
   "settings_darkmode": "Dunkles Thema",
   "settings_notifications": "Benachrichtigungen",
   "settings_language": "Sprache",
@@ -74,5 +74,6 @@
   "register_btn": "Registrieren",
   "guest_btn": "Als Gast fortfahren",
   "logout_btn": "Abmelden",
-  "login-message": "Moodshare macht noch mehr Spaß, wenn Sie verbunden sind!"
+  "login-message": "Moodshare macht noch mehr Spaß, wenn Sie verbunden sind!",
+  "copyright": "Moodshare © 2025-2026. Jegliche Vervielfältigung, auch auszugsweise, ist strengstens untersagt."
 }
