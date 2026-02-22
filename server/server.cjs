@@ -396,7 +396,7 @@ app.post('/api/posts/:id/repost', async (req, res) => {
       id: Date.now().toString(),
       likes: 0,
       repostedFrom: orig.id,
-      repostedBy: { id: req.user.id, username: req.user.username || req.user.name || 'user' },
+      repostedBy: { username: req.user.username || req.user.name || 'user' },
       createdAt: new Date().toISOString()
     };
 

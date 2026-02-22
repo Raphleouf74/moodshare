@@ -99,20 +99,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 const nav = document.querySelector('nav');
 const header = document.querySelector('header');
-// const profileheader = document.getElementById('accountheader');
+const profileheader = document.getElementById('accountheader');
 
 window.addEventListener('scroll', () => {
     const currentScroll = window.scrollY;
 
-    // Scroll vers le bas : cache la nav
     if (currentScroll > 50) {
         header.classList.add('scrolled');
-        // profileheader.classList.add('scrolled');
+        profileheader.classList.add('scrolled');
     }
-    // Scroll vers le haut : affiche la nav
     else {
         header.classList.remove('scrolled');
-        // profileheader.classList.remove('scrolled');
+        profileheader.classList.remove('scrolled');
     }
 });
 
@@ -320,7 +318,7 @@ function displayMood(mood) {
     textSpan.className = "post-text";
 
     // Appliquer couleur de texte si fournie, sinon choisir automatiquement
-    const textColor = mood.textColor || (() => {return getBrightness(mood.color || "#ffffff") < 128 ?"#FFFFFF" : "#000000";})();
+    const textColor = mood.textColor || (() => { return getBrightness(mood.color || "#ffffff") < 128 ? "#FFFFFF" : "#000000"; })();
 
     emojiSpan.style.color = textColor;
     textSpan.style.color = textColor;
@@ -342,7 +340,7 @@ function displayMood(mood) {
     // Expiration
     if (mood.ephemeral && mood.expiresAt) {
         moodcard.classList.add('ephemeral');
-        
+
         const icon = document.createElement("svg");
         icon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert-icon lucide-triangle-alert"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>`;
 
@@ -350,7 +348,7 @@ function displayMood(mood) {
         expiration.className = "expiration-date";
         expiration.textContent = "Message ephémère";
 
-        
+
         const expirationDate = new Date(mood.expiresAt).toLocaleString("fr-FR", {
             year: "numeric",
             month: "long",
@@ -359,7 +357,7 @@ function displayMood(mood) {
             minute: "2-digit"
         });
 
-        
+
         document.getElementById('msgdeletetime').textContent = "Message ephémère";
         expiration.appendChild(icon);
         content.appendChild(expiration);
@@ -452,10 +450,10 @@ function displayMood(mood) {
     shareBtn.title = 'Partager';
     actionBar.appendChild(shareBtn);
 
-    // const repostBtn = document.createElement('button');
-    // repostBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-repeat2-icon lucide-repeat-2"><path d="m2 9 3-3 3 3"/><path d="M13 18H7a2 2 0 0 1-2-2V6"/><path d="m22 15-3 3-3-3"/><path d="M11 6h6a2 2 0 0 1 2 2v10"/></svg>';
-    // repostBtn.title = 'Reposter';
-    // actionBar.appendChild(repostBtn);
+    const repostBtn = document.createElement('button');
+    repostBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-repeat2-icon lucide-repeat-2"><path d="m2 9 3-3 3 3"/><path d="M13 18H7a2 2 0 0 1-2-2V6"/><path d="m22 15-3 3-3-3"/><path d="M11 6h6a2 2 0 0 1 2 2v10"/></svg>';
+    repostBtn.title = 'Reposter';
+    actionBar.appendChild(repostBtn);
 
     // ---- Report button ----
     const reportBtn = document.createElement('button');
@@ -483,23 +481,23 @@ function displayMood(mood) {
         }
     });
 
-    // repostBtn.addEventListener('click', async () => {
-    //     try {
-    //         const res = await fetchWithAuth(`/posts/${mood.id}/repost`, { method: 'POST' });
-    //         if (res.status === 201) {
-    //             const newp = await res.json();
-    //             displayMood(newp);
-    //             showFeedback("success", "reposted");
-    //         } else {
-    //             const errData = await res.json().catch(() => ({}));
-    //             console.error('❌ Repost error:', res.status, errData);
-    //             showFeedback("error", "repost_failed");
-    //         }
-    //     } catch (err) {
-    //         console.error('❌ Repost fetch error:', err);
-    //         showFeedback("error", "repost_failed");
-    //     }
-    // });
+    repostBtn.addEventListener('click', async () => {
+        try {
+            const res = await fetchWithAuth(`/posts/${mood.id}/repost`, { method: 'POST' });
+            if (res.status === 201) {
+                const newp = await res.json();
+                displayMood(newp);
+                showFeedback("success", "reposted");
+            } else {
+                const errData = await res.json().catch(() => ({}));
+                console.error('❌ Repost error:', res.status, errData);
+                showFeedback("error", "repost_failed");
+            }
+        } catch (err) {
+            console.error('❌ Repost fetch error:', err);
+            showFeedback("error", "repost_failed");
+        }
+    });
 
 }
 
@@ -1000,12 +998,12 @@ const loader = document.getElementById('loader');
 if (loader) {
     // Ajouter classe body.loading
     document.body.classList.add('loading');
-    
+
     // Fade out après 2s
     setTimeout(() => {
         loader.classList.add('loader-hidden');
         document.body.classList.remove('loading');
-        
+
         // Retirer du DOM après transition
         setTimeout(() => {
             loader.remove();
@@ -1540,7 +1538,7 @@ function _updatePreview() {
     const previewText = document.getElementById('previewText');
     const previewSticker = document.getElementById('previewSticker');
 
-    
+
     previewEmoji.textContent = _selectedEmoji;
     previewText.textContent = text;
 
