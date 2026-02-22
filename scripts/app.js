@@ -486,7 +486,6 @@ function displayMood(mood) {
             const res = await fetchWithAuth(`/posts/${mood.id}/repost`, { method: 'POST' });
             if (res.status === 201) {
                 const newp = await res.json();
-                displayMood(newp);
                 showFeedback("success", "reposted");
             } else {
                 const errData = await res.json().catch(() => ({}));

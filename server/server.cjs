@@ -382,7 +382,7 @@ app.post('/api/posts/:id/report', async (req, res) => {
 });
 
 // Repost (create a new post duplicating an existing one)
-app.post('/api/posts/:id/repost', async (req, res) => {
+app.post('/api/posts/:id/repost', requireAuth, async (req, res) => {
   try {
     const orig = posts.find(p => p.id == req.params.id);
     if (!orig) return res.status(404).json({ error: 'Post non trouvé' });
@@ -498,6 +498,24 @@ function requireAdmin(req, res, next) {
   }
   next();
 }
+
+function requireAuth(req, res, next) {
+  return async (req, res, next) => {
+    try {
+      const token = req.cookies && req.cookies.access_token;
+      if (!token) return res.status(401).json({ error: "Unauthorized" });
+
+      const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+      const userQ = await db.query("SELECT id, email, display_name FROM users WHERE id=$1", [payload.uid]);
+      if (!userQ.rows.length) return res.status(401).json({ error: "Unauthorized" });
+
+      req.user = userQ.rows[0];
+      next();
+    } catch (err) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+  }
+};
 
 // ============================================================
 // POST /api/admin/posts/pinned — Créer un post épinglé (annonce)
