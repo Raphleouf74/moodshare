@@ -165,9 +165,11 @@ header.scrolled .logodraw {
     }
 
     #accountheader {
-        right: -100%;
-        opacity: 0;
-        pointer-events: none;
+        scale: 0.8;
+    }
+
+    #accountheader span {
+        font-size: 2rem;
     }
 }
 
@@ -566,9 +568,6 @@ header.scrolled .logodraw {
         display: none;
     }
 
-    #authActions.auth-actions {
-        min-height: auto;
-    }
 
     .auth-actions-col {
         padding: 32px 24px;
@@ -585,8 +584,8 @@ header.scrolled .logodraw {
     justify-content: center;
     align-items: center;
     background: rgba(0, 0, 0, 0.65);
-    backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
     z-index: 10001;
     opacity: 0;
     pointer-events: none;
@@ -1305,7 +1304,7 @@ section {
     gap: 12px;
     overflow-x: auto;
     padding: 6px 2px 12px;
-    scrollbar-width: none;
+    
     -ms-overflow-style: none;
     align-items: flex-start;
 }
@@ -1925,6 +1924,7 @@ body.dark .sv-bubble__face {
     font-size: 1.65rem;
     line-height: 1;
     pointer-events: none;
+    -webkit-user-select: none;
     user-select: none;
 }
 
@@ -1978,8 +1978,9 @@ body.dark .sv-bubble__face {
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, .72);
-    backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    
 }
 
 /* Carte portrait */
@@ -2033,11 +2034,6 @@ body.dark .sv-bubble__face {
 .sv-bar--done {
     width: 100%;
 }
-
-.sv-bar--active {
-    /* width animated via JS */
-}
-
 /* Header */
 .sv-header {
     display: flex;
@@ -2156,6 +2152,7 @@ body.dark .sv-bubble__face {
     border-radius: 50%;
     border: none;
     background: rgba(0, 0, 0, .22);
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
     color: white;
     display: flex;
@@ -2682,17 +2679,6 @@ body.loading {
     overflow: hidden;
 }
 
-
-
-50% {
-    transform: scale(1.4);
-}
-
-100% {
-    transform: scale(1);
-}
-}
-
 /* Language picker */
 .language-picker {
     position: relative;
@@ -3142,6 +3128,7 @@ body.dark .create-tool-btn:hover {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, .5);
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
     z-index: 9999;
     display: flex;
