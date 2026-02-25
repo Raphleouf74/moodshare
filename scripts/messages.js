@@ -256,7 +256,7 @@ async function searchUsers(query) {
 
 async function loadConversations() {
     try {
-        const res = await fetchWithAuth('/conversations');
+        const res = await fetchWithAuth('conversations');
         if (!res.ok) return;
 
         const conversations = await res.json();
