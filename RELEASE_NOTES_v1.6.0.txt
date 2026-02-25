@@ -1,0 +1,5 @@
+ Release v1.6.0
+Date: 2026-02-25 19:55
+Build: a36-25022026
+ Changelog:
+Vous pouvez maintenant discutter !
