@@ -228,19 +228,32 @@ app.use((req, res, next) => {
 });
 
 // ============================================================
-// SESSION — Configuration express-session
+// SESSION — Configuration avec MongoDB store
 // ============================================================
+const MongoStore = require('connect-mongo');
+
 app.use(session({
   secret: process.env.SESSION_SECRET || 'moodshare-secret-change-me-in-production',
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true, // IMPORTANT pour créer session même sans login
+  store: MongoStore.create({
+    mongoUrl: MONGO_URI,
+    touchAfter: 24 * 3600 // lazy session update
+  }),
   cookie: {
-    secure: process.env.NODE_ENV === 'production', // HTTPS only en prod
+    secure: false, // CRITICAL: false pour dev et prod cross-origin
     httpOnly: true,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+    sameSite: 'lax', // lax pour cross-origin
+    domain: undefined // Pas de domain pour autoriser cross-origin
   }
 }));
+
+// Debug session middleware
+app.use((req, res, next) => {
+  console.log(`[SESSION] ${req.method} ${req.path} - Session ID: ${req.sessionID} - User: ${req.session?.user?.id || 'none'}`);
+  next();
+});
 
 // Rate Limit — exempter les routes admin et SSE
 const generalLimiter = rateLimit({

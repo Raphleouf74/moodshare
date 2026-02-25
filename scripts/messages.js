@@ -71,22 +71,46 @@ setInterval(async () => {
 let currentUserId = null;
 let currentConversation = null;
 
-document.addEventListener('DOMContentLoaded', async () => {
+// Attendre que l'auth soit complètement chargée
+async function initMessages() {
     const user = await getCurrentUser();
     if (!user) {
-        console.log('Messages require login');
+        console.log('⚠️ Messages require login');
         return;
     }
 
     currentUserId = user.id;
+    console.log('✅ Messages init for user:', currentUserId);
 
-    // Injecter UI dans profileTab (ou créer un nouvel onglet)
+    // Injecter UI
     injectMessagingUI();
+}
+
+// Init après chargement DOM + petit délai pour auth
+document.addEventListener('DOMContentLoaded', () => {
+    // Attendre 1s que auth.js finisse son init
+    setTimeout(initMessages, 1000);
 });
 
 function injectMessagingUI() {
-    const profileTab = document.getElementById('messagesdiv');
-    if (!profileTab) return;
+    // Chercher le container messages (peut être profileTab ou messagesdiv)
+    let container = document.getElementById('messagesdiv');
+    
+    if (!container) {
+        // Fallback: chercher profileTab
+        container = document.getElementById('profileTab');
+    }
+    
+    if (!container) {
+        console.error('❌ Messages container not found');
+        return;
+    }
+
+    // Vérifier si déjà injecté
+    if (document.getElementById('messages-section')) {
+        console.log('⚠️ Messages UI already injected');
+        return;
+    }
 
     // Créer section messages
     const messagesSection = document.createElement('div');
@@ -118,7 +142,8 @@ function injectMessagingUI() {
     </div>
   `;
 
-    profileTab.appendChild(messagesSection);
+    container.appendChild(messagesSection);
+    console.log('✅ Messages UI injected');
 
     // Créer modal recherche utilisateurs
     createUserSearchModal();
