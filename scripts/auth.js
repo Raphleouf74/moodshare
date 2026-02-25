@@ -2,7 +2,7 @@
 // Détection simple : en dev (localhost/127.0.0.1 ou 127.0.0.1) on utilise le backend local,
 // sinon on utilise l'URL de production (Render)
 const API_BASE = "https://moodshare-7dd7.onrender.com";
-const API = API_BASE + '/api';
+const API = API_BASE + '/api/';
 
 // debug : vérifier à l'exécution quelle API est utilisée
 // console.log('API base:', API, 'hostname:', location.hostname);

@@ -35,7 +35,7 @@ router.put("/me", express.json(), async (req, res) => {
   }
 });
 
-router.get('/users/recommended', async (req, res) => {
+router.get('/recommended', async (req, res) => {
   try {
     const users = await UserModel.find({ isGuest: false }).limit(6);
     res.json(users.map(u => ({ id: u._id, displayName: u.displayName, email: u.email })));
@@ -45,7 +45,7 @@ router.get('/users/recommended', async (req, res) => {
   }
 });
 
-router.get('/users/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const user = await UserModel.findById(req.params.id);
     if (!user) return res.status(404).json({ message: 'Not found' });
@@ -56,7 +56,7 @@ router.get('/users/:id', async (req, res) => {
   }
 });
 
-router.get('/users/search', async (req, res) => {
+router.get('/search', async (req, res) => {
   const { q } = req.query;
   if (!q || q.length < 2) return res.json([]);
   try {
