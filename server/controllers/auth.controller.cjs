@@ -1,4 +1,4 @@
-const userModel = require('../models/users.cjs');
+const userModel = require('../models/User.cjs');
 const { hashPassword, comparePassword } = require('../services/hash.cjs');
 const jwtService = require('../services/jwt.cjs');
 
