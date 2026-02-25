@@ -13,7 +13,7 @@ const fs = require("fs");
 const fsPromises = require("fs/promises");
 
 // Routes externes (users)
-const usersRoutes = require("./models/User");
+const usersRoutes = require("./models/User.cjs");
 const jwtService = require('./services/jwt.cjs');
 
 // ============================================================
