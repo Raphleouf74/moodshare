@@ -218,7 +218,7 @@ async function searchUsers(query) {
     }
 
     try {
-        const res = await fetchWithAuth(`/users/search?q=${encodeURIComponent(query)}`);
+        const res = await fetchWithAuth(`users/search?q=${encodeURIComponent(query)}`);
         if (!res.ok) return;
 
         const users = await res.json();

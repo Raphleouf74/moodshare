@@ -2,7 +2,7 @@
 // Détection simple : en dev (localhost/127.0.0.1 ou 127.0.0.1) on utilise le backend local,
 // sinon on utilise l'URL de production (Render)
 const API_BASE = "https://moodshare-7dd7.onrender.com";
-const API = API_BASE + '/api/';
+const API = API_BASE + '/api';
 
 // debug : vérifier à l'exécution quelle API est utilisée
 // console.log('API base:', API, 'hostname:', location.hostname);
@@ -32,7 +32,7 @@ export async function fetchWithAuth(path, opts = {}) {
 
 export async function registerUser(username, password, email) {
   // send displayName to server
-  const res = await fetch(`${API}/auth/register`, {
+  const res = await fetch(`${API}auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -55,7 +55,7 @@ export async function registerUser(username, password, email) {
 export async function loginUser(identifier, password) {
   // identifier can be email or displayName
   const body = identifier && identifier.includes('@') ? { email: identifier, password } : { displayName: identifier, password };
-  const res = await fetch(`${API}/auth/login`, {
+  const res = await fetch(`${API}auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
@@ -72,7 +72,7 @@ export async function loginUser(identifier, password) {
 }
 
 export async function loginGuest() {
-  const res = await fetch(`${API}/auth/guest`, {
+  const res = await fetch(`${API}auth/guest`, {
     method: 'POST',
     credentials: 'include'
   });
@@ -87,7 +87,7 @@ export async function loginGuest() {
 
 export async function logout() {
   try {
-    await fetch(`${API}/auth/logout`, { method: 'POST', credentials: 'include' });
+    await fetch(`${API}auth/logout`, { method: 'POST', credentials: 'include' });
   } catch (e) { /* ignore */ }
   clearToken();
 }
@@ -96,7 +96,7 @@ export async function getCurrentUser() {
   const token = getToken();
   if (!token) return null;
   // <-- corrige l'appel: passer un path relatif à fetchWithAuth
-  const res = await fetchWithAuth('/auth/me');
+  const res = await fetchWithAuth('auth/me');
   if (!res.ok) return null;
   const data = await res.json().catch(() => null);
   // server returns { user: ... }
