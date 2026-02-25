@@ -243,14 +243,14 @@ app.use((req, res, next) => {
 // ============================================================
 // SESSION — Configuration avec MongoDB store
 // ============================================================
-const MongoStore = require('connect-mongo')(session);
+const { MongoStore } = require('connect-mongo');
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'moodshare-secret-change-me-in-production',
   resave: false,
   saveUninitialized: true, // IMPORTANT pour créer session même sans login
   store: new MongoStore({
-    url: MONGO_URI,
+    mongoUrl: MONGO_URI,
     touchAfter: 24 * 3600 // lazy session update
   }),
   cookie: {
