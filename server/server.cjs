@@ -95,6 +95,19 @@ const conversationSchema = new mongoose.Schema({
 
 const ConversationModel = mongoose.models.Conversation || mongoose.model('Conversation', conversationSchema);
 
+// POSTS STORAGE
+let posts = [
+  {
+    text: 'Bienvenue dans Moodshare !',
+    color: '#00cfeb',
+    date: '01/01/2026',
+    emoji: '👋',
+    ephemeral: false,
+    expiresAt: null,
+    id: 0
+  }
+];
+
 let mongoReady = false;
 
 if (MONGO_URI) {
@@ -230,14 +243,14 @@ app.use((req, res, next) => {
 // ============================================================
 // SESSION — Configuration avec MongoDB store
 // ============================================================
-const MongoStore = require('connect-mongo');
+const MongoStore = require('connect-mongo')(session);
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'moodshare-secret-change-me-in-production',
   resave: false,
   saveUninitialized: true, // IMPORTANT pour créer session même sans login
-  store: MongoStore.create({
-    mongoUrl: MONGO_URI,
+  store: new MongoStore({
+    url: MONGO_URI,
     touchAfter: 24 * 3600 // lazy session update
   }),
   cookie: {
@@ -271,19 +284,6 @@ const generalLimiter = rateLimit({
 });
 
 app.use(generalLimiter);
-
-/// POSTS STORAGE
-let posts = [
-  {
-    text: 'Bienvenue dans Moodshare !',
-    color: '#00cfeb',
-    date: '01/01/2026',
-    emoji: '👋',
-    ephemeral: false,
-    expiresAt: null,
-    id: 0
-  }
-];
 
 const dataDir = path.join(__dirname, "data");
 const postsFile = path.join(dataDir, "posts.json");
