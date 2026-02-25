@@ -13,7 +13,7 @@ const fs = require("fs");
 const fsPromises = require("fs/promises");
 
 // Routes externes (users)
-const usersRoutes = require("./models/User.cjs");
+const usersRoutes = require("./routes/users.cjs");
 const jwtService = require('./services/jwt.cjs');
 
 // ============================================================
@@ -511,6 +511,12 @@ app.post("/api/stories", async (req, res) => {
 });
 app.get("/api/auth/me", async (req, res) => {
   if (!req.user) return res.status(401).json({ error: "Not authenticated" });
+
+  // Pour les invités, retourner directement
+  if (req.user.id.startsWith('guest_')) {
+    return res.json({ user: { id: req.user.id, displayName: 'Invité' } });
+  }
+
   try {
     const user = await UserModel.findById(req.user.id);
     if (!user) return res.status(401).json({ error: "User not found" });
@@ -910,7 +916,7 @@ app.post('/api/auth/login', async (req, res) => {
         displayName: user.displayName,
         email: user.email
       },
-      token: user._id // Token simple basé sur l'ID
+      token: jwtService.sign({ id: user._id }, '15m')
     });
   } catch (err) {
     console.error('❌ Login error:', err);
@@ -941,7 +947,7 @@ app.post('/api/auth/guest', async (req, res) => {
     console.log('✅ Guest login:', guestId);
     res.json({
       user: { id: guestId, displayName: 'Invité' },
-      token: guestId
+      token: jwtService.sign({ id: guestId }, '15m')
     });
   } catch (err) {
     console.error('❌ Guest error:', err);
