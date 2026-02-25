@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const UserModel = require('../models/User.cjs');
+const UserModel = require('../models/users.cjs');
 
 
 // GET /api/users/me
