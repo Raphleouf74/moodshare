@@ -945,7 +945,7 @@ nav {
     nav:not(:hover) {
         bottom: 5px;
         right: 0;
-        width: 100px;
+        width: 120px;
         height: 4px;
         background: rgba(255, 255, 255, 0.08);
         border-radius: 15px;

@@ -6,6 +6,7 @@
     <title>MoodShare</title>
     <link rel="icon" href="/assets/logo/logo_dark.jpg" />
     <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/messages.css" />
     <script
       type="module"
       src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"
@@ -432,6 +433,25 @@
         </svg>
         <p class="link-title" data-i18n="nav_home">Accueil</p>
       </a>
+      <a class="hoverable link" id="messagesTab">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="36"
+          height="36"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.25"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="link-icon"
+        >
+          <path
+            d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"
+          />
+        </svg>
+        <p class="link-title">Messages</p>
+      </a>
       <a class="hoverable link" id="createTab">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -471,6 +491,7 @@
         </svg>
         <p class="link-title" data-i18n="nav_inbox">Notifications</p>
       </a>
+
       <a class="hoverable link" id="profileTab">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -861,6 +882,10 @@
         <i data-i18n="inbox_empty">Vos notifications apparaîtront ici.</i>
       </div>
     </section>
+    <section id="messagesTab" class="tab hidden">
+      <h1 data-i18n="messages_title">Messages</h1>
+      <div id="messagesdiv"></div>
+    </section>
 
     <section id="profileTab" class="tab hidden">
       <div id="accountinfo">
@@ -969,7 +994,7 @@
       <button class="hoverable" id="clearContentBtn">Supprimer le contenu</button class="hoverable">
       <button class="hoverable" id="deleteAccountBtn">Supprimer le compte</button class="hoverable"> -->
       </div>
-      <button style="background-color: transparent; border:none;">
+      <button style="background-color: transparent; border: none">
         <a
           href="moodshare.apk"
           download
@@ -988,7 +1013,7 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
           "
         >
-          <span style="margin-right: 10px">🤖</span> Installer l'App (.apk)
+          Installer l'App (Android)
         </a>
       </button>
       <footer>
@@ -1236,6 +1261,7 @@
         </div>
       </div>
     </div>
+    <script type="module" src="/scripts/messages.js"></script>
   </body>
   <script type="module" src="scripts/app.js"></script>
   <script type="module" src="scripts/auth.js"></script>

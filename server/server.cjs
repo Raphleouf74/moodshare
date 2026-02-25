@@ -15,6 +15,7 @@ const fsPromises = require("fs/promises");
 // Routes externes (users)
 const usersRoutes = require("./routes/users.cjs");
 const db = require("./db.cjs");
+const jwtService = require('./services/jwt.cjs');
 
 // ============================================================
 // MONGODB — persistance inter-redémarrages
@@ -50,11 +51,50 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true, lowercase: true },
   password: { type: String, required: true },
   isGuest: { type: Boolean, default: false },
+  pushTokens: [{ type: String }], // Tokens FCM pour notifications
   createdAt: { type: Date, default: Date.now },
   lastLogin: { type: Date, default: Date.now }
 }, { _id: false });
 
 const UserModel = mongoose.models.User || mongoose.model('User', userSchema);
+
+// ============================================================
+// NOTIFICATION SCHEMA
+// ============================================================
+const notificationSchema = new mongoose.Schema({
+  _id: { type: String, default: () => Date.now().toString() },
+  userId: { type: String, required: true, index: true },
+  type: { type: String, required: true }, // 'message', 'like', 'comment', 'follow'
+  title: { type: String, required: true },
+  body: { type: String, required: true },
+  data: { type: Object, default: {} }, // Metadata (postId, senderId, etc)
+  read: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now }
+}, { _id: false });
+
+const NotificationModel = mongoose.models.Notification || mongoose.model('Notification', notificationSchema);
+
+// ============================================================
+// MESSAGE & CONVERSATION SCHEMA
+// ============================================================
+const messageSchema = new mongoose.Schema({
+  senderId: { type: String, required: true },
+  senderName: { type: String, required: true },
+  content: { type: String, default: '' },
+  sharedPostId: { type: String, default: null }, // Si on partage un post
+  timestamp: { type: Date, default: Date.now }
+}, { _id: false });
+
+const conversationSchema = new mongoose.Schema({
+  _id: { type: String, required: true }, // Format: "userId1_userId2" (alphabétique)
+  participants: [{ type: String, required: true }], // [userId1, userId2]
+  participantNames: { type: Map, of: String }, // { userId: displayName }
+  messages: { type: [messageSchema], default: [] }, // Max 20 messages
+  lastMessageAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
+}, { _id: false });
+
+const ConversationModel = mongoose.models.Conversation || mongoose.model('Conversation', conversationSchema);
 
 let mongoReady = false;
 
@@ -172,6 +212,21 @@ app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.json());
+
+// Middleware pour vérifier le Bearer token et définir req.user
+app.use((req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.substring(7);
+    try {
+      const decoded = jwtService.verify(token);
+      req.user = { id: decoded.id || decoded.userId };
+    } catch (err) {
+      // invalid token, ignore
+    }
+  }
+  next();
+});
 
 // ============================================================
 // SESSION — Configuration express-session
@@ -337,6 +392,8 @@ app.post("/api/posts", async (req, res) => {
       color: req.body.color,
       textColor: req.body.textColor,
       id: Date.now().toString(),
+      userId: req.session?.user?.id || null, // Track qui a créé le post
+      userName: req.session?.user?.displayName || 'Anonyme',
       ...req.body,
       likes: 0,
       pinned: false,
@@ -453,8 +510,16 @@ app.post("/api/stories", async (req, res) => {
     res.status(400).json({ error: "Contenu Invalide" });
   }
 });
-app.get("/api/auth/me", (req, res) => {
-  res.json({ user: req.user });
+app.get("/api/auth/me", async (req, res) => {
+  if (!req.user) return res.status(401).json({ error: "Not authenticated" });
+  try {
+    const user = await UserModel.findById(req.user.id);
+    if (!user) return res.status(401).json({ error: "User not found" });
+    res.json({ user: { id: user._id, displayName: user.displayName, email: user.email } });
+  } catch (err) {
+    console.error('Error getting current user:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 // LIKE / UNLIKE
 app.post("/api/posts/:id/like", async (req, res) => {
@@ -897,6 +962,388 @@ app.get('/api/auth/me', (req, res) => {
     return res.status(401).json({ error: 'Non authentifié' });
   }
   res.json({ user: req.session.user });
+});
+
+// ============================================================
+// MESSAGING ROUTES
+// ============================================================
+
+// Middleware: require auth
+function requireAuth(req, res, next) {
+  if (!req.session?.user) {
+    return res.status(401).json({ error: 'Connexion requise' });
+  }
+  next();
+}
+
+// Helper: generate conversation ID (alphabetical)
+function getConversationId(userId1, userId2) {
+  return [userId1, userId2].sort().join('_');
+}
+
+// GET /api/conversations — Liste toutes les conversations de l'utilisateur
+app.get('/api/conversations', requireAuth, async (req, res) => {
+  try {
+    if (!mongoReady) {
+      return res.status(503).json({ error: 'DB non disponible' });
+    }
+
+    const userId = req.session.user.id;
+
+    // Trouver toutes les conversations où l'utilisateur est participant
+    const conversations = await ConversationModel.find({
+      participants: userId
+    }).sort({ lastMessageAt: -1 }).lean();
+
+    res.json(conversations);
+  } catch (err) {
+    console.error('❌ Get conversations error:', err);
+    res.status(500).json({ error: 'Erreur récupération conversations' });
+  }
+});
+
+// GET /api/conversations/:otherUserId — Récupère une conversation avec quelqu'un
+app.get('/api/conversations/:otherUserId', requireAuth, async (req, res) => {
+  try {
+    if (!mongoReady) {
+      return res.status(503).json({ error: 'DB non disponible' });
+    }
+
+    const userId = req.session.user.id;
+    const otherUserId = req.params.otherUserId;
+    const convId = getConversationId(userId, otherUserId);
+
+    let conversation = await ConversationModel.findById(convId).lean();
+
+    if (!conversation) {
+      // Créer conversation vide
+      const otherUser = await UserModel.findById(otherUserId);
+      if (!otherUser) {
+        return res.status(404).json({ error: 'Utilisateur introuvable' });
+      }
+
+      conversation = {
+        _id: convId,
+        participants: [userId, otherUserId],
+        participantNames: {
+          [userId]: req.session.user.displayName,
+          [otherUserId]: otherUser.displayName
+        },
+        messages: [],
+        lastMessageAt: new Date(),
+        updatedAt: new Date()
+      };
+    }
+
+    res.json(conversation);
+  } catch (err) {
+    console.error('❌ Get conversation error:', err);
+    res.status(500).json({ error: 'Erreur récupération conversation' });
+  }
+});
+
+// POST /api/conversations/:otherUserId/messages — Envoyer un message
+app.post('/api/conversations/:otherUserId/messages', requireAuth, async (req, res) => {
+  try {
+    if (!mongoReady) {
+      return res.status(503).json({ error: 'DB non disponible' });
+    }
+
+    const userId = req.session.user.id;
+    const otherUserId = req.params.otherUserId;
+    const { content, sharedPostId } = req.body;
+
+    if (!content && !sharedPostId) {
+      return res.status(400).json({ error: 'Message ou post requis' });
+    }
+
+    const convId = getConversationId(userId, otherUserId);
+
+    // Trouver ou créer conversation
+    let conversation = await ConversationModel.findById(convId);
+
+    if (!conversation) {
+      const otherUser = await UserModel.findById(otherUserId);
+      if (!otherUser) {
+        return res.status(404).json({ error: 'Utilisateur introuvable' });
+      }
+
+      conversation = new ConversationModel({
+        _id: convId,
+        participants: [userId, otherUserId],
+        participantNames: new Map([
+          [userId, req.session.user.displayName],
+          [otherUserId, otherUser.displayName]
+        ]),
+        messages: []
+      });
+    }
+
+    // Nouveau message
+    const newMessage = {
+      senderId: userId,
+      senderName: req.session.user.displayName,
+      content: content || '',
+      sharedPostId: sharedPostId || null,
+      timestamp: new Date()
+    };
+
+    // Ajouter message et garder max 20
+    conversation.messages.push(newMessage);
+    if (conversation.messages.length > 20) {
+      conversation.messages = conversation.messages.slice(-20);
+    }
+
+    conversation.lastMessageAt = new Date();
+    conversation.updatedAt = new Date();
+
+    await conversation.save();
+
+    // Créer notification pour le destinataire
+    await createNotification(otherUserId, 'message',
+      `${req.session.user.displayName}`,
+      sharedPostId ? 'a partagé un post' : content,
+      { senderId: userId, conversationId: convId }
+    );
+
+    res.json({ message: newMessage, conversation });
+  } catch (err) {
+    console.error('❌ Send message error:', err);
+    res.status(500).json({ error: 'Erreur envoi message' });
+  }
+});
+
+// ============================================================
+// NOTIFICATIONS ROUTES
+// ============================================================
+
+// Helper: créer notification
+async function createNotification(userId, type, title, body, data = {}) {
+  if (!mongoReady) return;
+  try {
+    const notification = new NotificationModel({
+      _id: Date.now().toString(),
+      userId,
+      type,
+      title,
+      body,
+      data,
+      read: false,
+      createdAt: new Date()
+    });
+    await notification.save();
+
+    const user = await UserModel.findById(userId);
+    if (user && user.pushTokens && user.pushTokens.length > 0) {
+      await sendPushNotification(user.pushTokens, title, body, data);
+    }
+  } catch (err) {
+    console.error('❌ Create notification error:', err);
+  }
+}
+
+// GET /api/notifications — Liste notifications de l'user
+app.get('/api/notifications', requireAuth, async (req, res) => {
+  try {
+    if (!mongoReady) {
+      return res.status(503).json({ error: 'DB non disponible' });
+    }
+
+    const userId = req.session.user.id;
+    const notifications = await NotificationModel.find({ userId })
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .lean();
+
+    res.json(notifications);
+  } catch (err) {
+    console.error('❌ Get notifications error:', err);
+    res.status(500).json({ error: 'Erreur récupération notifications' });
+  }
+});
+
+// POST /api/notifications/:id/read — Marquer comme lu
+app.post('/api/notifications/:id/read', requireAuth, async (req, res) => {
+  try {
+    if (!mongoReady) {
+      return res.status(503).json({ error: 'DB non disponible' });
+    }
+
+    const notifId = req.params.id;
+    await NotificationModel.findByIdAndUpdate(notifId, { read: true });
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('❌ Mark read error:', err);
+    res.status(500).json({ error: 'Erreur marquage notification' });
+  }
+});
+
+// POST /api/users/push-token — Enregistrer token FCM
+app.post('/api/users/push-token', requireAuth, async (req, res) => {
+  try {
+    if (!mongoReady) {
+      return res.status(503).json({ error: 'DB non disponible' });
+    }
+
+    const userId = req.session.user.id;
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ error: 'Token requis' });
+    }
+
+    // Ajouter token si pas déjà présent
+    await UserModel.findByIdAndUpdate(userId, {
+      $addToSet: { pushTokens: token }
+    });
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('❌ Save push token error:', err);
+    res.status(500).json({ error: 'Erreur enregistrement token' });
+  }
+});
+
+// GET /api/users/search — Rechercher utilisateurs
+app.get('/api/users/search', requireAuth, async (req, res) => {
+  try {
+    if (!mongoReady) {
+      return res.status(503).json({ error: 'DB non disponible' });
+    }
+
+    const query = req.query.q || '';
+    if (query.length < 2) {
+      return res.json([]);
+    }
+
+    // Recherche case-insensitive sur displayName
+    const users = await UserModel.find({
+      displayName: { $regex: query, $options: 'i' },
+      _id: { $ne: req.session.user.id } // Exclure soi-même
+    })
+      .select('_id displayName email')
+      .limit(20)
+      .lean();
+
+    res.json(users);
+  } catch (err) {
+    console.error('❌ Search users error:', err);
+    res.status(500).json({ error: 'Erreur recherche utilisateurs' });
+  }
+});
+
+// GET /api/users/:userId/posts — Posts d'un utilisateur spécifique
+app.get('/api/users/:userId/posts', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Filtrer posts par userId (ajouter userId aux posts lors de la création)
+    // Pour l'instant retourner posts vides si userId pas encore trackés
+    const userPosts = posts.filter(p => p.userId === userId);
+
+    res.json(userPosts);
+  } catch (err) {
+    console.error('❌ Get user posts error:', err);
+    res.status(500).json({ error: 'Erreur récupération posts' });
+  }
+});
+
+// ============================================================
+// CONVERSATIONS & MESSAGES ROUTES
+// ============================================================
+
+// GET /api/conversations — Liste des conversations de l'utilisateur
+app.get('/api/conversations', async (req, res) => {
+  if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
+
+  try {
+    const conversations = await ConversationModel.find({
+      participants: req.user.id
+    }).sort({ lastMessageAt: -1 });
+
+    res.json(conversations.map(conv => ({
+      id: conv._id,
+      participants: conv.participants,
+      participantNames: conv.participantNames,
+      lastMessageAt: conv.lastMessageAt,
+      messages: conv.messages.slice(-1) // dernier message seulement
+    })));
+  } catch (err) {
+    console.error('Error getting conversations:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// GET /api/conversations/:userId — Récupérer les messages d'une conversation
+app.get('/api/conversations/:userId', async (req, res) => {
+  if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
+
+  const { userId } = req.params;
+
+  try {
+    const conversation = await ConversationModel.findOne({
+      participants: { $all: [req.user.id, userId], $size: 2 }
+    });
+
+    if (!conversation) return res.json([]);
+
+    res.json(conversation.messages);
+  } catch (err) {
+    console.error('Error getting messages:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// POST /api/conversations/:userId/messages — Envoyer un message
+app.post('/api/conversations/:userId/messages', async (req, res) => {
+  if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
+
+  const { userId } = req.params;
+  const { content, sharedPostId } = req.body;
+
+  if (!content && !sharedPostId) return res.status(400).json({ error: 'Content or sharedPostId required' });
+
+  try {
+    // Trouver ou créer la conversation
+    let conversation = await ConversationModel.findOne({
+      participants: { $all: [req.user.id, userId], $size: 2 }
+    });
+
+    if (!conversation) {
+      // Créer nouvelle conversation
+      const user = await UserModel.findById(req.user.id);
+      const otherUser = await UserModel.findById(userId);
+      if (!user || !otherUser) return res.status(404).json({ error: 'User not found' });
+
+      conversation = new ConversationModel({
+        _id: [req.user.id, userId].sort().join('_'),
+        participants: [req.user.id, userId],
+        participantNames: {
+          [req.user.id]: user.displayName,
+          [userId]: otherUser.displayName
+        }
+      });
+    }
+
+    // Ajouter le message
+    const message = {
+      senderId: req.user.id,
+      senderName: conversation.participantNames[req.user.id],
+      content: content || '',
+      sharedPostId: sharedPostId || null,
+      timestamp: new Date()
+    };
+
+    conversation.messages.push(message);
+    conversation.lastMessageAt = new Date();
+    await conversation.save();
+
+    res.json({ success: true, message });
+  } catch (err) {
+    console.error('Error sending message:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // Remove old routes mounting

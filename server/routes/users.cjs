@@ -46,6 +46,18 @@ router.get('/users/:id', async (req, res) => {
   res.json({ id: u.id, username: u.username, avatar: u.avatar, bio: u.bio });
 });
 
+router.get('/users/search', async (req, res) => {
+  const { q } = req.query;
+  if (!q || q.length < 2) return res.json([]);
+  try {
+    const users = await userModel.search(q);
+    res.json(users);
+  } catch (err) {
+    console.error('Error searching users:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 router.patch('/users/:id', express.json(), async (req, res) => {
   const { id } = req.params;
   if (!req.user || req.user.id !== id) return res.status(403).json({ message: 'Forbidden' });

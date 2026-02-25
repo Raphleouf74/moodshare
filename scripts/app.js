@@ -462,6 +462,16 @@ function displayMood(mood) {
     reportBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>';
     actionBar.appendChild(reportBtn);
 
+    const shareInMsg = document.createElement('button');
+    shareInMsg.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share2-icon lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>';
+    shareInMsg.title = 'Partager dans un message';
+    shareInMsg.addEventListener('click', async () => {
+        const otherUserId = prompt('ID de l\'utilisateur :');
+        if (otherUserId) {
+            await window.sharePostInMessage(mood.id, otherUserId);
+        }
+    });
+    actionBar.appendChild(shareInMsg);
     reportBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         openReportModal(mood.id);
@@ -593,7 +603,14 @@ window.closeReportModal = closeReportModal;
 window.submitReport = submitReport;
 (async () => {
     try {
+        const user = await getCurrentUser();
         const res = await fetch(`${API}/posts`);
+        if (user) {
+            const res = await fetch(`${API}/users/${user.id}/posts`);
+            const userPosts = await res.json();
+            // Afficher userPosts au lieu de tous les posts
+        }
+        
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const text = await res.text();
         let moods;

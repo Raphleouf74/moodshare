@@ -79,6 +79,18 @@ async function createGuestUser() {
   return guest;
 }
 
+async function search(query, limit = 10) {
+  const users = await readUsers();
+  const lowerQuery = query.toLowerCase();
+  return users
+    .filter(u => !u.isGuest && (
+      (u.displayName && u.displayName.toLowerCase().includes(lowerQuery)) ||
+      (u.email && u.email.toLowerCase().includes(lowerQuery))
+    ))
+    .slice(0, limit)
+    .map(u => ({ id: u.id, displayName: u.displayName, email: u.email }));
+}
+
 module.exports = {
   readUsers,
   writeUsers,
@@ -87,5 +99,6 @@ module.exports = {
   getById,
   getByEmail,
   createGuestUser,
+  search,
   usersFile
 };
