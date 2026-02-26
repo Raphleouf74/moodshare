@@ -2,7 +2,7 @@ import { loadLanguage, t } from "./lang.js";
 import { fetchWithAuth, getCurrentUser } from './auth.js';
 
 // Détection backend : local en dev, prod sinon
-const API = "http://localhost:3000/api";
+const API = "https://moodshare-7dd7.onrender.com/api";
 
 // --- Live updates via Server-Sent Events (SSE) ---
 try {
