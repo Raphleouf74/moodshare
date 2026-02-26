@@ -56,7 +56,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.get('/search', async (req, res) => {
+router.get('/users/search', async (req, res) => {
   const { q } = req.query;
   if (!q || q.length < 2) return res.json([]);
   try {
