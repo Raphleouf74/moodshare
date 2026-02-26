@@ -871,7 +871,15 @@ app.post('/api/auth/register', async (req, res) => {
       email: newUser.email
     };
 
-    console.log('✅ User registered:', email);
+    // CRITIQUE: Sauvegarder la session
+    await new Promise((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+
+    console.log('✅ User registered:', email, 'Session ID:', req.sessionID);
     res.json({
       user: {
         id: newUser._id,
@@ -922,7 +930,15 @@ app.post('/api/auth/login', async (req, res) => {
       email: user.email
     };
 
-    console.log('✅ User logged in:', user.email);
+    // CRITIQUE: Sauvegarder la session explicitement
+    await new Promise((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+
+    console.log('✅ User logged in:', user.email, 'Session ID:', req.sessionID);
     res.json({
       user: {
         id: user._id,
@@ -957,7 +973,16 @@ app.post('/api/auth/guest', async (req, res) => {
     }
 
     req.session.user = { id: guestId, displayName: 'Invité', isGuest: true };
-    console.log('✅ Guest login:', guestId);
+    
+    // CRITIQUE: Sauvegarder la session
+    await new Promise((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+    
+    console.log('✅ Guest login:', guestId, 'Session ID:', req.sessionID);
     res.json({
       user: { id: guestId, displayName: 'Invité' },
       token: jwtService.sign({ id: guestId }, '15m')
@@ -1264,103 +1289,6 @@ app.get('/api/users/:userId/posts', async (req, res) => {
   } catch (err) {
     console.error('❌ Get user posts error:', err);
     res.status(500).json({ error: 'Erreur récupération posts' });
-  }
-});
-
-// ============================================================
-// CONVERSATIONS & MESSAGES ROUTES
-// ============================================================
-
-// GET /api/conversations — Liste des conversations de l'utilisateur
-app.get('/api/conversations', async (req, res) => {
-  if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
-
-  try {
-    const conversations = await ConversationModel.find({
-      participants: req.user.id
-    }).sort({ lastMessageAt: -1 });
-
-    res.json(conversations.map(conv => ({
-      id: conv._id,
-      participants: conv.participants,
-      participantNames: conv.participantNames,
-      lastMessageAt: conv.lastMessageAt,
-      messages: conv.messages.slice(-1) // dernier message seulement
-    })));
-  } catch (err) {
-    console.error('Error getting conversations:', err);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// GET /api/conversations/:userId — Récupérer les messages d'une conversation
-app.get('/api/conversations/:userId', async (req, res) => {
-  if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
-
-  const { userId } = req.params;
-
-  try {
-    const conversation = await ConversationModel.findOne({
-      participants: { $all: [req.user.id, userId], $size: 2 }
-    });
-
-    if (!conversation) return res.json([]);
-
-    res.json(conversation.messages);
-  } catch (err) {
-    console.error('Error getting messages:', err);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-
-// POST /api/conversations/:userId/messages — Envoyer un message
-app.post('/api/conversations/:userId/messages', async (req, res) => {
-  if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
-
-  const { userId } = req.params;
-  const { content, sharedPostId } = req.body;
-
-  if (!content && !sharedPostId) return res.status(400).json({ error: 'Content or sharedPostId required' });
-
-  try {
-    // Trouver ou créer la conversation
-    let conversation = await ConversationModel.findOne({
-      participants: { $all: [req.user.id, userId], $size: 2 }
-    });
-
-    if (!conversation) {
-      // Créer nouvelle conversation
-      const user = await UserModel.findById(req.user.id);
-      const otherUser = await UserModel.findById(userId);
-      if (!user || !otherUser) return res.status(404).json({ error: 'User not found' });
-
-      conversation = new ConversationModel({
-        _id: [req.user.id, userId].sort().join('_'),
-        participants: [req.user.id, userId],
-        participantNames: {
-          [req.user.id]: user.displayName,
-          [userId]: otherUser.displayName
-        }
-      });
-    }
-
-    // Ajouter le message
-    const message = {
-      senderId: req.user.id,
-      senderName: conversation.participantNames[req.user.id],
-      content: content || '',
-      sharedPostId: sharedPostId || null,
-      timestamp: new Date()
-    };
-
-    conversation.messages.push(message);
-    conversation.lastMessageAt = new Date();
-    await conversation.save();
-
-    res.json({ success: true, message });
-  } catch (err) {
-    console.error('Error sending message:', err);
-    res.status(500).json({ error: 'Server error' });
   }
 });
 
