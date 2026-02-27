@@ -183,6 +183,11 @@ process.on("unhandledRejection", err => console.error("❌ Rejection non faite:"
 
 const app = express();
 
+// ============================================================
+// TRUST PROXY — CRITIQUE pour Render/Heroku/Vercel
+// ============================================================
+app.set('trust proxy', 1); // Trust first proxy (Render/Cloudflare)
+
 // Debug: log simple des requêtes et des origins pour aider le debug CORS
 app.use((req, res, next) => {
   console.log(`[REQ] ${new Date().toISOString()} ${req.method} ${req.originalUrl} Origin=${req.headers.origin || 'none'}`);
@@ -243,22 +248,23 @@ app.use((req, res, next) => {
 // ============================================================
 // SESSION — Configuration avec MongoDB store
 // ============================================================
-const { MongoStore } = require('connect-mongo');
+const MongoStore = require('connect-mongo');
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'moodshare-secret-change-me-in-production',
   resave: false,
   saveUninitialized: true, // IMPORTANT pour créer session même sans login
-  store: new MongoStore({
+  store: MongoStore.create({
     mongoUrl: MONGO_URI,
-    touchAfter: 24 * 3600 // lazy session update
+    touchAfter: 24 * 3600,
+    ttl: 7 * 24 * 60 * 60 // 7 jours
   }),
+  proxy: true, // CRITIQUE avec trust proxy
   cookie: {
-    secure: false, // CRITICAL: false pour dev et prod cross-origin
+    secure: process.env.NODE_ENV === 'production', // true en prod HTTPS
     httpOnly: true,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
-    sameSite: 'lax', // lax pour cross-origin
-    domain: undefined // Pas de domain pour autoriser cross-origin
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // none pour cross-origin HTTPS
   }
 }));
 
