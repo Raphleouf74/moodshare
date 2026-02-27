@@ -107,10 +107,12 @@ window.addEventListener('scroll', () => {
     if (currentScroll > 50) {
         header.classList.add('scrolled');
         profileheader.classList.add('scrolled');
+        nav.classList.add('scrolled');
     }
     else {
         header.classList.remove('scrolled');
         profileheader.classList.remove('scrolled');
+        nav.classList.remove('scrolled');
     }
 });
 

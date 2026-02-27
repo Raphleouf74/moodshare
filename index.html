@@ -100,7 +100,6 @@
             <button
               id="openLogin"
               class="auth-action-btn auth-action-btn--primary"
-              data-i18n="login_btn"
             >
               <span class="auth-action-icon">
                 <svg
@@ -120,8 +119,8 @@
                 </svg>
               </span>
               <span class="auth-action-text">
-                <strong>Se connecter</strong>
-                <small>Accéder à mon compte</small>
+                <strong data-i18n="login_btn">Se connecter</strong>
+                <small data-i18n="login_btn_sub">Accéder à mon compte</small>
               </span>
               <svg
                 class="auth-action-arrow"
@@ -142,7 +141,6 @@
             <button
               id="openRegister"
               class="auth-action-btn auth-action-btn--secondary"
-              data-i18n="register_btn"
             >
               <span class="auth-action-icon">
                 <svg
@@ -163,51 +161,8 @@
                 </svg>
               </span>
               <span class="auth-action-text">
-                <strong>S'inscrire</strong>
-                <small>Créer un compte gratuit</small>
-              </span>
-              <svg
-                class="auth-action-arrow"
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-            </button>
-
-            <div class="auth-divider"><span>ou</span></div>
-
-            <button
-              id="guestLogin"
-              class="auth-action-btn auth-action-btn--ghost"
-              data-i18n="guest_btn"
-            >
-              <span class="auth-action-icon">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <circle cx="12" cy="8" r="5" />
-                  <path d="M20 21a8 8 0 0 0-16 0" />
-                </svg>
-              </span>
-              <span class="auth-action-text">
-                <strong>Continuer en invité</strong>
-                <small>Sans créer de compte</small>
+                <strong data-i18n="register_btn">S'inscrire</strong>
+                <small data-i18n="register_btn_sub">Créer un compte gratuit</small>
               </span>
               <svg
                 class="auth-action-arrow"
@@ -249,8 +204,8 @@
                 </svg>
               </span>
               <span class="auth-action-text">
-                <strong>Se déconnecter</strong>
-                <small>Quitter ma session</small>
+                <strong data-i18n="logout_btn">Se déconnecter</strong>
+                <small data-i18n="logout_btn_sub">Quitter ma session</small>
               </span>
             </button>
           </div>
@@ -412,7 +367,7 @@
       </form>
     </div>
 
-    <nav id="nav" class="menu" role="navigation" aria-label="Menu">
+    <nav id="nav" class="menu" role="navigation">
       <a class="hoverable link active" id="homeTab">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -620,55 +575,6 @@
 
           <!-- Color presets -->
           <div class="create-color-group">
-            <button
-              type="button"
-              class="create-color-preset"
-              data-color="#ffffff"
-              style="background: #ffffff"
-              title="Blanc"
-            ></button>
-            <button
-              type="button"
-              class="create-color-preset"
-              data-color="#fef3c7"
-              style="background: #fef3c7"
-              title="Jaune pastel"
-            ></button>
-            <button
-              type="button"
-              class="create-color-preset"
-              data-color="#fecaca"
-              style="background: #fecaca"
-              title="Rouge pastel"
-            ></button>
-            <button
-              type="button"
-              class="create-color-preset"
-              data-color="#bfdbfe"
-              style="background: #bfdbfe"
-              title="Bleu pastel"
-            ></button>
-            <button
-              type="button"
-              class="create-color-preset"
-              data-color="#d9f99d"
-              style="background: #d9f99d"
-              title="Vert pastel"
-            ></button>
-            <button
-              type="button"
-              class="create-color-preset"
-              data-color="#e9d5ff"
-              style="background: #e9d5ff"
-              title="Violet pastel"
-            ></button>
-            <button
-              type="button"
-              class="create-color-preset"
-              data-color="#1f2937"
-              style="background: #1f2937"
-              title="Noir"
-            ></button>
             <input
               type="color"
               id="moodColor"
@@ -676,6 +582,7 @@
               class="create-color-custom"
               title="Couleur personnalisée"
             />
+            <label for="moodColor" data-i18n="create_bg">-</label>
           </div>
         </div>
 
@@ -994,24 +901,10 @@
       <button class="hoverable" id="clearContentBtn">Supprimer le contenu</button class="hoverable">
       <button class="hoverable" id="deleteAccountBtn">Supprimer le compte</button class="hoverable"> -->
       </div>
-      <button style="background-color: transparent; border: none">
+      <button class="download-apk-btn">
         <a
           href="moodshare.apk"
           download
-          style="
-            display: inline-flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: black;
-            padding: 12px 24px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-family: sans-serif;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-          "
         >
           Installer l'App (Android)
         </a>
