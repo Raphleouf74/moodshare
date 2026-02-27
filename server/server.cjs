@@ -184,9 +184,9 @@ process.on("unhandledRejection", err => console.error("❌ Rejection non faite:"
 const app = express();
 
 // ============================================================
-// TRUST PROXY — CRITIQUE pour Render/Heroku/Vercel
+// TRUST PROXY — CRITIQUE pour Render/Heroku/proxies
 // ============================================================
-app.set('trust proxy', 1); // Trust first proxy (Render/Cloudflare)
+app.set('trust proxy', 1);
 
 // Debug: log simple des requêtes et des origins pour aider le debug CORS
 app.use((req, res, next) => {
@@ -253,18 +253,18 @@ const MongoStore = require('connect-mongo');
 app.use(session({
   secret: process.env.SESSION_SECRET || 'moodshare-secret-change-me-in-production',
   resave: false,
-  saveUninitialized: true, // IMPORTANT pour créer session même sans login
+  saveUninitialized: true,
   store: MongoStore.create({
     mongoUrl: MONGO_URI,
     touchAfter: 24 * 3600,
-    ttl: 7 * 24 * 60 * 60 // 7 jours
+    ttl: 7 * 24 * 60 * 60
   }),
   proxy: true, // CRITIQUE avec trust proxy
   cookie: {
-    secure: process.env.NODE_ENV === 'production', // true en prod HTTPS
+    secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // none pour cross-origin HTTPS
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   }
 }));
 
