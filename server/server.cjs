@@ -248,7 +248,7 @@ app.use((req, res, next) => {
 // ============================================================
 // SESSION — Configuration avec MongoDB store
 // ============================================================
-const MongoStore = require('connect-mongo');
+const { MongoStore } = require('connect-mongo');
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'moodshare-secret-change-me-in-production',
