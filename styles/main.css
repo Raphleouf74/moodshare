@@ -941,6 +941,11 @@ nav {
     gap: 14px;
 }
 
+/* allow badges positioned inside links */
+nav .link {
+    position: relative;
+}
+
 @media screen and (min-width:760px) {
     nav:not(:hover) {
         bottom: 5px;

@@ -21,6 +21,24 @@
     background: var(--menu-bg);
 }
 
+/* badge that appears on the messages nav link */
+.nav-badge {
+    position: absolute;
+    top: 4px;
+    right: 8px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    background: #e74c3c;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    line-height: 18px;
+    border-radius: 9px;
+    display: none;
+    text-align: center;
+}
+
 body.dark .messages-sidebar {
     border-right-color: rgba(255, 255, 255, .08);
 }

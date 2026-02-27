@@ -71,6 +71,21 @@ setInterval(async () => {
 let currentUserId = null;
 let currentConversation = null;
 
+// unread counter for nav badge
+let unreadMessages = 0;
+
+function updateBadge() {
+    const badge = document.getElementById('messagesBadge');
+    if (!badge) return;
+    badge.textContent = unreadMessages > 0 ? unreadMessages : '';
+    badge.style.display = unreadMessages > 0 ? 'inline-block' : 'none';
+}
+
+function clearBadge() {
+    unreadMessages = 0;
+    updateBadge();
+}
+
 // Attendre que l'auth soit complètement chargée
 async function initMessages() {
     const user = await getCurrentUser();
@@ -81,6 +96,60 @@ async function initMessages() {
 
     currentUserId = user.id;
     console.log('✅ Messages init for user:', currentUserId);
+
+    // **real-time updates via SSE**
+    try {
+        const streamUrl = `${API}/stream`;
+        const es = new EventSource(streamUrl, { withCredentials: true });
+
+        es.addEventListener('new_message', (e) => {
+            try {
+                const data = JSON.parse(e.data);
+                const { conversationId, message, participants } = data;
+
+                // only care about messages involving the current user
+                if (!participants || !participants.includes(currentUserId)) return;
+
+                // ignore our own messages (already rendered locally)
+                if (message.senderId === currentUserId) return;
+
+                // update cache
+                const cache = getCached();
+                const msgs = cache[conversationId] || [];
+                msgs.push(message);
+                setCached(conversationId, msgs);
+
+                // if this conversation is currently open, re-render
+                const openConvId = currentConversation
+                    ? [currentUserId, currentConversation.otherUserId].sort().join('_')
+                    : null;
+                const isActive = openConvId === conversationId;
+
+                if (isActive) {
+                    renderMessages(msgs);
+                } else {
+                    // not currently visible → increment badge + feedback
+                    unreadMessages++;
+                    updateBadge();
+                    if (typeof showFeedback === 'function') {
+                        // show a short toast; translation key can be generic
+                        showFeedback('info', `Nouveau message de ${message.senderName}`);
+                    }
+                }
+
+                // refresh conversation list preview so the last message updates
+                loadConversations();
+            } catch (err) {
+                console.warn('Invalid new_message event', err);
+            }
+        });
+
+        es.addEventListener('connected', (_) => {
+            /* already connected */
+        });
+    } catch (err) {
+        console.warn('SSE for messages not supported or failed', err);
+    }
 
     // Injecter UI
     injectMessagingUI();
@@ -144,6 +213,21 @@ function injectMessagingUI() {
 
     container.appendChild(messagesSection);
     console.log('✅ Messages UI injected');
+
+    // nav badge for unread messages (in-case nav exists already)
+    const navLink = document.getElementById('messagesTab');
+    if (navLink && !document.getElementById('messagesBadge')) {
+        const badge = document.createElement('span');
+        badge.id = 'messagesBadge';
+        badge.className = 'nav-badge';
+        badge.style.display = 'none';
+        navLink.appendChild(badge);
+
+        // clear unread when user clicks the tab
+        navLink.addEventListener('click', () => {
+            clearBadge();
+        });
+    }
 
     // Créer modal recherche utilisateurs
     createUserSearchModal();
@@ -298,23 +382,24 @@ async function openConversation(otherUserId, otherName) {
     document.getElementById('messages-thread').style.display = 'flex';
     document.getElementById('current-chat-name').textContent = otherName;
 
-    // Load messages depuis cache ou API
+    // Load messages depuis cache pour affichage rapide, puis toujours récupérer
+    // depuis l'API pour s'assurer d'avoir les derniers messages entrants.
     const convId = [currentUserId, otherUserId].sort().join('_');
     const cache = getCached();
 
     if (cache[convId]) {
         renderMessages(cache[convId]);
-    } else {
-        try {
-            const res = await fetchWithAuth(`/conversations/${otherUserId}`);
-            if (!res.ok) return;
+    }
 
-            const conv = await res.json();
-            setCached(convId, conv.messages || []);
-            renderMessages(conv.messages || []);
-        } catch (err) {
-            console.error('❌ Load conversation error:', err);
-        }
+    try {
+        const res = await fetchWithAuth(`conversations/${otherUserId}`);
+        if (!res.ok) return;
+
+        const conv = await res.json();
+        setCached(convId, conv.messages || []);
+        renderMessages(conv.messages || []);
+    } catch (err) {
+        console.error('❌ Load conversation error:', err);
     }
 }
 

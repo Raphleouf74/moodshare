@@ -1155,6 +1155,17 @@ app.post('/api/conversations/:otherUserId/messages', requireAuth, async (req, re
       { senderId: userId, conversationId: convId }
     );
 
+    // SSE broadcast so clients can update in real time
+    try {
+      sendSSE('new_message', {
+        conversationId: convId,
+        message: newMessage,
+        participants: conversation.participants
+      });
+    } catch (e) {
+      console.error('❌ SSE broadcast failed:', e);
+    }
+
     res.json({ message: newMessage, conversation });
   } catch (err) {
     console.error('❌ Send message error:', err);
