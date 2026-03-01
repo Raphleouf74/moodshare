@@ -1597,3 +1597,16 @@ if (profilename) {
     const storedName = localStorage.getItem('username') || 'Non connecté';
     profilename.textContent = storedName;
 }
+const eastereggbtn = document.querySelector('.mainlogo');
+if (eastereggbtn) {
+    eastereggbtn.addEventListener('click', () => {
+        const comptclicks = parseInt(localStorage.getItem('eggClicks') || '0') + 1;
+        localStorage.setItem('eggClicks', comptclicks.toString());
+        eastereggbtn.style.scale = (comptclicks / 10) + 1; // effet de scale progressif
+        if (comptclicks < 5) return;
+        localStorage.setItem('eggClicks', '0');
+        const egg = document.querySelector('.mainlogo h1');
+        egg.textContent = "ShareMood" ;
+        document.querySelector('.logodraw #square').style.height = "20px";
+    });
+}
