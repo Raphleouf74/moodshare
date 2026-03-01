@@ -53,6 +53,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     checkSiteVersion();
     loadUserPosts();
 
+    // show/hide android download or message
+    const downloadSection = document.getElementById('downloadSection');
+    if (downloadSection) {
+        const downloadLink = downloadSection.querySelector('a.download-apk-btn');
+        const downloadMessage = document.getElementById('downloadMessage');
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const isWindows = /Windows/i.test(navigator.userAgent);
+        const isLinux = /Linux/i.test(navigator.userAgent);
+        const isMacOS = /Macintosh|Mac OS X/i.test(navigator.userAgent);
+        if (isAndroid) {
+            if (downloadLink) downloadLink.style.display = '';
+            if (downloadMessage) downloadMessage.style.display = 'none';
+        } if (isWindows || isLinux || isMacOS) {
+            if (downloadLink) downloadLink.style.display = 'none';
+            if (downloadMessage) downloadMessage.style.display = '';
+            downloadMessage.textContent = "L'application de bureau arrivera très prochainement !"
+        }
+        else {
+            if (downloadLink) downloadLink.style.display = 'none';
+            if (downloadMessage) downloadMessage.style.display = '';
+        }
+    }
+
     // Sécurité anti-code dans le textarea
     const moodInput = document.getElementById("moodInput");
 

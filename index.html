@@ -6,7 +6,6 @@
     <title>MoodShare</title>
     <link rel="icon" href="/assets/logo/logo_dark.jpg" />
     <link rel="stylesheet" href="/styles/main.css" />
-    <link rel="stylesheet" href="/styles/messages.css" />
     <script
       type="module"
       src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"
@@ -36,9 +35,7 @@
             <div id="square"></div>
             <div id="circle"></div>
           </div>
-          <h1 style="pointer-events: none">
-            MoodShare
-          </h1>
+          <h1>MoodShare</h1>
         </div>
       </div>
     </header>
@@ -162,7 +159,9 @@
               </span>
               <span class="auth-action-text">
                 <strong data-i18n="register_btn">S'inscrire</strong>
-                <small data-i18n="register_btn_sub">Créer un compte gratuit</small>
+                <small data-i18n="register_btn_sub"
+                  >Créer un compte gratuit</small
+                >
               </span>
               <svg
                 class="auth-action-arrow"
@@ -901,14 +900,14 @@
       <button class="hoverable" id="clearContentBtn">Supprimer le contenu</button class="hoverable">
       <button class="hoverable" id="deleteAccountBtn">Supprimer le compte</button class="hoverable"> -->
       </div>
-      <button class="download-apk-btn">
-        <a
-          href="moodshare.apk"
-          download
-        >
-          Installer l'App (Android)
+      <div id="downloadSection" class="download-section">
+        <a href="moodshare.apk" class="download-apk-btn">
+          Installer gratuitement l'app!
         </a>
-      </button>
+        <p id="downloadMessage" class="hidden">
+          L'app arrivera prochainement sur iOS et autres plateformes
+        </p>
+      </div>
       <footer>
         <p data-i18n="copyright">
           <b>Moodshare &copy; 2025-2026.</b> Toute reproduction partielle ou
