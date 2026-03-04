@@ -1038,16 +1038,19 @@ nav .link {
 @media (max-width: 769px) {
     nav {
         width: 90vw;
-        background-color: rgba(255, 255, 255, 0.9);
-        border-radius: 15px;
+        background-color: rgba(255, 255, 255, 0.7);
+        border-radius: 20px;
         bottom: 5px;
         height: 50px;
     }
 
     nav.scrolled {
-        background: rgb(200, 200, 200, 0.4);
+        background: transparent;
+        box-shadow: none;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+        border:none;
         height: 30px;
-        width: 50vw;
         border-radius: 15px;
         bottom: 7.5px;
     }
@@ -1057,8 +1060,24 @@ nav .link {
         box-shadow: 0 0 5px 5px rgba(94, 94, 245, 0);
     }
 
+    nav.scrolled .link {
+        width: 50px;
+        background: rgb(200,200,200,0.3);
+    }
+
+    nav.scrolled .link svg{
+        scale: 0.9;        
+        transform: translateX(-5px);
+    }
+
     .link.active:hover {
-        width: 70px;
+        width: 50px;
+        scale: 1;
+    }
+
+    .link.active:hover svg {
+        scale: 0.9;
+        transform: translateX(-5px);
     }
 
     .link:hover,
@@ -3999,6 +4018,11 @@ body.dark .conversation-item:hover {
     font-size: 1.1rem;
 }
 
+@media (max-width: 768px) {
+    #messages-empty {
+        display: flex;
+    }
+}
 #messages-thread {
     flex: 1;
     display: flex;
@@ -4027,10 +4051,15 @@ body.dark .messages-header {
     font-size: 1.4rem;
     cursor: pointer;
     transition: background .15s;
+    flex-shrink: 0;
 }
 
 .messages-header button:hover {
     background: rgba(0, 0, 0, .06);
+}
+
+.messages-header button:active {
+    transform: scale(0.95);
 }
 
 .messages-header h3 {
@@ -4073,6 +4102,7 @@ body.dark .messages-header {
     background: linear-gradient(135deg, #667eea, #764ba2);
     color: white;
     border-bottom-right-radius: 4px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, .2);
 }
 
 .message-received {
@@ -4090,6 +4120,8 @@ body.dark .message-received {
     margin: 0;
     font-size: 0.95rem;
     line-height: 1.4;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .shared-post {
@@ -4147,17 +4179,29 @@ body.dark .messages-input-wrap {
     .messages-sidebar {
         width: 100%;
         border-right: none;
+        position: relative;
     }
 
     .messages-main {
-        position: absolute;
+        position: fixed;
         inset: 0;
+        top: 0;
         background: var(--menu-bg);
-        z-index: 100;
+        z-index: 1000;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .25s ease;
+    }
+
+    .messages-main.active {
+        opacity: 1;
+        pointer-events: auto;
     }
 
     #messages-thread {
-        display: none !important;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
     }
 
     #messages-thread.active {
@@ -4166,6 +4210,81 @@ body.dark .messages-input-wrap {
 
     .messages-sidebar.hidden {
         display: none;
+    }
+
+    /* Mobile message thread optimizations */
+    #messages-body {
+        padding: 12px;
+        gap: 8px;
+    }
+
+    .message {
+        max-width: 85%;
+        padding: 10px 14px;
+        font-size: 0.95rem;
+        border-radius: 14px;
+    }
+
+    .message p {
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    /* Header optimizations */
+    .messages-header {
+        padding: 14px 12px;
+        gap: 10px;
+        flex-shrink: 0;
+    }
+
+    .messages-header button {
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .messages-header h3 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        flex: 1;
+    }
+
+    /* Input optimizations for touch */
+    .messages-input-wrap {
+        padding: 12px;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    #message-input {
+        padding: 14px 14px;
+        font-size: 1rem;
+        border-radius: 12px;
+        min-height: 44px;
+        line-height: 1.6;
+
+        -webkit-appearance: none;
+        appearance:none;
+    }
+
+    #send-message-btn {
+        padding: 14px 20px;
+        min-width: 44px;
+        min-height: 44px;
+        border-radius: 12px;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .shared-post {
+        max-width: 80%;
+        padding: 10px;
+        font-size: 0.9rem;
     }
 }
 
@@ -4492,4 +4611,85 @@ body.dark .user-search-item:hover {
 
 .btn-icon:hover {
     transform: scale(1.1);
+}
+
+/* ============================================================
+   MOBILE MESSAGING ENHANCEMENTS
+   ============================================================ */
+@media (max-width: 768px) {
+    /* Back button styling and animation */
+    .messages-header button:first-child {
+        order: -1;
+        background: rgba(0, 0, 0, .04);
+        border-radius: 8px;
+        padding: 8px;
+        transition: all .15s;
+    }
+
+    body.dark .messages-header button:first-child {
+        background: rgba(255, 255, 255, .06);
+    }
+
+    .messages-header button:first-child:active {
+        background: rgba(0, 0, 0, .1);
+        transform: scale(0.9);
+    }
+
+    body.dark .messages-header button:first-child:active {
+        background: rgba(255, 255, 255, .12);
+    }
+
+    /* Smooth scrolling */
+    #messages-body {
+        scroll-behavior: smooth;
+    }
+
+    /* Message timestamps on mobile hover */
+    .message-time {
+        font-size: 0.75rem;
+        opacity: 0.7;
+        margin-top: 4px;
+        display: none;
+    }
+
+    .message:hover .message-time {
+        display: block;
+    }
+
+    /* Prevent zoom on input focus (font size 16px prevents auto-zoom) */
+    #message-input,
+    .search-input-wrap input {
+        font-size: 16px !important;
+    }
+
+    /* Safe area support for notched devices */
+    .messages-header {
+        padding-top: max(14px, env(safe-area-inset-top));
+    }
+
+    .messages-input-wrap {
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
+    }
+
+    /* Conversation list on mobile - make items more tappable */
+    .conversation-item {
+        padding: 14px;
+        min-height: 60px;
+    }
+
+    .conv-avatar {
+        min-width: 48px;
+        min-height: 48px;
+    }
+
+    /* Messages - better spacing for thumb interaction */
+    .message {
+        margin-bottom: 2px;
+    }
+
+    /* Shared post optimized */
+    .shared-post {
+        max-width: 90%;
+        padding: 12px;
+    }
 }
