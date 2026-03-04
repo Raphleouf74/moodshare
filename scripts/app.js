@@ -149,7 +149,6 @@ async function checkSiteVersion() {
         if (current && current !== latest || currentBuild && currentBuild !== latestBuild) {
             showFeedback("warning", "fb_version_not_up_to_date");
             addInboxNotification("warning", "fb_version_not_up_to_date", "fb_update_how_to");
-            caches.keys().then(names => names.forEach(name => caches.delete(name)));
             localStorage.clear();
 
             // Recharge après un petit délai
@@ -612,7 +611,7 @@ window.submitReport = submitReport;
             const userPosts = await res.json();
             // Afficher userPosts au lieu de tous les posts
         }
-        
+
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const text = await res.text();
         let moods;
@@ -747,7 +746,7 @@ function showFeedback(type, messageKey, vars = {}) {
         warning: "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"36\" height=\"36\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-triangle-alert-icon lucide-triangle-alert\"><path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\"/><path d=\"M12 9v4\"/><path d=\"M12 17h.01\"/></svg>   ",
         info: "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"36\" height=\"36\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-circle-alert-icon lucide-circle-alert\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"12\" x2=\"12\" y1=\"8\" y2=\"12\"/><line x1=\"12\" x2=\"12.01\" y1=\"16\" y2=\"16\"/></svg>",
         remark: "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"36\" height=\"36\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-message-circle-warning-icon lucide-message-circle-warning\"><path d=\"M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719\"/><path d=\"M12 8v4\"/><path d=\"M12 16h.01\"/></svg>",
-        welcome: "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"36\" height=\"36\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-party-popper-icon lucide-party-popper\"><path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1..93-2..83-4..75, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5\""
+        welcome: "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"36\" height=\"36\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-party-popper-icon lucide-party-popper\"><path d=\"M5.8 11.3 2 22l10.7-3.79\"/><path d=\"M4 3h.01\"/><path d=\"M22 8h.01\"/><path d=\"M15 2h.01\"/><path d=\"M22 20h.01\"/><path d=\"m22 2-2.24.75a2.9 2.9 0 0 0-1.96 3.12c.1.86-.57 1.63-1.45 1.63h-.38c-.86 0-1.6.6-1.76 1.44L14 10\"/><path d=\"m22 13-.82-.33c-.86-.34-1.82.2-1.98 1.11c-.11.7-.72 1.22-1.43 1.22H17\"/><path d=\"m11 2 .33.82c.34.86-.2 1.82-1.11 1.98C9.52 4.9 9 5.52 9 6.23V7\"/><path d=\"M11 13c1.93 1.93 2.83 4.17 2 5-.83.83-3.07-.07-5-2-1.93-1..93-2..83-4..75, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5, -5\""
     };
 
     // ---- Icône ----
@@ -1592,21 +1591,67 @@ if (_ephemeralToggle && _durationPicker) {
     });
 }
 
-const profilename = document.getElementById('userName');
-if (profilename) {
-    const storedName = localStorage.getItem('username') || 'Non connecté';
-    profilename.textContent = storedName;
-}
-const eastereggbtn = document.querySelector('.mainlogo');
-if (eastereggbtn) {
-    eastereggbtn.addEventListener('click', () => {
-        const comptclicks = parseInt(localStorage.getItem('eggClicks') || '0') + 1;
-        localStorage.setItem('eggClicks', comptclicks.toString());
-        eastereggbtn.style.scale = (comptclicks / 10) + 1; // effet de scale progressif
-        if (comptclicks < 5) return;
-        localStorage.setItem('eggClicks', '0');
-        const egg = document.querySelector('.mainlogo h1');
-        egg.textContent = "ShareMood" ;
-        document.querySelector('.logodraw #square').style.height = "20px";
+document.addEventListener('DOMContentLoaded', () => {
+    // === PULL-TO-REFRESH SETUP ===
+    initPullToRefresh();
+});
+
+// ============================================================
+// PULL-TO-REFRESH
+// ============================================================
+let pullStartY = 0;
+let isPulling = false;
+
+function initPullToRefresh() {
+    document.addEventListener('touchstart', (e) => {
+        // Vérifier si on est au top de la page
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        if (scrollTop === 0) {
+            pullStartY = e.touches[0].clientY;
+            isPulling = true;
+        }
+    });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!isPulling) return;
+
+        const pullDist = e.touches[0].clientY - pullStartY;
+        const indicator = document.getElementById('pullRefreshIndicator');
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+
+        if (pullDist > 0 && scrollTop === 0) {
+            e.preventDefault();
+
+            // Afficher l'indicateur avec animation
+            if (indicator) {
+                indicator.style.opacity = Math.min(pullDist / 100, 1);
+                indicator.style.transform = `translateY(${Math.min(pullDist, 60)}px) rotate(${Math.min(pullDist / 2, 180)}deg)`;
+                indicator.classList.add('visible');
+            }
+        }
+    });
+
+    document.addEventListener('touchend', (e) => {
+        if (!isPulling) return;
+        isPulling = false;
+
+        const pullDist = e.changedTouches[0].clientY - pullStartY;
+        const indicator = document.getElementById('pullRefreshIndicator');
+
+        if (pullDist > 80) {
+            // Refresh
+            if (indicator) {
+                indicator.classList.add('loading');
+            }
+
+            window.location.reload();
+        } else {
+            // Reset
+            if (indicator) {
+                indicator.classList.remove('visible');
+                indicator.style.opacity = 0;
+                indicator.style.transform = 'translateY(0) rotate(0deg)';
+            }
+        }
     });
 }

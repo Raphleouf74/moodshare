@@ -378,10 +378,20 @@ async function loadConversations() {
 async function openConversation(otherUserId, otherName) {
     currentConversation = { otherUserId, otherName };
 
+    const messagesMain = document.querySelector('.messages-main');
+    const messagesSidebar = document.querySelector('.messages-sidebar');
+    
     document.getElementById('messages-empty').style.display = 'none';
     document.getElementById('messages-thread').style.display = 'flex';
     document.getElementById('current-chat-name').textContent = otherName;
-
+    
+    // Mobile: show main, hide sidebar
+    if (messagesMain) messagesMain.classList.add('active');
+    if (messagesSidebar) messagesSidebar.classList.add('hidden');
+    
+    // ✅ AJOUTER CETTE LIGNE:
+    document.body.classList.add('messages-open');
+    
     // Load messages depuis cache pour affichage rapide, puis toujours récupérer
     // depuis l'API pour s'assurer d'avoir les derniers messages entrants.
     const convId = [currentUserId, otherUserId].sort().join('_');
@@ -462,9 +472,19 @@ async function sendMessage() {
 }
 
 function closeThread() {
+    const messagesMain = document.querySelector('.messages-main');
+    const messagesSidebar = document.querySelector('.messages-sidebar');
+    
     document.getElementById('messages-thread').style.display = 'none';
     document.getElementById('messages-empty').style.display = 'flex';
     currentConversation = null;
+    
+    // Mobile: hide main, show sidebar
+    if (messagesMain) messagesMain.classList.remove('active');
+    if (messagesSidebar) messagesSidebar.classList.remove('hidden');
+    
+    // ✅ AJOUTER CETTE LIGNE:
+    document.body.classList.remove('messages-open');
 }
 
 // Fonction pour partager un post dans une conversation

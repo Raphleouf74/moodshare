@@ -208,9 +208,10 @@ const corsOptions = {
       "https://moodsharing.netlify.app",
       "https://moodshare-7dd7.onrender.com"
     ];
-    const localhostRegex = /^https?:\/\/(localhost|192\.168\.1\.21|::1)(:\d+)?$/;
+    // Mettre 127.0.0.1 et 192.168.1.21 en localhost safe
+    const localhostsRegex = /^https?:\/\/(localhost|127\.0\.0\.1|192\.168\.1\.21)(:\d+)?$/;
 
-    if (localhostRegex.test(origin) || allowedHosts.includes(origin)) {
+    if (localhostsRegex.test(origin) || allowedHosts.includes(origin)) {
       return callback(null, true);
     }
     console.log("❌ Bloqué par le CORS:", origin);
