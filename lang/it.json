@@ -75,5 +75,6 @@
   "guest_btn": "Continua come ospite",
   "logout_btn": "Esci",
   "login-message": "Moodshare è ancora più divertente quando sei connesso!",
-  "copyright": "Moodshare © 2025-2026. Qualsiasi riproduzione, totale o parziale, è severamente vietata."
+  "copyright": "Moodshare © 2025-2026. Qualsiasi riproduzione, totale o parziale, è severamente vietata.",
+  "message_warning": "Attenzione, vengono salvati solo gli ultimi 20 messaggi. Inoltre, i messaggi non sono crittografati, fai attenzione a ciò che condividi: può essere visto dai moderatori!"
 }

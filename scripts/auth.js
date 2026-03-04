@@ -30,13 +30,13 @@ export async function fetchWithAuth(path, opts = {}) {
   return fetch(url, { ...opts, headers, credentials: 'include' });
 }
 
-export async function registerUser(username, password, email) {
+export async function registerUser(username, password) {
   // send displayName to server
   const res = await fetch(`${API}auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify({ displayName: username, email, password })
+    body: JSON.stringify({ displayName: username, password })
   });
   if (!res.ok) {
     const txt = await res.text().catch(()=>null);
@@ -44,7 +44,7 @@ export async function registerUser(username, password, email) {
   }
   // registration succeeded; server doesn't return tokens, so perform login to obtain session
   try {
-    await loginUser(email, password);
+    await loginUser(password);
   } catch (e) {
     // ignore auto-login failure but still return created user data
   }
@@ -53,8 +53,7 @@ export async function registerUser(username, password, email) {
 }
 
 export async function loginUser(identifier, password) {
-  // identifier can be email or displayName
-  const body = identifier && identifier.includes('@') ? { email: identifier, password } : { displayName: identifier, password };
+  const body = identifier && identifier.includes('@') ? { displayName: identifier, password } : { displayName: identifier, password };
   const res = await fetch(`${API}auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -114,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const authForm = document.getElementById('authForm');
   const authTitle = document.getElementById('authFormTitle');
   const usernameInput = document.getElementById('authUsername');
-  const emailInput = document.getElementById('authEmail');
   const passwordInput = document.getElementById('authPassword');
   const cancelBtn = document.getElementById('authCancel');
   const userName = document.getElementById('userName');
@@ -137,7 +135,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (authModal) authModal.style.display = 'none';
     usernameInput && (usernameInput.value = '');
     passwordInput && (passwordInput.value = '');
-    emailInput && (emailInput.value = '');
   }
 
   if (openLogin) openLogin.addEventListener('click', () => showModal(false));
@@ -147,13 +144,13 @@ document.addEventListener('DOMContentLoaded', () => {
     ev.preventDefault();
     try {
       if (isRegister) {
-        const user = await registerUser(usernameInput.value, passwordInput.value, emailInput.value);
-        const uname = (user && (user.displayName || user.display_name || user.username)) || usernameInput.value || emailInput.value || 'UserName';
+        const user = await registerUser(usernameInput.value, passwordInput.value);
+        const uname = (user && (user.displayName || user.display_name || user.username)) || usernameInput.value ||  'UserName';
         userName.textContent = uname;
         saveProfileLocal({ displayName: uname });
       } else {
         const user = await loginUser(usernameInput.value, passwordInput.value);
-        const uname = (user && (user.displayName || user.display_name || user.username)) || usernameInput.value || emailInput.value || 'UserName';
+        const uname = (user && (user.displayName || user.display_name || user.username)) || usernameInput.value || 'UserName';
         userName.textContent = uname;
         saveProfileLocal({ displayName: uname });
       }

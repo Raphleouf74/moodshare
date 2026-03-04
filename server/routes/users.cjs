@@ -9,7 +9,7 @@ router.get("/me", async (req, res) => {
   try {
     const user = await UserModel.findById(req.user.id);
     if (!user) return res.status(404).json({ error: "User not found" });
-    res.json({ id: user._id, displayName: user.displayName, email: user.email });
+    res.json({ id: user._id, displayName: user.displayName });
   } catch (err) {
     console.error("Error /api/users/me", err);
     res.status(500).json({ error: "Server error" });
@@ -28,7 +28,7 @@ router.put("/me", express.json(), async (req, res) => {
     if (updates.displayName) user.displayName = updates.displayName;
     await user.save();
 
-    res.json({ id: user._id, displayName: user.displayName, email: user.email });
+    res.json({ id: user._id, displayName: user.displayName});
   } catch (err) {
     console.error("Error update /api/users/me", err);
     res.status(500).json({ error: "Server error" });
@@ -38,7 +38,7 @@ router.put("/me", express.json(), async (req, res) => {
 router.get('/recommended', async (req, res) => {
   try {
     const users = await UserModel.find({ isGuest: false }).limit(6);
-    res.json(users.map(u => ({ id: u._id, displayName: u.displayName, email: u.email })));
+    res.json(users.map(u => ({ id: u._id, displayName: u.displayName})));
   } catch (err) {
     console.error("Error /users/recommended", err);
     res.status(500).json({ error: "Server error" });
@@ -49,7 +49,7 @@ router.get('/:id', async (req, res) => {
   try {
     const user = await UserModel.findById(req.params.id);
     if (!user) return res.status(404).json({ message: 'Not found' });
-    res.json({ id: user._id, displayName: user.displayName, email: user.email });
+    res.json({ id: user._id, displayName: user.displayName });
   } catch (err) {
     console.error("Error /users/:id", err);
     res.status(500).json({ error: "Server error" });
@@ -63,11 +63,10 @@ router.get('/users/search', async (req, res) => {
     const users = await UserModel.find({
       isGuest: false,
       $or: [
-        { displayName: { $regex: q, $options: 'i' } },
-        { email: { $regex: q, $options: 'i' } }
+        { displayName: { $regex: q, $options: 'i' } }
       ]
     }).limit(10);
-    res.json(users.map(u => ({ id: u._id, displayName: u.displayName, email: u.email })));
+    res.json(users.map(u => ({ id: u._id, displayName: u.displayName })));
   } catch (err) {
     console.error('Error searching users:', err);
     res.status(500).json({ error: 'Server error' });

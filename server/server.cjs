@@ -47,7 +47,6 @@ const PostModel = mongoose.models.Post || mongoose.model('Post', postSchema);
 const userSchema = new mongoose.Schema({
   _id: { type: String, default: () => Date.now().toString() },
   displayName: { type: String, required: true },
-  email: { type: String, required: true, unique: true, lowercase: true },
   password: { type: String, required: true },
   isGuest: { type: Boolean, default: false },
   pushTokens: [{ type: String }], // Tokens FCM pour notifications
@@ -541,7 +540,7 @@ app.get("/api/auth/me", async (req, res) => {
   try {
     const user = await UserModel.findById(req.user.id);
     if (!user) return res.status(401).json({ error: "User not found" });
-    res.json({ user: { id: user._id, displayName: user.displayName, email: user.email } });
+    res.json({ user: { id: user._id, displayName: user.displayName} });
   } catch (err) {
     console.error('Error getting current user:', err);
     res.status(500).json({ error: 'Server error' });
@@ -843,9 +842,9 @@ app.use("/api/auth", (req, res, next) => {
 // POST /api/auth/register
 app.post('/api/auth/register', async (req, res) => {
   try {
-    const { displayName, email, password } = req.body;
+    const { displayName, password } = req.body;
 
-    if (!displayName || !email || !password) {
+    if (!displayName || !password) {
       return res.status(400).json({ error: 'Tous les champs sont requis' });
     }
 
@@ -854,17 +853,10 @@ app.post('/api/auth/register', async (req, res) => {
       return res.status(503).json({ error: 'Base de données non disponible' });
     }
 
-    // Check if user exists
-    const existing = await UserModel.findOne({ email: email.toLowerCase() });
-    if (existing) {
-      return res.status(400).json({ error: 'Email déjà utilisé' });
-    }
-
     // Create user
     const newUser = new UserModel({
       _id: Date.now().toString(),
       displayName,
-      email: email.toLowerCase(),
       password: hashPassword(password),
       createdAt: new Date(),
       lastLogin: new Date()
@@ -876,7 +868,6 @@ app.post('/api/auth/register', async (req, res) => {
     req.session.user = {
       id: newUser._id,
       displayName: newUser.displayName,
-      email: newUser.email
     };
 
     // CRITIQUE: Sauvegarder la session
@@ -887,12 +878,11 @@ app.post('/api/auth/register', async (req, res) => {
       });
     });
 
-    console.log('✅ User registered:', email, 'Session ID:', req.sessionID);
+    console.log('✅ User registered:', 'Session ID:', req.sessionID);
     res.json({
       user: {
         id: newUser._id,
         displayName: newUser.displayName,
-        email: newUser.email
       }
     });
   } catch (err) {
@@ -904,21 +894,20 @@ app.post('/api/auth/register', async (req, res) => {
 // POST /api/auth/login
 app.post('/api/auth/login', async (req, res) => {
   try {
-    const { email, displayName, password } = req.body;
-    const identifier = email || displayName;
+    const { displayName, password } = req.body;
+    const identifier = displayName;
 
     if (!identifier || !password) {
-      return res.status(400).json({ error: 'Email/pseudo et mot de passe requis' });
+      return res.status(400).json({ error: 'Pseudo et mot de passe requis' });
     }
 
     if (!mongoReady) {
       return res.status(503).json({ error: 'Base de données non disponible' });
     }
 
-    // Find user by email or displayName (case insensitive)
+    // Find user by displayName (case insensitive)
     const user = await UserModel.findOne({
       $or: [
-        { email: identifier.toLowerCase() },
         { displayName: { $regex: new RegExp(`^${identifier}$`, 'i') } }
       ]
     });
@@ -935,7 +924,6 @@ app.post('/api/auth/login', async (req, res) => {
     req.session.user = {
       id: user._id,
       displayName: user.displayName,
-      email: user.email
     };
 
     // CRITIQUE: Sauvegarder la session explicitement
@@ -946,12 +934,11 @@ app.post('/api/auth/login', async (req, res) => {
       });
     });
 
-    console.log('✅ User logged in:', user.email, 'Session ID:', req.sessionID);
+    console.log('✅ User logged in:', 'Session ID:', req.sessionID);
     res.json({
       user: {
         id: user._id,
         displayName: user.displayName,
-        email: user.email
       },
       token: jwtService.sign({ id: user._id }, '15m')
     });
@@ -971,7 +958,6 @@ app.post('/api/auth/guest', async (req, res) => {
       const guestUser = new UserModel({
         _id: guestId,
         displayName: 'Invité',
-        email: `${guestId}@guest.local`,
         password: hashPassword(Math.random().toString()),
         isGuest: true,
         createdAt: new Date(),
@@ -1284,7 +1270,7 @@ app.get('/api/users/search', requireAuth, async (req, res) => {
       displayName: { $regex: query, $options: 'i' },
       _id: { $ne: req.session.user.id } // Exclure soi-même
     })
-      .select('_id displayName email')
+      .select('_id displayName')
       .limit(20)
       .lean();
 

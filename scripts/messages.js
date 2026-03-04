@@ -164,12 +164,12 @@ document.addEventListener('DOMContentLoaded', () => {
 function injectMessagingUI() {
     // Chercher le container messages (peut être profileTab ou messagesdiv)
     let container = document.getElementById('messagesdiv');
-    
+
     if (!container) {
         // Fallback: chercher profileTab
         container = document.getElementById('profileTab');
     }
-    
+
     if (!container) {
         console.error('❌ Messages container not found');
         return;
@@ -203,6 +203,8 @@ function injectMessagingUI() {
           <h3 id="current-chat-name"></h3>
         </div>
         <div id="messages-body"></div>
+        <p data-i18n="message_warning" class="message-warning">Attention, seulement les 20 derniers messages sont sauvegardés. <br> De plus les messages ne sont pas cryptés, faites attention à ce que vous partagez: cela peut être vu par les modérateurs !</p>
+
         <div class="messages-input-wrap">
           <input type="text" id="message-input" placeholder="Écris un message..." />
           <button id="send-message-btn">Envoyer</button>
@@ -321,7 +323,6 @@ async function searchUsers(query) {
         <div class="user-avatar">${user.displayName[0].toUpperCase()}</div>
         <div class="user-info">
           <div class="user-name">${user.displayName}</div>
-          <div class="user-email">${user.email}</div>
         </div>
         <button class="btn-start-chat">Message</button>
       `;
@@ -380,18 +381,18 @@ async function openConversation(otherUserId, otherName) {
 
     const messagesMain = document.querySelector('.messages-main');
     const messagesSidebar = document.querySelector('.messages-sidebar');
-    
+
     document.getElementById('messages-empty').style.display = 'none';
     document.getElementById('messages-thread').style.display = 'flex';
     document.getElementById('current-chat-name').textContent = otherName;
-    
+
     // Mobile: show main, hide sidebar
     if (messagesMain) messagesMain.classList.add('active');
     if (messagesSidebar) messagesSidebar.classList.add('hidden');
-    
+
     // ✅ AJOUTER CETTE LIGNE:
     document.body.classList.add('messages-open');
-    
+
     // Load messages depuis cache pour affichage rapide, puis toujours récupérer
     // depuis l'API pour s'assurer d'avoir les derniers messages entrants.
     const convId = [currentUserId, otherUserId].sort().join('_');
@@ -474,15 +475,15 @@ async function sendMessage() {
 function closeThread() {
     const messagesMain = document.querySelector('.messages-main');
     const messagesSidebar = document.querySelector('.messages-sidebar');
-    
+
     document.getElementById('messages-thread').style.display = 'none';
     document.getElementById('messages-empty').style.display = 'flex';
     currentConversation = null;
-    
+
     // Mobile: hide main, show sidebar
     if (messagesMain) messagesMain.classList.remove('active');
     if (messagesSidebar) messagesSidebar.classList.remove('hidden');
-    
+
     // ✅ AJOUTER CETTE LIGNE:
     document.body.classList.remove('messages-open');
 }

@@ -1638,7 +1638,7 @@ function initPullToRefresh() {
         const pullDist = e.changedTouches[0].clientY - pullStartY;
         const indicator = document.getElementById('pullRefreshIndicator');
 
-        if (pullDist > 80) {
+        if (pullDist > 300) {
             // Refresh
             if (indicator) {
                 indicator.classList.add('loading');
