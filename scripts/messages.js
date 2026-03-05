@@ -96,6 +96,10 @@ async function initMessages() {
 
     currentUserId = user.id;
     console.log('✅ Messages init for user:', currentUserId);
+    
+    // Éviter la double initialisation
+    if (window._messagesInitialized) return;
+    window._messagesInitialized = true;
 
     // **real-time updates via SSE**
     try {
@@ -155,10 +159,13 @@ async function initMessages() {
     injectMessagingUI();
 }
 
-// Init après chargement DOM + petit délai pour auth
+// Init dès que l'utilisateur se connecte
+document.addEventListener('userLoggedIn', initMessages);
+
+// Init aussi au chargement DOM (restore de session)
 document.addEventListener('DOMContentLoaded', () => {
-    // Attendre 1s que auth.js finisse son init
-    setTimeout(initMessages, 1000);
+    // Petit délai pour laisser auth.js se charger
+    setTimeout(initMessages, 500);
 });
 
 function injectMessagingUI() {
@@ -169,49 +176,8 @@ function injectMessagingUI() {
         // Fallback: chercher profileTab
         container = document.getElementById('profileTab');
     }
-
-    if (!container) {
-        console.error('❌ Messages container not found');
-        return;
-    }
-
-    // Vérifier si déjà injecté
-    if (document.getElementById('messages-section')) {
-        console.log('⚠️ Messages UI already injected');
-        return;
-    }
-
     // Créer section messages
-    const messagesSection = document.createElement('div');
-    messagesSection.id = 'messages-section';
-    messagesSection.className = 'messages-container';
-    messagesSection.innerHTML = `
-    <div class="messages-sidebar">
-      <div class="messages-sidebar-header">
-        <h2>Messages</h2>
-        <button id="new-conversation-btn" class="btn-icon" title="Nouvelle conversation">+</button>
-      </div>
-      <div id="conversations-list"></div>
-    </div>
-    <div class="messages-main">
-      <div id="messages-empty">
-        <p>Sélectionne une conversation</p>
-      </div>
-      <div id="messages-thread" style="display:none;">
-        <div class="messages-header">
-          <button id="back-to-list">←</button>
-          <h3 id="current-chat-name"></h3>
-        </div>
-        <div id="messages-body"></div>
-        <p data-i18n="message_warning" class="message-warning">Attention, seulement les 20 derniers messages sont sauvegardés. <br> De plus les messages ne sont pas cryptés, faites attention à ce que vous partagez: cela peut être vu par les modérateurs !</p>
-
-        <div class="messages-input-wrap">
-          <input type="text" id="message-input" placeholder="Écris un message..." />
-          <button id="send-message-btn">Envoyer</button>
-        </div>
-      </div>
-    </div>
-  `;
+    const messagesSection = document.getElementById('messages-section');
 
     container.appendChild(messagesSection);
     console.log('✅ Messages UI injected');
@@ -371,11 +337,15 @@ async function loadConversations() {
             div.addEventListener('click', () => openConversation(otherUserId, otherName));
             list.appendChild(div);
         });
+        //Si non connecter, injecter un p "Non connecté" dans le container
+
     } catch (err) {
         console.error('❌ Load conversations error:', err);
     }
 }
-
+if (!currentUserId) {
+    document.getElementById('conversations-list').innerHTML = '<p class="empty" data-i18n="not-logged-in">Vous n\'êtes pas connecté(e), connectez vous afin de discuter !</p>';
+}
 async function openConversation(otherUserId, otherName) {
     currentConversation = { otherUserId, otherName };
 

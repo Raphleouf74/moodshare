@@ -160,6 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (guestBtn) guestBtn.classList.add('hidden');
       if (logoutBtn) logoutBtn.classList.remove('hidden');
       if (accountHeader) accountHeader.classList.remove('hidden');
+      // 🔥 Émettre événement de connexion
+      document.dispatchEvent(new CustomEvent('userLoggedIn'));
     } catch (err) {
       alert(err.message);
     }
@@ -176,6 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (guestBtn) guestBtn.classList.add('hidden');
       if (logoutBtn) logoutBtn.classList.remove('hidden');
       if (accountHeader) accountHeader.classList.remove('hidden');
+      // 🔥 Émettre événement de connexion
+      document.dispatchEvent(new CustomEvent('userLoggedIn'));
       hideModal();
     } catch (err) {
       alert(err.message || 'Guest login failed');

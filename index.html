@@ -471,8 +471,6 @@
       </div>
     </section>
 
-    <section id="postsTab" class="tab hidden"></section>
-
     <section id="createTab" class="tab hidden">
       <div class="create-container">
         <!-- Titre -->
@@ -763,7 +761,50 @@
     </section>
     <section id="messagesTab" class="tab hidden">
       <h1 data-i18n="messages_title">Messages</h1>
-      <div id="messagesdiv"></div>
+      <div id="messagesdiv">
+        <div id="messages-section" class="messages-container">
+          <div class="messages-sidebar">
+            <div class="messages-sidebar-header">
+              <h2>Messages</h2>
+              <button
+                id="new-conversation-btn"
+                class="btn-icon"
+                title="Nouvelle conversation"
+              >
+                +
+              </button>
+            </div>
+            <div id="conversations-list"></div>
+          </div>
+          <div class="messages-main">
+            <div id="messages-empty">
+              <p>Sélectionne une conversation</p>
+            </div>
+            <div id="messages-thread" style="display: none">
+              <div class="messages-header">
+                <button id="back-to-list">←</button>
+                <h3 id="current-chat-name"></h3>
+              </div>
+              <div id="messages-body"></div>
+              <p data-i18n="message_warning" class="message-warning">
+                Attention, seulement les 20 derniers messages sont sauvegardés.
+                <br />
+                De plus les messages ne sont pas cryptés, faites attention à ce
+                que vous partagez: cela peut être vu par les modérateurs !
+              </p>
+
+              <div class="messages-input-wrap">
+                <input
+                  type="text"
+                  id="message-input"
+                  placeholder="Écris un message..."
+                />
+                <button id="send-message-btn">Envoyer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section id="profileTab" class="tab hidden">
