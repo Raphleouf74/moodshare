@@ -6,6 +6,7 @@
     <title>MoodShare</title>
     <link rel="icon" href="/assets/logo/logo_dark.jpg" />
     <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/profile.css" />
     <script
       type="module"
       src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"
@@ -46,7 +47,7 @@
       id="accountheader"
       onclick="document.getElementById('authModal').style.display = 'block'"
     >
-      <span id="userName">UserName</span>
+      <span id="userName">---</span>
     </div>
 
     <div id="authModal">
@@ -760,7 +761,6 @@
       </div>
     </section>
     <section id="messagesTab" class="tab hidden">
-      <h1 data-i18n="messages_title">Messages</h1>
       <div id="messagesdiv">
         <div id="messages-section" class="messages-container">
           <div class="messages-sidebar">
@@ -1168,5 +1168,6 @@
   <script type="module" src="scripts/app.js"></script>
   <script type="module" src="scripts/auth.js"></script>
   <script type="module" src="scripts/profile.js"></script>
+  <script type="module" src="scripts/social.js"></script>
   <script type="module" src="/scripts/lang-picker.js"></script>
 </html>

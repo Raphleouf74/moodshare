@@ -145,12 +145,12 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       if (isRegister) {
         const user = await registerUser(usernameInput.value, passwordInput.value);
-        const uname = (user && (user.displayName || user.display_name || user.username)) || usernameInput.value ||  'UserName';
+        const uname = (user && (user.displayName || user.display_name || user.username)) || usernameInput.value ||  '---';
         userName.textContent = uname;
         saveProfileLocal({ displayName: uname });
       } else {
         const user = await loginUser(usernameInput.value, passwordInput.value);
-        const uname = (user && (user.displayName || user.display_name || user.username)) || usernameInput.value || 'UserName';
+        const uname = (user && (user.displayName || user.display_name || user.username)) || usernameInput.value || '---';
         userName.textContent = uname;
         saveProfileLocal({ displayName: uname });
       }
@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (guestBtn) guestBtn.classList.remove('hidden');
     // restore stored profile name or default
     const saved = loadProfileLocal();
-    userName.textContent = saved && saved.displayName ? saved.displayName : 'UserName';
+    userName.textContent = saved && saved.displayName ? saved.displayName : '---';
   });
 
   // Small helpers to persist simple profile prefs locally
@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const user = await getCurrentUser();
     if (user) {
-      const uname = (user && (user.displayName || user.display_name || user.username)) || localProfile.displayName || 'UserName';
+      const uname = (user && (user.displayName || user.display_name || user.username)) || localProfile.displayName || '---';
       // userName.textContent = uname;
       saveProfileLocal({ displayName: uname });
       if (openLogin) openLogin.classList.add('hidden');

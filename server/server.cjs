@@ -42,17 +42,39 @@ const postSchema = new mongoose.Schema({
 const PostModel = mongoose.models.Post || mongoose.model('Post', postSchema);
 
 // ============================================================
-// USER SCHEMA pour MongoDB
+// USER SCHEMA pour MongoDB — avec features sociales
 // ============================================================
 const userSchema = new mongoose.Schema({
   _id: { type: String, default: () => Date.now().toString() },
   displayName: { type: String, required: true },
   password: { type: String, required: true },
+  email: { type: String, sparse: true },
   isGuest: { type: Boolean, default: false },
+
+  // Profil
+  bio: { type: String, default: '', maxLength: 200 },
+  avatar: { type: String, default: '👤' },
+
+  // Réseau social
+  followers: [{ type: String }], // Users qui me suivent
+  following: [{ type: String }], // Users que je suis
+  favorites: [{ type: String }], // Posts favoris
+
+  // Notifications
   pushTokens: [{ type: String }], // Tokens FCM pour notifications
+
+  // Stats (denormalisées pour perf)
+  postsCount: { type: Number, default: 0 },
+  followersCount: { type: Number, default: 0 },
+  followingCount: { type: Number, default: 0 },
+
+  // Timestamps
   createdAt: { type: Date, default: Date.now },
   lastLogin: { type: Date, default: Date.now }
 }, { _id: false });
+
+// Index pour recherche rapide
+userSchema.index({ displayName: 'text' });
 
 const UserModel = mongoose.models.User || mongoose.model('User', userSchema);
 
@@ -540,7 +562,7 @@ app.get("/api/auth/me", async (req, res) => {
   try {
     const user = await UserModel.findById(req.user.id);
     if (!user) return res.status(401).json({ error: "User not found" });
-    res.json({ user: { id: user._id, displayName: user.displayName} });
+    res.json({ user: { id: user._id, displayName: user.displayName } });
   } catch (err) {
     console.error('Error getting current user:', err);
     res.status(500).json({ error: 'Server error' });
@@ -566,6 +588,359 @@ app.post("/api/posts/:id/unlike", async (req, res) => {
   await persistPost(post);
   // Pas de sendSSE ici — même raison
   res.json(post);
+});
+
+// SHARE — Créer un nouveau post qui partage un post existant
+app.post("/api/posts/:id/share", async (req, res) => {
+  try {
+    const originalPost = posts.find(p => p.id == req.params.id);
+    if (!originalPost) return res.status(404).json({ error: "Post non trouvé" });
+
+    if (!req.session?.user) {
+      return res.status(401).json({ error: "Non authentifié" });
+    }
+
+    // Créer un nouveau post avec référence au post original
+    const sharedPost = {
+      id: Date.now(),
+      text: req.body.text || `📤 Partagé par ${req.session.user.displayName}`,
+      color: originalPost.color,
+      emoji: originalPost.emoji,
+      date: new Date().toLocaleDateString('fr-FR'),
+      userId: req.session.user.id,
+      userName: req.session.user.displayName,
+      likes: 0,
+      ephemeral: false,
+      sharedFrom: {
+        id: originalPost.id,
+        userName: originalPost.userName || 'Anonyme',
+        text: originalPost.text,
+        emoji: originalPost.emoji,
+        color: originalPost.color
+      }
+    };
+
+    posts.unshift(sharedPost);
+    await savePostsToFile();
+    await persistPost(sharedPost);
+    sendSSE('new_post', sharedPost);
+
+    res.json(sharedPost);
+  } catch (err) {
+    console.error('❌ Erreur share:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// ============================================================
+// ROUTES SOCIALES — Follow, Favorites, Suggestions
+// ============================================================
+
+// Middleware auth pour routes sociales
+function requireAuth(req, res, next) {
+  if (!req.session?.user?.id) {
+    return res.status(401).json({ error: 'Non authentifié' });
+  }
+  next();
+}
+
+// GET /api/social/profile/:userId — Profil public d'un user
+app.get('/api/social/profile/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const currentUserId = req.session?.user?.id;
+
+    const user = await UserModel.findById(userId).select('-password');
+    if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+
+    // Posts de cet user (depuis MongoDB)
+    const userPosts = await PostModel.find({ userId })
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .lean();
+
+    // Check si l'user actuel suit ce profil
+    const isFollowing = currentUserId ? user.followers.includes(currentUserId) : false;
+    const isOwnProfile = currentUserId === userId;
+
+    res.json({
+      user: {
+        id: user._id,
+        displayName: user.displayName,
+        bio: user.bio || '',
+        avatar: user.avatar || '👤',
+        followersCount: user.followersCount || 0,
+        followingCount: user.followingCount || 0,
+        postsCount: userPosts.length,
+        isFollowing,
+        isOwnProfile
+      },
+      posts: userPosts
+    });
+  } catch (err) {
+    console.error('❌ Erreur profile:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// POST /api/social/follow/:userId — Suivre un user
+app.post('/api/social/follow/:userId', requireAuth, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const currentUserId = req.session.user.id;
+
+    if (userId === currentUserId) {
+      return res.status(400).json({ error: 'Impossible de se suivre soi-même' });
+    }
+
+    const [currentUser, targetUser] = await Promise.all([
+      UserModel.findById(currentUserId),
+      UserModel.findById(userId)
+    ]);
+
+    if (!targetUser) return res.status(404).json({ error: 'Utilisateur introuvable' });
+
+    // Vérifier si déjà suivi
+    if (currentUser.following.includes(userId)) {
+      return res.status(400).json({ error: 'Déjà suivi' });
+    }
+
+    // Ajouter aux listes
+    currentUser.following.push(userId);
+    currentUser.followingCount = currentUser.following.length;
+
+    targetUser.followers.push(currentUserId);
+    targetUser.followersCount = targetUser.followers.length;
+
+    await Promise.all([currentUser.save(), targetUser.save()]);
+
+    console.log(`✅ ${currentUser.displayName} suit maintenant ${targetUser.displayName}`);
+
+    res.json({
+      success: true,
+      followersCount: targetUser.followersCount,
+      followingCount: currentUser.followingCount
+    });
+  } catch (err) {
+    console.error('❌ Erreur follow:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// POST /api/social/unfollow/:userId — Ne plus suivre
+app.post('/api/social/unfollow/:userId', requireAuth, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const currentUserId = req.session.user.id;
+
+    const [currentUser, targetUser] = await Promise.all([
+      UserModel.findById(currentUserId),
+      UserModel.findById(userId)
+    ]);
+
+    if (!targetUser) return res.status(404).json({ error: 'Utilisateur introuvable' });
+
+    // Retirer des listes
+    currentUser.following = currentUser.following.filter(id => id !== userId);
+    currentUser.followingCount = currentUser.following.length;
+
+    targetUser.followers = targetUser.followers.filter(id => id !== currentUserId);
+    targetUser.followersCount = targetUser.followers.length;
+
+    await Promise.all([currentUser.save(), targetUser.save()]);
+
+    console.log(`✅ ${currentUser.displayName} ne suit plus ${targetUser.displayName}`);
+
+    res.json({
+      success: true,
+      followersCount: targetUser.followersCount,
+      followingCount: currentUser.followingCount
+    });
+  } catch (err) {
+    console.error('❌ Erreur unfollow:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// POST /api/social/favorite/:postId — Ajouter aux favoris
+app.post('/api/social/favorite/:postId', requireAuth, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const currentUserId = req.session.user.id;
+
+    const user = await UserModel.findById(currentUserId);
+    if (!user.favorites.includes(postId)) {
+      user.favorites.push(postId);
+      await user.save();
+    }
+
+    res.json({ success: true, favoritesCount: user.favorites.length });
+  } catch (err) {
+    console.error('❌ Erreur favorite:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// POST /api/social/unfavorite/:postId — Retirer des favoris
+app.post('/api/social/unfavorite/:postId', requireAuth, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const currentUserId = req.session.user.id;
+
+    const user = await UserModel.findById(currentUserId);
+    user.favorites = user.favorites.filter(id => id !== postId);
+    await user.save();
+
+    res.json({ success: true, favoritesCount: user.favorites.length });
+  } catch (err) {
+    console.error('❌ Erreur unfavorite:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// GET /api/social/favorites — Mes posts favoris
+app.get('/api/social/favorites', requireAuth, async (req, res) => {
+  try {
+    const currentUserId = req.session.user.id;
+    const user = await UserModel.findById(currentUserId);
+
+    const favPosts = await PostModel.find({
+      _id: { $in: user.favorites }
+    }).sort({ createdAt: -1 }).lean();
+
+    res.json({ posts: favPosts });
+  } catch (err) {
+    console.error('❌ Erreur get favorites:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// GET /api/social/suggestions — Suggestions d'utilisateurs à suivre
+app.get('/api/social/suggestions', requireAuth, async (req, res) => {
+  try {
+    const currentUserId = req.session.user.id;
+    const currentUser = await UserModel.findById(currentUserId);
+
+    // Trouver users avec le plus de followers, qu'on ne suit pas déjà
+    const suggestions = await UserModel.find({
+      _id: {
+        $ne: currentUserId,
+        $nin: currentUser.following || []
+      },
+      isGuest: false
+    })
+      .select('_id displayName bio avatar followersCount')
+      .sort({ followersCount: -1, createdAt: -1 })
+      .limit(5)
+      .lean();
+
+    res.json({ suggestions });
+  } catch (err) {
+    console.error('❌ Erreur suggestions:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// GET /api/social/followers/:userId — Liste des followers
+app.get('/api/social/followers/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await UserModel.findById(userId);
+    if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+
+    const followers = await UserModel.find({
+      _id: { $in: user.followers || [] }
+    }).select('_id displayName avatar').lean();
+
+    res.json({ followers });
+  } catch (err) {
+    console.error('❌ Erreur followers:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// GET /api/social/following/:userId — Liste des abonnements
+app.get('/api/social/following/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await UserModel.findById(userId);
+    if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+
+    const following = await UserModel.find({
+      _id: { $in: user.following || [] }
+    }).select('_id displayName avatar').lean();
+
+    res.json({ following });
+  } catch (err) {
+    console.error('❌ Erreur following:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// GET /api/social/feed — Feed intelligent (posts des amis en priorité)
+app.get('/api/social/feed', requireAuth, async (req, res) => {
+  try {
+    const currentUserId = req.session.user.id;
+    const currentUser = await UserModel.findById(currentUserId);
+
+    // Posts des users suivis + mes posts
+    const friendsIds = [...(currentUser.following || []), currentUserId];
+
+    const friendsPosts = await PostModel.find({
+      userId: { $in: friendsIds }
+    })
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .lean();
+
+    // Posts des autres (pour suggestions)
+    const otherPosts = await PostModel.find({
+      userId: { $nin: friendsIds }
+    })
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .lean();
+
+    // Marquer les posts favoris
+    const favorites = currentUser.favorites || [];
+    const allPosts = [...friendsPosts, ...otherPosts].map(p => ({
+      ...p,
+      isFavorite: favorites.includes(p._id),
+      isFromFriend: friendsIds.includes(p.userId)
+    }));
+
+    res.json({ posts: allPosts });
+  } catch (err) {
+    console.error('❌ Erreur feed:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// PUT /api/social/profile — Modifier son profil
+app.put('/api/social/profile', requireAuth, async (req, res) => {
+  try {
+    const currentUserId = req.session.user.id;
+    const { bio, avatar } = req.body;
+
+    const user = await UserModel.findById(currentUserId);
+    if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+
+    if (bio !== undefined) user.bio = bio.substring(0, 200);
+    if (avatar !== undefined) user.avatar = avatar.substring(0, 10);
+
+    await user.save();
+
+    res.json({
+      success: true,
+      user: {
+        bio: user.bio,
+        avatar: user.avatar
+      }
+    });
+  } catch (err) {
+    console.error('❌ Erreur update profile:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
 });
 
 // ============================================================
@@ -967,7 +1342,7 @@ app.post('/api/auth/guest', async (req, res) => {
     }
 
     req.session.user = { id: guestId, displayName: 'Invité', isGuest: true };
-    
+
     // CRITIQUE: Sauvegarder la session
     await new Promise((resolve, reject) => {
       req.session.save((err) => {
@@ -975,7 +1350,7 @@ app.post('/api/auth/guest', async (req, res) => {
         else resolve();
       });
     });
-    
+
     console.log('✅ Guest login:', guestId, 'Session ID:', req.sessionID);
     res.json({
       user: { id: guestId, displayName: 'Invité' },
@@ -1297,9 +1672,350 @@ app.get('/api/users/:userId/posts', async (req, res) => {
   }
 });
 
+// ============================================================
+// ROUTES SOCIALES — Follow, Favorites, Suggestions
+// ============================================================
+
+// GET /api/social/profile/:userId — Profil public d'un user
+app.get('/api/social/profile/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const currentUserId = req.session?.user?.id;
+
+    const user = await UserModel.findById(userId).select('-password');
+    if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+
+    // Récupérer posts de cet user depuis MongoDB
+    const userPosts = await PostModel.find({ userId })
+      .sort({ createdAt: -1 })
+      .limit(50)
+      .lean();
+
+    // Check si l'user actuel suit ce profil
+    const isFollowing = currentUserId ? user.followers.includes(currentUserId) : false;
+    const isOwnProfile = currentUserId === userId;
+    const isFavorited = currentUserId && user.favorites ? user.favorites.some(f => typeof f === 'string' ? f === currentUserId : f.userId === currentUserId) : false;
+
+    res.json({
+      user: {
+        id: user._id,
+        displayName: user.displayName,
+        bio: user.bio || '',
+        avatar: user.avatar || '👤',
+        followersCount: user.followersCount || user.followers?.length || 0,
+        followingCount: user.followingCount || user.following?.length || 0,
+        postsCount: user.postsCount || userPosts.length,
+        isFollowing,
+        isOwnProfile,
+        isFavorited
+      },
+      posts: userPosts
+    });
+  } catch (err) {
+    console.error('❌ Erreur profile:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// POST /api/social/follow/:userId — Suivre un user
+app.post('/api/social/follow/:userId', requireAuth, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const currentUserId = req.session.user.id;
+
+    if (userId === currentUserId) {
+      return res.status(400).json({ error: 'Impossible de se suivre soi-même' });
+    }
+
+    const [currentUser, targetUser] = await Promise.all([
+      UserModel.findById(currentUserId),
+      UserModel.findById(userId)
+    ]);
+
+    if (!targetUser) return res.status(404).json({ error: 'Utilisateur introuvable' });
+
+    // Vérifier si déjà suivi
+    if (currentUser.following && currentUser.following.includes(userId)) {
+      return res.status(400).json({ error: 'Déjà suivi' });
+    }
+
+    // Ajouter aux listes
+    if (!currentUser.following) currentUser.following = [];
+    if (!targetUser.followers) targetUser.followers = [];
+
+    currentUser.following.push(userId);
+    currentUser.followingCount = currentUser.following.length;
+
+    targetUser.followers.push(currentUserId);
+    targetUser.followersCount = targetUser.followers.length;
+
+    await Promise.all([currentUser.save(), targetUser.save()]);
+
+    // Créer notification
+    await createNotification({
+      userId: targetUser._id,
+      type: 'follow',
+      title: 'Nouveau follower',
+      body: `${currentUser.displayName} a commencé à vous suivre`,
+      data: { followerId: currentUserId }
+    });
+
+    res.json({
+      success: true,
+      followersCount: targetUser.followersCount,
+      followingCount: currentUser.followingCount
+    });
+  } catch (err) {
+    console.error('❌ Erreur follow:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// POST /api/social/unfollow/:userId — Ne plus suivre
+app.post('/api/social/unfollow/:userId', requireAuth, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const currentUserId = req.session.user.id;
+
+    const [currentUser, targetUser] = await Promise.all([
+      UserModel.findById(currentUserId),
+      UserModel.findById(userId)
+    ]);
+
+    if (!targetUser) return res.status(404).json({ error: 'Utilisateur introuvable' });
+
+    // Retirer des listes
+    if (currentUser.following) {
+      currentUser.following = currentUser.following.filter(id => id !== userId);
+      currentUser.followingCount = currentUser.following.length;
+    }
+
+    if (targetUser.followers) {
+      targetUser.followers = targetUser.followers.filter(id => id !== currentUserId);
+      targetUser.followersCount = targetUser.followers.length;
+    }
+
+    await Promise.all([currentUser.save(), targetUser.save()]);
+
+    res.json({
+      success: true,
+      followersCount: targetUser.followersCount || 0,
+      followingCount: currentUser.followingCount || 0
+    });
+  } catch (err) {
+    console.error('❌ Erreur unfollow:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// POST /api/social/favorite/:postId — Ajouter aux favoris
+app.post('/api/social/favorite/:postId', requireAuth, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const currentUserId = req.session.user.id;
+
+    const user = await UserModel.findById(currentUserId);
+    if (!user.favorites) user.favorites = [];
+
+    if (!user.favorites.includes(postId)) {
+      user.favorites.push(postId);
+      await user.save();
+    }
+
+    res.json({ success: true, favoritesCount: user.favorites.length });
+  } catch (err) {
+    console.error('❌ Erreur favorite:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// POST /api/social/unfavorite/:postId — Retirer des favoris
+app.post('/api/social/unfavorite/:postId', requireAuth, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const currentUserId = req.session.user.id;
+
+    const user = await UserModel.findById(currentUserId);
+    if (user.favorites) {
+      user.favorites = user.favorites.filter(id => id !== postId);
+      await user.save();
+    }
+
+    res.json({ success: true, favoritesCount: user.favorites?.length || 0 });
+  } catch (err) {
+    console.error('❌ Erreur unfavorite:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// GET /api/social/favorites — Mes posts favoris
+app.get('/api/social/favorites', requireAuth, async (req, res) => {
+  try {
+    const currentUserId = req.session.user.id;
+    const user = await UserModel.findById(currentUserId);
+
+    if (!user.favorites || user.favorites.length === 0) {
+      return res.json({ posts: [] });
+    }
+
+    const favPosts = await PostModel.find({
+      _id: { $in: user.favorites }
+    }).sort({ createdAt: -1 }).lean();
+
+    res.json({ posts: favPosts });
+  } catch (err) {
+    console.error('❌ Erreur get favorites:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// GET /api/social/suggestions — Suggestions d'utilisateurs
+app.get('/api/social/suggestions', requireAuth, async (req, res) => {
+  try {
+    const currentUserId = req.session.user.id;
+    const currentUser = await UserModel.findById(currentUserId);
+
+    // Trouver users avec le plus de followers, qu'on ne suit pas déjà
+    const suggestions = await UserModel.find({
+      _id: {
+        $ne: currentUserId, // Pas soi-même
+        $nin: currentUser.following || [] // Pas déjà suivis
+      },
+      isGuest: false // Pas les invités
+    })
+      .select('_id displayName bio avatar followersCount postsCount')
+      .sort({ followersCount: -1, postsCount: -1, createdAt: -1 })
+      .limit(5)
+      .lean();
+
+    res.json({ suggestions });
+  } catch (err) {
+    console.error('❌ Erreur suggestions:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// GET /api/social/followers/:userId — Liste des followers
+app.get('/api/social/followers/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await UserModel.findById(userId);
+    if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+
+    const followers = await UserModel.find({
+      _id: { $in: user.followers || [] }
+    }).select('_id displayName avatar bio followersCount').lean();
+
+    res.json({ followers });
+  } catch (err) {
+    console.error('❌ Erreur followers:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// GET /api/social/following/:userId — Liste des abonnements
+app.get('/api/social/following/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await UserModel.findById(userId);
+    if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+
+    const following = await UserModel.find({
+      _id: { $in: user.following || [] }
+    }).select('_id displayName avatar bio followersCount').lean();
+
+    res.json({ following });
+  } catch (err) {
+    console.error('❌ Erreur following:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// GET /api/social/feed — Feed intelligent (posts amis + suggestions)
+app.get('/api/social/feed', async (req, res) => {
+  try {
+    const currentUserId = req.session?.user?.id;
+
+    if (!currentUserId) {
+      // User non connecté = tous les posts
+      const allPosts = await PostModel.find({})
+        .sort({ createdAt: -1 })
+        .limit(50)
+        .lean();
+      return res.json({ posts: allPosts, hasSuggestions: false });
+    }
+
+    const currentUser = await UserModel.findById(currentUserId);
+
+    // Posts des amis (users suivis)
+    const friendsPosts = await PostModel.find({
+      userId: { $in: currentUser.following || [] }
+    })
+      .sort({ createdAt: -1 })
+      .limit(30)
+      .lean();
+
+    // Posts populaires (pour remplir)
+    const popularPosts = await PostModel.find({
+      userId: { $nin: [...(currentUser.following || []), currentUserId] }
+    })
+      .sort({ likes: -1, createdAt: -1 })
+      .limit(20)
+      .lean();
+
+    // Mélanger intelligemment (amis en priorité)
+    const allPosts = [...friendsPosts, ...popularPosts].slice(0, 50);
+
+    res.json({
+      posts: allPosts,
+      hasSuggestions: friendsPosts.length > 5 // Afficher bannière si assez de posts amis
+    });
+  } catch (err) {
+    console.error('❌ Erreur feed:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// PUT /api/social/profile — Mettre à jour son profil
+app.put('/api/social/profile', requireAuth, async (req, res) => {
+  try {
+    const currentUserId = req.session.user.id;
+    const { bio, avatar, displayName } = req.body;
+
+    const user = await UserModel.findById(currentUserId);
+    if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+
+    if (bio !== undefined) user.bio = bio.substring(0, 200); // Max 200 chars
+    if (avatar !== undefined) user.avatar = avatar.substring(0, 10); // Emoji uniquement
+    if (displayName !== undefined) user.displayName = displayName.substring(0, 50);
+
+    await user.save();
+
+    // Mettre à jour session
+    req.session.user.displayName = user.displayName;
+    await new Promise((resolve, reject) => {
+      req.session.save(err => err ? reject(err) : resolve());
+    });
+
+    res.json({
+      success: true,
+      user: {
+        id: user._id,
+        displayName: user.displayName,
+        bio: user.bio,
+        avatar: user.avatar
+      }
+    });
+  } catch (err) {
+    console.error('❌ Erreur update profile:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
 // Remove old routes mounting
 // app.use("/api/auth", authRoutes);
 app.use("/api", usersRoutes);
+// Removed: app.use("/api/social", socialRoutes); — routes now inline above
 // Debug : lister les routes enregistrées (utile pour vérifier les chemins)
 function listRoutes() {
   const routes = [];
