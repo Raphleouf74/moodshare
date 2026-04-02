@@ -1,0 +1,38 @@
+<<<<<<< HEAD
+
+=======
+>>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
+{
+    "languages": [
+        {
+            "code": "fr",
+            "name": "Français",
+            "flag": "🇫🇷",
+            "file": "fr.json"
+        },
+        {
+            "code": "en",
+            "name": "English",
+            "flag": "🇬🇧",
+            "file": "en.json"
+        },
+        {
+            "code": "es",
+            "name": "Español",
+            "flag": "🇪🇸",
+            "file": "es.json"
+        },
+        {
+            "code": "de",
+            "name": "Deutsch",
+            "flag": "🇩🇪",
+            "file": "de.json"
+        },
+        {
+            "code": "it",
+            "name": "Italiano",
+            "flag": "🇮🇹",
+            "file": "it.json"
+        }
+    ]
+}
