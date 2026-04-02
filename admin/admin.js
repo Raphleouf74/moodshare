@@ -11,11 +11,7 @@ const ADMIN_CREDS = [
 
 // Doit correspondre à la variable d'env ADMIN_SECRET sur Render.
 // Change cette valeur après avoir configuré la variable sur Render.
-<<<<<<< HEAD
 const ADMIN_SECRET = "080310";
-=======
-const ADMIN_SECRET = "260110080310";
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 
 function adminHeaders() {
     const headers = {

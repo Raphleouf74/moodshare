@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 // translate-all.js
 // Usage:
 //   node translate-all.js

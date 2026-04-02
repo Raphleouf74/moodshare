@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 {
     "__name__": "Français",
     "__flag__": "🇫🇷",
@@ -94,8 +91,4 @@
     "message_warning": "Attention, seulement les 20 derniers messages sont sauvegardés. De plus les messages ne sont pas cryptés, faites attention à ce que vous partagez: cela peut être vu par les modérateurs !",
     "not-logged-in": "Vous n'êtes pas connecté(e), connectez-vous afin de discuter !"
 
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af

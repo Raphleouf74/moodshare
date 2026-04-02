@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 const userModel = require('../models/User.cjs');
 const { hashPassword, comparePassword } = require('../services/hash.cjs');
 const jwtService = require('../services/jwt.cjs');
@@ -46,8 +43,5 @@ exports.me = async (req, res) => {
   const u = await userModel.getById(req.user.id);
   if (!u) return res.status(404).json({ message: 'User not found' });
   res.json({ id: u.id, username: u.username, avatar: u.avatar, bio: u.bio, settings: u.settings });
-<<<<<<< HEAD
 
-=======
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 };

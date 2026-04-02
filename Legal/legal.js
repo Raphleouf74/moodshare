@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 // Petit script pour imprimer / télécharger le contenu en Markdown simple
 function toMarkdown(title, htmlContent){
   // Très simple transformation : retire balises et garde titres

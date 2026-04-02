@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 export let currentTranslations = {}; // <-- ajout
 
 export async function loadLanguage(lang) {
@@ -53,8 +50,4 @@ export function t(key, vars = {}) {
     });
 
     return text;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af

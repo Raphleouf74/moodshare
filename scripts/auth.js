@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 // assets/js/auth.js
 // Détection simple : en dev (localhost/127.0.0.1 ou 127.0.0.1) on utilise le backend local,
 // sinon on utilise l'URL de production (Render)
@@ -285,8 +282,4 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   injectProfileSettings();
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af

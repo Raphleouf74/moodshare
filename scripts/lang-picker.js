@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 // scripts/lang-picker.js
 import { loadLanguage } from "./lang.js"; // ton loader existant
 
@@ -135,8 +132,4 @@ async function initLangPicker() {
 // auto-init on DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
     initLangPicker().catch(err => console.error(err));
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af

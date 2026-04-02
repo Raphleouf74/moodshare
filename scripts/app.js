@@ -852,10 +852,6 @@ async function addInboxNotification(
     }, 50);
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 const addStoryBtn = document.getElementById('addStoryBtn');
 const storyModeToggle = document.getElementById('storyModeToggle');
 

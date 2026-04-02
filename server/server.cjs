@@ -18,21 +18,13 @@ const jwtService = require('./services/jwt.cjs');
 
 // ============================================================
 // MONGODB — persistance inter-redémarrages
-<<<<<<< HEAD
-=======
-// Ajouter MONGO_URI dans Environment > Render pour activer.
-// Format : mongodb+srv://<user>:<pass>@cluster.mongodb.net/moodshare
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 // ============================================================
 const MONGO_URI = 'mongodb+srv://MoodShareAdminRaph:Jem4ppelleraphael!@cluster0.7lnr6qq.mongodb.net/?appName=Cluster0';
 
 const postSchema = new mongoose.Schema({
   _id: { type: String, default: () => Date.now().toString() },
-<<<<<<< HEAD
   userId: { type: String, default: null },
   userName: { type: String, default: 'Anonyme' },
-=======
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
   text: String,
   emoji: String,
   color: String,
@@ -50,17 +42,12 @@ const postSchema = new mongoose.Schema({
 const PostModel = mongoose.models.Post || mongoose.model('Post', postSchema);
 
 // ============================================================
-<<<<<<< HEAD
 // USER SCHEMA pour MongoDB — avec features sociales
-=======
-// USER SCHEMA pour MongoDB
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 // ============================================================
 const userSchema = new mongoose.Schema({
   _id: { type: String, default: () => Date.now().toString() },
   displayName: { type: String, required: true },
   password: { type: String, required: true },
-<<<<<<< HEAD
   email: { type: String, sparse: true },
   isGuest: { type: Boolean, default: false },
 
@@ -82,19 +69,12 @@ const userSchema = new mongoose.Schema({
   followingCount: { type: Number, default: 0 },
 
   // Timestamps
-=======
-  isGuest: { type: Boolean, default: false },
-  pushTokens: [{ type: String }], // Tokens FCM pour notifications
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
   createdAt: { type: Date, default: Date.now },
   lastLogin: { type: Date, default: Date.now }
 }, { _id: false });
 
-<<<<<<< HEAD
 userSchema.index({ displayName: 'text' });
 
-=======
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 const UserModel = mongoose.models.User || mongoose.model('User', userSchema);
 
 // ============================================================
@@ -103,17 +83,10 @@ const UserModel = mongoose.models.User || mongoose.model('User', userSchema);
 const notificationSchema = new mongoose.Schema({
   _id: { type: String, default: () => Date.now().toString() },
   userId: { type: String, required: true, index: true },
-<<<<<<< HEAD
   type: { type: String, required: true },
   title: { type: String, required: true },
   body: { type: String, required: true },
   data: { type: Object, default: {} },
-=======
-  type: { type: String, required: true }, // 'message', 'like', 'comment', 'follow'
-  title: { type: String, required: true },
-  body: { type: String, required: true },
-  data: { type: Object, default: {} }, // Metadata (postId, senderId, etc)
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
   read: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now }
 }, { _id: false });
@@ -127,26 +100,15 @@ const messageSchema = new mongoose.Schema({
   senderId: { type: String, required: true },
   senderName: { type: String, required: true },
   content: { type: String, default: '' },
-<<<<<<< HEAD
   sharedPostId: { type: String, default: null },
-=======
-  sharedPostId: { type: String, default: null }, // Si on partage un post
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
   timestamp: { type: Date, default: Date.now }
 }, { _id: false });
 
 const conversationSchema = new mongoose.Schema({
-<<<<<<< HEAD
   _id: { type: String, required: true },
   participants: [{ type: String, required: true }],
   participantNames: { type: Map, of: String },
   messages: { type: [messageSchema], default: [] },
-=======
-  _id: { type: String, required: true }, // Format: "userId1_userId2" (alphabétique)
-  participants: [{ type: String, required: true }], // [userId1, userId2]
-  participantNames: { type: Map, of: String }, // { userId: displayName }
-  messages: { type: [messageSchema], default: [] }, // Max 20 messages
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
   lastMessageAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 }, { _id: false });
@@ -162,11 +124,7 @@ let posts = [
     emoji: '👋',
     ephemeral: false,
     expiresAt: null,
-<<<<<<< HEAD
     id: '0'
-=======
-    id: 0
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
   }
 ];
 
@@ -183,11 +141,7 @@ if (MONGO_URI) {
       console.error('❌ MongoDB connexion échouée — fallback JSON:', err.message);
     });
 } else {
-<<<<<<< HEAD
   console.warn('⚠️  MONGO_URI absent — persistance JSON seule');
-=======
-  console.warn('⚠️  MONGO_URI absent — persistance JSON seule (éphémère sur Render Free)');
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 }
 
 async function loadPostsFromMongo() {
@@ -195,11 +149,7 @@ async function loadPostsFromMongo() {
     const docs = await PostModel.find({}).sort({ pinned: -1, createdAt: -1 }).lean();
     if (docs.length > 0) {
       posts = docs.map(d => ({ ...d, id: d._id }));
-<<<<<<< HEAD
       console.log(`📦 ${posts.length} posts chargés depuis MongoDB`);
-=======
-      console.log(`📦 \${posts.length} posts chargés depuis MongoDB`);
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     }
   } catch (err) {
     console.error('❌ loadPostsFromMongo:', err.message);
@@ -234,63 +184,34 @@ async function savePostsToFile() {
   }
 }
 
-<<<<<<< HEAD
-=======
-// Persiste partout (JSON + MongoDB)
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 async function persistPost(post) {
   await savePostsToFile();
   await saveToDB(post);
 }
 
-<<<<<<< HEAD
-=======
-// Supprime de la mémoire + partout
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 async function unpersistPost(id) {
   posts = posts.filter(p => String(p.id) !== String(id));
   await savePostsToFile();
   await deleteFromDB(id);
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 process.on("uncaughtException", err => console.error("❌ Exception non attrapée:", err));
 process.on("unhandledRejection", err => console.error("❌ Rejection non faite:", err));
 
 const app = express();
 
-<<<<<<< HEAD
 app.set('trust proxy', 1);
 
-=======
-// ============================================================
-// TRUST PROXY — CRITIQUE pour Render/Heroku/proxies
-// ============================================================
-app.set('trust proxy', 1);
-
-// Debug: log simple des requêtes et des origins pour aider le debug CORS
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.use((req, res, next) => {
   console.log(`[REQ] ${new Date().toISOString()} ${req.method} ${req.originalUrl} Origin=${req.headers.origin || 'none'}`);
   next();
 });
 
-<<<<<<< HEAD
-=======
-// Ping simple pour tester rapidement depuis le navigateur
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.get('/ping', (req, res) => {
   res.set('x-server', 'moodshare-server');
   res.json({ ok: true, time: Date.now() });
 });
 
-<<<<<<< HEAD
-=======
-// CORS — config unique, propre, avec support du header X-Admin-Secret
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
@@ -298,10 +219,6 @@ const corsOptions = {
       "https://moodsharing.netlify.app",
       "https://moodshare-7dd7.onrender.com"
     ];
-<<<<<<< HEAD
-=======
-    // Mettre 127.0.0.1 et 192.168.1.21 en localhost safe
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     const localhostsRegex = /^https?:\/\/(localhost|127\.0\.0\.1|192\.168\.1\.21)(:\d+)?$/;
 
     if (localhostsRegex.test(origin) || allowedHosts.includes(origin)) {
@@ -312,18 +229,10 @@ const corsOptions = {
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-<<<<<<< HEAD
-=======
-  // X-Admin-Secret ajouté pour les routes /api/admin/*
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Admin-Secret']
 };
 
 app.use(cors(corsOptions));
-<<<<<<< HEAD
-=======
-// Preflight explicite — indispensable pour les custom headers comme X-Admin-Secret
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.options('*', cors(corsOptions));
 
 app.use(helmet());
@@ -331,10 +240,6 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.json());
 
-<<<<<<< HEAD
-=======
-// Middleware pour vérifier le Bearer token et définir req.user
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.use((req, res, next) => {
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -363,11 +268,7 @@ app.use(session({
     touchAfter: 24 * 3600,
     ttl: 7 * 24 * 60 * 60
   }),
-<<<<<<< HEAD
   proxy: true,
-=======
-  proxy: true, // CRITIQUE avec trust proxy
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     httpOnly: true,
@@ -376,33 +277,17 @@ app.use(session({
   }
 }));
 
-<<<<<<< HEAD
-=======
-// Debug session middleware
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.use((req, res, next) => {
   console.log(`[SESSION] ${req.method} ${req.path} - Session ID: ${req.sessionID} - User: ${req.session?.user?.id || 'none'}`);
   next();
 });
 
-<<<<<<< HEAD
-=======
-// Rate Limit — exempter les routes admin et SSE
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 500,
   skip: (req, res) => {
-<<<<<<< HEAD
     if (req.path.startsWith('/api/admin')) return true;
     if (req.path === '/api/stream') return true;
-=======
-    // Exempter les routes admin (protégées par le secret)
-    if (req.path.startsWith('/api/admin')) return true;
-    // Exempter le SSE (connexion persistante)
-    if (req.path === '/api/stream') return true;
-    // Exempter les routes auth
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     if (req.path.startsWith('/api/auth')) return true;
     return false;
   }
@@ -413,10 +298,6 @@ app.use(generalLimiter);
 const dataDir = path.join(__dirname, "data");
 const postsFile = path.join(dataDir, "posts.json");
 
-<<<<<<< HEAD
-=======
-// Ensure dir exists
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
 }
@@ -426,20 +307,12 @@ function safeLoadJSON(filePath, fallback, label) {
     if (fs.existsSync(filePath)) {
       const raw = fs.readFileSync(filePath, "utf8");
       const parsed = JSON.parse(raw);
-<<<<<<< HEAD
-=======
-      // Vérifie que c'est bien un tableau
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
       if (!Array.isArray(parsed)) throw new Error("Not an array");
       console.log(`✅ ${label}: ${parsed.length} entrées chargées`);
       return parsed;
     }
   } catch (err) {
     console.error(`❌ ${label} corrompu (${err.message}) — réinitialisation`);
-<<<<<<< HEAD
-=======
-    // Écrase le fichier corrompu avec un tableau vide propre
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     try { fs.writeFileSync(filePath, JSON.stringify(fallback, null, 2)); } catch (_) { }
   }
   return fallback;
@@ -447,26 +320,14 @@ function safeLoadJSON(filePath, fallback, label) {
 
 posts = safeLoadJSON(postsFile, posts, "posts.json");
 
-<<<<<<< HEAD
-=======
-// ---- STORIES STORAGE ----
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 let stories = [];
 const storiesFile = path.join(dataDir, "stories.json");
 stories = safeLoadJSON(storiesFile, stories, "stories.json");
 
-<<<<<<< HEAD
-=======
-// === REPORTS STORAGE ===
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 let reports = [];
 const reportsFile = path.join(dataDir, "reports.json");
 reports = safeLoadJSON(reportsFile, reports, "reports.json");
 
-<<<<<<< HEAD
-=======
-// === SSE (Server-Sent Events) clients ===
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 let sseClients = [];
 
 function sendSSE(event, data) {
@@ -485,10 +346,6 @@ app.get('/api/stream', (req, res) => {
   const clientId = `${Date.now()}_${Math.random()}`;
   sseClients.push({ id: clientId, res });
 
-<<<<<<< HEAD
-=======
-  // initial snapshot
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
   res.write(`event: connected\ndata: ${JSON.stringify({ ok: true })}\n\n`);
   res.write(`event: initial_posts\ndata: ${JSON.stringify(posts)}\n\n`);
   res.write(`event: initial_stories\ndata: ${JSON.stringify(stories)}\n\n`);
@@ -498,27 +355,15 @@ app.get('/api/stream', (req, res) => {
 
 app.get("/api/stories", (req, res) => {
   try {
-<<<<<<< HEAD
     const now = Date.now();
     const active = stories.filter(s => !s.expiresAt || new Date(s.expiresAt).getTime() > now);
 
-=======
-    // Filtrer les stories expirées
-    const now = Date.now();
-    const active = stories.filter(s => !s.expiresAt || new Date(s.expiresAt).getTime() > now);
-
-    // Purger les expirées du stockage si nécessaire
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     const expiredExists = stories.length !== active.length;
     if (expiredExists) {
       stories = active;
       fsPromises.writeFile(storiesFile, JSON.stringify(stories, null, 2)).catch(err => {
         console.error("❌ Erreur lors de la sauvegarde des stories après la purge:", err);
       });
-<<<<<<< HEAD
-=======
-      // broadcast updated stories list
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
       try { sendSSE('stories_update', stories); } catch (e) { console.error('❌ Erreur SSE:', e); }
     }
 
@@ -528,7 +373,6 @@ app.get("/api/stories", (req, res) => {
     res.status(500).json({ error: "Erreur interne" });
   }
 });
-<<<<<<< HEAD
 
 app.get("/api/posts", (req, res) => {
   res.json(posts);
@@ -543,28 +387,6 @@ function sanitizeText(text) {
   return text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-=======
-// GET POSTS
-app.get("/api/posts", (req, res) => {
-  res.json(posts);
-});
-function sanitizeText(text) {
-  if (!text) return "";
-
-  // Détection stricte → refuse la requête
-  const forbiddenPattern = /(script|javascript:|onerror=|onclick=|onload=|<iframe|<img|<svg|document\.|window\.)/i;
-
-  if (forbiddenPattern.test(text)) {
-    throw new Error("Contenu interdit detecté");
-  }
-
-  // Sanitize quand même :
-  return text
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
-// CREATE POST
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.post("/api/posts", async (req, res) => {
   try {
     const cleanText = sanitizeText(req.body.text);
@@ -576,11 +398,7 @@ app.post("/api/posts", async (req, res) => {
       color: req.body.color,
       textColor: req.body.textColor,
       id: Date.now().toString(),
-<<<<<<< HEAD
       userId: req.session?.user?.id || null,
-=======
-      userId: req.session?.user?.id || null, // Track qui a créé le post
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
       userName: req.session?.user?.displayName || 'Anonyme',
       ...req.body,
       likes: 0,
@@ -598,14 +416,6 @@ app.post("/api/posts", async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-=======
-
-
-
-
-// Report a post or comment
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.post('/api/posts/:id/report', async (req, res) => {
   try {
     const targetPost = posts.find(p => p.id == req.params.id);
@@ -621,7 +431,6 @@ app.post('/api/posts/:id/report', async (req, res) => {
 
     reports.unshift(report);
     await fsPromises.writeFile(reportsFile, JSON.stringify(reports, null, 2));
-<<<<<<< HEAD
     try { sendSSE('report', report); } catch (e) { console.error('❌ Erreur SSE:', e); }
 
     res.json({ ok: true });
@@ -631,17 +440,6 @@ app.post('/api/posts/:id/report', async (req, res) => {
   }
 });
 
-=======
-
-    // Notify admins / clients via SSE
-    try { sendSSE('report', report); } catch (e) { console.error('❌ Erreur SSE:', e); }
-
-    res.json({ ok: true });
-  } catch (err) { console.error('❌ Erreur de signalement:', err); res.status(500).json({ error: 'Interne' }); }
-});
-
-// Repost (create a new post duplicating an existing one)
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.post('/api/posts/:id/repost', async (req, res) => {
   try {
     const orig = posts.find(p => p.id == req.params.id);
@@ -663,44 +461,24 @@ app.post('/api/posts/:id/repost', async (req, res) => {
     try { sendSSE('new_post', newPost); } catch (e) { console.error('❌ Erreur SSE:', e); }
 
     res.status(201).json(newPost);
-<<<<<<< HEAD
   } catch (err) {
     console.error('❌ Erreur de republication:', err);
     res.status(500).json({ error: 'Interne' });
   }
 });
 
-=======
-  } catch (err) { console.error('❌ Erreur de republication:', err); res.status(500).json({ error: 'Interne' }); }
-});
-
-
-
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.post("/api/stories", async (req, res) => {
   try {
     const text = String(req.body.text || "").trim();
     const emoji = String(req.body.emoji || "").trim();
     const color = req.body.color || "#ffffff";
-<<<<<<< HEAD
     const textColor = req.body.textColor || null;
     const expiresAt = req.body.expiresAt ? new Date(req.body.expiresAt).toISOString() : null;
 
-=======
-    // Nouvelle prise en charge de textColor
-    const textColor = req.body.textColor || null;
-    const expiresAt = req.body.expiresAt ? new Date(req.body.expiresAt).toISOString() : null;
-
-    // Validation basique
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     if (!text && !emoji) {
       return res.status(400).json({ error: "Story vide" });
     }
 
-<<<<<<< HEAD
-=======
-    // Sanitization stricte (réutilise sanitizeText)
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     const cleanText = sanitizeText(text);
     const cleanEmoji = sanitizeText(emoji);
 
@@ -709,49 +487,25 @@ app.post("/api/stories", async (req, res) => {
       text: cleanText,
       emoji: cleanEmoji,
       color,
-<<<<<<< HEAD
-=======
-      // stocker textColor si fourni
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
       ...(textColor ? { textColor } : {}),
       createdAt: new Date().toISOString(),
       expiresAt
     };
 
-<<<<<<< HEAD
     stories.unshift(newStory);
     await fsPromises.writeFile(storiesFile, JSON.stringify(stories, null, 2));
     try { sendSSE('new_story', newStory); } catch (e) { console.error('❌ Erreur SSE:', e); }
 
-=======
-    // Prévenir accumulation : garder récence en tête
-    stories.unshift(newStory);
-
-    // Enregistrer
-    await fsPromises.writeFile(storiesFile, JSON.stringify(stories, null, 2));
-
-    // notify clients
-    try { sendSSE('new_story', newStory); } catch (e) { console.error('❌ Erreur SSE:', e); }
-
-    // Répondre avec la story créée
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     res.status(201).json(newStory);
   } catch (err) {
     console.error("❌ Erreur lors de la création de la story:", err);
     res.status(400).json({ error: "Contenu Invalide" });
   }
 });
-<<<<<<< HEAD
 
 app.get("/api/auth/me", async (req, res) => {
   if (!req.user) return res.status(401).json({ error: "Not authenticated" });
 
-=======
-app.get("/api/auth/me", async (req, res) => {
-  if (!req.user) return res.status(401).json({ error: "Not authenticated" });
-
-  // Pour les invités, retourner directement
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
   if (req.user.id.startsWith('guest_')) {
     return res.json({ user: { id: req.user.id, displayName: 'Invité' } });
   }
@@ -759,32 +513,19 @@ app.get("/api/auth/me", async (req, res) => {
   try {
     const user = await UserModel.findById(req.user.id);
     if (!user) return res.status(401).json({ error: "User not found" });
-<<<<<<< HEAD
     res.json({ user: { id: user._id, displayName: user.displayName } });
-=======
-    res.json({ user: { id: user._id, displayName: user.displayName} });
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
   } catch (err) {
     console.error('Error getting current user:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
-<<<<<<< HEAD
 
-=======
-// LIKE / UNLIKE
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.post("/api/posts/:id/like", async (req, res) => {
   const post = posts.find(p => p.id == req.params.id);
   if (!post) return res.status(404).json({ error: "Post non trouvé" });
 
   post.likes++;
   await persistPost(post);
-<<<<<<< HEAD
-=======
-  // Pas de sendSSE ici — le client met à jour son compteur
-  // depuis la réponse HTTP pour éviter le double-comptage
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
   res.json(post);
 });
 
@@ -794,7 +535,6 @@ app.post("/api/posts/:id/unlike", async (req, res) => {
 
   post.likes = Math.max(0, post.likes - 1);
   await persistPost(post);
-<<<<<<< HEAD
   res.json(post);
 });
 
@@ -1177,19 +917,6 @@ app.get('/api/social/feed', requireAuth, async (req, res) => {
 // ADMIN ROUTES
 // ============================================================
 
-=======
-  // Pas de sendSSE ici — même raison
-  res.json(post);
-});
-
-// ============================================================
-// Vérifie que la requête vient bien du panneau admin.
-// Le panel envoie l'header X-Admin-Secret dont la valeur doit
-// correspondre à la variable d'env ADMIN_SECRET (à définir sur
-// Render dans Environment > Add Environment Variable).
-// Si ADMIN_SECRET n'est pas défini, la route est bloquée.
-// ============================================================
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 function requireAdmin(req, res, next) {
   const secret = process.env.ADMIN_SECRET;
   if (!secret) {
@@ -1204,14 +931,6 @@ function requireAdmin(req, res, next) {
   next();
 }
 
-<<<<<<< HEAD
-=======
-
-// ============================================================
-// POST /api/admin/posts/pinned — Créer un post épinglé (annonce)
-// DOIT être déclaré AVANT /api/admin/posts/:id pour éviter le conflit
-// ============================================================
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.post('/api/admin/posts/pinned', requireAdmin, async (req, res) => {
   try {
     const { text, emoji, color, textColor, pinnedLabel } = req.body;
@@ -1246,22 +965,10 @@ app.post('/api/admin/posts/pinned', requireAdmin, async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-=======
-// ============================================================
-// GET /api/admin/posts/pinned — Liste les posts épinglés
-// ============================================================
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.get('/api/admin/posts/pinned', requireAdmin, (req, res) => {
   res.json(posts.filter(p => p.pinned));
 });
 
-<<<<<<< HEAD
-=======
-// ============================================================
-// DELETE /api/admin/posts/pinned/:id — Supprimer un post épinglé
-// ============================================================
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.delete('/api/admin/posts/pinned/:id', requireAdmin, async (req, res) => {
   try {
     const post = posts.find(p => String(p.id) === String(req.params.id) && p.pinned);
@@ -1278,12 +985,6 @@ app.delete('/api/admin/posts/pinned/:id', requireAdmin, async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-=======
-// ============================================================
-// DELETE /api/admin/posts/:id — Suppression forcée d'un post
-// ============================================================
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.delete('/api/admin/posts/:id', requireAdmin, async (req, res) => {
   try {
     const post = posts.find(p => String(p.id) === String(req.params.id));
@@ -1300,12 +1001,6 @@ app.delete('/api/admin/posts/:id', requireAdmin, async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-=======
-// ============================================================
-// PUT /api/admin/posts/:id — Modification forcée d'un post
-// ============================================================
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.put('/api/admin/posts/:id', requireAdmin, async (req, res) => {
   try {
     const post = posts.find(p => String(p.id) === String(req.params.id));
@@ -1329,12 +1024,6 @@ app.put('/api/admin/posts/:id', requireAdmin, async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-=======
-// ============================================================
-// GET /api/admin/reports — Liste complète des signalements
-// ============================================================
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.get('/api/admin/reports', requireAdmin, (req, res) => {
   try {
     res.json(reports);
@@ -1344,12 +1033,6 @@ app.get('/api/admin/reports', requireAdmin, (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-=======
-// ============================================================
-// DELETE /api/admin/reports/:id — Supprimer un signalement
-// ============================================================
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.delete('/api/admin/reports/:id', requireAdmin, async (req, res) => {
   try {
     const idx = reports.findIndex(r => r.id == req.params.id);
@@ -1366,15 +1049,7 @@ app.delete('/api/admin/reports/:id', requireAdmin, async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
 app.get('/api/admin/status', requireAdmin, (req, res) => {
-=======
-// ============================================================
-// GET /api/admin/status — Statut du serveur et MongoDB
-// ============================================================
-app.get('/api/admin/status', requireAdmin, (req, res) => {
-  const serverStartTime = process.uptime() * 1000;
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
   const uptime = Math.floor(process.uptime());
   const environment = process.env.RENDER ? 'Render' : 'Local';
 
@@ -1405,34 +1080,16 @@ app.get('/api/admin/status', requireAdmin, (req, res) => {
     api: {
       corsEnabled: true,
       adminSecretConfigured: !!process.env.ADMIN_SECRET,
-<<<<<<< HEAD
       rateLimit: '500 req/15min'
-=======
-      rateLimit: '200 req/15min'
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     },
     timestamp: new Date().toISOString()
   });
 });
 
-<<<<<<< HEAD
 app.post('/api/admin/emergency-restart', requireAdmin, async (req, res) => {
   console.log('🚨 [EMERGENCY] Redémarrage d\'urgence initié par admin');
 
   try {
-=======
-// ============================================================
-// POST /api/admin/emergency-restart — Action d'urgence
-// Redémarre les connexions (MongoDB, SSE, etc.)
-// ============================================================
-app.post('/api/admin/emergency-restart', requireAdmin, async (req, res) => {
-  const secret = req.headers['x-admin-secret'];
-  console.log(`🚨 [EMERGENCY] Requête POST reçue - Secret fourni: ${secret ? '✅' : '❌'}`);
-  console.log('🚨 [EMERGENCY] Redémarrage d\'urgence initié par admin');
-
-  try {
-    // Fermer tous les clients SSE
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     const closedCount = sseClients.length;
     sseClients.forEach(c => {
       try { c.res.end(); } catch (_) { }
@@ -1440,17 +1097,9 @@ app.post('/api/admin/emergency-restart', requireAdmin, async (req, res) => {
     sseClients = [];
     console.log(`✅ [EMERGENCY] ${closedCount} clients SSE fermés`);
 
-<<<<<<< HEAD
     if (MONGO_URI && mongoReady) {
       try {
         await mongoose.connection.db.admin().ping();
-=======
-    // Tenter reconnexion MongoDB
-    if (MONGO_URI && mongoReady) {
-      try {
-        // Vérifier la connexion
-        const test = await mongoose.connection.db.admin().ping();
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
         console.log('✅ [EMERGENCY] MongoDB ping OK');
       } catch (err) {
         console.warn('⚠️ [EMERGENCY] MongoDB ping échoué:', err.message);
@@ -1477,27 +1126,16 @@ app.post('/api/admin/emergency-restart', requireAdmin, async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-=======
-// Rejeter les GET sur emergency-restart (seul POST est autorisé)
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.get('/api/admin/emergency-restart', (req, res) => {
   console.warn('🚫 [EMERGENCY] Tentative GET sur emergency-restart (méthode non autorisée)');
   res.status(405).json({ error: 'Méthode non autorisée - utilisez POST' });
 });
 
-<<<<<<< HEAD
 // ============================================================
 // AUTH ROUTES
 // ============================================================
 const crypto = require('crypto');
 
-=======
-/// AUTH ROUTES — MongoDB implementation
-const crypto = require('crypto');
-
-// Helper: hash password
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 function hashPassword(password) {
   return crypto.createHash('sha256').update(password).digest('hex');
 }
@@ -1507,10 +1145,6 @@ app.use("/api/auth", (req, res, next) => {
   next();
 });
 
-<<<<<<< HEAD
-=======
-// POST /api/auth/register
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { displayName, password } = req.body;
@@ -1519,18 +1153,10 @@ app.post('/api/auth/register', async (req, res) => {
       return res.status(400).json({ error: 'Tous les champs sont requis' });
     }
 
-<<<<<<< HEAD
-=======
-    // Check if MongoDB is ready
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     if (!mongoReady) {
       return res.status(503).json({ error: 'Base de données non disponible' });
     }
 
-<<<<<<< HEAD
-=======
-    // Create user
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     const newUser = new UserModel({
       _id: Date.now().toString(),
       displayName,
@@ -1541,19 +1167,11 @@ app.post('/api/auth/register', async (req, res) => {
 
     await newUser.save();
 
-<<<<<<< HEAD
-=======
-    // Auto-login après inscription
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     req.session.user = {
       id: newUser._id,
       displayName: newUser.displayName,
     };
 
-<<<<<<< HEAD
-=======
-    // CRITIQUE: Sauvegarder la session
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     await new Promise((resolve, reject) => {
       req.session.save((err) => {
         if (err) reject(err);
@@ -1574,21 +1192,11 @@ app.post('/api/auth/register', async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { displayName, password } = req.body;
 
     if (!displayName || !password) {
-=======
-// POST /api/auth/login
-app.post('/api/auth/login', async (req, res) => {
-  try {
-    const { displayName, password } = req.body;
-    const identifier = displayName;
-
-    if (!identifier || !password) {
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
       return res.status(400).json({ error: 'Pseudo et mot de passe requis' });
     }
 
@@ -1596,16 +1204,9 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(503).json({ error: 'Base de données non disponible' });
     }
 
-<<<<<<< HEAD
     const user = await UserModel.findOne({
       $or: [
         { displayName: { $regex: new RegExp(`^${displayName}$`, 'i') } }
-=======
-    // Find user by displayName (case insensitive)
-    const user = await UserModel.findOne({
-      $or: [
-        { displayName: { $regex: new RegExp(`^${identifier}$`, 'i') } }
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
       ]
     });
 
@@ -1613,26 +1214,14 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(401).json({ error: 'Identifiants incorrects' });
     }
 
-<<<<<<< HEAD
     user.lastLogin = new Date();
     await user.save();
 
-=======
-    // Update last login
-    user.lastLogin = new Date();
-    await user.save();
-
-    // Set session
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     req.session.user = {
       id: user._id,
       displayName: user.displayName,
     };
 
-<<<<<<< HEAD
-=======
-    // CRITIQUE: Sauvegarder la session explicitement
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     await new Promise((resolve, reject) => {
       req.session.save((err) => {
         if (err) reject(err);
@@ -1654,18 +1243,10 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-=======
-// POST /api/auth/guest
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.post('/api/auth/guest', async (req, res) => {
   try {
     const guestId = 'guest_' + Date.now();
 
-<<<<<<< HEAD
-=======
-    // Optionnel: créer aussi les invités dans MongoDB pour tracking
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     if (mongoReady) {
       const guestUser = new UserModel({
         _id: guestId,
@@ -1675,31 +1256,18 @@ app.post('/api/auth/guest', async (req, res) => {
         createdAt: new Date(),
         lastLogin: new Date()
       });
-<<<<<<< HEAD
       await guestUser.save().catch(() => { });
     }
 
     req.session.user = { id: guestId, displayName: 'Invité', isGuest: true };
 
-=======
-      await guestUser.save().catch(() => { }); // Ignore errors pour guest
-    }
-
-    req.session.user = { id: guestId, displayName: 'Invité', isGuest: true };
-    
-    // CRITIQUE: Sauvegarder la session
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     await new Promise((resolve, reject) => {
       req.session.save((err) => {
         if (err) reject(err);
         else resolve();
       });
     });
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     console.log('✅ Guest login:', guestId, 'Session ID:', req.sessionID);
     res.json({
       user: { id: guestId, displayName: 'Invité' },
@@ -1711,50 +1279,19 @@ app.post('/api/auth/guest', async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-=======
-// POST /api/auth/logout
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.post('/api/auth/logout', (req, res) => {
   req.session.destroy();
   res.json({ ok: true });
 });
 
-<<<<<<< HEAD
-=======
-// GET /api/auth/me
-app.get('/api/auth/me', (req, res) => {
-  if (!req.session?.user) {
-    return res.status(401).json({ error: 'Non authentifié' });
-  }
-  res.json({ user: req.session.user });
-});
-
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 // ============================================================
 // MESSAGING ROUTES
 // ============================================================
 
-<<<<<<< HEAD
-=======
-// Middleware: require auth
-function requireAuth(req, res, next) {
-  if (!req.session?.user) {
-    return res.status(401).json({ error: 'Connexion requise' });
-  }
-  next();
-}
-
-// Helper: generate conversation ID (alphabetical)
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 function getConversationId(userId1, userId2) {
   return [userId1, userId2].sort().join('_');
 }
 
-<<<<<<< HEAD
-=======
-// GET /api/conversations — Liste toutes les conversations de l'utilisateur
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.get('/api/conversations', requireAuth, async (req, res) => {
   try {
     if (!mongoReady) {
@@ -1763,10 +1300,6 @@ app.get('/api/conversations', requireAuth, async (req, res) => {
 
     const userId = req.session.user.id;
 
-<<<<<<< HEAD
-=======
-    // Trouver toutes les conversations où l'utilisateur est participant
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     const conversations = await ConversationModel.find({
       participants: userId
     }).sort({ lastMessageAt: -1 }).lean();
@@ -1778,10 +1311,6 @@ app.get('/api/conversations', requireAuth, async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-=======
-// GET /api/conversations/:otherUserId — Récupère une conversation avec quelqu'un
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.get('/api/conversations/:otherUserId', requireAuth, async (req, res) => {
   try {
     if (!mongoReady) {
@@ -1795,10 +1324,6 @@ app.get('/api/conversations/:otherUserId', requireAuth, async (req, res) => {
     let conversation = await ConversationModel.findById(convId).lean();
 
     if (!conversation) {
-<<<<<<< HEAD
-=======
-      // Créer conversation vide
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
       const otherUser = await UserModel.findById(otherUserId);
       if (!otherUser) {
         return res.status(404).json({ error: 'Utilisateur introuvable' });
@@ -1824,10 +1349,6 @@ app.get('/api/conversations/:otherUserId', requireAuth, async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-=======
-// POST /api/conversations/:otherUserId/messages — Envoyer un message
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.post('/api/conversations/:otherUserId/messages', requireAuth, async (req, res) => {
   try {
     if (!mongoReady) {
@@ -1844,10 +1365,6 @@ app.post('/api/conversations/:otherUserId/messages', requireAuth, async (req, re
 
     const convId = getConversationId(userId, otherUserId);
 
-<<<<<<< HEAD
-=======
-    // Trouver ou créer conversation
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     let conversation = await ConversationModel.findById(convId);
 
     if (!conversation) {
@@ -1867,10 +1384,6 @@ app.post('/api/conversations/:otherUserId/messages', requireAuth, async (req, re
       });
     }
 
-<<<<<<< HEAD
-=======
-    // Nouveau message
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     const newMessage = {
       senderId: userId,
       senderName: req.session.user.displayName,
@@ -1879,10 +1392,6 @@ app.post('/api/conversations/:otherUserId/messages', requireAuth, async (req, re
       timestamp: new Date()
     };
 
-<<<<<<< HEAD
-=======
-    // Ajouter message et garder max 20
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     conversation.messages.push(newMessage);
     if (conversation.messages.length > 20) {
       conversation.messages = conversation.messages.slice(-20);
@@ -1893,20 +1402,12 @@ app.post('/api/conversations/:otherUserId/messages', requireAuth, async (req, re
 
     await conversation.save();
 
-<<<<<<< HEAD
-=======
-    // Créer notification pour le destinataire
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     await createNotification(otherUserId, 'message',
       `${req.session.user.displayName}`,
       sharedPostId ? 'a partagé un post' : content,
       { senderId: userId, conversationId: convId }
     );
 
-<<<<<<< HEAD
-=======
-    // SSE broadcast so clients can update in real time
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     try {
       sendSSE('new_message', {
         conversationId: convId,
@@ -1928,10 +1429,6 @@ app.post('/api/conversations/:otherUserId/messages', requireAuth, async (req, re
 // NOTIFICATIONS ROUTES
 // ============================================================
 
-<<<<<<< HEAD
-=======
-// Helper: créer notification
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 async function createNotification(userId, type, title, body, data = {}) {
   if (!mongoReady) return;
   try {
@@ -1949,21 +1446,13 @@ async function createNotification(userId, type, title, body, data = {}) {
 
     const user = await UserModel.findById(userId);
     if (user && user.pushTokens && user.pushTokens.length > 0) {
-<<<<<<< HEAD
       // TODO: sendPushNotification(user.pushTokens, title, body, data);
-=======
-      await sendPushNotification(user.pushTokens, title, body, data);
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     }
   } catch (err) {
     console.error('❌ Create notification error:', err);
   }
 }
 
-<<<<<<< HEAD
-=======
-// GET /api/notifications — Liste notifications de l'user
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.get('/api/notifications', requireAuth, async (req, res) => {
   try {
     if (!mongoReady) {
@@ -1983,10 +1472,6 @@ app.get('/api/notifications', requireAuth, async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-=======
-// POST /api/notifications/:id/read — Marquer comme lu
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.post('/api/notifications/:id/read', requireAuth, async (req, res) => {
   try {
     if (!mongoReady) {
@@ -2003,10 +1488,6 @@ app.post('/api/notifications/:id/read', requireAuth, async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-=======
-// POST /api/users/push-token — Enregistrer token FCM
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.post('/api/users/push-token', requireAuth, async (req, res) => {
   try {
     if (!mongoReady) {
@@ -2020,10 +1501,6 @@ app.post('/api/users/push-token', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'Token requis' });
     }
 
-<<<<<<< HEAD
-=======
-    // Ajouter token si pas déjà présent
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     await UserModel.findByIdAndUpdate(userId, {
       $addToSet: { pushTokens: token }
     });
@@ -2035,10 +1512,6 @@ app.post('/api/users/push-token', requireAuth, async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
-=======
-// GET /api/users/search — Rechercher utilisateurs
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.get('/api/users/search', requireAuth, async (req, res) => {
   try {
     if (!mongoReady) {
@@ -2050,16 +1523,9 @@ app.get('/api/users/search', requireAuth, async (req, res) => {
       return res.json([]);
     }
 
-<<<<<<< HEAD
     const users = await UserModel.find({
       displayName: { $regex: query, $options: 'i' },
       _id: { $ne: req.session.user.id }
-=======
-    // Recherche case-insensitive sur displayName
-    const users = await UserModel.find({
-      displayName: { $regex: query, $options: 'i' },
-      _id: { $ne: req.session.user.id } // Exclure soi-même
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     })
       .select('_id displayName')
       .limit(20)
@@ -2072,22 +1538,10 @@ app.get('/api/users/search', requireAuth, async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
 app.get('/api/users/:userId/posts', async (req, res) => {
   try {
     const userId = req.params.userId;
     const userPosts = posts.filter(p => p.userId === userId);
-=======
-// GET /api/users/:userId/posts — Posts d'un utilisateur spécifique
-app.get('/api/users/:userId/posts', async (req, res) => {
-  try {
-    const userId = req.params.userId;
-
-    // Filtrer posts par userId (ajouter userId aux posts lors de la création)
-    // Pour l'instant retourner posts vides si userId pas encore trackés
-    const userPosts = posts.filter(p => p.userId === userId);
-
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
     res.json(userPosts);
   } catch (err) {
     console.error('❌ Get user posts error:', err);
@@ -2095,17 +1549,10 @@ app.get('/api/users/:userId/posts', async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
 // Mount external routes
 app.use("/api", usersRoutes);
 
 // Debug routes
-=======
-// Remove old routes mounting
-// app.use("/api/auth", authRoutes);
-app.use("/api", usersRoutes);
-// Debug : lister les routes enregistrées (utile pour vérifier les chemins)
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 function listRoutes() {
   const routes = [];
   app._router.stack.forEach(m => {
@@ -2121,43 +1568,17 @@ function listRoutes() {
       });
     }
   });
-<<<<<<< HEAD
   console.log('📡 Routes enregistrées:\n' + routes.join('\n'));
 }
 listRoutes();
 
-=======
-  console.log('Paths enregistrées:\n' + routes.join('\n'));
-}
-listRoutes();
-
-/// HEALTH
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
 app.get("/api/health", (req, res) => {
   res.json({ ok: true });
 });
 
-<<<<<<< HEAD
 console.log('✅ Routes sociales chargées avec MongoDB');
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Le serveur tourne sur le port ${PORT}`));
 
 module.exports = app;
-=======
-
-// Start server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Le serveur tourne sur le port ${PORT}`));
-
-module.exports = app;
-app.use('/api', (req, res, next) => {
-  // Autoriser report sans login
-  if (req.path.includes('/report')) return next();
-
-  if (!req.session?.user) {
-    return res.status(401).json({ error: 'Non autorisé' });
-  }
-  next();
-});
->>>>>>> b9647a007683f23089e1a45c47a4fdac9815b1af
