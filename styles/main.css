@@ -30,7 +30,7 @@
 body {
     font-family: "Inter", sans-serif;
     margin: 0;
-    background: linear-gradient(135deg, rgba(155, 255, 255, 0.50), #28013793);
+    background: radial-gradient(circle,rgba(0, 0,0, 0.30), rgba(155, 255, 255, 0.50) );
     background-attachment: fixed;
     overflow-x: hidden;
 }
@@ -1379,7 +1379,7 @@ section {
 .stories-list {
     display: flex;
     gap: 12px;
-    overflow-x: auto;
+    overflow: hidden;
     padding: 6px 2px 12px;
 
     -ms-overflow-style: none;
@@ -2541,68 +2541,6 @@ footer {
     color: white;
 }
 
-/* Paramètres */
-section#settingsTab {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    /* important */
-    padding-top: 90px;
-    /* ou la hauteur de ton header */
-    min-height: 100vh;
-    box-sizing: border-box;
-}
-
-section#settingsTab button,
-section#settingsTab a {
-    width: 80%;
-    font-size: 15px;
-    font-weight: 500;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-}
-
-section#settingsTab #appSettings {
-    width: 80%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: rgb(230, 230, 230, 0.6);
-    padding: 15px;
-    border-radius: 20px;
-    gap: 50px;
-    text-align: left;
-    margin-bottom: 20px;
-    -webkit-backdrop-filter: blur(5px);
-    backdrop-filter: blur(5px);
-}
-
-#settingsTab #settingstitle {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.25rem;
-    align-items: space-evenly;
-    flex-direction: row;
-    font-weight: bold;
-    margin-bottom: 15px;
-}
-
-#settingsTab h4 {
-    text-align: left;
-    font-size: 1.25rem;
-    font-weight: bold;
-}
-
-
-#settingsTab #settingstitle svg {
-    width: 60px;
-    height: 60px;
-}
 
 /* ============================================================
    LOADER — Minimaliste fluide
@@ -2632,10 +2570,10 @@ section#settingsTab #appSettings {
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.3) 0%, transparent 50%),
-        radial-gradient(circle at 40% 20%, rgba(249, 168, 212, 0.2) 0%, transparent 50%);
-    animation: loaderGradientShift 8s ease-in-out infinite;
+        radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.7) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.7) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(249, 168, 212, 0.7) 0%, transparent 50%);
+    animation: loaderGradientShift 2s  ease-in-out infinite;
 }
 
 @keyframes loaderGradientShift {
@@ -2681,13 +2619,18 @@ section#settingsTab #appSettings {
 }
 
 .loader-logo-text {
-    font-size: 3.5rem;
+    font-size: 5rem;
     font-weight: 800;
     color: white;
     letter-spacing: -0.03em;
     text-shadow: 0 4px 20px rgba(0, 0, 0, .2);
-    display: block;
-    animation: loaderTextPulse 2s ease-in-out infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    gap: -5px;
+    flex-direction: column;
+    animation: loaderTextPulse 5s ease-in-out infinite;
 }
 
 .loader-accent {
@@ -2695,6 +2638,8 @@ section#settingsTab #appSettings {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    font-size: 6rem;
+    margin-top: -20px;
     filter: drop-shadow(0 2px 8px rgba(36, 191, 251, .4));
 }
 
@@ -2715,10 +2660,13 @@ section#settingsTab #appSettings {
 /* Barre de progression */
 .loader-bar {
     width: 300px;
-    height: 10px;
+    position: fixed;
+    top: calc(50% - 150px);
+    height: 300px;
     background: rgba(255, 255, 255, .2);
-    border-radius: 10px;
+    border-radius: 25px;
     overflow: hidden;
+    z-index: 2;
     box-shadow: 0 2px 12px rgba(0, 0, 0, .15);
 }
 
@@ -2726,14 +2674,15 @@ section#settingsTab #appSettings {
     height: 100%;
     width: 0%;
     background: linear-gradient(90deg,
-            rgba(255, 255, 255, .6) 0%,
-            rgba(255, 255, 255, .95) 50%,
-            rgba(255, 255, 255, .6) 100%);
+            rgba(255, 255, 255, .2) 0%,
+            rgba(255, 255, 255, .45) 50%,
+            rgba(255, 255, 255, .2) 100%);
     background-size: 200% 100%;
     border-radius: 2px;
+    z-index: 2;
     animation:
-        loaderBarFill 2s cubic-bezier(.4, 0, .2, 1) forwards,
-        loaderBarShimmer 1.5s linear infinite;
+        loaderBarFill 3.5s cubic-bezier(.4, 0, .2, 1) forwards,
+        loaderBarShimmer 3s linear infinite;
     box-shadow: 0 0 12px rgba(255, 255, 255, .5);
 }
 
@@ -2807,6 +2756,8 @@ nav svg {
     align-items: center;
     padding: 10px 12px;
     border-radius: 12px;
+    font-size: 25px;
+    justify-content: space-evenly;
     border: black 2px solid;
     background-color: rgb(255, 255, 255);
     cursor: pointer;
@@ -2858,7 +2809,9 @@ section#homeTab {
     pointer-events: auto;
 }
 
-
+#lpCurrentFlag {
+    scale: 2;
+}
 /* Grid: 3 columns */
 .lp-grid {
     display: grid;
@@ -2940,60 +2893,32 @@ section#homeTab {
     height: 40px;
 }
 
-.low-end * {
-    transition: none !important;
-    animation: none !important;
-    will-change: auto !important;
-}
-
-.low-end body {
-    background: #f5f5f5;
-}
-
-.low-end .loader,
-.low-end #emojiPickerContainer {
-    display: none !important;
-}
-
-.low-end .post {
-    box-shadow: none;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-.low-end .logo-container,
-.low-end .skeleton-circle,
-.low-end #squareback,
-.low-end #circleback {
-    display: none;
-}
-
 #circleback {
     position: fixed;
-    scale: 10;
+    scale: 1;
     width: 200px;
     height: 200px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    top: -50px;
-    left: 50px;
+    background: rgba(255, 255, 255, 0);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.31);
     pointer-events: none;
     z-index: -1;
+    left: 50%;
+    top: calc(50% - 100px);
 }
 
 #squareback {
     position: fixed;
-    scale: 8;
-    rotate: -10deg;
+    scale: 1;
     width: 200px;
     height: 200px;
     border-radius: 25px;
-    background: rgba(255, 255, 255, 0.3);
-    bottom: -50px;
-    right: 100px;
+    background: transparent;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.31);
     pointer-events: none;
     z-index: -1;
+    top: calc(50% - 100px);
+    left: calc(50% - 200px);
 }
 
 

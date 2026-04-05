@@ -1,5 +1,6 @@
 import { loadLanguage, t } from "./lang.js";
 import { fetchWithAuth, getCurrentUser } from './auth.js';
+import { initPermalinks } from './post-permalink.js';
 
 // Détection backend : local en dev, prod sinon
 const API = "https://moodshare-7dd7.onrender.com/api";
@@ -447,12 +448,13 @@ function displayMood(mood) {
 
     const shareBtn = document.createElement('button');
     shareBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link-icon lucide-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
-    shareBtn.title = 'Partager';
+    shareBtn.title = 'Copier le lien du post';
     actionBar.appendChild(shareBtn);
 
     const repostBtn = document.createElement('button');
     repostBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-repeat2-icon lucide-repeat-2"><path d="m2 9 3-3 3 3"/><path d="M13 18H7a2 2 0 0 1-2-2V6"/><path d="m22 15-3 3-3-3"/><path d="M11 6h6a2 2 0 0 1 2 2v10"/></svg>';
     repostBtn.title = 'Reposter';
+    repostBtn.disabled = true;  // Disable initially
     actionBar.appendChild(repostBtn);
 
     // ---- Report button ----
@@ -462,16 +464,16 @@ function displayMood(mood) {
     reportBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>';
     actionBar.appendChild(reportBtn);
 
-    const shareInMsg = document.createElement('button');
-    shareInMsg.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share2-icon lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>';
-    shareInMsg.title = 'Partager dans un message';
-    shareInMsg.addEventListener('click', async () => {
-        const otherUserId = prompt('ID de l\'utilisateur :');
-        if (otherUserId) {
-            await window.sharePostInMessage(mood.id, otherUserId);
-        }
-    });
-    actionBar.appendChild(shareInMsg);
+    // const shareInMsg = document.createElement('button');
+    // shareInMsg.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-share2-icon lucide-share-2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>';
+    // shareInMsg.title = 'Partager dans un message';
+    // shareInMsg.addEventListener('click', async () => {
+    //     const otherUserId = prompt('ID de l\'utilisateur :');
+    //     if (otherUserId) {
+    //         await window.sharePostInMessage(mood.id, otherUserId);
+    //     }
+    // });
+    // actionBar.appendChild(shareInMsg);
     reportBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         openReportModal(mood.id);
@@ -608,7 +610,6 @@ window.submitReport = submitReport;
         if (user) {
             const res = await fetch(`${API}/users/${user.id}/posts`);
             const userPosts = await res.json();
-            // Afficher userPosts au lieu de tous les posts
         }
 
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -617,11 +618,15 @@ window.submitReport = submitReport;
         try {
             moods = JSON.parse(text);
         } catch (jsonErr) {
-            console.error('❌ Posts JSON corrompu:', jsonErr.message, '— position:', text.substring(4080, 4095));
+            console.error('❌ Posts JSON corrompu:', jsonErr.message);
             return;
         }
         if (!Array.isArray(moods)) return;
         moods.reverse().forEach(displayMood);
+
+        // 🔥 AJOUT : activer la navigation par permalien APRÈS le chargement des posts
+        initPermalinks();
+
     } catch (err) {
         console.error('❌ Erreur chargement posts:', err);
     }
@@ -984,8 +989,8 @@ if (loader) {
         // Retirer du DOM après transition
         setTimeout(() => {
             loader.remove();
-        }, 600);
-    }, 2000);
+        }, 7000);
+    }, 3600);
 }
 
 async function loadLanguages() {

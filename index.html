@@ -760,7 +760,6 @@
       </div>
     </section>
     <section id="messagesTab" class="tab hidden">
-      <h1 data-i18n="messages_title">Messages</h1>
       <div id="messagesdiv">
         <div id="messages-section" class="messages-container">
           <div class="messages-sidebar">
@@ -897,32 +896,7 @@
             <p data-i18n="Policy_title">Politique de confidentialité</p>
           </button></a
         >
-        <a id="goToSettingsBtn"
-          ><div id="image">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="white"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-settings-icon lucide-settings"
-            >
-              <path
-                d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"
-              />
-              <circle cx="12" cy="12" r="3" />
-            </svg>
-          </div>
-          <button class="hoverable">
-            <b>
-              <p data-i18n="nav_settings">Paramètres</p>
-            </b>
-          </button></a
-        ><a href="moodshare.apk" class="download-apk-btn">
+        <a href="moodshare.apk" class="download-apk-btn">
           <div id="image">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -944,6 +918,44 @@
           <button class="hoverable">Installer l'app ! (.apk)</button>
         </a>
       </div>
+      <div class="language-picker">
+        <p data-i18n="settings_language" class="lp-title">Langue</p>
+
+        <div class="lp-control">
+          <button
+            class="lp-button"
+            id="lpOpenBtn"
+            aria-haspopup="dialog"
+            aria-expanded="false"
+          >
+            <span id="lpCurrentFlag" class="lp-flag">🌐</span>
+            <span id="lpCurrentLabel">Français</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="36"
+              height="36"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.25"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-down-icon lucide-arrow-down"
+            >
+              <path d="M12 5v14" />
+              <path d="m19 12-7 7-7-7" />
+            </svg>
+          </button>
+          <div
+            id="lpPopup"
+            class="lp-popup"
+            role="dialog"
+            aria-label="Language selector"
+          >
+            <div id="lpGrid" class="lp-grid" tabindex="0"></div>
+          </div>
+        </div>
+      </div>
       <footer>
         <p data-i18n="copyright">
           <b>Moodshare &copy; 2025-2026.</b> Toute reproduction partielle ou
@@ -954,111 +966,6 @@
           <span id="BuildVersion">...</span>
         </p>
       </footer>
-    </section>
-
-    <section id="settingsTab" class="tab hidden">
-      <div id="appSettings">
-        <div id="settingstitle">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="lucide lucide-settings-icon lucide-settings"
-          >
-            <path
-              d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"
-            />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
-          <h1 data-i18n="settings_app">Paramètres de l'application</h1>
-        </div>
-        <!-- Language Picker -->
-        <div class="language-picker">
-          <p data-i18n="settings_language" class="lp-title">Langue</p>
-
-          <div class="lp-control">
-            <button
-              class="lp-button"
-              id="lpOpenBtn"
-              aria-haspopup="dialog"
-              aria-expanded="false"
-            >
-              <span id="lpCurrentFlag" class="lp-flag">🌐</span>
-              <span id="lpCurrentLabel">Français</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="36"
-                height="36"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2.25"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-arrow-down-icon lucide-arrow-down"
-              >
-                <path d="M12 5v14" />
-                <path d="m19 12-7 7-7-7" />
-              </svg>
-            </button>
-            <div
-              id="lpPopup"
-              class="lp-popup"
-              role="dialog"
-              aria-label="Language selector"
-            >
-              <div id="lpGrid" class="lp-grid" tabindex="0"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="lowend-settings">
-          <h4 data-i18n="settings-performance">Mode performance</h4>
-          <p class="lp-title">
-            Mode "low‑end" (détection automatique ou manuel)
-          </p>
-
-          <div
-            class="lowend-controls"
-            role="radiogroup"
-            aria-label="Low end mode"
-          >
-            <label>
-              <input
-                type="radio"
-                name="lowEndMode"
-                id="lowEndAuto"
-                value="auto"
-              />
-              <p data-i18n="perf-auto">Auto (détection)</p>
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="lowEndMode"
-                id="lowEndForce"
-                value="on"
-              />
-              <p data-i18n="perf-low">Forcer low-end</p>
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="lowEndMode"
-                id="lowEndOff"
-                value="off"
-              />
-              <p data-i18n="perf-unactive">Désactiver</p>
-            </label>
-          </div>
-        </div>
-      </div>
     </section>
 
     <!-- ===== REPORT MODAL ===== -->
