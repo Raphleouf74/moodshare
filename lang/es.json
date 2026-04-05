@@ -77,5 +77,6 @@
   "login-message": "¡Moodshare es aún más divertido cuando estás conectado!",
   "copyright": "Moodshare © 2025-2026. Queda estrictamente prohibida cualquier reproducción, total o parcial.",
   "message_warning": "Advertencia, solo se guardan los últimos 20 mensajes. Además, los mensajes no están encriptados, ten cuidado con lo que compartes: ¡los moderadores pueden verlo!",
-    "not-logged-in": "No estás conectado, por favor inicia sesión para discutir !"
+  "not-logged-in": "No estás conectado, por favor inicia sesión para discutir !",
+  "lp-warn": "Algunas partes del sitio aún no están traducidas."  
 }

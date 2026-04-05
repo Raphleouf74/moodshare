@@ -29,7 +29,12 @@ const postSchema = new mongoose.Schema({
   emoji: String,
   color: String,
   textColor: String,
+  stickerUrl: { type: String, default: null },
+  anonymous: { type: Boolean, default: false },
   likes: { type: Number, default: 0 },
+  views: { type: Number, default: 0 },
+  // reactions: { heart: N, haha: N, ... }
+  reactions: { type: Map, of: Number, default: {} },
   ephemeral: { type: Boolean, default: false },
   expiresAt: { type: Date, default: null },
   repostedFrom: String,
@@ -114,6 +119,20 @@ const conversationSchema = new mongoose.Schema({
 }, { _id: false });
 
 const ConversationModel = mongoose.models.Conversation || mongoose.model('Conversation', conversationSchema);
+
+// ============================================================
+// COMMENT SCHEMA
+// ============================================================
+const commentSchema = new mongoose.Schema({
+  _id: { type: String, default: () => Date.now().toString() },
+  postId: { type: String, required: true, index: true },
+  author: { type: String, default: 'Anonyme' },
+  authorId: { type: String, default: null },
+  text: { type: String, required: true, maxLength: 500 },
+  createdAt: { type: Date, default: Date.now }
+}, { _id: false });
+
+const CommentModel = mongoose.models.Comment || mongoose.model('Comment', commentSchema);
 
 // POSTS STORAGE
 let posts = [
@@ -375,7 +394,26 @@ app.get("/api/stories", (req, res) => {
 });
 
 app.get("/api/posts", (req, res) => {
-  res.json(posts);
+  const page = Math.max(1, parseInt(req.query.page || '1', 10));
+  const limit = Math.min(100, Math.max(1, parseInt(req.query.limit || '200', 10)));
+  const sort = req.query.sort || 'recent'; // recent | popular | trending
+
+  let result = [...posts];
+
+  if (sort === 'popular') {
+    result.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+  } else if (sort === 'trending') {
+    result.sort((a, b) => {
+      const scoreA = (a.likes || 0) * 2 + (a.views || 0) * 0.1;
+      const scoreB = (b.likes || 0) * 2 + (b.views || 0) * 0.1;
+      return scoreB - scoreA;
+    });
+  }
+  // default: recent — already ordered unshift
+
+  const start = (page - 1) * limit;
+  const paged = result.slice(start, start + limit);
+  res.json(paged);
 });
 
 function sanitizeText(text) {
@@ -392,23 +430,37 @@ app.post("/api/posts", async (req, res) => {
     const cleanText = sanitizeText(req.body.text);
     const cleanEmoji = sanitizeText(req.body.emoji);
 
+    const userId = req.session?.user?.id || req.user?.id || null;
+    const isAnon = !!req.body.anonymous;
+    const userName = isAnon ? 'Anonyme' : (req.session?.user?.displayName || req.body.userName || 'Anonyme');
+
     const newPost = {
       text: cleanText,
       emoji: cleanEmoji,
       color: req.body.color,
       textColor: req.body.textColor,
+      stickerUrl: req.body.stickerUrl || null,
+      anonymous: isAnon,
       id: Date.now().toString(),
-      userId: req.session?.user?.id || null,
-      userName: req.session?.user?.displayName || 'Anonyme',
-      ...req.body,
+      userId: isAnon ? null : userId,
+      userName,
       likes: 0,
+      views: 0,
+      reactions: {},
       pinned: false,
+      ephemeral: !!req.body.ephemeral,
+      expiresAt: req.body.expiresAt || null,
       createdAt: new Date().toISOString()
     };
 
     posts.unshift(newPost);
     await persistPost(newPost);
     try { sendSSE('new_post', newPost); } catch (e) { console.error('❌ Erreur SSE:', e); }
+
+    // Incrémenter postsCount
+    if (!isAnon && userId && mongoReady) {
+      UserModel.findByIdAndUpdate(userId, { $inc: { postsCount: 1 } }).catch(() => { });
+    }
 
     res.status(201).json(newPost);
   } catch (err) {
@@ -582,11 +634,33 @@ app.post("/api/posts/:id/share", async (req, res) => {
 // ROUTES SOCIALES — avec MongoDB
 // ============================================================
 
-function requireAuth(req, res, next) {
-  if (!req.session?.user?.id) {
-    return res.status(401).json({ error: 'Non authentifié' });
+// ============================================================
+// AUTH MIDDLEWARE — accepte session ET JWT Bearer token
+// ============================================================
+async function requireAuth(req, res, next) {
+  // 1. Session OK (login classique)
+  if (req.session?.user?.id) return next();
+
+  // 2. JWT présent (token retourné par /login)
+  if (req.user?.id) {
+    try {
+      const userId = req.user.id;
+      if (userId.startsWith('guest_')) {
+        req.session.user = { id: userId, displayName: 'Invité', isGuest: true };
+        return next();
+      }
+      if (!mongoReady) return res.status(503).json({ error: 'DB non disponible' });
+      const user = await UserModel.findById(userId).lean();
+      if (!user) return res.status(401).json({ error: 'Non authentifié' });
+      req.session.user = { id: user._id, displayName: user.displayName };
+      return next();
+    } catch (err) {
+      console.error('❌ requireAuth JWT hydration error:', err);
+      return res.status(401).json({ error: 'Non authentifié' });
+    }
   }
-  next();
+
+  return res.status(401).json({ error: 'Non authentifié' });
 }
 
 // GET /api/social/profile/:userId — Profil utilisateur
@@ -1235,7 +1309,7 @@ app.post('/api/auth/login', async (req, res) => {
         id: user._id,
         displayName: user.displayName,
       },
-      token: jwtService.sign({ id: user._id }, '15m')
+      token: jwtService.sign({ id: user._id }, '7d')
     });
   } catch (err) {
     console.error('❌ Login error:', err);
@@ -1271,7 +1345,7 @@ app.post('/api/auth/guest', async (req, res) => {
     console.log('✅ Guest login:', guestId, 'Session ID:', req.sessionID);
     res.json({
       user: { id: guestId, displayName: 'Invité' },
-      token: jwtService.sign({ id: guestId }, '15m')
+      token: jwtService.sign({ id: guestId }, '7d')
     });
   } catch (err) {
     console.error('❌ Guest error:', err);
@@ -1546,6 +1620,182 @@ app.get('/api/users/:userId/posts', async (req, res) => {
   } catch (err) {
     console.error('❌ Get user posts error:', err);
     res.status(500).json({ error: 'Erreur récupération posts' });
+  }
+});
+
+// ============================================================
+// ROUTES V2 — Post unique, vues, réactions, commentaires
+// ============================================================
+
+// GET /api/posts/:id — Post unique (pour permalink)
+app.get('/api/posts/:id', (req, res) => {
+  const post = posts.find(p => String(p.id) === String(req.params.id));
+  if (!post) return res.status(404).json({ error: 'Post non trouvé' });
+  res.json(post);
+});
+
+// POST /api/posts/:id/view — Incrémenter les vues
+app.post('/api/posts/:id/view', async (req, res) => {
+  try {
+    const post = posts.find(p => String(p.id) === String(req.params.id));
+    if (!post) return res.status(404).json({ error: 'Post non trouvé' });
+
+    post.views = (post.views || 0) + 1;
+
+    // Persist en DB en arrière-plan sans bloquer la réponse
+    if (mongoReady) {
+      PostModel.findByIdAndUpdate(String(post.id), { $inc: { views: 1 } }).catch(() => { });
+    }
+
+    res.json({ views: post.views });
+  } catch (err) {
+    console.error('❌ view error:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// GET /api/posts/:id/reactions — Lire les réactions d'un post
+app.get('/api/posts/:id/reactions', (req, res) => {
+  const post = posts.find(p => String(p.id) === String(req.params.id));
+  if (!post) return res.status(404).json({ error: 'Post non trouvé' });
+
+  // reactions est un Map ou objet simple
+  const reactions = post.reactions instanceof Map
+    ? Object.fromEntries(post.reactions)
+    : (post.reactions || {});
+
+  res.json({ reactions });
+});
+
+// POST /api/posts/:id/react — Ajouter / changer sa réaction
+app.post('/api/posts/:id/react', requireAuth, async (req, res) => {
+  try {
+    const { type } = req.body;
+    const VALID_TYPES = ['heart', 'haha', 'wow', 'sad', 'fire', 'clap'];
+    if (!VALID_TYPES.includes(type)) {
+      return res.status(400).json({ error: 'Type de réaction invalide' });
+    }
+
+    const post = posts.find(p => String(p.id) === String(req.params.id));
+    if (!post) return res.status(404).json({ error: 'Post non trouvé' });
+
+    if (!post.reactions || typeof post.reactions !== 'object') post.reactions = {};
+    // Convertir Map Mongoose en objet simple si besoin
+    if (post.reactions instanceof Map) {
+      post.reactions = Object.fromEntries(post.reactions);
+    }
+
+    post.reactions[type] = (post.reactions[type] || 0) + 1;
+
+    // Persist en DB
+    if (mongoReady) {
+      const updateKey = `reactions.${type}`;
+      PostModel.findByIdAndUpdate(String(post.id), { $inc: { [updateKey]: 1 } }).catch(() => { });
+    }
+
+    res.json({ reactions: post.reactions });
+  } catch (err) {
+    console.error('❌ react error:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// POST /api/posts/:id/unreact — Retirer sa réaction
+app.post('/api/posts/:id/unreact', requireAuth, async (req, res) => {
+  try {
+    const { type } = req.body;
+    const post = posts.find(p => String(p.id) === String(req.params.id));
+    if (!post) return res.status(404).json({ error: 'Post non trouvé' });
+
+    if (!post.reactions) post.reactions = {};
+    if (post.reactions instanceof Map) post.reactions = Object.fromEntries(post.reactions);
+
+    if (post.reactions[type] > 0) {
+      post.reactions[type] = Math.max(0, (post.reactions[type] || 1) - 1);
+      if (post.reactions[type] === 0) delete post.reactions[type];
+
+      if (mongoReady) {
+        const updateKey = `reactions.${type}`;
+        PostModel.findByIdAndUpdate(String(post.id), { $inc: { [updateKey]: -1 } }).catch(() => { });
+      }
+    }
+
+    res.json({ reactions: post.reactions });
+  } catch (err) {
+    console.error('❌ unreact error:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// GET /api/posts/:id/comments — Lire les commentaires
+app.get('/api/posts/:id/comments', async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const post = posts.find(p => String(p.id) === String(postId));
+    if (!post) return res.status(404).json({ error: 'Post non trouvé' });
+
+    if (!mongoReady) {
+      return res.json({ comments: [] });
+    }
+
+    const comments = await CommentModel.find({ postId: String(postId) })
+      .sort({ createdAt: 1 })
+      .limit(100)
+      .lean();
+
+    res.json({ comments: comments.map(c => ({ ...c, _id: c._id })) });
+  } catch (err) {
+    console.error('❌ get comments error:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// POST /api/posts/:id/comments — Ajouter un commentaire
+app.post('/api/posts/:id/comments', async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const post = posts.find(p => String(p.id) === String(postId));
+    if (!post) return res.status(404).json({ error: 'Post non trouvé' });
+
+    const rawText = String(req.body.text || '').trim();
+    if (!rawText) return res.status(400).json({ error: 'Commentaire vide' });
+    if (rawText.length > 500) return res.status(400).json({ error: 'Commentaire trop long (max 500)' });
+
+    const cleanText = sanitizeText(rawText);
+
+    // Auteur : session > JWT > body
+    const authorId = req.session?.user?.id || req.user?.id || null;
+    const author = req.session?.user?.displayName || req.body.author || 'Anonyme';
+
+    const comment = {
+      _id: Date.now().toString(),
+      postId: String(postId),
+      author,
+      authorId,
+      text: cleanText,
+      createdAt: new Date().toISOString()
+    };
+
+    if (mongoReady) {
+      const doc = new CommentModel(comment);
+      await doc.save();
+    }
+
+    // Notification au propriétaire du post si connu
+    if (mongoReady && post.userId && post.userId !== authorId) {
+      createNotification(
+        post.userId,
+        'comment',
+        author,
+        `a commenté : "${cleanText.substring(0, 60)}"`,
+        { postId, commentId: comment._id }
+      ).catch(() => { });
+    }
+
+    res.status(201).json({ comment });
+  } catch (err) {
+    console.error('❌ post comment error:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
   }
 });
 

@@ -1,6 +1,9 @@
 import { loadLanguage, t } from "./lang.js";
 import { fetchWithAuth, getCurrentUser } from './auth.js';
-import { initPermalinks } from './post-permalink.js';
+import { initPermalinks, openPostModal } from './post-permalink.js';
+import { initV2, attachV2ToPost } from './init.js';
+window.openPermalinkModal = openPostModal;
+
 
 // Détection backend : local en dev, prod sinon
 const API = "https://moodshare-7dd7.onrender.com/api";
@@ -365,6 +368,11 @@ function displayMood(mood) {
     }
 
     moodcard.appendChild(content);
+    content.style.cursor = 'pointer';
+    content.addEventListener('click', (e) => {
+        if (e.target.closest('button, a, input')) return;
+        openPostModal(mood.id);
+    });
 
     // ---- OPTIONS ----
     const options = document.createElement("div");
@@ -509,6 +517,7 @@ function displayMood(mood) {
             showFeedback("error", "repost_failed");
         }
     });
+    attachV2ToPost(moodcard, mood.id);
 
 }
 
@@ -623,6 +632,7 @@ window.submitReport = submitReport;
         }
         if (!Array.isArray(moods)) return;
         moods.reverse().forEach(displayMood);
+        initV2();
 
         // 🔥 AJOUT : activer la navigation par permalien APRÈS le chargement des posts
         initPermalinks();
@@ -788,74 +798,7 @@ function showFeedback(type, messageKey, vars = {}) {
  * @param {function} [actionFn] - Fonction à exécuter au clic sur le bouton
  */
 
-async function addInboxNotification(
-    type,
-    titleKey,
-    messageKey,
-    icon = "!",
-    actionLabel,
-    actionFn
-) {
-    const title = t(titleKey) || titleKey;
-    const message = t(messageKey) || messageKey;
 
-    const inboxDiv = document.getElementById("inboxdiv");
-    if (!inboxDiv) return console.error("❌ Inbox non trouvée dans le DOM");
-
-    const typeColors = {
-        info: "#3498dbb0",
-        success: "#27ae60b0",
-        warning: "#f1c40fb0",
-        error: "#e74c3cb0",
-        critical: "#c0392bb0"
-    };
-
-    const notif = document.createElement("div");
-    notif.className = `notificationInbox ${type}`;
-    notif.style.borderLeft = `6px solid ${typeColors[type] || "#777"}`;
-
-    // Structure de base
-    const iconSpan = document.createElement("span");
-    iconSpan.className = "material-symbols-rounded";
-    iconSpan.style.color = typeColors[type] || "#777";
-    iconSpan.textContent = icon; // 🔒 OK : icône interne, safe
-
-    const wrapper = document.createElement("div");
-
-    const h3 = document.createElement("h3");
-    h3.textContent = title;
-
-    const p = document.createElement("p");
-    p.textContent = message;
-
-    wrapper.appendChild(h3);
-    wrapper.appendChild(p);
-
-    // Bouton d'action sécurisé
-    if (actionLabel) {
-        const btn = document.createElement("button");
-        btn.className = "notif-action";
-        if (typeof actionFn === "function") {
-            btn.addEventListener("click", actionFn);
-        }
-        wrapper.appendChild(btn);
-    }
-
-    notif.appendChild(iconSpan);
-    notif.appendChild(wrapper);
-
-    // Injection finale
-    inboxDiv.prepend(notif);
-
-    // Animation safe
-    notif.style.opacity = "0";
-    notif.style.transform = "translateY(-10px)";
-    setTimeout(() => {
-        notif.style.transition = "all 0.3s ease";
-        notif.style.opacity = "1";
-        notif.style.transform = "translateY(0)";
-    }, 50);
-}
 
 const addStoryBtn = document.getElementById('addStoryBtn');
 const storyModeToggle = document.getElementById('storyModeToggle');
@@ -1620,3 +1563,71 @@ function initPullToRefresh() {
         }
     });
 }
+
+async function addInboxNotification(
+    type,
+    titleKey,
+    messageKey,
+    icon = "!",
+    imgsrc
+) {
+    const title = t(titleKey) || titleKey;
+    const message = t(messageKey) || messageKey;
+
+    const inboxDiv = document.getElementById("inboxdiv");
+    if (!inboxDiv) return console.error("❌ Inbox non trouvée dans le DOM");
+
+    const typeColors = {
+        info: "#3498dbb0",
+        success: "#27ae60b0",
+        warning: "#f1c40fb0",
+        error: "#e74c3cb0",
+        critical: "#c0392bb0"
+    };
+
+    const notif = document.createElement("div");
+    notif.className = `notificationInbox ${type}`;
+    notif.style.borderLeft = `6px solid ${typeColors[type] || "#777"}`;
+
+    // Structure de base
+    const iconSpan = document.createElement("span");
+    iconSpan.className = "material-symbols-rounded";
+    iconSpan.style.color = typeColors[type] || "#777";
+    iconSpan.textContent = icon; // 🔒 OK : icône interne, safe
+
+    const wrapper = document.createElement("div");
+
+    const h3 = document.createElement("h3");
+    h3.textContent = title;
+
+    const p = document.createElement("p");
+    p.textContent = message;
+
+    const img = document.createElement("img");
+    if (imgsrc) {
+        img.src = imgsrc;
+        img.alt = title;
+        img.height = 60;
+        img.className = "notif-img";
+
+    }
+
+    wrapper.appendChild(h3);
+    wrapper.appendChild(p);
+    wrapper.appendChild(img);
+
+    notif.appendChild(wrapper);
+
+    // Injection finale
+    inboxDiv.prepend(notif);
+
+    // Animation safe
+    notif.style.opacity = "0";
+    notif.style.transform = "translateY(-10px)";
+    setTimeout(() => {
+        notif.style.transition = "all 0.3s ease";
+        notif.style.opacity = "1";
+        notif.style.transform = "translateY(0)";
+    }, 50);
+}
+addInboxNotification("info", "Découvrez MoodShare v2", "Découvrez une nouvelle version de MoodShare avec des fonctionnalités améliorées. Vous pouvez désormais: -Réagir aux posts des autres utilisateurs, - Un tout nouveau design de l'onglet Profil - Vous pouvez trier votre feed par catégorie, - Un onglet explorer pour voir de façon compréssé et rapide tous les posts - Les commentaires sont de retour !, - Des bannières journalières en haut du feed,  - Ajout du nombre de vues d'un post, - Nouvel écran de chargement, - Plus d'option pour la création de post, - La pagination des posts est enfin là afin de compléter le système de copie des liens de post, - Autres amélioration UI/UX pour mobile, - Modification et ajustement diverses", "check_circle", "../v2logo.png");

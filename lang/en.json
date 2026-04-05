@@ -78,6 +78,6 @@
   "login-message": "Moodshare is even more fun when you're connected!",
   "copyright": "Moodshare © 2025-2026. Any reproduction, total or partial, is strictly prohibited.",
   "message_warning": "Warning: only the last 20 messages are saved. Also, messages are not encrypted, so be careful about what you share: it can be seen by mods!",
-    "not-logged-in": "You are not logged in, please log in to discuss !"
-
+  "not-logged-in": "You are not logged in, please log in to discuss !",
+  "lp-warn": "Some parts of the site are not yet translated."
 }

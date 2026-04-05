@@ -37,7 +37,11 @@ function handleHash(hash) {
 // MODAL POST PERMALINK
 // ============================================================
 
-async function openPostModal(postId) {
+/**
+ * Ouvre la modale d'un post.
+ * Exporté pour être appelé au clic depuis displayMood() dans app.js.
+ */
+export async function openPostModal(postId) {
     // Évite les doublons
     if (document.getElementById('permalink-modal')) return;
 
@@ -117,37 +121,22 @@ function renderModal(mood, postId, postEl) {
 
     const panel = document.createElement('div');
     panel.style.cssText = `
-        background: var(--bg-secondary, #1a1a1a);
+        background: var(--bg-secondary, #b6b6b6);
         border-radius: 20px;
         padding: 32px 28px 28px;
-        max-width: 480px;
-        width: 100%;
-        max-height: 90vh;
+        width: 80%;
+        height: 90%;
         overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-evenly;
         position: relative;
         box-shadow: 0 16px 48px rgba(0,0,0,0.6);
         animation: plSlideUp 0.3s ease;
         box-sizing: border-box;
     `;
 
-    // ---- Badge "Post partagé" ----
-    const badge = document.createElement('div');
-    badge.style.cssText = `
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: #667eea;
-        background: rgba(102,126,234,0.12);
-        border: 1px solid rgba(102,126,234,0.3);
-        border-radius: 20px;
-        padding: 4px 12px;
-        margin-bottom: 20px;
-    `;
-    badge.textContent = '🔗 Post partagé';
 
     // ---- Bouton fermer ----
     const closeBtn = document.createElement('button');
@@ -187,6 +176,7 @@ function renderModal(mood, postId, postEl) {
         text-align: center;
         min-height: 160px;
         display: flex;
+        width: 95%;
         flex-direction: column;
         align-items: center;
         justify-content: center;
@@ -245,9 +235,10 @@ function renderModal(mood, postId, postEl) {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        font-size: 0.85rem;
+        font-size: 2.5rem;
         color: #888;
         margin-bottom: 20px;
+        width: 95%;
         flex-wrap: wrap;
         gap: 8px;
     `;
@@ -330,7 +321,6 @@ function renderModal(mood, postId, postEl) {
 
     // ---- Assembly ----
     panel.appendChild(closeBtn);
-    panel.appendChild(badge);
     panel.appendChild(card);
     panel.appendChild(meta);
     panel.appendChild(actions);
@@ -373,7 +363,7 @@ function showPermalinkError(postId) {
         position: fixed; inset: 0;
         background: rgba(0,0,0,0.85);
         backdrop-filter: blur(6px);
-        z-index: 999;
+        z-index: 99999;
         display: flex; align-items: center; justify-content: center;
         padding: 16px; box-sizing: border-box;
         animation: plFadeIn 0.25s ease;
