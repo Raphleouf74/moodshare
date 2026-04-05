@@ -373,7 +373,7 @@ function showPermalinkError(postId) {
         position: fixed; inset: 0;
         background: rgba(0,0,0,0.85);
         backdrop-filter: blur(6px);
-        z-index: 99999;
+        z-index: 999;
         display: flex; align-items: center; justify-content: center;
         padding: 16px; box-sizing: border-box;
         animation: plFadeIn 0.25s ease;
