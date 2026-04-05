@@ -2,6 +2,7 @@ import { loadLanguage, t } from "./lang.js";
 import { fetchWithAuth, getCurrentUser } from './auth.js';
 import { initPermalinks, openPostModal } from './post-permalink.js';
 import { initV2, attachV2ToPost } from './init.js';
+import { getAnonymousFlag } from './creator-extras.js';
 window.openPermalinkModal = openPostModal;
 
 
@@ -520,6 +521,7 @@ function displayMood(mood) {
     attachV2ToPost(moodcard, mood.id);
 
 }
+window.displayMoodV2 = displayMood;
 
 // ============================================================
 // REPORT MODAL
@@ -878,13 +880,16 @@ if (submitBtn) {
 
                 const newMood = {
                     text,
-                    color,
+                    color: window._v2SelectedGradient || color,
                     textColor: document.getElementById('textColor')?.value || null,
                     emoji,
                     stickerUrl: _selectedStickerUrl || null,
                     ephemeral: ephemeralToggle.checked,
-                    expiresAt
+                    expiresAt,
+                    anonymous: getAnonymousFlag()
                 };
+                window._v2SelectedGradient = null;
+                document.querySelectorAll('.swatch').forEach(s => s.classList.remove('swatch--active'));
 
                 const response = await fetch(`${API}/posts`, {
                     method: "POST",

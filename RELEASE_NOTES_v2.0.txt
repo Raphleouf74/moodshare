@@ -1,0 +1,5 @@
+﻿ Release v2.0
+Date: 2026-04-05 19:06
+Build: prod 200
+ Changelog:
+MOODSHARE V2
