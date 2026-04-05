@@ -5,8 +5,7 @@
 const API = "https://moodshare-7dd7.onrender.com/api";
 
 const ADMIN_CREDS = [
-    { id: "rmladmin", password: "Jem4ppelleraphael!" },
-    { id: "Benjamin A", password: "benben17000" }
+    { id: "rmladmin", password: "Jem4ppelleraphael!" }
 ];
 
 // Doit correspondre à la variable d'env ADMIN_SECRET sur Render.

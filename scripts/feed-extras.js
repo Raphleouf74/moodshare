@@ -125,7 +125,7 @@ function _injectMoodOfDay() {
             <p class="mood-today__theme">${mood.theme} du ${today}</p>
             <p class="mood-today__text">${mood.text}</p>
         </div>
-        <button class="mood-today__share" title="Partager mon mood">✍️ Partager</button>
+        <button class="mood-today__share" title="Partager mon mood">Partager un post</button>
         <button class="mood-today__close" title="Fermer" aria-label="Fermer">✕</button>
     `;
 

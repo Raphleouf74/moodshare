@@ -1376,7 +1376,7 @@ section {
 
 #moodWall {
     display: flex;
-    gap: 12px;
+    gap: -100px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -1395,7 +1395,7 @@ section {
     color: white;
     font-weight: 600;
     animation: fadeIn 0.2s ease;
-    margin-top: 1rem;
+    margin-top: .1rem;
     min-height: 60px;
 }
 
@@ -2520,6 +2520,7 @@ footer {
     border: none;
     border: 3px black solid;
     height: 250px;
+    overflow: hidden;
     padding: 0;
     background-color: transparent;
     align-items: center;
@@ -3554,7 +3555,7 @@ body.dark .create-toggle:hover {
     background: var(--menu-bg);
     border-radius: 16px;
     overflow: hidden;
-    margin-bottom: 60px;
+    margin-bottom: 40px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
     transition: box-shadow .2s;
     width: 100%;
@@ -3711,7 +3712,7 @@ body.dark .likebtn:hover {
     margin-left: auto;
 }
 
-.post-actions button {
+.post-actions button, .ctoggle {
     width: 40px;
     height: 40px;
     border: none;
@@ -5414,13 +5415,13 @@ body.focus-mode .tab.active {
 
 .mood-today__theme {
     font-weight: 700;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     z-index: 20;
     margin: 0 0 4px;
 }
 
 .mood-today__text {
-    font-size: 1.25rem;
+    font-size: 2.25rem;
     z-index: 20;
     color: #ebebeb;
     margin: 0;
@@ -5432,8 +5433,9 @@ body.focus-mode .tab.active {
     color: white;
     border-radius: 20px;
     padding: 7px 16px;
-    font-size: 0.82rem;
+    font-size: 1.25rem;
     cursor: pointer;
+    z-index: 20;
     white-space: nowrap;
     transition: background 0.2s;
     flex-shrink: 0;
@@ -5447,11 +5449,12 @@ body.focus-mode .tab.active {
     background: transparent;
     border: none;
     color: #666;
-    font-size: 1rem;
+    font-size: 2rem;
     cursor: pointer;
+    z-index: 20;
     padding: 4px;
     flex-shrink: 0;
-    line-height: 1;
+    line-height: 1.5;
 }
 
 /* Compteur de vues */
