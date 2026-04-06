@@ -48,7 +48,8 @@ function _injectExplorerTab() {
     section.className = 'tab hidden';
     section.innerHTML = `
         <div class="exp-header">
-            <h2 class="exp-title">🧭 Explorer</h2>
+            <button class="explorerbackbtn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-big-left-icon lucide-arrow-big-left"><path d="M10.793 19.793a.707.707 0 0 0 1.207-.5V16a1 1 0 0 1 1-1h6a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-6a1 1 0 0 1-1-1V4.707a.707.707 0 0 0-1.207-.5l-6.94 6.94a1.207 1.207 0 0 0 0 1.707z"/></svg> Retour en arrière</button>
+            <h2 class="exp-title"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#1d88ec" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-compass-icon lucide-compass"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/></svg> Explorer</h2>
             <p class="exp-sub">Les posts les plus populaires de la communauté</p>
         </div>
         <div class="exp-filters" id="exp-filters"></div>
@@ -62,6 +63,15 @@ function _injectExplorerTab() {
         </div>
     `;
 
+    // Clic sur le back → revenir au feed
+    section.querySelector('.explorerbackbtn')?.addEventListener('click', () => {
+        document.querySelector('section#homeTab')?.classList.remove('hidden');
+        document.querySelector('section#homeTab')?.classList.add('active');
+        section.classList.add('hidden');
+        section.classList.remove('active');
+        document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+        document.querySelector('nav a#homeTab')?.classList.add('active');
+    });
     // Insérer avant le footer ou à la fin du main
     const main = document.querySelector('main') || document.body;
     main.appendChild(section);

@@ -2994,61 +2994,242 @@ section#homeTab {
 
 #reportModalOverlay {
     position: fixed;
-    pointer-events: auto;
+    inset: 0;
+    pointer-events: none;
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100vw;
     height: 100vh;
-    top: 0;
-    left: 0;
     z-index: 9999;
-    -webkit-backdrop-filter: blur(15px);
-    backdrop-filter: blur(15px);
+    background: rgba(12, 18, 35, 0.72);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+}
+
+#reportModalOverlay.visible {
+    pointer-events: auto;
 }
 
 .report-modal-panel {
-    width: 600px;
-    height: 400px;
-    border-radius: 20px;
-    background-color: #fff;
-    padding: 15px;
+    width: min(600px, calc(100vw - 32px));
+    max-width: 620px;
+    border-radius: 24px;
+    background: radial-gradient(circle at top left, rgba(255,255,255,0.95), rgba(245,245,245,0.96));
+    padding: 24px;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    position: absolute;
+    position: relative;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
+    transform: translateY(30px);
+    opacity: 0;
+    transition: transform 0.28s ease, opacity 0.28s ease;
+}
+
+.report-modal-panel.open {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.report-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
 }
 
 .report-modal-title {
-    font-size: 25px;
-    align-items: center;
+    font-size: 1.4rem;
+    font-weight: 800;
     display: flex;
-    justify-content: left;
-    margin-left: 25px;
-    gap: 25px;
+    align-items: center;
+    gap: 14px;
+    color: #111827;
+    margin: 0;
 }
 
 .report-modal-title svg {
-    height: 30px;
-    width: 30px;
+    height: 28px;
+    width: 28px;
+    color: #6366f1;
 }
 
 .report-modal-close {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: rgba(200, 0, 0);
-    border: none;
+    position: relative;
+    top: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
     border-radius: 50%;
-    height: 30px;
-    width: 30px;
+    height: 38px;
+    width: 38px;
     justify-content: center;
     align-items: center;
-    text-align: center;
     display: flex;
-    color: white;
+    color: #111827;
+    transition: transform 0.2s ease, background 0.2s ease;
 }
 
+.report-modal-close:hover {
+    transform: scale(1.05);
+    background: #f8fafc;
+}
+
+.report-modal-body {
+    display: grid;
+    gap: 18px;
+}
+
+.report-field {
+    display: grid;
+    gap: 10px;
+}
+
+.report-label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.report-label span {
+    font-weight: 400;
+    color: #6b7280;
+    font-size: 0.85rem;
+}
+
+.report-select-wrap,
+.report-textarea {
+    width: 100%;
+}
+
+.report-select {
+    width: 100%;
+    min-height: 48px;
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    padding: 14px 16px;
+    background: #ffffff;
+    color: #111827;
+    font-size: 0.95rem;
+    appearance: none;
+    outline: none;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.report-select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+}
+
+.report-textarea {
+    min-height: 160px;
+    resize: vertical;
+    border: 1px solid rgba(148, 163, 184, 0.45);
+    border-radius: 20px;
+    background: #ffffff;
+    color: #111827;
+    padding: 16px;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    outline: none;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.report-textarea:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.10);
+}
+
+.report-msg {
+    border-radius: 16px;
+    padding: 14px 16px;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    display: none;
+}
+
+.report-msg--error {
+    display: none;
+    background: rgba(254, 205, 211, 0.55);
+    color: #991b1b;
+    border: 1px solid rgba(220, 38, 38, 0.18);
+}
+
+.report-msg--success {
+    display: none;
+    background: rgba(220, 252, 231, 0.75);
+    color: #166534;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.report-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.report-cancel-btn,
+.report-submit-btn {
+    min-width: 140px;
+    border-radius: 14px;
+    padding: 14px 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.report-cancel-btn {
+    border: 1px solid rgba(148, 163, 184, 0.5);
+    background: #f8fafc;
+    color: #475569;
+}
+
+.report-cancel-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+}
+
+.report-submit-btn {
+    border: none;
+    background: #6366f1;
+    color: #ffffff;
+    box-shadow: 0 16px 32px rgba(99, 102, 241, 0.24);
+}
+
+.report-submit-btn:hover {
+    transform: translateY(-1px);
+    background: #4f46e5;
+}
+
+.report-submit-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+@media (max-width: 640px) {
+    .report-modal-panel {
+        padding: 20px;
+    }
+
+    .report-modal-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .report-footer {
+        justify-content: stretch;
+    }
+
+    .report-cancel-btn,
+    .report-submit-btn {
+        width: 100%;
+    }
+}
 
 /* ============================================================
    CREATE TAB — Interface de création refaite
@@ -5867,4 +6048,105 @@ body.focus-mode .tab.active {
     .cal__scroll {
         -webkit-overflow-scrolling: touch;
     }
+}
+
+/* Sort-bar : style nav buttons (Explorer, POTD) */
+.sort-btn--nav {
+    border-color: rgba(102, 126, 234, 0.3);
+    color: #667eea;
+}
+ 
+.sort-btn--nav.sort-btn--active {
+    background: rgba(102, 126, 234, 0.2);
+    border-color: #667eea;
+}
+ 
+ 
+.exp-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #555;
+    padding: 40px;
+}
+ 
+/* ============================================================
+   ANIMATIONS COMMUNES
+   ============================================================ */
+ 
+@keyframes v2FadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+ 
+    to {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+}
+ 
+@keyframes v2FadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+ 
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+ 
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+ 
+@media (max-width: 768px) {
+    .presets-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+ 
+    .rpopup {
+        left: 0;
+        transform: translateX(0) scale(0.85);
+    }
+ 
+    .rpopup.rvisible {
+        transform: translateX(0) scale(1);
+    }
+ 
+    .exp-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+ 
+    .mood-today {
+        flex-wrap: wrap;
+    }
+ 
+    .mood-today__share {
+        width: 100%;
+        text-align: center;
+    }
+ 
+    .cal__scroll {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+.explorerbackbtn {
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 255, 0.1);
+    border: 1px solid rgba(0,0,0, 0.15);
+    color: black;
+    border-radius: 10px;
+    font-size: 1.25rem;
+    width: 200px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    cursor: pointer;
+    z-index: 20;
+    transition: background 0.2s;
 }
