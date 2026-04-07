@@ -72,6 +72,19 @@ body {
     line-height: 1.6;
 }
 
+.maintenance-panel button {
+    margin-top: 20px;
+    padding: 12px 24px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s, transform .15s;
+}
+
 
 
 main,
@@ -106,7 +119,7 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    z-index: 2000;
+    z-index: 99999999999999999999;
     -webkit-backdrop-filter: blur(0);
     backdrop-filter: blur(0);
 }
