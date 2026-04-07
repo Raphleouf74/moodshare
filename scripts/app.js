@@ -189,7 +189,7 @@ async function checkSiteVersion() {
         localStorage.setItem('siteVersion', latest);
         localStorage.setItem('buildVersion', latestBuild);
 
-        console.log(`%c Version du site: ${latest} (Build ${latestBuild})`, "color: blue; font-size: 16px;");
+        console.log(`%c Version du site: ${latest} (${latestBuild})`, "color: blue; font-size: 16px;");
     } catch (error) {
         console.error('Erreur lors de la vérification de la version du site:', error);
         showFeedback("error", "fb_error_verify_version");
@@ -1034,7 +1034,7 @@ if (openBtn) {
 }
 
 
-console.log(`%c⚠ Attention: Ne rentrez JAMAIS de commande ici sans connaître son but !`, "color: orange; font-size: 25px; font-family: impact");
+console.log(`%c⚠ Attention: Ne rentrez JAMAIS de commande ici sans connaître son but ! Toute tentative d'injection de commande entraînera le bannissement immédiat du compte.`, "color: orange; font-size: 25px; font-family: impact");
 
 function detectLowEnd() {
     const mem = navigator.deviceMemory || 1; // GB

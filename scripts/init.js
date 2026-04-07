@@ -9,7 +9,6 @@ import { initExplorer } from './explorer.js';
 
 // ─── initV2() : appelé UNE FOIS après chargement du feed ─────
 export async function initV2() {
-    console.log('%c🚀 MoodShare v2 — initialisation', 'color:#667eea;font-weight:bold;font-size:14px');
 
     // 1. Améliorations du créateur de post
     initCreatorExtras();
@@ -30,8 +29,6 @@ export async function initV2() {
 
     // 6. Observer les nouveaux posts ajoutés dynamiquement (SSE / repost)
     _observeNewPosts();
-
-    console.log('%c✅ MoodShare v2 — prêt', 'color:#10b981;font-weight:bold');
 }
 
 // ─── attachV2ToPost() : appelé dans displayMood() ─────────────

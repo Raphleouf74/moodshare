@@ -1183,6 +1183,13 @@ app.get('/api/admin/users', requireAdmin, async (req, res) => {
 
 app.get('/api/admin/password', requireAdmin, (req, res) => {
   res.json({ password: process.env.ADMIN_PASSWORD ? '✅ Configuré' : '❌ Non configuré' });
+  console.log('🔐 [ADMIN] Vérification de la configuration du mot de passe admin');
+  if (!process.env.ADMIN_PASSWORD) {
+    console.warn('⚠️  ADMIN_PASSWORD non défini — pensez à le configurer pour sécuriser l\'accès admin');
+  }
+  else {
+    console.log('✅ ADMIN_PASSWORD est configuré');
+  }
 });
 
 app.delete('/api/admin/users/:id', requireAdmin, async (req, res) => {

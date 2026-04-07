@@ -95,7 +95,6 @@ async function initMessages() {
     }
 
     currentUserId = user.id;
-    console.log('✅ Messages init for user:', currentUserId);
     
     // Éviter la double initialisation
     if (window._messagesInitialized) return;
@@ -180,7 +179,6 @@ function injectMessagingUI() {
     const messagesSection = document.getElementById('messages-section');
 
     container.appendChild(messagesSection);
-    console.log('✅ Messages UI injected');
 
     // nav badge for unread messages (in-case nav exists already)
     const navLink = document.getElementById('messagesTab');
