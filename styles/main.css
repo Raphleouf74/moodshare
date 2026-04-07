@@ -2706,7 +2706,7 @@ footer {
 
 .loader-bar span {
     position: fixed;
-    transform: translate(50%,50%);
+    transform: translate(50%, 50%);
     font-size: 10rem;
     opacity: 0.3;
 }
@@ -3015,7 +3015,7 @@ section#homeTab {
     width: min(600px, calc(100vw - 32px));
     max-width: 620px;
     border-radius: 24px;
-    background: radial-gradient(circle at top left, rgba(255,255,255,0.95), rgba(245,245,245,0.96));
+    background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.95), rgba(245, 245, 245, 0.96));
     padding: 24px;
     display: flex;
     flex-direction: column;
@@ -3893,7 +3893,8 @@ body.dark .likebtn:hover {
     margin-left: auto;
 }
 
-.post-actions button, .ctoggle {
+.post-actions button,
+.ctoggle {
     width: 40px;
     height: 40px;
     border: none;
@@ -5519,7 +5520,7 @@ body.focus-mode .tab.active {
     justify-content: center;
     gap: 8px;
     z-index: 500;
-    background: rgb(0,0,0,0.3);
+    background: rgb(0, 0, 0, 0.3);
     color: white;
     -webkit-backdrop-filter: blur(15px);
     backdrop-filter: blur(15px);
@@ -5528,6 +5529,14 @@ body.focus-mode .tab.active {
     padding: 12px;
     margin-bottom: 8px;
     flex-wrap: wrap;
+}
+
+@media screen and (max-width: 769px) {
+    .sort-bar {
+        width: 36%;
+        top: 90px;
+        transform: translateX(125px);
+    }
 }
 
 .sort-label {
@@ -5555,7 +5564,7 @@ body.focus-mode .tab.active {
 .sort-btn--active {
     background: rgb(255, 255, 255);
     border-color: rgb(22, 0, 145);
-    color: rgb(22,0,145);
+    color: rgb(22, 0, 145);
 }
 
 /* Bannière Mood du jour */
@@ -5638,6 +5647,43 @@ body.focus-mode .tab.active {
     line-height: 1.5;
 }
 
+
+@media screen and (max-width: 769px) {
+    .mood-today {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .mood-today__emoji {
+        font-size: 4.5rem;
+    }
+
+    .mood-today__text {
+        font-size: 2.75rem;
+    }
+
+    .mood-today__share {
+        font-size: 1.5rem;
+        padding: 10px 20px;
+    }
+
+    .mood-today__close {
+        align-self: flex-end;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid rgba(255, 0, 0, 0.411);
+        width: 50px;
+        height: 50px;
+        color: red;
+    }
+
+}
+
 /* Compteur de vues */
 .views {
     font-size: 0.8rem;
@@ -5711,10 +5757,12 @@ body.focus-mode .tab.active {
     align-items: center;
     gap: 10px;
 }
+
 .cal__labels span {
     font-size: 2rem;
     color: #cacaca;
 }
+
 .cal__count {
     font-size: 0.8rem;
     font-weight: 400;
@@ -6055,79 +6103,79 @@ body.focus-mode .tab.active {
     border-color: rgba(102, 126, 234, 0.3);
     color: #667eea;
 }
- 
+
 .sort-btn--nav.sort-btn--active {
     background: rgba(102, 126, 234, 0.2);
     border-color: #667eea;
 }
- 
- 
+
+
 .exp-empty {
     grid-column: 1 / -1;
     text-align: center;
     color: #555;
     padding: 40px;
 }
- 
+
 /* ============================================================
    ANIMATIONS COMMUNES
    ============================================================ */
- 
+
 @keyframes v2FadeOut {
     from {
         opacity: 1;
         transform: translateY(0);
     }
- 
+
     to {
         opacity: 0;
         transform: translateY(-8px);
     }
 }
- 
+
 @keyframes v2FadeIn {
     from {
         opacity: 0;
         transform: translateY(8px);
     }
- 
+
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
- 
+
 /* ============================================================
    RESPONSIVE
    ============================================================ */
- 
+
 @media (max-width: 768px) {
     .presets-grid {
         grid-template-columns: repeat(4, 1fr);
     }
- 
+
     .rpopup {
         left: 0;
         transform: translateX(0) scale(0.85);
     }
- 
+
     .rpopup.rvisible {
         transform: translateX(0) scale(1);
     }
- 
+
     .exp-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     }
- 
+
     .mood-today {
         flex-wrap: wrap;
     }
- 
+
     .mood-today__share {
         width: 100%;
         text-align: center;
     }
- 
+
     .cal__scroll {
         -webkit-overflow-scrolling: touch;
     }
@@ -6137,7 +6185,7 @@ body.focus-mode .tab.active {
     top: 20px;
     left: 20px;
     background: rgba(0, 0, 255, 0.1);
-    border: 1px solid rgba(0,0,0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.15);
     color: black;
     border-radius: 10px;
     font-size: 1.25rem;
