@@ -417,6 +417,23 @@ body {
     flex-shrink: 0;
 }
 
+.maintenance-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(252, 211, 77, 0.12);
+    color: #92400e;
+    font-size: 12px;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    margin-bottom: 12px;
+}
+
+.maintenance-pill.hidden {
+    display: none;
+}
+
 .logout-btn {
     width: 100%;
     padding: 9px;

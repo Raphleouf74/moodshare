@@ -312,10 +312,26 @@ const generalLimiter = rateLimit({
   }
 });
 
+function isAdminSecretRequest(req) {
+  return !!process.env.ADMIN_SECRET && req.headers['x-admin-secret'] === process.env.ADMIN_SECRET;
+}
+
 app.use(generalLimiter);
+
+app.use((req, res, next) => {
+  if (!config.maintenance) return next();
+  const isAdminRequest = isAdminSecretRequest(req);
+  const allowed = isAdminRequest || req.path.startsWith('/api/admin') || req.path === '/api/maintenance' || req.path === '/api/stream';
+  if (allowed) return next();
+  if (req.path.startsWith('/api')) {
+    return res.status(503).json({ error: 'Site en maintenance', maintenance: true });
+  }
+  next();
+});
 
 const dataDir = path.join(__dirname, "data");
 const postsFile = path.join(dataDir, "posts.json");
+const configFile = path.join(dataDir, "config.json");
 
 if (!fs.existsSync(dataDir)) {
   fs.mkdirSync(dataDir, { recursive: true });
@@ -337,6 +353,26 @@ function safeLoadJSON(filePath, fallback, label) {
   return fallback;
 }
 
+function safeLoadJSONFile(filePath, fallback, label) {
+  try {
+    if (fs.existsSync(filePath)) {
+      const raw = fs.readFileSync(filePath, "utf8");
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        console.log(`✅ ${label} chargé`);
+        return parsed;
+      }
+      throw new Error("Not an object");
+    }
+  } catch (err) {
+    console.error(`❌ ${label} corrompu (${err.message}) — réinitialisation`);
+    try { fs.writeFileSync(filePath, JSON.stringify(fallback, null, 2)); } catch (_) { }
+  }
+  return fallback;
+}
+
+let config = { maintenance: false };
+
 posts = safeLoadJSON(postsFile, posts, "posts.json");
 
 let stories = [];
@@ -346,6 +382,16 @@ stories = safeLoadJSON(storiesFile, stories, "stories.json");
 let reports = [];
 const reportsFile = path.join(dataDir, "reports.json");
 reports = safeLoadJSON(reportsFile, reports, "reports.json");
+
+config = safeLoadJSONFile(configFile, config, "config.json");
+
+async function saveConfig() {
+  try {
+    await fsPromises.writeFile(configFile, JSON.stringify(config, null, 2));
+  } catch (err) {
+    console.error('❌ Erreur sauvegarde config:', err);
+  }
+}
 
 let sseClients = [];
 
@@ -1123,6 +1169,23 @@ app.delete('/api/admin/reports/:id', requireAdmin, async (req, res) => {
   }
 });
 
+app.get('/api/maintenance', (req, res) => {
+  res.json({ maintenance: !!config.maintenance });
+});
+
+app.post('/api/admin/maintenance', requireAdmin, async (req, res) => {
+  try {
+    const enabled = req.body?.enabled === true || req.body?.enabled === 'true';
+    config.maintenance = enabled;
+    await saveConfig();
+    console.log(`🛠️  [ADMIN] Mode maintenance ${enabled ? 'activé' : 'désactivé'}`);
+    res.json({ maintenance: config.maintenance });
+  } catch (err) {
+    console.error('❌ Erreur mise à jour mode maintenance:', err);
+    res.status(500).json({ error: 'Erreur interne' });
+  }
+});
+
 app.get('/api/admin/status', requireAdmin, (req, res) => {
   const uptime = Math.floor(process.uptime());
   const environment = process.env.RENDER ? 'Render' : 'Local';
@@ -1156,6 +1219,7 @@ app.get('/api/admin/status', requireAdmin, (req, res) => {
       adminSecretConfigured: !!process.env.ADMIN_SECRET,
       rateLimit: '500 req/15min'
     },
+    maintenance: !!config.maintenance,
     timestamp: new Date().toISOString()
   });
 });

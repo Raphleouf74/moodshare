@@ -9,6 +9,27 @@ window.openPermalinkModal = openPostModal;
 // Détection backend : local en dev, prod sinon
 const API = "https://moodshare-7dd7.onrender.com/api";
 
+async function checkMaintenanceMode() {
+    try {
+        const res = await fetch(`${API}/maintenance`, { cache: 'no-store' });
+        if (!res.ok) return false;
+        const data = await res.json();
+        if (data?.maintenance) {
+            showMaintenanceOverlay();
+            return true;
+        }
+    } catch (err) {
+        console.warn('Impossible de vérifier le mode maintenance', err);
+    }
+    return false;
+}
+
+function showMaintenanceOverlay() {
+    const overlay = document.getElementById('maintenance-overlay');
+    if (!overlay) return;
+    overlay.classList.remove('hidden');
+}
+
 // --- Live updates via Server-Sent Events (SSE) ---
 try {
     const streamUrl = `${API}/stream`;
@@ -43,6 +64,9 @@ try {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    const isUnderMaintenance = await checkMaintenanceMode();
+    if (isUnderMaintenance) return;
+
     // load recommended users on home
     // await loadRecommended();
     // try to restore session for UI (auth.js already handles initial state)

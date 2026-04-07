@@ -123,6 +123,28 @@ async function loadAll() {
     renderPosts();
     renderReports();
     renderStories();
+    await updateAdminMaintenanceBadge();
+}
+
+async function updateAdminMaintenanceBadge() {
+    const indicator = document.getElementById('maintenance-indicator');
+    if (!indicator) return;
+    try {
+        const res = await fetch(`${API}/admin/status`, {
+            method: 'GET',
+            headers: adminHeaders(),
+        });
+        if (!res.ok) throw new Error('Impossible de récupérer le statut admin');
+        const status = await res.json();
+        if (status.maintenance) {
+            indicator.classList.remove('hidden');
+            indicator.textContent = '⚠️ Maintenance activée';
+        } else {
+            indicator.classList.add('hidden');
+        }
+    } catch (err) {
+        indicator.classList.add('hidden');
+    }
 }
 
 // ======================
@@ -380,6 +402,24 @@ async function renderSettings() {
                     </div>
                 </div>
 
+                <!-- MAINTENANCE MODE -->
+                <div class="settings-card">
+                    <div class="settings-card-title">🛠️ Mode maintenance</div>
+                    <div class="settings-status">
+                        <div class="status-row">
+                            <span>État</span>
+                            <span class="status-badge ${status.maintenance ? 'danger' : 'success'}">
+                                ${status.maintenance ? '❌ Activé' : '✅ Désactivé'}
+                            </span>
+                        </div>
+                        <div class="status-row" style="margin-top: 12px;">
+                            <button class="btn ${status.maintenance ? 'btn-ghost' : 'btn-warn'}" onclick="setMaintenance(${!status.maintenance})">
+                                ${status.maintenance ? 'Désactiver le mode maintenance' : 'Activer le mode maintenance'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- DATABASE STATS -->
                 <div class="settings-card">
                     <div class="settings-card-title">📊 Base de données</div>
@@ -471,6 +511,29 @@ async function renderSettings() {
                 <button class="btn btn-ghost" onclick="renderSettings()">🔄 Réessayer</button>
             </div>
         `;
+    }
+}
+
+async function setMaintenance(enabled) {
+    try {
+        const res = await fetch(`${API}/admin/maintenance`, {
+            method: 'POST',
+            headers: {
+                ...adminHeaders(),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ enabled })
+        });
+
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({ error: res.statusText }));
+            throw new Error(errData.error || errData.message || 'Erreur de requête');
+        }
+
+        toast(`Mode maintenance ${enabled ? 'activé' : 'désactivé'} ✅`, 'success');
+        renderSettings();
+    } catch (err) {
+        toast(`Impossible de changer le mode maintenance : ${err.message}`, 'error');
     }
 }
 
