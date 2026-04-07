@@ -1153,6 +1153,41 @@ app.get('/api/admin/reports', requireAdmin, (req, res) => {
   }
 });
 
+app.get('/api/admin/users', requireAdmin, async (req, res) => {
+  try {
+    const users = await UserModel.find({})
+      .select('_id displayName avatar isGuest createdAt followersCount followingCount postsCount')
+      .lean();
+
+    res.json(users.map((u) => ({
+      id: u._id,
+      displayName: u.displayName,
+      avatar: u.avatar,
+      isGuest: u.isGuest,
+      createdAt: u.createdAt,
+      followersCount: u.followersCount || 0,
+      followingCount: u.followingCount || 0,
+      postsCount: u.postsCount || 0,
+    })));
+  } catch (err) {
+    console.error('❌ Erreur récupération users admin:', err);
+    res.status(500).json({ error: 'Erreur interne' });
+  }
+});
+
+app.delete('/api/admin/users/:id', requireAdmin, async (req, res) => {
+  try {
+    const user = await UserModel.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé' });
+
+    console.log(`🗑️  [ADMIN] Utilisateur ${req.params.id} supprimé`);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('❌ Erreur suppression utilisateur admin:', err);
+    res.status(500).json({ error: 'Erreur interne' });
+  }
+});
+
 app.delete('/api/admin/reports/:id', requireAdmin, async (req, res) => {
   try {
     const idx = reports.findIndex(r => r.id == req.params.id);

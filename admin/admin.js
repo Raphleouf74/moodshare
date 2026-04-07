@@ -25,6 +25,7 @@ function adminHeaders() {
 let allPosts = [];
 let allReports = [];
 let allStories = [];
+let allUsers = [];
 
 // ======================
 // LOGIN
@@ -85,6 +86,8 @@ function showPage(name) {
     if (name === "reports") renderReports();
     if (name === "stories") renderStories();
     if (name === "create") bindCreatePreview();
+    if (name === "pinned") loadPinned();
+    if (name === "users") renderUsers();
     if (name === "settings") renderSettings();
 }
 
@@ -113,6 +116,17 @@ async function loadAll() {
         } catch (_) {
             /* SSE fallback */
         }
+
+        // Users: endpoint admin sécurisé
+        try {
+            const uRes = await fetch(`${API}/admin/users`, {
+                headers: adminHeaders(),
+            });
+            if (uRes.ok) allUsers = await uRes.json();
+            else allUsers = [];
+        } catch (_) {
+            allUsers = [];
+        }
     } catch (err) {
         toast("Erreur de connexion à l'API", "error");
     }
@@ -120,6 +134,7 @@ async function loadAll() {
     if (sp) sp.style.display = "none";
     updateStats();
     renderDashRecent();
+    renderUsers();
     renderPosts();
     renderReports();
     renderStories();
@@ -192,7 +207,7 @@ function renderDashRecent() {
         </tbody>
       </table>`;
     const postTable = document.getElementById('post-table');
-    
+
 }
 
 // ======================
@@ -577,7 +592,7 @@ async function confirmEmergencyRestart() {
             const result = await res.json();
             toast("🚨 Redémarrage d'urgence effectué ✅", "success");
             closeModal("emergency-modal");
-            
+
             // Recharger les données après un délai
             setTimeout(() => {
                 loadAll();
@@ -1019,6 +1034,81 @@ async function deletePinnedPost(id) {
     }
 }
 
+// ======================
+// Liste des users
+// ======================
+function renderUsers() {
+    const el = document.getElementById("users-table");
+    if (!el) return;
+
+    if (!Array.isArray(allUsers) || allUsers.length === 0) {
+        el.innerHTML = emptyState("Aucun utilisateur trouvé");
+        return;
+    }
+
+    el.innerHTML = `
+      <div class="table-wrapper">
+        <table>
+            <thead><tr>
+                <th>Utilisateur</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr></thead>
+            <tbody>
+                ${allUsers
+                    .map((u) => {
+                        const name = u.displayName || u.username || "Utilisateur";
+                        const avatar = u.avatar || name.charAt(0).toUpperCase();
+                        const badge = u.isGuest ? '<span class="chip chip-ephemeral">Invité</span>' : '';
+                        return `
+                        <tr>
+                            <td>
+                                <div style="display:flex;align-items:center;gap:10px;">
+                                    <div style="width:32px;height:32px;border-radius:50%;background:#6b7280;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;">
+                                        ${avatar}
+                                    </div>
+                                    <div>
+                                        <div>${name}</div>
+                                        <div style="font-size:12px;color:var(--muted);">${u.id}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>${badge}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="deleteUser('${u.id}')">🗑️ Supprimer</button>
+                            </td>
+                        </tr>
+                    `;
+                    })
+                    .join("")}
+            </tbody>
+        </table>
+      </div>
+    `;
+}
+
+async function deleteUser(id) {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.")) {
+        return;
+    }
+    try {
+        const res = await fetch(`${API}/admin/users/${id}`, {
+            method: "DELETE",
+            headers: adminHeaders(),
+        });
+        if (res.ok) {
+            allUsers = allUsers.filter(u => u.id !== id);
+            toast("Utilisateur supprimé 🗑️", "success");
+            renderUsers();
+        }
+        else {
+            const err = await res.json().catch(() => ({}));
+            toast("Erreur : " + (err.error || res.status), "error");
+        }
+    } catch (e) {
+        toast("Erreur réseau", "error");
+    }
+}
 // Patch showPage to handle pinned page
 const _origShowPage = showPage;
 showPage = function (name) {
