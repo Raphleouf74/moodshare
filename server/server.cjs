@@ -73,6 +73,11 @@ const userSchema = new mongoose.Schema({
   followersCount: { type: Number, default: 0 },
   followingCount: { type: Number, default: 0 },
 
+  // Ban system
+  bannedUntil: { type: Date, default: null },
+  bannedReason: { type: String, default: '' },
+  permanentlyBanned: { type: Boolean, default: false },
+
   // Timestamps
   createdAt: { type: Date, default: Date.now },
   lastLogin: { type: Date, default: Date.now }
@@ -280,6 +285,7 @@ const { MongoStore } = require('connect-mongo');
 
 app.use(session({
   secret: process.env.SESSION_SECRET || 'moodshare-secret-change-me-in-production',
+  admin_pwd: process.env.ADMIN_PASSWORD || 'admin123',
   resave: false,
   saveUninitialized: true,
   store: MongoStore.create({
@@ -1175,6 +1181,10 @@ app.get('/api/admin/users', requireAdmin, async (req, res) => {
   }
 });
 
+app.get('/api/admin/password', requireAdmin, (req, res) => {
+  res.json({ password: process.env.ADMIN_PASSWORD ? '✅ Configuré' : '❌ Non configuré' });
+});
+
 app.delete('/api/admin/users/:id', requireAdmin, async (req, res) => {
   try {
     const user = await UserModel.findByIdAndDelete(req.params.id);
@@ -1184,6 +1194,50 @@ app.delete('/api/admin/users/:id', requireAdmin, async (req, res) => {
     res.json({ ok: true });
   } catch (err) {
     console.error('❌ Erreur suppression utilisateur admin:', err);
+    res.status(500).json({ error: 'Erreur interne' });
+  }
+});
+
+app.put('/api/admin/users/:id/ban', requireAdmin, async (req, res) => {
+  try {
+    const { duration, reason, permanent } = req.body;
+    const user = await UserModel.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé' });
+
+    if (permanent) {
+      user.permanentlyBanned = true;
+      user.bannedReason = reason || 'Ban définitif';
+      user.bannedUntil = null;
+    } else {
+      const banDuration = duration || 60; // minutes par défaut
+      user.bannedUntil = new Date(Date.now() + banDuration * 60 * 1000);
+      user.bannedReason = reason || `Ban temporaire de ${banDuration} minutes`;
+      user.permanentlyBanned = false;
+    }
+
+    await user.save();
+    console.log(`🚫 [ADMIN] Utilisateur ${req.params.id} banni: ${user.bannedReason}`);
+    res.json({ ok: true, bannedUntil: user.bannedUntil, permanentlyBanned: user.permanentlyBanned });
+  } catch (err) {
+    console.error('❌ Erreur ban utilisateur admin:', err);
+    res.status(500).json({ error: 'Erreur interne' });
+  }
+});
+
+app.put('/api/admin/users/:id/unban', requireAdmin, async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: 'Utilisateur non trouvé' });
+
+    user.bannedUntil = null;
+    user.permanentlyBanned = false;
+    user.bannedReason = '';
+    await user.save();
+
+    console.log(`✅ [ADMIN] Utilisateur ${req.params.id} débanni`);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('❌ Erreur déban utilisateur admin:', err);
     res.status(500).json({ error: 'Erreur interne' });
   }
 });
@@ -1313,6 +1367,16 @@ function hashPassword(password) {
   return crypto.createHash('sha256').update(password).digest('hex');
 }
 
+function checkUserBan(user) {
+  if (user.permanentlyBanned) {
+    return { banned: true, reason: user.bannedReason || 'Ban définitif', permanent: true };
+  }
+  if (user.bannedUntil && user.bannedUntil > new Date()) {
+    return { banned: true, reason: user.bannedReason || 'Ban temporaire', until: user.bannedUntil, permanent: false };
+  }
+  return { banned: false };
+}
+
 app.use("/api/auth", (req, res, next) => {
   console.log("🔐 [Auth] %s %s", req.method, req.path);
   next();
@@ -1385,6 +1449,18 @@ app.post('/api/auth/login', async (req, res) => {
 
     if (!user || user.password !== hashPassword(password)) {
       return res.status(401).json({ error: 'Identifiants incorrects' });
+    }
+
+    // Vérifier si l'utilisateur est banni
+    const banStatus = checkUserBan(user);
+    if (banStatus.banned) {
+      return res.status(403).json({
+        error: 'Compte banni',
+        banned: true,
+        reason: banStatus.reason,
+        until: banStatus.until,
+        permanent: banStatus.permanent
+      });
     }
 
     user.lastLogin = new Date();

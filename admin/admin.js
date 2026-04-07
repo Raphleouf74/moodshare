@@ -4,9 +4,37 @@
 // ======================
 const API = "https://moodshare-7dd7.onrender.com/api";
 
-const ADMIN_CREDS = [
-    { id: "rmladmin", password: "Jem4ppelleraphael!" }
-];
+// Récupérer le mot de passe admin depuis le serveur de manière sécurisée
+let admin_pwd = "admin123"; // Valeur par défaut temporaire
+
+async function loadAdminPassword() {
+    try {
+        const res = await fetch(`${API}/admin/password`, { headers: adminHeaders() });
+        if (res.ok) {
+            const data = await res.json();
+            admin_pwd = data.password;
+            console.log('[ADMIN] Mot de passe récupéré depuis serveur');
+        } else {
+            console.log('[ADMIN] Impossible de récupérer le mot de passe depuis serveur, utilisation valeur par défaut');
+        }
+    } catch (e) {
+        console.log('[ADMIN] Erreur réseau lors de la récupération du mot de passe, utilisation valeur par défaut');
+    }
+}
+
+// Charger le mot de passe au démarrage
+loadAdminPassword();
+
+const urlParams = new URLSearchParams(window.location.search);
+const envAdminPwd = urlParams.get('admin_pwd');
+if (envAdminPwd) {
+    admin_pwd = envAdminPwd;
+    console.log('[ADMIN] ADMIN_PASSWORD récupéré depuis URL param (override)');
+}
+
+function getAdminCreds() {
+    return [{ id: "rmladmin", password: admin_pwd }];
+}
 
 // Doit correspondre à la variable d'env ADMIN_SECRET sur Render.
 // Change cette valeur après avoir configuré la variable sur Render.
@@ -17,7 +45,6 @@ function adminHeaders() {
         "Content-Type": "application/json",
         "X-Admin-Secret": ADMIN_SECRET,
     };
-    console.log('[ADMIN] Headers sent:', { 'X-Admin-Secret': ADMIN_SECRET ? '✅ présent' : '❌ absent' });
     return headers;
 }
 
@@ -39,7 +66,7 @@ function attemptLogin() {
     err.classList.remove("show");
 
     // Vérifier si les credentials correspondent à au moins un admin dans le tableau
-    const isValidAdmin = ADMIN_CREDS.some(admin => admin.id === id && admin.password === pw);
+    const isValidAdmin = getAdminCreds().some(admin => admin.id === id && admin.password === pw);
 
     if (isValidAdmin) {
         sessionStorage.setItem("ms_admin", "1");
@@ -568,7 +595,7 @@ async function confirmEmergencyRestart() {
     const errorEl = document.getElementById("emergency-error");
 
     // Vérifier les credentials
-    const isValidAdmin = ADMIN_CREDS.some(admin => admin.password === password);
+    const isValidAdmin = getAdminCreds().some(admin => admin.password === password);
     if (!isValidAdmin) {
         errorEl.textContent = "❌ Mot de passe incorrect";
         errorEl.style.display = "block";
@@ -1075,7 +1102,10 @@ function renderUsers() {
                             </td>
                             <td>${badge}</td>
                             <td>
+                                <button class="btn btn-ghost btn-sm" onclick="openUserDetails('${u.id}')">👁️ Voir</button>
                                 <button class="btn btn-danger btn-sm" onclick="deleteUser('${u.id}')">🗑️ Supprimer</button>
+                                <button class="btn btn-danger btn-sm" onclick="banUser('${u.id}')">🗑️ Bannir temporairement</button>
+                                <button class="btn btn-danger btn-sm" onclick="permaBanUser('${u.id}')">🚫 Bannir définitivement</button>
                             </td>
                         </tr>
                     `;
@@ -1109,6 +1139,57 @@ async function deleteUser(id) {
         toast("Erreur réseau", "error");
     }
 }
+
+async function banUser(id) {
+    const duration = prompt("Durée du ban en minutes (ex: 60 pour 1 heure) :");
+    if (!duration || isNaN(duration) || duration <= 0) {
+        toast("Durée invalide", "error");
+        return;
+    }
+    const reason = prompt("Raison du ban :") || "Ban temporaire";
+
+    try {
+        const res = await fetch(`${API}/admin/users/${id}/ban`, {
+            method: "PUT",
+            headers: adminHeaders(),
+            body: JSON.stringify({ duration: parseInt(duration), reason })
+        });
+        if (res.ok) {
+            toast(`Utilisateur banni pour ${duration} minutes`, "success");
+            renderUsers();
+        } else {
+            const err = await res.json().catch(() => ({}));
+            toast("Erreur : " + (err.error || res.status), "error");
+        }
+    } catch (e) {
+        toast("Erreur réseau", "error");
+    }
+}
+
+async function permaBanUser(id) {
+    const reason = prompt("Raison du ban définitif :") || "Ban définitif";
+    if (!confirm("Êtes-vous sûr de vouloir bannir définitivement cet utilisateur ?")) {
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API}/admin/users/${id}/ban`, {
+            method: "PUT",
+            headers: adminHeaders(),
+            body: JSON.stringify({ permanent: true, reason })
+        });
+        if (res.ok) {
+            toast("Utilisateur banni définitivement", "success");
+            renderUsers();
+        } else {
+            const err = await res.json().catch(() => ({}));
+            toast("Erreur : " + (err.error || res.status), "error");
+        }
+    } catch (e) {
+        toast("Erreur réseau", "error");
+    }
+}
+
 // Patch showPage to handle pinned page
 const _origShowPage = showPage;
 showPage = function (name) {

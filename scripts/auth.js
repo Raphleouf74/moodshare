@@ -63,6 +63,11 @@ export async function loginUser(identifier, password) {
   });
   if (!res.ok) {
     const txt = await res.text().catch(() => null);
+    const errorData = JSON.parse(txt || '{}');
+    if (errorData.banned) {
+      showBanScreen(errorData);
+      throw new Error('Account banned');
+    }
     throw new Error(txt || 'Login failed');
   }
   const data = await res.json();
@@ -90,6 +95,42 @@ export async function logout() {
     await fetch(`${API}auth/logout`, { method: 'POST', credentials: 'include' });
   } catch (e) { /* ignore */ }
   clearToken();
+  // Reset UI
+  const userName = document.getElementById('userName');
+  const userNameProfile = document.getElementById('userNameProfile');
+  const accountAvatar = document.getElementById('accountavatar');
+  if (userName) userName.textContent = 'UserName';
+  if (userNameProfile) userNameProfile.textContent = 'USERNAME';
+  if (accountAvatar) accountAvatar.alt = '';
+  saveProfileLocal({});
+  // Hide ban screen if shown
+  const banOverlay = document.getElementById('ban-overlay');
+  if (banOverlay) banOverlay.classList.add('hidden');
+}
+
+function showBanScreen(banData) {
+  const banOverlay = document.getElementById('ban-overlay');
+  const banReason = document.getElementById('ban-reason');
+  const banUntil = document.getElementById('ban-until');
+
+  if (banReason) {
+    banReason.textContent = banData.reason || 'Votre compte a été banni pour violation des règles.';
+  }
+
+  if (banUntil) {
+    if (banData.permanent) {
+      banUntil.textContent = 'Ce ban est définitif.';
+    } else if (banData.until) {
+      const untilDate = new Date(banData.until);
+      banUntil.textContent = `Ban jusqu'au ${untilDate.toLocaleString('fr-FR')}.`;
+    } else {
+      banUntil.textContent = '';
+    }
+  }
+
+  if (banOverlay) {
+    banOverlay.classList.remove('hidden');
+  }
 }
 
 export async function getCurrentUser() {
@@ -283,3 +324,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   injectProfileSettings();
 });
+// Expose logout globally for ban screen
+window.logout = logout;

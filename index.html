@@ -62,6 +62,30 @@
       </div>
     </div>
 
+    <div id="ban-overlay" class="maintenance-overlay hidden">
+      <div class="maintenance-panel">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="75"
+          height="75"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-ban"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <path d="m4.9 4.9 14.2 14.2" />
+        </svg>
+        <h1>Compte banni</h1>
+        <p id="ban-reason">Votre compte a été banni pour violation des règles.</p>
+        <p id="ban-until"></p>
+        <button onclick="logout()">Se déconnecter</button>
+      </div>
+    </div>
+
     <header>
       <div class="logo">
         <div class="mainlogo">
