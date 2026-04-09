@@ -260,11 +260,6 @@ function _injectMoodOfDay() {
         try { sessionStorage.setItem('mood_today_closed', Date.now()); } catch { }
     });
 
-    // Ne pas réafficher si fermé dans la même session
-    try {
-        const closed = sessionStorage.getItem('mood_today_closed');
-        if (closed) banner.style.display = 'none';
-    } catch { }
 }
 
 // ─── 3. Compteur de vues ────────────────────────────────────

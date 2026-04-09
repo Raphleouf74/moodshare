@@ -6,14 +6,24 @@ const API = "https://moodshare-7dd7.onrender.com/api";
 
 // Récupérer le mot de passe admin depuis le serveur de manière sécurisée
 let admin_pwd = "admin123"; // Valeur par défaut temporaire
+// Doit correspondre à la variable d'env ADMIN_SECRET sur Render.
+// Change cette valeur après avoir configuré la variable sur Render.
+const ADMIN_SECRET = "080310";
 
+function adminHeaders() {
+    const headers = {
+        "Content-Type": "application/json",
+        "X-Admin-Secret": ADMIN_SECRET,
+    };
+    return headers;
+}
 async function loadAdminPassword() {
     try {
         const res = await fetch(`${API}/admin/password`, { headers: adminHeaders() });
         if (res.ok) {
             const data = await res.json();
             admin_pwd = data.password;
-            console.log('[ADMIN] Mot de passe récupéré depuis serveur');
+            console.log('[ADMIN] Mot de passe récupéré depuis serveur' + admin_pwd);
         } else {
             console.log('[ADMIN] Impossible de récupérer le mot de passe depuis serveur, utilisation valeur par défaut');
         }
@@ -36,17 +46,7 @@ function getAdminCreds() {
     return [{ id: "rmladmin", password: admin_pwd }];
 }
 
-// Doit correspondre à la variable d'env ADMIN_SECRET sur Render.
-// Change cette valeur après avoir configuré la variable sur Render.
-const ADMIN_SECRET = "080310";
 
-function adminHeaders() {
-    const headers = {
-        "Content-Type": "application/json",
-        "X-Admin-Secret": ADMIN_SECRET,
-    };
-    return headers;
-}
 
 // In-memory state
 let allPosts = [];
