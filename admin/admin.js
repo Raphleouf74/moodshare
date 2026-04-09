@@ -3,11 +3,6 @@
 // CONSTANTS
 // ======================
 const API = "https://moodshare-7dd7.onrender.com/api";
-
-// Récupérer le mot de passe admin depuis le serveur de manière sécurisée
-let admin_pwd = "admin123"; // Valeur par défaut temporaire
-// Doit correspondre à la variable d'env ADMIN_SECRET sur Render.
-// Change cette valeur après avoir configuré la variable sur Render.
 const ADMIN_SECRET = "080310";
 
 function adminHeaders() {
@@ -23,12 +18,9 @@ async function loadAdminPassword() {
         if (res.ok) {
             const data = await res.json();
             admin_pwd = data.password;
-            console.log('[ADMIN] Mot de passe récupéré depuis serveur' + admin_pwd);
-        } else {
-            console.log('[ADMIN] Impossible de récupérer le mot de passe depuis serveur, utilisation valeur par défaut');
         }
     } catch (e) {
-        console.log('[ADMIN] Erreur réseau lors de la récupération du mot de passe, utilisation valeur par défaut');
+        console.log('Erreur réseau lors de la récupération du mot de passe.' + e.message);
     }
 }
 
@@ -1078,16 +1070,15 @@ function renderUsers() {
         <table>
             <thead><tr>
                 <th>Utilisateur</th>
-                <th>Statut</th>
                 <th>Actions</th>
             </tr></thead>
             <tbody>
                 ${allUsers
-                    .map((u) => {
-                        const name = u.displayName || u.username || "Utilisateur";
-                        const avatar = u.avatar || name.charAt(0).toUpperCase();
-                        const badge = u.isGuest ? '<span class="chip chip-ephemeral">Invité</span>' : '';
-                        return `
+            .map((u) => {
+                const name = u.displayName || u.username || "Utilisateur";
+                const avatar = u.avatar || name.charAt(0).toUpperCase();
+                const badge = u.isGuest ? '<span class="chip chip-ephemeral">Invité</span>' : '';
+                return `
                         <tr>
                             <td>
                                 <div style="display:flex;align-items:center;gap:10px;">
@@ -1102,20 +1093,20 @@ function renderUsers() {
                             </td>
                             <td>${badge}</td>
                             <td>
-                                <button class="btn btn-ghost btn-sm" onclick="openUserDetails('${u.id}')">👁️ Voir</button>
                                 <button class="btn btn-danger btn-sm" onclick="deleteUser('${u.id}')">🗑️ Supprimer</button>
                                 <button class="btn btn-danger btn-sm" onclick="banUser('${u.id}')">🗑️ Bannir temporairement</button>
                                 <button class="btn btn-danger btn-sm" onclick="permaBanUser('${u.id}')">🚫 Bannir définitivement</button>
                             </td>
                         </tr>
                     `;
-                    })
-                    .join("")}
+            })
+            .join("")}
             </tbody>
         </table>
       </div>
     `;
 }
+
 
 async function deleteUser(id) {
     if (!confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.")) {
