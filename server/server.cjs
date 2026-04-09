@@ -60,6 +60,9 @@ const userSchema = new mongoose.Schema({
   bio: { type: String, default: '', maxLength: 200 },
   avatar: { type: String, default: '👤' },
 
+  // Clé publique E2E (ECDH P-256, format JWK base64)
+  publicKey: { type: String, default: null },
+
   // Réseau social
   followers: [{ type: String }],
   following: [{ type: String }],
@@ -110,6 +113,7 @@ const messageSchema = new mongoose.Schema({
   senderId: { type: String, required: true },
   senderName: { type: String, required: true },
   content: { type: String, default: '' },
+  encrypted: { type: Boolean, default: false },
   sharedPostId: { type: String, default: null },
   timestamp: { type: Date, default: Date.now }
 }, { _id: false });
@@ -1182,7 +1186,7 @@ app.get('/api/admin/users', requireAdmin, async (req, res) => {
 });
 
 app.get('/api/admin/password', requireAdmin, (req, res) => {
-  res.json({ password: process.env.ADMIN_PASSWORD});
+  res.json({ password: process.env.ADMIN_PASSWORD });
   console.log('🔐 [ADMIN] Vérification de la configuration du mot de passe admin');
   if (!process.env.ADMIN_PASSWORD) {
     console.warn('⚠️  ADMIN_PASSWORD non défini — pensez à le configurer pour sécuriser l\'accès admin');
@@ -1613,7 +1617,7 @@ app.post('/api/conversations/:otherUserId/messages', requireAuth, async (req, re
 
     const userId = req.session.user.id;
     const otherUserId = req.params.otherUserId;
-    const { content, sharedPostId } = req.body;
+    const { content, sharedPostId, encrypted } = req.body;
 
     if (!content && !sharedPostId) {
       return res.status(400).json({ error: 'Message ou post requis' });
@@ -1644,6 +1648,7 @@ app.post('/api/conversations/:otherUserId/messages', requireAuth, async (req, re
       senderId: userId,
       senderName: req.session.user.displayName,
       content: content || '',
+      encrypted: !!encrypted,
       sharedPostId: sharedPostId || null,
       timestamp: new Date()
     };
@@ -1765,6 +1770,49 @@ app.post('/api/users/push-token', requireAuth, async (req, res) => {
   } catch (err) {
     console.error('❌ Save push token error:', err);
     res.status(500).json({ error: 'Erreur enregistrement token' });
+  }
+});
+
+// ============================================================
+// E2E ENCRYPTION — Gestion des clés publiques
+// ============================================================
+
+// POST /api/users/public-key — Enregistrer sa clé publique ECDH
+app.post('/api/users/public-key', requireAuth, async (req, res) => {
+  try {
+    if (!mongoReady) return res.status(503).json({ error: 'DB non disponible' });
+
+    const userId = req.session.user.id;
+    const { publicKey } = req.body;
+
+    if (!publicKey || typeof publicKey !== 'string') {
+      return res.status(400).json({ error: 'Clé publique invalide' });
+    }
+    if (publicKey.length > 4096) {
+      return res.status(400).json({ error: 'Clé publique trop longue' });
+    }
+
+    await UserModel.findByIdAndUpdate(userId, { publicKey });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('❌ Save public key error:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+// GET /api/users/:userId/public-key — Lire la clé publique d'un utilisateur
+app.get('/api/users/:userId/public-key', async (req, res) => {
+  try {
+    if (!mongoReady) return res.status(503).json({ error: 'DB non disponible' });
+
+    const user = await UserModel.findById(req.params.userId).select('publicKey').lean();
+    if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+    if (!user.publicKey) return res.status(404).json({ error: 'Clé publique non enregistrée' });
+
+    res.json({ publicKey: user.publicKey });
+  } catch (err) {
+    console.error('❌ Get public key error:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
   }
 });
 

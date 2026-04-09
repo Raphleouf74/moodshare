@@ -127,11 +127,13 @@ header {
 .logodraw:hover #square {
     background-color: #222;
     border-radius: 50%;
+    font-size: 2rem;
 }
 
 .logodraw:hover #circle {
     background-color: #222;
     border-radius: 10px;
+    font-size: 2rem;
 }
 
 
@@ -1000,6 +1002,14 @@ header.scrolled .logodraw {
 .logodraw #square {
     width: 50px;
     height: 50px;
+    color: rgba(255, 255, 255, 0.25);
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-family:'Franklin Gothic Medium';
+    font-weight: 900;
     border-radius: 10px;
     background-color: #000;
 }
@@ -1009,6 +1019,11 @@ header.scrolled .logodraw {
     height: 50px;
     border-radius: 50%;
     background-color: #000;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
 }
 
 
@@ -4220,6 +4235,14 @@ body.dark .conversation-item:hover {
     display: flex;
     flex-direction: column;
     position: relative;
+    min-height: 0;
+}
+
+#messages-thread {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 #messages-empty {
@@ -4236,12 +4259,6 @@ body.dark .conversation-item:hover {
     #messages-empty {
         display: flex;
     }
-}
-
-#messages-thread {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
 }
 
 .messages-header {
@@ -4284,9 +4301,10 @@ body.dark .messages-header {
 }
 
 #messages-body {
-    flex: 1;
+    position: relative;
     overflow-y: auto;
-    height: 300px;
+    flex: 1 1 auto;
+    min-height: 0;
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -4356,6 +4374,7 @@ body.dark .message-received {
     height: 60px;
     padding: 16px 20px;
     border-top: 1px solid rgba(0, 0, 0, .06);
+    flex-shrink: 0;
 }
 
 body.dark .messages-input-wrap {
@@ -5011,7 +5030,6 @@ body.dark .user-search-item:hover {
     .messages-input-wrap {
         padding: 16px 40px;
         bottom: 0;
-        position: absolute;
         margin-top: 15px;
         left: 0;
         height: 50px;
@@ -5026,6 +5044,7 @@ body.dark .user-search-item:hover {
         position: absolute;
         margin-top: 15px;
         left: 0;
+        font-size: 1rem;
         height: 20px;
         width: 100%;
     }
