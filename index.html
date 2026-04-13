@@ -24,7 +24,6 @@
           >
         </div>
         <div class="loader-bar">
-          <span>v2</span>
           <div class="loader-bar-fill"></div>
         </div>
       </div>
@@ -80,7 +79,9 @@
           <path d="m4.9 4.9 14.2 14.2" />
         </svg>
         <h1>Compte banni</h1>
-        <p id="ban-reason">Votre compte a été banni pour violation des règles.</p>
+        <p id="ban-reason">
+          Votre compte a été banni pour violation des règles.
+        </p>
         <p id="ban-until"></p>
         <button onclick="logout()">Se déconnecter</button>
       </div>
@@ -90,7 +91,7 @@
       <div class="logo">
         <div class="mainlogo">
           <div class="logodraw">
-            <div id="square">V2</div>
+            <div id="square"></div>
             <div id="circle"></div>
           </div>
           <h1>MoodShare</h1>
@@ -314,6 +315,8 @@
               type="text"
               placeholder="Ton pseudo…"
               autocomplete="username"
+              ,
+              maxlength="13"
             />
           </div>
         </div>
@@ -397,7 +400,7 @@
     </div>
 
     <nav id="nav" class="menu" role="navigation">
-      <a class="hoverable link active" id="homeTab">
+      <a class="hoverable link active" id="home">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="40"
@@ -417,7 +420,7 @@
         </svg>
         <p class="link-title" data-i18n="nav_home">Accueil</p>
       </a>
-      <a class="hoverable link" id="messagesTab">
+      <a class="hoverable link" id="messages">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="36"
@@ -436,7 +439,7 @@
         </svg>
         <p class="link-title">Messages</p>
       </a>
-      <a class="hoverable link" id="createTab">
+      <a class="hoverable link" id="create">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="36"
@@ -455,7 +458,7 @@
         </svg>
         <p class="link-title" data-i18n="nav_create">Créer</p>
       </a>
-      <a class="hoverable link" id="inboxTab">
+      <a class="hoverable link" id="inbox">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="36"
@@ -476,7 +479,7 @@
         <p class="link-title" data-i18n="nav_inbox">Notifications</p>
       </a>
 
-      <a class="hoverable link" id="profileTab">
+      <a class="hoverable link" id="more">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -495,7 +498,7 @@
         <p class="link-title" data-i18n="nav_profile">Plus</p>
       </a>
     </nav>
-    <section id="homeTab" class="tab active">
+    <section id="home" class="tab active">
       <div class="stories">
         <h2 data-i18n="home_stories">Stories</h2>
         <div class="stories-list">
@@ -528,7 +531,7 @@
       </div>
     </section>
 
-    <section id="createTab" class="tab hidden">
+    <section id="create" class="tab hidden">
       <div class="create-container">
         <!-- Titre -->
         <div class="create-header">
@@ -809,13 +812,13 @@
       </div>
     </section>
 
-    <section id="inboxTab" class="tab hidden">
+    <section id="inbox" class="tab hidden">
       <h1 data-i18n="inbox_title">Boîte de récéption</h1>
       <div id="inboxdiv">
         <i data-i18n="inbox_empty">Vos notifications apparaîtront ici.</i>
       </div>
     </section>
-    <section id="messagesTab" class="tab hidden">
+    <section id="messages" class="tab hidden">
       <div id="messagesdiv">
         <div id="messages-section" class="messages-container">
           <div class="messages-sidebar">
@@ -843,8 +846,6 @@
               <div id="messages-body"></div>
               <p data-i18n="message_warning" class="message-warning">
                 Attention, seulement les 20 derniers messages sont sauvegardés.
-                De plus les messages ne sont pas cryptés, faites attention à ce
-                que vous partagez: cela peut être vu par les modérateurs !
               </p>
 
               <div class="messages-input-wrap">
@@ -861,7 +862,7 @@
       </div>
     </section>
 
-    <section id="profileTab" class="tab hidden">
+    <section id="more" class="tab hidden">
       <div id="accountinfo">
         <span id="userNameProfile">USERNAME</span>
       </div>
@@ -1011,6 +1012,56 @@
             <p style="color: red" data-i18n="lp-warn"></p>
             <div id="lpGrid" class="lp-grid" tabindex="0"></div>
           </div>
+        </div>
+      </div>
+      <div id="customisebg">
+        <h3>Personnaliser le fond d'écran</h3>
+        <div class="bg-options">
+          <button class="bg-option" data-bg="default">
+            <span data-i18n="bg_default">MShare</span>
+          </button>
+          <button class="bg-option" data-bg="aurora">
+            <span data-i18n="bg_aurora">Aurora</span>
+          </button>
+          <button class="bg-option" data-bg="venom">
+            <span data-i18n="bg_venom">Venom</span>
+          </button>
+          <button class="bg-option" data-bg="Inferno">
+            <span data-i18n="bg_inferno">Inferno</span>
+          </button>
+          <button class="bg-option" data-bg="twilight">
+            <span data-i18n="bg_twilight">Twilight</span>
+          </button>
+          <button class="bg-option" data-bg="sangrie">
+            <span data-i18n="bg_sangrie">Sangrie</span>
+          </button>
+          <button class="bg-option" data-bg="ocean">
+            <span data-i18n="bg_ocean">Ocean</span>
+          </button>
+          <button class="bg-option" data-bg="sunset">
+            <span data-i18n="bg_sunset">Sunset</span>
+          </button>
+          <button class="bg-option" data-bg="forest">
+            <span data-i18n="bg_forest">Forest</span>
+          </button>
+          <button class="bg-option" data-bg="candy">
+            <span data-i18n="bg_candy">Candy</span>
+          </button>
+          <button class="bg-option" data-bg="sky">
+            <span data-i18n="bg_sky">Sky</span>
+          </button>
+          <button class="bg-option" data-bg="summer">
+            <span data-i18n="bg_summer">Summer</span>
+          </button>
+          <button class="bg-option" data-bg="winter">
+            <span data-i18n="bg_winter">Winter</span>
+          </button>
+          <button class="bg-option" data-bg="spring">
+            <span data-i18n="bg_spring">Spring</span>
+          </button>
+          <button class="bg-option" data-bg="autumn">
+            <span data-i18n="bg_autumn">Autumn</span>
+          </button>
         </div>
       </div>
       <footer>

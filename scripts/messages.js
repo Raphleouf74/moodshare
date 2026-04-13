@@ -398,35 +398,41 @@ async function _showE2EBadge(otherUserId) {
     // Supprimer l'ancien badge
     document.getElementById('e2e-badge')?.remove();
 
-    const badge = document.createElement('span');
+    const badge = document.createElement('div');
     badge.id = 'e2e-badge';
     badge.style.cssText = `
-        display:inline-flex;align-items:center;gap:4px;
-        font-size:0.7rem;font-weight:700;letter-spacing:0.06em;
-        padding:2px 8px;border-radius:12px;margin-left:10px;
-        vertical-align:middle;
+        display:flex;flex-direction:column;text-align:end;align-items:center;jutify-content:end;
+        font-size:1rem;font-weight:700;letter-spacing:0.06em;
+        padding:5px;border-radius:12px;margin-left:10px;
     `;
 
     // Vérifier si l'autre utilisateur a une clé publique
     const theirKey = _myPrivateKey ? await fetchPublicKey(otherUserId) : null;
 
+
+
+    header.insertAdjacentElement('afterend', badge);
+
+    const badgeTitle = document.createElement('span');
+    const badgeP = document.createElement('p');
     if (_myPrivateKey && theirKey) {
-        badge.textContent = '🔒 Chiffré E2E';
+        badgeTitle.textContent = '🔒 Chiffré E2E';
         badge.style.background = 'rgba(16,185,129,0.15)';
         badge.style.color = '#10b981';
         badge.style.border = '1px solid rgba(16,185,129,0.3)';
-        badge.title = 'Les messages sont chiffrés de bout en bout. Seuls vous et votre interlocuteur pouvez les lire.';
+        badgeP.textContent = 'Les messages sont chiffrés de bout en bout. Seuls vous et votre interlocuteur pouvez les lire.';
     } else {
-        badge.textContent = '⚠️ Non chiffré';
+        badgeTitle.textContent = '⚠️ Non chiffré';
         badge.style.background = 'rgba(245,158,11,0.12)';
         badge.style.color = '#f59e0b';
         badge.style.border = '1px solid rgba(245,158,11,0.3)';
-        badge.title = _myPrivateKey
+        badgeP.textContent = _myPrivateKey
             ? 'Votre interlocuteur n\'a pas encore de clé E2E.'
             : 'E2E indisponible sur cet appareil.';
     }
 
-    header.insertAdjacentElement('afterend', badge);
+    badge.appendChild(badgeTitle);
+    badge.appendChild(badgeP);
 }
 
 // ─── Déchiffrement (avec fallback gracieux) ──────────────────

@@ -99,7 +99,7 @@ const DAILY_MOODS = [
     { emoji: '🤝', theme: 'Solidarité', color: '#1f4037', text: 'Soutenez et soyez soutenu.' },
     { emoji: '📬', theme: 'Communication', color: '#00b09b', text: 'Partagez vos pensées avec les autres.' },
     { emoji: '⚡', theme: 'Pulsion', color: '#f5576c', text: 'Laissez l’énergie vous guider.' },
-    { emoji: '🥳', theme: 'Joyeux', color: '#ff9a9e', text: 'Faites la fête pour vous-même !' },
+    { emoji: '🥳', theme: 'Festivité', color: '#ff9a9e', text: 'Faites la fête pour vous-même !' },
     { emoji: '🤔', theme: 'Réflexion', color: '#4b6cb7', text: 'Prenez le temps d’analyser calmement.' },
     { emoji: '🪁', theme: 'Liberté', color: '#43cea2', text: 'Laissez votre esprit s’envoler.' },
     { emoji: '🏖️', theme: 'Évasion', color: '#f7971e', text: 'Changez d’air, même mentalement.' },

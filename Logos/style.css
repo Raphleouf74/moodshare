@@ -34,7 +34,7 @@ body {
     text-align: center;
     color: white;
     background: #111;
-    font-size: 15px;
+    font-size: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -43,8 +43,8 @@ body {
 }
 
 .small {
-    width: 60px;
-    font-size: 20px;
+    width: 80px;
+    font-size: 30px;
     height: 95px;
     display: flex;
     align-items: center;

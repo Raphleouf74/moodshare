@@ -124,25 +124,28 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 });
 
+// const currentsection = location.hash || "#home";
+// const nav = document.querySelector('nav');
+// const header = document.querySelector('header');
+// const headerh1 = document.querySelector('header h1');
+// const profileheader = document.getElementById('accountheader');
 
-const nav = document.querySelector('nav');
-const header = document.querySelector('header');
-const profileheader = document.getElementById('accountheader');
+// location.hash.addEventListener('scroll', () => {
+//     const currentScroll = currentsection.scrollY;
 
-window.addEventListener('scroll', () => {
-    const currentScroll = window.scrollY;
-
-    if (currentScroll > 50) {
-        header.classList.add('scrolled');
-        profileheader.classList.add('scrolled');
-        nav.classList.add('scrolled');
-    }
-    else {
-        header.classList.remove('scrolled');
-        profileheader.classList.remove('scrolled');
-        nav.classList.remove('scrolled');
-    }
-});
+//     if (currentScroll > 50) {
+//         header.classList.add('scrolled');
+//         profileheader.classList.add('scrolled');
+//         nav.classList.add('scrolled');
+//         headerh1.classList.add('scrolled');
+//     }
+//     else {
+//         header.classList.remove('scrolled');
+//         profileheader.classList.remove('scrolled');
+//         nav.classList.remove('scrolled');
+//         headerh1.classList.remove('scrolled');
+//     }
+// });
 
 async function checkSiteVersion() {
 
@@ -684,6 +687,7 @@ tabs.forEach(tab => {
             if (section.id.startsWith(tabId)) {
                 section.classList.add("active");
                 section.classList.remove("hidden");
+                location.hash = `${section.id}`; // Met à jour le hash pour le permalien
             } else {
                 section.classList.remove("active");
                 section.classList.add("hidden");
@@ -1660,3 +1664,43 @@ async function addInboxNotification(
     }, 50);
 }
 addInboxNotification("info", "Découvrez MoodShare v2", "Découvrez une nouvelle version de MoodShare avec des fonctionnalités améliorées. Vous pouvez désormais: -Réagir aux posts des autres utilisateurs, - Un tout nouveau design de l'onglet Profil - Vous pouvez trier votre feed par catégorie, - Un onglet explorer pour voir de façon compréssé et rapide tous les posts - Les commentaires sont de retour !, - Des bannières journalières en haut du feed,  - Ajout du nombre de vues d'un post, - Nouvel écran de chargement, - Plus d'option pour la création de post, - La pagination des posts est enfin là afin de compléter le système de copie des liens de post, - Autres amélioration UI/UX pour mobile, - Modification et ajustement diverses", "check_circle", "../v2logo.png");
+addInboxNotification("info", "Découvrez MoodShare v2.1", "Découvrez une nouvelle version de MoodShare basée sur la sécurité de ses utilisateurs ! Voici ce qu'il y a de nouveau: - Une toute nouvelle fonctionnalité de sécurité: l'encryption de vos message en utilisant le système de chiffrement de bout en bout (E2E), - Amélioration UI/UX pour mobile/PC, - Modification et ajustement diverses", "check_circle", "../v2_1logo.png");
+addInboxNotification("info", "Découvrez MoodShare v2.2", "Découvrez une nouvelle version de MoodShare basée sur la personnalisation de l'application ! Voici les nouveautés : -Ajout des thèmes, vous pouvez désormais changer le thème de l'application dans l'onglet \"Plus\", vous avez le choix parmi 15 thèmes tous peaufinés pour plus de choix !, - Modification et ajustement diverses", "check_circle", "../v2_2logo.png");
+
+function gradients() {
+    return {
+        default: ["#39e8ff", "#436fb6"],
+        aurora: ["#00D4FF", "#5B0FBE"],
+        venom: ["#B5E853", "#0A1200"],
+        Inferno: ["#FF6B35", "#1A0508"],
+        twilight: ["#FF9A8B", "#1E1040"],
+        sangrie: ["#C0392B", "#080205"],
+        ocean: ["#2193b0", "#6dd5ed"],
+        sunset: ["#ee9ca7", "#ffdde1"],
+        forest: ["#5A3F37", "#2C7744"],
+        candy: ["#D3959B", "#BFE6BA"],
+        sky: ["#2980B9", "#6DD5FA"],
+        summer: ["#FAD0C4", "#FFD1FF"],
+        winter: ["#E0EAFc", "#CFDEF3"],
+        spring: ["#FBC2EB", "#A6C1EE"],
+        autumn: ["#D1913C", "#FFD194"]
+    };
+}
+
+
+// obtenir l'etat des boutons de gradient dans .bg-options
+const gradientButtons = document.querySelectorAll('.bg-options button');
+gradientButtons.forEach(btn => {
+    btn.style.background = `linear-gradient(135deg, ${gradients()[btn.dataset.bg][0]}, ${gradients()[btn.dataset.bg][1]})`;
+    btn.addEventListener('click', () => {
+        const gradient = btn.dataset.bg;
+        if (gradient && gradients()[gradient]) {
+            const colors = gradients()[gradient];
+
+            document.querySelector("body").style.background = `linear-gradient(135deg, ${colors[0]}, ${colors[1]})`;
+            window._v2SelectedGradient = `linear-gradient(135deg, ${colors[0]}, ${colors[1]})`;
+            document.querySelectorAll('.bg-option').forEach(s => s.classList.remove('swatch--active'));
+            btn.classList.add('swatch--active');
+        }
+    });
+});

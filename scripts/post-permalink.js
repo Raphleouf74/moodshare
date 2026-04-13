@@ -285,8 +285,8 @@ function renderModal(mood, postId, postEl) {
     goToFeedBtn.addEventListener('click', () => {
         closeModal(overlay);
         // Activer l'onglet Home si nécessaire
-        const homeTab = document.getElementById('homeTab');
-        if (homeTab) homeTab.click();
+        const home = document.getElementById('home');
+        if (home) home.click();
 
         // Scroll vers le post avec un léger délai
         setTimeout(() => {
@@ -295,7 +295,7 @@ function renderModal(mood, postId, postEl) {
                 target.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 // Flash highlight
                 target.style.transition = 'box-shadow 0.3s';
-                target.style.boxShadow = '0 0 0 3px #667eea, 0 0 20px rgba(102,126,234,0.4)';
+                target.style.boxShadow = '0 0 0 13px #d31313, 0 0 20px rgba(255, 13, 106, 0.4)';
                 setTimeout(() => { target.style.boxShadow = ''; }, 2200);
             }
         }, 300);
