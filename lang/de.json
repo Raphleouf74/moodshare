@@ -76,7 +76,7 @@
   "logout_btn": "Abmelden",
   "login-message": "Moodshare macht noch mehr Spaß, wenn Sie verbunden sind!",
   "copyright": "Moodshare © 2025-2026. Jegliche Vervielfältigung, auch auszugsweise, ist strengstens untersagt.",
-  "message_warning": "Achtung, nur die letzten 20 Nachrichten werden gespeichert. Außerdem sind die Nachrichten nicht verschlüsselt. Seien Sie vorsichtig, was Sie teilen: Moderatoren können es lesen!",
+  "message_warning": "Die letzten 50 Nachrichten werden gespeichert!",
   "not-logged-in": "Sie sind nicht eingeloggt, bitte loggen Sie sich ein, um zu diskutieren !",
   "lp-warn": "Einige Teile der Seite sind noch nicht übersetzt."
 }

@@ -6,7 +6,8 @@ import {
     fetchPublicKey,
     getSharedKey,
     encryptMessage,
-    decryptMessage
+    decryptMessage,
+    invalidatePubKeyCache
 } from './crypto-e2e.js';
 
 const API = 'https://moodshare-7dd7.onrender.com/api';
@@ -14,24 +15,21 @@ const MESSAGE_CACHE_KEY = 'moodshare_messages_cache';
 
 // ─── Cache local ─────────────────────────────────────────────
 function getCached() {
-    try {
-        const cached = sessionStorage.getItem(MESSAGE_CACHE_KEY);
-        return cached ? JSON.parse(cached) : {};
-    } catch { return {}; }
+    try { return JSON.parse(sessionStorage.getItem(MESSAGE_CACHE_KEY) || '{}'); } catch { return {}; }
 }
-
 function setCached(convId, messages) {
     try {
-        const cache = getCached();
-        cache[convId] = messages;
-        sessionStorage.setItem(MESSAGE_CACHE_KEY, JSON.stringify(cache));
+        const c = getCached(); c[convId] = messages;
+        sessionStorage.setItem(MESSAGE_CACHE_KEY, JSON.stringify(c));
     } catch (e) { console.error('Cache error:', e); }
 }
 
 let currentUserId = null;
 let currentConversation = null;
-let _myPrivateKey = null; // clé privée ECDH en mémoire
+let _myPrivateKey = null;
+let _myPublicKeyB64 = null;
 let unreadMessages = 0;
+let _e2eReady = false; // true si les clés sont enregistrées sur le serveur
 
 function updateBadge() {
     const badge = document.getElementById('messagesBadge');
@@ -39,13 +37,58 @@ function updateBadge() {
     badge.textContent = unreadMessages > 0 ? unreadMessages : '';
     badge.style.display = unreadMessages > 0 ? 'inline-block' : 'none';
 }
+function clearBadge() { unreadMessages = 0; updateBadge(); }
 
-function clearBadge() {
-    unreadMessages = 0;
-    updateBadge();
+// ─── Init E2E avec retry ──────────────────────────────────────
+async function _initE2E(userId) {
+    try {
+        const { privateKey, publicKeyB64 } = await ensureKeyPair(userId);
+        _myPrivateKey = privateKey;
+        _myPublicKeyB64 = publicKeyB64;
+
+        // Vérifier si notre clé est déjà sur le serveur
+        const existing = await fetchPublicKey(userId);
+        if (existing) {
+            console.log('🔐 Clés E2E prêtes (clé déjà enregistrée)');
+            _e2eReady = true;
+            return;
+        }
+
+        // Pas encore enregistrée → tenter l'enregistrement
+        console.log('🔐 Enregistrement de la clé E2E…');
+        const ok = await registerPublicKey(publicKeyB64, 5);
+        _e2eReady = ok;
+
+        if (ok) {
+            // Invalider le cache pour forcer re-fetch au prochain accès
+            invalidatePubKeyCache(userId);
+            console.log('🔐 Clés E2E prêtes (nouvelle clé enregistrée)');
+        } else {
+            console.warn('⚠️  E2E: clé non enregistrée — messages en clair');
+            // Réessayer en arrière-plan dans 30s
+            setTimeout(() => _retryE2ERegistration(userId, publicKeyB64), 30_000);
+        }
+    } catch (err) {
+        console.error('❌ E2E init error:', err);
+    }
 }
 
-// ─── Init ─────────────────────────────────────────────────────
+async function _retryE2ERegistration(userId, publicKeyB64) {
+    if (_e2eReady) return;
+    console.log('🔁 E2E retry registration…');
+    const ok = await registerPublicKey(publicKeyB64, 3);
+    if (ok) {
+        _e2eReady = true;
+        invalidatePubKeyCache(userId);
+        console.log('✅ E2E clé enregistrée après retry');
+        // Mettre à jour le badge dans la conv ouverte
+        if (currentConversation) _showE2EBadge(currentConversation.otherUserId);
+    } else {
+        setTimeout(() => _retryE2ERegistration(userId, publicKeyB64), 60_000);
+    }
+}
+
+// ─── Init messages ────────────────────────────────────────────
 async function initMessages() {
     const user = await getCurrentUser();
     if (!user) { console.log('⚠️ Messages require login'); return; }
@@ -54,18 +97,10 @@ async function initMessages() {
     if (window._messagesInitialized) return;
     window._messagesInitialized = true;
 
-    // ── Initialiser les clés E2E ──────────────────────────────
-    try {
-        const { privateKey, publicKeyB64 } = await ensureKeyPair(currentUserId);
-        _myPrivateKey = privateKey;
-        // Enregistrer la clé publique sur le serveur (idempotent)
-        await registerPublicKey(publicKeyB64);
-        console.log('🔐 Clés E2E prêtes');
-    } catch (err) {
-        console.warn('⚠️ E2E init failed (messages will be sent unencrypted):', err);
-    }
+    // Init E2E (non bloquant)
+    _initE2E(currentUserId);
 
-    // ── SSE ──────────────────────────────────────────────────
+    // SSE pour messages temps réel
     try {
         const es = new EventSource(`${API}/stream`, { withCredentials: true });
         es.addEventListener('new_message', async (e) => {
@@ -75,9 +110,8 @@ async function initMessages() {
                 if (!participants?.includes(currentUserId)) return;
                 if (message.senderId === currentUserId) return;
 
-                // Déchiffrer le message entrant
                 const decrypted = await _tryDecrypt(message, conversationId);
-                const displayMsg = { ...message, content: decrypted ?? message.content };
+                const displayMsg = { ...message, content: decrypted ?? message.content, _wasEncrypted: !!decrypted };
 
                 const cache = getCached();
                 const msgs = cache[conversationId] || [];
@@ -110,16 +144,14 @@ document.addEventListener('DOMContentLoaded', () => setTimeout(initMessages, 500
 
 // ─── UI injection ─────────────────────────────────────────────
 function injectMessagingUI() {
-    let container = document.getElementById('messagesdiv') || document.getElementById('profileTab');
+    const container = document.getElementById('messagesdiv') || document.getElementById('profileTab');
     const messagesSection = document.getElementById('messages-section');
     if (container && messagesSection) container.appendChild(messagesSection);
 
     const navLink = document.getElementById('messagesTab');
     if (navLink && !document.getElementById('messagesBadge')) {
         const badge = document.createElement('span');
-        badge.id = 'messagesBadge';
-        badge.className = 'nav-badge';
-        badge.style.display = 'none';
+        badge.id = 'messagesBadge'; badge.className = 'nav-badge'; badge.style.display = 'none';
         navLink.appendChild(badge);
         navLink.addEventListener('click', clearBadge);
     }
@@ -135,12 +167,11 @@ function injectMessagingUI() {
     document.getElementById('new-conversation-btn')?.addEventListener('click', openUserSearch);
 }
 
-// ─── User search modal ────────────────────────────────────────
+// ─── User search ──────────────────────────────────────────────
 function createUserSearchModal() {
+    if (document.getElementById('user-search-modal')) return;
     const modal = document.createElement('div');
-    modal.id = 'user-search-modal';
-    modal.className = 'modal-overlay';
-    modal.style.display = 'none';
+    modal.id = 'user-search-modal'; modal.className = 'modal-overlay'; modal.style.display = 'none';
     modal.innerHTML = `
     <div class="modal-panel user-search-panel">
       <div class="modal-header">
@@ -157,28 +188,31 @@ function createUserSearchModal() {
     document.getElementById('close-user-search').addEventListener('click', closeUserSearch);
     modal.addEventListener('click', (e) => { if (e.target === modal) closeUserSearch(); });
 
-    let searchTimeout;
+    let st;
     document.getElementById('user-search-input').addEventListener('input', (e) => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => searchUsers(e.target.value), 300);
+        clearTimeout(st);
+        st = setTimeout(() => searchUsers(e.target.value), 300);
     });
 }
 
 function openUserSearch() {
-    const modal = document.getElementById('user-search-modal');
-    if (modal) { modal.style.display = 'flex'; document.getElementById('user-search-input').focus(); }
+    const m = document.getElementById('user-search-modal');
+    if (m) { m.style.display = 'flex'; document.getElementById('user-search-input').focus(); }
 }
 function closeUserSearch() {
-    const modal = document.getElementById('user-search-modal');
-    if (modal) {
-        modal.style.display = 'none';
+    const m = document.getElementById('user-search-modal');
+    if (m) {
+        m.style.display = 'none';
         document.getElementById('user-search-input').value = '';
         document.getElementById('user-search-results').innerHTML = '';
     }
 }
 
 async function searchUsers(query) {
-    if (!query || query.length < 2) { document.getElementById('user-search-results').innerHTML = ''; return; }
+    if (!query || query.length < 2) {
+        document.getElementById('user-search-results').innerHTML = '';
+        return;
+    }
     try {
         const res = await fetchWithAuth(`users/search?q=${encodeURIComponent(query)}`);
         if (!res.ok) return;
@@ -220,14 +254,18 @@ async function loadConversations() {
         for (const conv of conversations) {
             const otherUserId = conv.participants.find(id => id !== currentUserId);
             const otherName = conv.participantNames?.[otherUserId] || 'Utilisateur';
-            const lastMsg = conv.messages[conv.messages.length - 1];
+            const lastMsg = conv.messages?.[conv.messages.length - 1];
 
-            // Prévisualisation du dernier message (tenter déchiffrement)
             let preview = 'Post partagé';
             if (lastMsg?.content) {
-                const convId = [currentUserId, otherUserId].sort().join('_');
-                const decrypted = await _tryDecrypt(lastMsg, convId);
-                preview = decrypted ?? '🔒 Message chiffré';
+                if (lastMsg.encrypted) {
+                    // Tenter déchiffrement pour la preview
+                    const convId = [currentUserId, otherUserId].sort().join('_');
+                    const plain = await _tryDecrypt(lastMsg, convId);
+                    preview = plain ? plain.substring(0, 60) : '🔒 Message chiffré';
+                } else {
+                    preview = lastMsg.content.substring(0, 60);
+                }
             }
 
             const div = document.createElement('div');
@@ -244,6 +282,7 @@ async function loadConversations() {
     } catch (err) { console.error('❌ Load conversations error:', err); }
 }
 
+// Afficher "non connecté" si pas de userId
 if (!currentUserId) {
     const el = document.getElementById('conversations-list');
     if (el) el.innerHTML = '<p class="empty">Vous n\'êtes pas connecté(e), connectez vous afin de discuter !</p>';
@@ -259,12 +298,12 @@ async function openConversation(otherUserId, otherName) {
     document.getElementById('messages-thread').style.display = 'flex';
     document.getElementById('current-chat-name').textContent = otherName;
 
-    // Badge E2E dans l'en-tête de conversation
-    _showE2EBadge(otherUserId);
-
     if (messagesMain) messagesMain.classList.add('active');
     if (messagesSidebar) messagesSidebar.classList.add('hidden');
     document.body.classList.add('messages-open');
+
+    // Badge E2E (async, non bloquant)
+    _showE2EBadge(otherUserId);
 
     const convId = [currentUserId, otherUserId].sort().join('_');
     const cache = getCached();
@@ -276,11 +315,11 @@ async function openConversation(otherUserId, otherName) {
         const conv = await res.json();
         const msgs = conv.messages || [];
 
-        // Déchiffrer tous les messages reçus
+        // Déchiffrer en parallèle
         const decryptedMsgs = await Promise.all(msgs.map(async (msg) => {
-            if (!msg.content || msg.sharedPostId) return msg;
+            if (!msg.content || msg.sharedPostId || !msg.encrypted) return msg;
             const plain = await _tryDecrypt(msg, convId);
-            return { ...msg, content: plain ?? msg.content, _encrypted: plain !== null };
+            return { ...msg, content: plain ?? msg.content, _wasEncrypted: plain !== null };
         }));
 
         setCached(convId, decryptedMsgs);
@@ -301,9 +340,15 @@ function renderMessages(messages) {
         if (msg.sharedPostId) {
             div.innerHTML = `<div class="shared-post" data-post-id="${msg.sharedPostId}"><p>📌 Post partagé</p></div>`;
         } else {
-            const lockIcon = msg._encrypted ? '🔒 ' : '';
             const p = document.createElement('p');
-            p.textContent = lockIcon + (msg.content || '');
+            p.textContent = msg.content || '';
+            // Petit indicateur discret si message chiffré
+            if (msg._wasEncrypted) {
+                const lock = document.createElement('span');
+                lock.textContent = ' 🔒';
+                lock.style.cssText = 'font-size:0.65em;opacity:0.5;';
+                p.appendChild(lock);
+            }
             div.appendChild(p);
         }
 
@@ -322,30 +367,31 @@ async function sendMessage() {
     const { otherUserId } = currentConversation;
     const convId = [currentUserId, otherUserId].sort().join('_');
 
-    // Tenter de chiffrer
+    // Tenter chiffrement
     let toSend = content;
     let isEncrypted = false;
-    try {
-        if (_myPrivateKey) {
+
+    if (_myPrivateKey && _e2eReady) {
+        try {
             const theirKey = await fetchPublicKey(otherUserId);
             if (theirKey) {
                 const aesKey = await getSharedKey(_myPrivateKey, theirKey, convId);
                 toSend = await encryptMessage(content, aesKey);
                 isEncrypted = true;
             }
+        } catch (err) {
+            console.warn('⚠️  Chiffrement échoué, envoi en clair:', err.message);
         }
-    } catch (err) {
-        console.warn('⚠️ Encryption failed, sending plaintext:', err);
     }
 
-    // Affichage optimiste (en clair localement)
+    // Affichage optimiste (clair)
     const cache = getCached();
     const messages = cache[convId] || [];
     const newMsg = {
         senderId: currentUserId,
         senderName: 'Moi',
-        content,              // clair pour l'affichage local
-        _encrypted: isEncrypted,
+        content,
+        _wasEncrypted: isEncrypted,
         timestamp: new Date().toISOString()
     };
     messages.push(newMsg);
@@ -353,15 +399,12 @@ async function sendMessage() {
     renderMessages(messages);
     input.value = '';
 
-    // Envoyer le payload chiffré au serveur
+    // Envoi au serveur (payload chiffré)
     fetch(`${API}/conversations/${otherUserId}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({
-            content: toSend,     // chiffré ou non
-            encrypted: isEncrypted
-        })
+        body: JSON.stringify({ content: toSend, encrypted: isEncrypted })
     }).catch(err => console.error('Send error:', err));
 }
 
@@ -374,9 +417,58 @@ function closeThread() {
     if (messagesMain) messagesMain.classList.remove('active');
     if (messagesSidebar) messagesSidebar.classList.remove('hidden');
     document.body.classList.remove('messages-open');
+    document.getElementById('e2e-badge')?.remove();
 }
 
-// Partager un post dans une conversation
+// ─── Badge E2E ────────────────────────────────────────────────
+async function _showE2EBadge(otherUserId) {
+    document.getElementById('e2e-badge')?.remove();
+    const header = document.getElementById('current-chat-name');
+    if (!header) return;
+
+    const badge = document.createElement('span');
+    badge.id = 'e2e-badge';
+    badge.style.cssText = `
+        display:inline-flex;align-items:center;gap:4px;
+        font-size:0.68rem;font-weight:700;letter-spacing:0.06em;
+        padding:2px 8px;border-radius:12px;margin-left:10px;
+        vertical-align:middle;cursor:default;`;
+
+    const theirKey = _myPrivateKey && _e2eReady ? await fetchPublicKey(otherUserId) : null;
+
+    if (_myPrivateKey && _e2eReady && theirKey) {
+        badge.textContent = '🔒 Chiffré E2E';
+        badge.style.background = 'rgba(16,185,129,0.15)';
+        badge.style.color = '#10b981';
+        badge.style.border = '1px solid rgba(16,185,129,0.3)';
+        badge.title = 'Messages chiffrés de bout en bout. Le serveur ne peut pas les lire.';
+    } else {
+        badge.textContent = _e2eReady ? '⚠️ Non chiffré' : '🔓 E2E en attente';
+        badge.style.background = 'rgba(245,158,11,0.12)';
+        badge.style.color = '#f59e0b';
+        badge.style.border = '1px solid rgba(245,158,11,0.3)';
+        badge.title = !_e2eReady
+            ? 'Vos clés E2E sont en cours d\'enregistrement.'
+            : 'Votre interlocuteur n\'a pas encore de clé E2E.';
+    }
+
+    header.insertAdjacentElement('afterend', badge);
+}
+
+// ─── Déchiffrement gracieux ───────────────────────────────────
+async function _tryDecrypt(msg, convId) {
+    if (!msg.content || !msg.encrypted || !_myPrivateKey) return null;
+    try {
+        const theirKey = await fetchPublicKey(msg.senderId);
+        if (!theirKey) return null;
+        const aesKey = await getSharedKey(_myPrivateKey, theirKey, convId);
+        return await decryptMessage(msg.content, aesKey);
+    } catch {
+        return null;
+    }
+}
+
+// ─── Partage de post ──────────────────────────────────────────
 window.sharePostInMessage = async function (postId, otherUserId) {
     if (!currentUserId) { alert('Connexion requise'); return; }
     try {
@@ -389,62 +481,3 @@ window.sharePostInMessage = async function (postId, otherUserId) {
         if (res.ok) alert('Post partagé !');
     } catch (err) { console.error('Share error:', err); }
 };
-
-// ─── Badge E2E dans l'en-tête de conversation ────────────────
-async function _showE2EBadge(otherUserId) {
-    const header = document.getElementById('current-chat-name');
-    if (!header) return;
-
-    // Supprimer l'ancien badge
-    document.getElementById('e2e-badge')?.remove();
-
-    const badge = document.createElement('div');
-    badge.id = 'e2e-badge';
-    badge.style.cssText = `
-        display:flex;flex-direction:column;text-align:end;align-items:center;jutify-content:end;
-        font-size:1rem;font-weight:700;letter-spacing:0.06em;
-        padding:5px;border-radius:12px;margin-left:10px;
-    `;
-
-    // Vérifier si l'autre utilisateur a une clé publique
-    const theirKey = _myPrivateKey ? await fetchPublicKey(otherUserId) : null;
-
-
-
-    header.insertAdjacentElement('afterend', badge);
-
-    const badgeTitle = document.createElement('span');
-    const badgeP = document.createElement('p');
-    if (_myPrivateKey && theirKey) {
-        badgeTitle.textContent = '🔒 Chiffré E2E';
-        badge.style.background = 'rgba(16,185,129,0.15)';
-        badge.style.color = '#10b981';
-        badge.style.border = '1px solid rgba(16,185,129,0.3)';
-        badgeP.textContent = 'Les messages sont chiffrés de bout en bout. Seuls vous et votre interlocuteur pouvez les lire.';
-    } else {
-        badgeTitle.textContent = '⚠️ Non chiffré';
-        badge.style.background = 'rgba(245,158,11,0.12)';
-        badge.style.color = '#f59e0b';
-        badge.style.border = '1px solid rgba(245,158,11,0.3)';
-        badgeP.textContent = _myPrivateKey
-            ? 'Votre interlocuteur n\'a pas encore de clé E2E.'
-            : 'E2E indisponible sur cet appareil.';
-    }
-
-    badge.appendChild(badgeTitle);
-    badge.appendChild(badgeP);
-}
-
-// ─── Déchiffrement (avec fallback gracieux) ──────────────────
-async function _tryDecrypt(msg, convId) {
-    if (!msg.content || !msg.encrypted || !_myPrivateKey) return null;
-    try {
-        // Clé de l'expéditeur pour déchiffrer
-        const theirKey = await fetchPublicKey(msg.senderId);
-        if (!theirKey) return null;
-        const aesKey = await getSharedKey(_myPrivateKey, theirKey, convId);
-        return await decryptMessage(msg.content, aesKey);
-    } catch {
-        return null;
-    }
-}

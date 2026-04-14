@@ -1654,8 +1654,8 @@ app.post('/api/conversations/:otherUserId/messages', requireAuth, async (req, re
     };
 
     conversation.messages.push(newMessage);
-    if (conversation.messages.length > 20) {
-      conversation.messages = conversation.messages.slice(-20);
+    if (conversation.messages.length > 50) {
+      conversation.messages = conversation.messages.slice(-50);
     }
 
     conversation.lastMessageAt = new Date();
@@ -1778,22 +1778,43 @@ app.post('/api/users/push-token', requireAuth, async (req, res) => {
 // ============================================================
 
 // POST /api/users/public-key — Enregistrer sa clé publique ECDH
-app.post('/api/users/public-key', requireAuth, async (req, res) => {
+// Accepte session OU JWT Bearer (pas requireAuth strict pour éviter race condition startup)
+app.post('/api/users/public-key', async (req, res) => {
   try {
-    if (!mongoReady) return res.status(503).json({ error: 'DB non disponible' });
+    // Résoudre l'userId depuis session ou JWT
+    const userId = req.session?.user?.id || req.user?.id;
+    if (!userId) {
+      console.warn('⚠️  POST /users/public-key — non authentifié');
+      return res.status(401).json({ error: 'Non authentifié' });
+    }
 
-    const userId = req.session.user.id;
     const { publicKey } = req.body;
-
     if (!publicKey || typeof publicKey !== 'string') {
       return res.status(400).json({ error: 'Clé publique invalide' });
     }
-    if (publicKey.length > 4096) {
+    if (publicKey.length > 8192) {
       return res.status(400).json({ error: 'Clé publique trop longue' });
     }
 
-    await UserModel.findByIdAndUpdate(userId, { publicKey });
-    res.json({ ok: true });
+    if (!mongoReady) {
+      // MongoDB pas prêt → on accepte quand même (le client retentera)
+      console.warn('⚠️  POST /users/public-key — MongoDB pas prêt, clé non sauvegardée');
+      return res.status(503).json({ error: 'DB non disponible', retryable: true });
+    }
+
+    const result = await UserModel.findByIdAndUpdate(
+      userId,
+      { publicKey },
+      { new: true, select: 'publicKey' }
+    );
+
+    if (!result) {
+      console.warn(`⚠️  POST /users/public-key — user ${userId} introuvable`);
+      return res.status(404).json({ error: 'Utilisateur introuvable' });
+    }
+
+    console.log(`🔑 Clé E2E enregistrée pour user ${userId}`);
+    res.json({ ok: true, registered: true });
   } catch (err) {
     console.error('❌ Save public key error:', err);
     res.status(500).json({ error: 'Erreur serveur' });
@@ -1801,18 +1822,28 @@ app.post('/api/users/public-key', requireAuth, async (req, res) => {
 });
 
 // GET /api/users/:userId/public-key — Lire la clé publique d'un utilisateur
+// Retourne 200 + { publicKey: null } si pas encore enregistrée (pas de 404)
 app.get('/api/users/:userId/public-key', async (req, res) => {
   try {
-    if (!mongoReady) return res.status(503).json({ error: 'DB non disponible' });
+    if (!mongoReady) {
+      // Fallback: pas d'erreur, juste null
+      return res.json({ publicKey: null, registered: false });
+    }
 
-    const user = await UserModel.findById(req.params.userId).select('publicKey').lean();
+    const user = await UserModel.findById(req.params.userId)
+      .select('publicKey')
+      .lean();
+
     if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
-    if (!user.publicKey) return res.status(404).json({ error: 'Clé publique non enregistrée' });
 
-    res.json({ publicKey: user.publicKey });
+    // Retourner null si pas de clé — le client gèrera gracieusement
+    res.json({
+      publicKey: user.publicKey || null,
+      registered: !!user.publicKey
+    });
   } catch (err) {
     console.error('❌ Get public key error:', err);
-    res.status(500).json({ error: 'Erreur serveur' });
+    res.json({ publicKey: null, registered: false });
   }
 });
 

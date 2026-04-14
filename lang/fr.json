@@ -88,7 +88,7 @@
     "not_logged_in": "Vous n'êtes pas connecté(e)",
     "update_title": "Nouvelle mise à jour disponible !",
     "copyright": "Moodshare © 2025-2026. Toute reproduction partielle ou totale est strictement interdite.",
-    "message_warning": "Attention, seulement les 20 derniers messages sont sauvegardés !",
+    "message_warning": "Seuls les 50 derniers messages sont sauvegardés !",
     "not-logged-in": "Vous n'êtes pas connecté(e), connectez-vous afin de discuter !",
     "lp-warn": " "
 
