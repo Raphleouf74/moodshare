@@ -1400,7 +1400,7 @@ async function _loadTrendingStickers() {
         _stickerResults.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text);opacity:.6;">Chargement des tendances...</div>';
 
         // Tenter v2 en premier
-        const res = await fetch(`https://tenor.googleapis.com/v2/featured?key=${TENOR_V2_KEY}&client_key=moodshare&limit=20&media_filter=gif`);
+        const res = await fetch(`https://tenor.googleapis.com/v2/featured?key=${TENOR_API_KEY}&client_key=moodshare&limit=20&media_filter=gif`);
 
         if (!res.ok) throw new Error('V2 failed');
 
@@ -1425,7 +1425,7 @@ async function _searchStickers(query) {
         _stickerResults.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text);opacity:.6;">Recherche...</div>';
 
         // Tenter v2 en premier
-        const res = await fetch(`https://tenor.googleapis.com/v2/search?q=${encodeURIComponent(query)}&key=${TENOR_V2_KEY}&client_key=moodshare&limit=20&media_filter=gif`);
+        const res = await fetch(`https://tenor.googleapis.com/v2/search?q=${encodeURIComponent(query)}&key=${TENOR_API_KEY}&client_key=moodshare&limit=20&media_filter=gif`);
 
         if (!res.ok) throw new Error('V2 failed');
 
@@ -1491,7 +1491,7 @@ function _renderStickers(results, apiVersion) {
 function _updatePreview() {
     const text = _moodInput.value || 'Ton message apparaîtra ici...';
     const bgColor = document.getElementById('moodColor').value;
-    const previewCard = document.getElementById('previewCard');
+    const previewCard = document.getElementById('previewMood');
     const previewEmoji = document.getElementById('previewEmoji');
     const previewText = document.getElementById('previewText');
     const previewSticker = document.getElementById('previewSticker');
@@ -1499,6 +1499,11 @@ function _updatePreview() {
 
     previewEmoji.textContent = _selectedEmoji;
     previewText.textContent = text;
+
+    // Set background color
+    if (previewCard) {
+        previewCard.style.background = bgColor;
+    }
 
     // Auto text color based on brightness
     const brightness = _getBrightness(bgColor);
@@ -1535,6 +1540,8 @@ if (_ephemeralToggle && _durationPicker) {
 document.addEventListener('DOMContentLoaded', () => {
     // === PULL-TO-REFRESH SETUP ===
     initPullToRefresh();
+    // Initial preview update
+    _updatePreview();
 });
 
 // ============================================================

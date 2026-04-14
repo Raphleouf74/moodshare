@@ -212,7 +212,7 @@ function createStickerPicker() {
     _stickerOverlay.id = 'message-sticker-overlay';
     _stickerOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;display:none;align-items:center;justify-content:center;padding:20px;z-index:10000;background:rgba(0,0,0,.5);';
     _stickerOverlay.innerHTML = `
-        <div style="width:min(640px,100%);max-height:90vh;background:#fff;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.2);">
+        <div style="width:90%;max-height:90vh;background:#fff;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.2);">
             <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid #eee;">
                 <div>
                     <strong style="font-size:1rem;">Choisir un sticker</strong>
@@ -255,14 +255,14 @@ function createStickerPicker() {
 
 function injectStickerButton() {
     const wrapper = document.querySelector('.messages-input-wrap');
-    if (!wrapper || document.getElementById('sticker-button')) return;
+    if (!wrapper || document.querySelectorAll('#sticker-button').length) return;
 
     const button = document.createElement('button');
     button.id = 'sticker-button';
     button.type = 'button';
-    button.textContent = '📎';
+    button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sticker-icon lucide-sticker"><path d="M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"/><path d="M15 3v5a1 1 0 0 0 1 1h5"/><path d="M8 13h.01"/><path d="M16 13h.01"/><path d="M10 16s.8 1 2 1c1.3 0 2-1 2-1"/></svg><h3>Sticker</h3>';
     button.title = 'Ajouter un sticker';
-    button.style.cssText = 'margin-right:8px;padding:0 12px;border:none;border-radius:12px;background:#f3f4f6;color:#111;cursor:pointer;';
+    button.style.cssText = 'display:flex;flex-direction:row;justify-content:space-evenly;align-items:center;margin-right:8px;padding:0 12px;border:none;border-radius:12px;background:#f3f4f6;color:#111;cursor:pointer;';
 
     button.addEventListener('click', () => {
         _stickerOverlay.style.display = 'flex';
@@ -540,7 +540,7 @@ async function sendMessage() {
 
     const { otherUserId } = currentConversation;
     const convId = [currentUserId, otherUserId].sort().join('_');
-    
+
     // Tenter chiffrement du texte uniquement
     let toSend = content;
     let isEncrypted = false;
@@ -607,23 +607,23 @@ async function _showE2EBadge(otherUserId) {
     badge.id = 'e2e-badge';
     badge.style.cssText = `
         display:inline-flex;align-items:center;gap:4px;
-        font-size:0.68rem;font-weight:700;letter-spacing:0.06em;
+        font-size:1rem;font-weight:700;letter-spacing:0.06em;
         padding:2px 8px;border-radius:12px;margin-left:10px;
         vertical-align:middle;cursor:default;`;
 
     const theirKey = _myPrivateKey && _e2eReady ? await fetchPublicKey(otherUserId) : null;
 
     if (_myPrivateKey && _e2eReady && theirKey) {
-        badge.textContent = '🔒 Chiffré E2E';
+        badge.textContent = 'Conversation chiffrée';
         badge.style.background = 'rgba(16,185,129,0.15)';
         badge.style.color = '#10b981';
         badge.style.border = '1px solid rgba(16,185,129,0.3)';
-        badge.title = 'Messages chiffrés de bout en bout. Le serveur ne peut pas les lire.';
+        badge.title = 'La conversation et les messages sont cryptés de bout en bout.';
     } else {
-        badge.textContent = _e2eReady ? '⚠️ Non chiffré' : '🔓 E2E en attente';
-        badge.style.background = 'rgba(245,158,11,0.12)';
-        badge.style.color = '#f59e0b';
-        badge.style.border = '1px solid rgba(245,158,11,0.3)';
+        badge.textContent = _e2eReady ? 'Conversation non chiffrée' : 'E2E en attente...';
+        badge.style.background = 'rgba(255,0,11,0.12)';
+        badge.style.color = '#f50b0b';
+        badge.style.border = '1px solid rgba(255,0,11,0.3)';
         badge.title = !_e2eReady
             ? 'Vos clés E2E sont en cours d\'enregistrement.'
             : 'Votre interlocuteur n\'a pas encore de clé E2E.';

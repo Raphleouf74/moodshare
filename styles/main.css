@@ -3569,6 +3569,56 @@ body.dark .sticker-search {
     border-bottom-color: rgba(255, 255, 255, .08);
 }
 
+.sticker-results {
+    padding: 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.sticker-item {
+    aspect-ratio: 1;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s;
+    background: rgba(0, 0, 0, .02);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sticker-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+}
+
+.sticker-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.tenor-credit {
+    text-align: center;
+    padding: 12px;
+    font-size: 0.8rem;
+    color: var(--text);
+    opacity: .6;
+}
+
+.tenor-credit a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.tenor-credit a:hover {
+    text-decoration: underline;
+}
+
 /* Preview */
 .create-preview {
     margin-bottom: 22px;
@@ -5031,7 +5081,7 @@ body.dark .user-search-item:hover {
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     position: fixed;
-    bottom: 85px;
+    top: 7.5px;
     border-top-right-radius: 10px;
     left: 0;
     width: 50%;
@@ -5064,7 +5114,7 @@ body.dark .user-search-item:hover {
         position: absolute;
         margin-top: 15px;
         left: 0;
-        font-size: 1rem;
+        font-size: 1.5rem;
         height: 10px;
         width: 100%;
     }
@@ -5699,9 +5749,10 @@ body.focus-mode .tab.active {
 }
 
 .sort-btn {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0);
+    border: 1px solid transparent;
     color: #ffffff;
+    scale: 0.85;
     border-radius: 20px;
     padding: 6px 16px;
     font-size: 1.25rem;
@@ -5712,12 +5763,20 @@ body.focus-mode .tab.active {
 .sort-btn:hover {
     background: rgba(255, 255, 255, 0.08);
     color: #fff;
+    scale: 0.9;
 }
 
 .sort-btn--active {
     background: rgb(255, 255, 255);
+    scale: 1;
     border-color: rgb(22, 0, 145);
     color: rgb(22, 0, 145);
+}
+
+.sort-btn--active:hover {
+    background: rgb(255, 255, 255);
+    color: rgb(22, 0, 145);
+    scale: 1.05;
 }
 
 /* Bannière Mood du jour */
@@ -6350,5 +6409,19 @@ body.focus-mode .tab.active {
     justify-content: space-evenly;
     cursor: pointer;
     z-index: 20;
+    transition: background 0.2s;
+}
+
+#sticker-button {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: white;
+    border-radius: 20px;
+    width: 150px;
+    padding: 7px 16px;
+    font-size: 1.25rem;
+    cursor: pointer;
+    z-index: 20;
+    white-space: nowrap;
     transition: background 0.2s;
 }

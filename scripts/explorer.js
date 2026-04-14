@@ -70,7 +70,9 @@ function _injectExplorerTab() {
         section.classList.add('hidden');
         section.classList.remove('active');
         document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
-        document.querySelector('nav a#homeTab')?.classList.add('active');
+        document.querySelector('section#home')?.classList.remove('hidden');
+        document.querySelector('section#home')?.classList.add('active');
+        document.querySelector('nav a#home')?.classList.add('active');
     });
     // Insérer avant le footer ou à la fin du main
     const main = document.querySelector('main') || document.body;
