@@ -30,6 +30,9 @@ let _myPrivateKey = null;
 let _myPublicKeyB64 = null;
 let unreadMessages = 0;
 let _e2eReady = false; // true si les clés sont enregistrées sur le serveur
+let _selectedStickerUrl = null;
+let _stickerOverlay = null;
+const TENOR_V1_KEY = 'LIVDSRZULELA';
 
 function updateBadge() {
     const badge = document.getElementById('messagesBadge');
@@ -157,6 +160,8 @@ function injectMessagingUI() {
     }
 
     createUserSearchModal();
+    createStickerPicker();
+    injectStickerButton();
     loadConversations();
 
     document.getElementById('send-message-btn')?.addEventListener('click', sendMessage);
@@ -199,6 +204,160 @@ function openUserSearch() {
     const m = document.getElementById('user-search-modal');
     if (m) { m.style.display = 'flex'; document.getElementById('user-search-input').focus(); }
 }
+
+function createStickerPicker() {
+    if (document.getElementById('message-sticker-overlay')) return;
+
+    _stickerOverlay = document.createElement('div');
+    _stickerOverlay.id = 'message-sticker-overlay';
+    _stickerOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;display:none;align-items:center;justify-content:center;padding:20px;z-index:10000;background:rgba(0,0,0,.5);';
+    _stickerOverlay.innerHTML = `
+        <div style="width:min(640px,100%);max-height:90vh;background:#fff;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.2);">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid #eee;">
+                <div>
+                    <strong style="font-size:1rem;">Choisir un sticker</strong>
+                    <div style="font-size:.9rem;color:#666;">Recherche Tenor GIF</div>
+                </div>
+                <button id="close-sticker-picker" style="border:none;background:none;font-size:1.5rem;line-height:1;cursor:pointer;">×</button>
+            </div>
+            <div style="padding:14px 18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                <input id="sticker-search-input" type="text" placeholder="Rechercher un sticker..." style="flex:1;min-width:180px;padding:10px 12px;border:1px solid #ccc;border-radius:12px;outline:none;" />
+                <button id="sticker-search-btn" style="padding:10px 16px;border:none;border-radius:12px;background:#2d8cff;color:#fff;cursor:pointer;">Rechercher</button>
+            </div>
+            <div id="sticker-results" style="padding:0 16px 16px;overflow:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;"></div>
+        </div>
+    `;
+    document.body.appendChild(_stickerOverlay);
+
+    _stickerOverlay.addEventListener('click', (e) => {
+        if (e.target === _stickerOverlay) {
+            _stickerOverlay.style.display = 'none';
+        }
+    });
+
+    document.getElementById('close-sticker-picker').addEventListener('click', () => {
+        _stickerOverlay.style.display = 'none';
+    });
+
+    document.getElementById('sticker-search-btn').addEventListener('click', () => {
+        const q = document.getElementById('sticker-search-input').value.trim();
+        if (q) _searchStickers(q);
+    });
+
+    document.getElementById('sticker-search-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const q = document.getElementById('sticker-search-input').value.trim();
+            if (q) _searchStickers(q);
+        }
+    });
+}
+
+function injectStickerButton() {
+    const wrapper = document.querySelector('.messages-input-wrap');
+    if (!wrapper || document.getElementById('sticker-button')) return;
+
+    const button = document.createElement('button');
+    button.id = 'sticker-button';
+    button.type = 'button';
+    button.textContent = '📎';
+    button.title = 'Ajouter un sticker';
+    button.style.cssText = 'margin-right:8px;padding:0 12px;border:none;border-radius:12px;background:#f3f4f6;color:#111;cursor:pointer;';
+
+    button.addEventListener('click', () => {
+        _stickerOverlay.style.display = 'flex';
+        if (!document.getElementById('sticker-results').children.length) {
+            _loadTrendingStickers();
+        }
+    });
+
+    wrapper.insertBefore(button, wrapper.firstChild);
+
+    const preview = document.createElement('div');
+    preview.id = 'sticker-preview';
+    preview.style.cssText = 'display:none;padding:8px 12px;margin-top:10px;border:1px solid #e2e8f0;border-radius:12px;background:#fafafa;max-width:260px;';
+    wrapper.parentNode.insertBefore(preview, wrapper.nextSibling);
+}
+
+function _updateStickerPreview() {
+    const preview = document.getElementById('sticker-preview');
+    if (!preview) return;
+    if (_selectedStickerUrl) {
+        preview.style.display = 'flex';
+        preview.style.alignItems = 'center';
+        preview.style.justifyContent = 'space-between';
+        preview.innerHTML = `
+            <img src="${_selectedStickerUrl}" alt="Sticker" style="max-width:120px;max-height:96px;border-radius:12px;object-fit:contain;" />
+            <button id="clear-sticker-btn" style="margin-left:10px;padding:6px 10px;border:none;border-radius:10px;background:#ef4444;color:#fff;cursor:pointer;">Supprimer</button>
+        `;
+        document.getElementById('clear-sticker-btn').addEventListener('click', () => {
+            _selectedStickerUrl = null;
+            _updateStickerPreview();
+        });
+    } else {
+        preview.style.display = 'none';
+        preview.innerHTML = '';
+    }
+}
+
+async function _loadTrendingStickers() {
+    const results = document.getElementById('sticker-results');
+    if (!results) return;
+    results.innerHTML = '<div style="grid-column:1/-1;padding:20px;text-align:center;color:#666;">Chargement des stickers...</div>';
+    try {
+        const res = await fetch(`https://g.tenor.com/v1/trending?key=${TENOR_V1_KEY}&limit=24`);
+        const data = await res.json();
+        if (!data.results || !data.results.length) {
+            results.innerHTML = '<div style="grid-column:1/-1;padding:20px;text-align:center;color:#666;">Aucun sticker trouvé</div>';
+            return;
+        }
+        _renderStickerResults(data.results);
+    } catch (err) {
+        console.error('❌ Chargement stickers échoué:', err);
+        results.innerHTML = '<div style="grid-column:1/-1;padding:20px;text-align:center;color:#666;">Erreur de chargement</div>';
+    }
+}
+
+async function _searchStickers(query) {
+    const results = document.getElementById('sticker-results');
+    if (!results) return;
+    results.innerHTML = '<div style="grid-column:1/-1;padding:20px;text-align:center;color:#666;">Recherche...</div>';
+    try {
+        const res = await fetch(`https://g.tenor.com/v1/search?q=${encodeURIComponent(query)}&key=${TENOR_V1_KEY}&limit=24`);
+        const data = await res.json();
+        if (!data.results || !data.results.length) {
+            results.innerHTML = '<div style="grid-column:1/-1;padding:20px;text-align:center;color:#666;">Aucun résultat</div>';
+            return;
+        }
+        _renderStickerResults(data.results);
+    } catch (err) {
+        console.error('❌ Recherche stickers échouée:', err);
+        results.innerHTML = '<div style="grid-column:1/-1;padding:20px;text-align:center;color:#666;">Erreur de recherche</div>';
+    }
+}
+
+function _renderStickerResults(items) {
+    const results = document.getElementById('sticker-results');
+    if (!results) return;
+    results.innerHTML = '';
+    items.forEach(item => {
+        const media = item.media?.[0];
+        const gifUrl = media?.gif?.url || media?.tinygif?.url || media?.mediumgif?.url;
+        const thumbUrl = media?.nanogif?.url || media?.tinygif?.url || gifUrl;
+        if (!gifUrl) return;
+        const div = document.createElement('div');
+        div.style.cssText = 'border-radius:12px;overflow:hidden;cursor:pointer;position:relative;';
+        div.innerHTML = `<img src="${thumbUrl}" alt="Sticker" style="width:100%;height:100%;object-fit:cover;display:block;"/>`;
+        div.addEventListener('click', () => {
+            _selectedStickerUrl = gifUrl;
+            _updateStickerPreview();
+            _stickerOverlay.style.display = 'none';
+        });
+        results.appendChild(div);
+    });
+}
+
+
 function closeUserSearch() {
     const m = document.getElementById('user-search-modal');
     if (m) {
@@ -340,16 +499,30 @@ function renderMessages(messages) {
         if (msg.sharedPostId) {
             div.innerHTML = `<div class="shared-post" data-post-id="${msg.sharedPostId}"><p>📌 Post partagé</p></div>`;
         } else {
-            const p = document.createElement('p');
-            p.textContent = msg.content || '';
-            // Petit indicateur discret si message chiffré
-            if (msg._wasEncrypted) {
-                const lock = document.createElement('span');
-                lock.textContent = ' 🔒';
-                lock.style.cssText = 'font-size:0.65em;opacity:0.5;';
-                p.appendChild(lock);
+            if (msg.content) {
+                const p = document.createElement('p');
+                p.textContent = msg.content;
+                if (msg._wasEncrypted) {
+                    const lock = document.createElement('span');
+                    lock.textContent = ' 🔒';
+                    lock.style.cssText = 'font-size:0.65em;opacity:0.5;';
+                    p.appendChild(lock);
+                }
+                div.appendChild(p);
             }
-            div.appendChild(p);
+            if (msg.stickerUrl) {
+                const stickerImg = document.createElement('img');
+                stickerImg.src = msg.stickerUrl;
+                stickerImg.alt = 'Sticker';
+                stickerImg.style.cssText = 'max-width:220px;max-height:180px;border-radius:14px;margin-top:10px;object-fit:contain;';
+                div.appendChild(stickerImg);
+            }
+            if (!msg.content && !msg.stickerUrl) {
+                const empty = document.createElement('p');
+                empty.textContent = 'Message vide';
+                empty.style.opacity = '0.7';
+                div.appendChild(empty);
+            }
         }
 
         body.appendChild(div);
@@ -362,16 +535,17 @@ function renderMessages(messages) {
 async function sendMessage() {
     const input = document.getElementById('message-input');
     const content = input.value.trim();
-    if (!content || !currentConversation) return;
+    const stickerUrl = _selectedStickerUrl;
+    if ((!content && !stickerUrl) || !currentConversation) return;
 
     const { otherUserId } = currentConversation;
     const convId = [currentUserId, otherUserId].sort().join('_');
-
-    // Tenter chiffrement
+    
+    // Tenter chiffrement du texte uniquement
     let toSend = content;
     let isEncrypted = false;
 
-    if (_myPrivateKey && _e2eReady) {
+    if (_myPrivateKey && _e2eReady && content) {
         try {
             const theirKey = await fetchPublicKey(otherUserId);
             if (theirKey) {
@@ -391,6 +565,7 @@ async function sendMessage() {
         senderId: currentUserId,
         senderName: 'Moi',
         content,
+        stickerUrl: stickerUrl || null,
         _wasEncrypted: isEncrypted,
         timestamp: new Date().toISOString()
     };
@@ -398,13 +573,15 @@ async function sendMessage() {
     setCached(convId, messages);
     renderMessages(messages);
     input.value = '';
+    _selectedStickerUrl = null;
+    _updateStickerPreview();
 
     // Envoi au serveur (payload chiffré)
     fetch(`${API}/conversations/${otherUserId}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ content: toSend, encrypted: isEncrypted })
+        body: JSON.stringify({ content: toSend, encrypted: isEncrypted, stickerUrl: stickerUrl || null })
     }).catch(err => console.error('Send error:', err));
 }
 

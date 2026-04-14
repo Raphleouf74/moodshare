@@ -115,6 +115,7 @@ const messageSchema = new mongoose.Schema({
   content: { type: String, default: '' },
   encrypted: { type: Boolean, default: false },
   sharedPostId: { type: String, default: null },
+  stickerUrl: { type: String, default: null },
   timestamp: { type: Date, default: Date.now }
 }, { _id: false });
 
@@ -1617,10 +1618,12 @@ app.post('/api/conversations/:otherUserId/messages', requireAuth, async (req, re
 
     const userId = req.session.user.id;
     const otherUserId = req.params.otherUserId;
-    const { content, sharedPostId, encrypted } = req.body;
+    const { content, sharedPostId, stickerUrl, encrypted } = req.body;
+    const safeStickerUrl = typeof stickerUrl === 'string' && stickerUrl.trim() ? stickerUrl.trim() : null;
+    const safeContent = typeof content === 'string' ? content.trim() : '';
 
-    if (!content && !sharedPostId) {
-      return res.status(400).json({ error: 'Message ou post requis' });
+    if (!safeContent && !sharedPostId && !safeStickerUrl) {
+      return res.status(400).json({ error: 'Message, sticker ou post requis' });
     }
 
     const convId = getConversationId(userId, otherUserId);
@@ -1647,9 +1650,10 @@ app.post('/api/conversations/:otherUserId/messages', requireAuth, async (req, re
     const newMessage = {
       senderId: userId,
       senderName: req.session.user.displayName,
-      content: content || '',
+      content: safeContent || '',
       encrypted: !!encrypted,
       sharedPostId: sharedPostId || null,
+      stickerUrl: safeStickerUrl,
       timestamp: new Date()
     };
 
@@ -1665,7 +1669,7 @@ app.post('/api/conversations/:otherUserId/messages', requireAuth, async (req, re
 
     await createNotification(otherUserId, 'message',
       `${req.session.user.displayName}`,
-      sharedPostId ? 'a partagé un post' : content,
+      sharedPostId ? 'a partagé un post' : safeStickerUrl ? 'a envoyé un sticker' : safeContent,
       { senderId: userId, conversationId: convId }
     );
 
