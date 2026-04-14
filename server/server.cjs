@@ -2060,8 +2060,8 @@ app.post('/api/posts/:id/comments', async (req, res) => {
   }
 });
 
-// Mount external routes
-app.use("/api", usersRoutes);
+// Mount external routes for user-related endpoints
+app.use("/api/users", usersRoutes);
 
 // Debug routes
 function listRoutes() {

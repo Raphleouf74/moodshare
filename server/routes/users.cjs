@@ -56,7 +56,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.get('/users/search', async (req, res) => {
+router.get('/search', async (req, res) => {
   const { q } = req.query;
   if (!q || q.length < 2) return res.json([]);
   try {
@@ -70,6 +70,18 @@ router.get('/users/search', async (req, res) => {
   } catch (err) {
     console.error('Error searching users:', err);
     res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// GET /api/users/:id/public-key
+router.get('/:id/public-key', async (req, res) => {
+  try {
+    const user = await UserModel.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+    res.json({ publicKey: user.publicKey });
+  } catch (err) {
+    console.error("Error /api/users/:id/public-key", err);
+    res.status(500).json({ error: "Server error" });
   }
 });
 
