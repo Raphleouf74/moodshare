@@ -189,7 +189,7 @@ async function saveToDB(post) {
   try {
     const doc = { ...post, _id: String(post.id) };
     delete doc.id;
-    await PostModel.findOneAndUpdate({ _id: doc._id }, doc, { upsert: true, new: true });
+    await PostModel.findOneAndUpdate({ _id: doc._id }, doc, { upsert: true, after: true });
   } catch (err) {
     console.error('❌ saveToDB:', err.message);
   }
