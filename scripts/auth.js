@@ -65,6 +65,7 @@ export async function loginUser(identifier, password) {
     if (errorData.banned) {
       showBanScreen(errorData);
       throw new Error('Account banned');
+      console.log('User is banned:', errorData);
     }
     throw new Error(txt || 'Login failed');
   }
@@ -107,6 +108,7 @@ export async function logout() {
 }
 
 function showBanScreen(banData) {
+  console.log('🚫 Affichage écran de ban:', banData);
   const banOverlay = document.getElementById('ban-overlay');
   const banReason = document.getElementById('ban-reason');
   const banUntil = document.getElementById('ban-until');
@@ -115,15 +117,31 @@ function showBanScreen(banData) {
     banReason.textContent = banData.reason || 'Votre compte a été banni pour violation des règles.';
   }
 
-  if (banUntil) {
-    if (banData.permanent) {
-      banUntil.textContent = 'Ce ban est définitif.';
-    } else if (banData.until) {
-      const untilDate = new Date(banData.until);
-      banUntil.textContent = `Ban jusqu'au ${untilDate.toLocaleString('fr-FR')}.`;
-    } else {
-      banUntil.textContent = '';
+  function updateTimeRemaining() {
+    if (banUntil) {
+      if (banData.permanent) {
+        banUntil.textContent = 'Ce ban est définitif.';
+      } else if (banData.until) {
+        const untilDate = new Date(banData.until);
+        const now = new Date();
+        const remaining = untilDate - now;
+        if (remaining > 0) {
+          const hours = Math.floor(remaining / (1000 * 60 * 60));
+          const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+          banUntil.textContent = `Temps restant: ${hours}h ${minutes}m ${seconds}s`;
+        } else {
+          banUntil.textContent = 'Le ban est terminé. Rafraîchissez la page.';
+        }
+      } else {
+        banUntil.textContent = '';
+      }
     }
+  }
+
+  updateTimeRemaining();
+  if (!banData.permanent && banData.until) {
+    setInterval(updateTimeRemaining, 1000);
   }
 
   if (banOverlay) {
@@ -136,7 +154,16 @@ export async function getCurrentUser() {
   if (!token) return null;
   // <-- corrige l'appel: passer un path relatif à fetchWithAuth
   const res = await fetchWithAuth('auth/me');
-  if (!res.ok) return null;
+  if (!res.ok) {
+    if (res.status === 403) {
+      const data = await res.json().catch(() => ({}));
+      if (data.banData) {
+        showBanScreen(data.banData);
+        return null;
+      }
+    }
+    return null;
+  }
   const data = await res.json().catch(() => null);
   // server returns { user: ... }
   return data && data.user ? data.user : data;

@@ -622,6 +622,8 @@ app.get("/api/auth/me", async (req, res) => {
   try {
     const user = await UserModel.findById(req.user.id);
     if (!user) return res.status(401).json({ error: "User not found" });
+    const banData = checkBanSync(user);
+    if (banData) return res.status(403).json({ error: "Banni", banData });
     res.json({ user: { id: user._id, displayName: user.displayName } });
   } catch (err) {
     console.error('Error getting current user:', err);
@@ -696,7 +698,11 @@ app.post("/api/posts/:id/share", async (req, res) => {
 // ============================================================
 async function requireAuth(req, res, next) {
   // 1. Session OK (login classique)
-  if (req.session?.user?.id) return next();
+  if (req.session?.user?.id) {
+    const banData = await checkBan(req.session.user.id);
+    if (banData) return res.status(403).json({ error: 'Banni', banData });
+    return next();
+  }
 
   // 2. JWT présent (token retourné par /login)
   if (req.user?.id) {
@@ -709,6 +715,8 @@ async function requireAuth(req, res, next) {
       if (!mongoReady) return res.status(503).json({ error: 'DB non disponible' });
       const user = await UserModel.findById(userId).lean();
       if (!user) return res.status(401).json({ error: 'Non authentifié' });
+      const banData = checkBanSync(user);
+      if (banData) return res.status(403).json({ error: 'Banni', banData });
       req.session.user = { id: user._id, displayName: user.displayName };
       return next();
     } catch (err) {
@@ -718,6 +726,28 @@ async function requireAuth(req, res, next) {
   }
 
   return res.status(401).json({ error: 'Non authentifié' });
+}
+
+async function checkBan(userId) {
+  if (!mongoReady) return null;
+  try {
+    const user = await UserModel.findById(userId).select('bannedUntil permanentlyBanned bannedReason').lean();
+    return checkBanSync(user);
+  } catch (err) {
+    console.error('❌ Erreur checkBan:', err);
+    return null;
+  }
+}
+
+function checkBanSync(user) {
+  if (!user) return null;
+  if (user.permanentlyBanned) {
+    return { reason: user.bannedReason || 'Ban définitif', permanent: true };
+  }
+  if (user.bannedUntil && user.bannedUntil > new Date()) {
+    return { reason: user.bannedReason || 'Ban temporaire', until: user.bannedUntil, permanent: false };
+  }
+  return null;
 }
 
 // GET /api/social/profile/:userId — Profil utilisateur
@@ -1167,7 +1197,7 @@ app.get('/api/admin/reports', requireAdmin, (req, res) => {
 app.get('/api/admin/users', requireAdmin, async (req, res) => {
   try {
     const users = await UserModel.find({})
-      .select('_id displayName avatar isGuest createdAt followersCount followingCount postsCount')
+      .select('_id displayName avatar isGuest createdAt followersCount followingCount postsCount bannedUntil bannedReason permanentlyBanned')
       .lean();
 
     res.json(users.map((u) => ({
@@ -1179,6 +1209,9 @@ app.get('/api/admin/users', requireAdmin, async (req, res) => {
       followersCount: u.followersCount || 0,
       followingCount: u.followingCount || 0,
       postsCount: u.postsCount || 0,
+      bannedUntil: u.bannedUntil,
+      bannedReason: u.bannedReason,
+      permanentlyBanned: u.permanentlyBanned,
     })));
   } catch (err) {
     console.error('❌ Erreur récupération users admin:', err);

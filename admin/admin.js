@@ -1070,6 +1070,7 @@ function renderUsers() {
         <table>
             <thead><tr>
                 <th>Utilisateur</th>
+                <th>Statut</th>
                 <th>Actions</th>
             </tr></thead>
             <tbody>
@@ -1078,6 +1079,22 @@ function renderUsers() {
                 const name = u.displayName || u.username || "Utilisateur";
                 const avatar = u.avatar || name.charAt(0).toUpperCase();
                 const badge = u.isGuest ? '<span class="chip chip-ephemeral">Invité</span>' : '';
+                let status = '';
+                if (u.permanentlyBanned) {
+                    status = '<span class="chip chip-danger">Banni définitivement</span>';
+                } else if (u.bannedUntil && new Date(u.bannedUntil) > new Date()) {
+                    const remaining = new Date(u.bannedUntil) - new Date();
+                    const hours = Math.floor(remaining / (1000 * 60 * 60));
+                    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+                    status = `<span class="chip chip-warning">Banni (${hours}h ${minutes}m restantes)</span>`;
+                } else if (u.bannedUntil && new Date(u.bannedUntil) <= new Date()) {
+                    status = '<span class="chip chip-success">Ban expiré</span>';
+                }
+                const actions = u.permanentlyBanned || (u.bannedUntil && new Date(u.bannedUntil) > new Date()) ?
+                    `<button class="btn btn-success btn-sm" onclick="unbanUser('${u.id}')">✅ Débannir</button>` :
+                    `<button class="btn btn-danger btn-sm" onclick="deleteUser('${u.id}')">🗑️ Supprimer</button>
+                     <button class="btn btn-danger btn-sm" onclick="banUser('${u.id}')">🗑️ Bannir temporairement</button>
+                     <button class="btn btn-danger btn-sm" onclick="permaBanUser('${u.id}')">🚫 Bannir définitivement</button>`;
                 return `
                         <tr>
                             <td>
@@ -1091,12 +1108,8 @@ function renderUsers() {
                                     </div>
                                 </div>
                             </td>
-                            <td>${badge}</td>
-                            <td>
-                                <button class="btn btn-danger btn-sm" onclick="deleteUser('${u.id}')">🗑️ Supprimer</button>
-                                <button class="btn btn-danger btn-sm" onclick="banUser('${u.id}')">🗑️ Bannir temporairement</button>
-                                <button class="btn btn-danger btn-sm" onclick="permaBanUser('${u.id}')">🚫 Bannir définitivement</button>
-                            </td>
+                            <td>${badge} ${status}</td>
+                            <td>${actions}</td>
                         </tr>
                     `;
             })
@@ -1172,6 +1185,24 @@ async function permaBanUser(id) {
         if (res.ok) {
             toast("Utilisateur banni définitivement", "success");
             renderUsers();
+        } else {
+            const err = await res.json().catch(() => ({}));
+            toast("Erreur : " + (err.error || res.status), "error");
+        }
+    } catch (e) {
+        toast("Erreur réseau", "error");
+    }
+}
+
+async function unbanUser(id) {
+    try {
+        const res = await fetch(`${API}/admin/users/${id}/unban`, {
+            method: "PUT",
+            headers: adminHeaders(),
+        });
+        if (res.ok) {
+            toast("Utilisateur débanni", "success");
+            loadAll();
         } else {
             const err = await res.json().catch(() => ({}));
             toast("Erreur : " + (err.error || res.status), "error");
