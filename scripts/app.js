@@ -836,7 +836,7 @@ const storyModeToggle = document.getElementById('storyModeToggle');
 if (addStoryBtn) {
     addStoryBtn.addEventListener('click', () => {
         // Active automatiquement le mode "Story"
-        const createTabBtn = document.getElementById('createTab');
+        const createTabBtn = document.querySelector('#create');
         createTabBtn?.click();
         if (storyModeToggle) storyModeToggle.checked = true;
     });
@@ -1400,7 +1400,7 @@ async function _loadTrendingStickers() {
         _stickerResults.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text);opacity:.6;">Chargement des tendances...</div>';
 
         // Tenter v2 en premier
-        const res = await fetch(`https://tenor.googleapis.com/v2/featured?key=${TENOR_API_KEY}&client_key=moodshare&limit=20&media_filter=gif`);
+        const res = await fetch(`https://tenor.googleapis.com/v2/featured?key=${TENOR_API_KEY}&client_key=moodshare&limit=100&media_filter=gif`);
 
         if (!res.ok) throw new Error('V2 failed');
 
@@ -1410,7 +1410,7 @@ async function _loadTrendingStickers() {
         console.warn('⚠️ Tenor v2 failed, trying v1:', err);
         // Fallback v1
         try {
-            const res = await fetch(`https://g.tenor.com/v1/trending?key=${TENOR_V1_KEY}&limit=20`);
+            const res = await fetch(`https://g.tenor.com/v1/trending?key=${TENOR_V1_KEY}&limit=100`);
             const data = await res.json();
             _renderStickers(data.results, 'v1');
         } catch (err2) {
@@ -1425,7 +1425,7 @@ async function _searchStickers(query) {
         _stickerResults.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text);opacity:.6;">Recherche...</div>';
 
         // Tenter v2 en premier
-        const res = await fetch(`https://tenor.googleapis.com/v2/search?q=${encodeURIComponent(query)}&key=${TENOR_API_KEY}&client_key=moodshare&limit=20&media_filter=gif`);
+        const res = await fetch(`https://tenor.googleapis.com/v2/search?q=${encodeURIComponent(query)}&key=${TENOR_API_KEY}&client_key=moodshare&limit=100&media_filter=gif`);
 
         if (!res.ok) throw new Error('V2 failed');
 
@@ -1441,7 +1441,7 @@ async function _searchStickers(query) {
         console.warn('⚠️ Tenor v2 failed, trying v1:', err);
         // Fallback v1
         try {
-            const res = await fetch(`https://g.tenor.com/v1/search?q=${encodeURIComponent(query)}&key=${TENOR_V1_KEY}&limit=20`);
+            const res = await fetch(`https://g.tenor.com/v1/search?q=${encodeURIComponent(query)}&key=${TENOR_V1_KEY}&limit=100`);
             const data = await res.json();
 
             if (!data.results || data.results.length === 0) {

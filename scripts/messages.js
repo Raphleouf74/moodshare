@@ -255,7 +255,7 @@ function createStickerPicker() {
 
 function injectStickerButton() {
     const wrapper = document.querySelector('.messages-input-wrap');
-    if (!wrapper || document.querySelectorAll('#sticker-button').length) return;
+    if (!wrapper || document.getElementById('sticker-button')) return;
 
     const button = document.createElement('button');
     button.id = 'sticker-button';
