@@ -270,10 +270,7 @@ function _injectDClink() {
     const linkbanner = document.createElement('div');
     linkbanner.id = 'dc-link';
     linkbanner.className = 'dc-link';
-    linkbanner.style.justifyContent = 'space-evenly';
-    linkbanner.style.border = "none";
-    linkbanner.style.width = "60%";
-    linkbanner.style.marginLeft = "20%";
+    
     linkbanner.innerHTML = `
         <a
         id="discordbtn"
@@ -286,7 +283,7 @@ function _injectDClink() {
             ></path>
           </svg>
         </div>
-        <h2 style="font-size: 2.25rem; margin: 0;">Rejoignez notre serveur Discord !</h2>
+        <h2>Rejoignez notre serveur Discord !</h2>
       </a>
         <button class="dc-link__close" title="Fermer" aria-label="Fermer" style="color: white; background: rgba(255, 0, 0, 0.31); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">✕</button>
     `;

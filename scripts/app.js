@@ -124,28 +124,31 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 });
 
-// const currentsection = location.hash || "#home";
-// const nav = document.querySelector('nav');
-// const header = document.querySelector('header');
-// const headerh1 = document.querySelector('header h1');
-// const profileheader = document.getElementById('accountheader');
+const nav = document.querySelector('nav');
+const header = document.querySelector('header');
+const headerh1 = document.querySelector('header h1');
+const profileheader = document.getElementById('accountheader');
+const tabSections = document.querySelectorAll('section.tab');
 
-// location.hash.addEventListener('scroll', () => {
-//     const currentScroll = currentsection.scrollY;
-
-//     if (currentScroll > 50) {
-//         header.classList.add('scrolled');
-//         profileheader.classList.add('scrolled');
-//         nav.classList.add('scrolled');
-//         headerh1.classList.add('scrolled');
-//     }
-//     else {
-//         header.classList.remove('scrolled');
-//         profileheader.classList.remove('scrolled');
-//         nav.classList.remove('scrolled');
-//         headerh1.classList.remove('scrolled');
-//     }
-// });
+// Chaque section scrollable doit déclencher l'effet de scroll du header
+if (tabSections.length) {
+    tabSections.forEach(section => {
+        section.addEventListener('scroll', () => {
+            const currentScroll = section.scrollTop;
+            if (currentScroll > 50) {
+                header.classList.add('scrolled');
+                profileheader.classList.add('scrolled');
+                nav.classList.add('scrolled');
+                headerh1.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+                profileheader.classList.remove('scrolled');
+                nav.classList.remove('scrolled');
+                headerh1.classList.remove('scrolled');
+            }
+        });
+    });
+}
 
 async function checkSiteVersion() {
 

@@ -97,9 +97,11 @@ export async function logout() {
   // Reset UI
   const userName = document.getElementById('userName');
   const userNameProfile = document.getElementById('userNameProfile');
+  const userIDspan = document.getElementById('userId');
   const accountAvatar = document.getElementById('accountavatar');
   if (userName) userName.textContent = 'UserName';
   if (userNameProfile) userNameProfile.textContent = 'USERNAME';
+  if (userIDspan) userIDspan.textContent = 'Connectez vous';
   if (accountAvatar) accountAvatar.alt = '';
   saveProfileLocal({});
   // Hide ban screen if shown
@@ -184,6 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const cancelBtn = document.getElementById('authCancel');
   const userName = document.getElementById('userName');
   const userNameProfile = document.getElementById('userNameProfile');
+  const userIDspan = document.getElementById('userId');
   const logoutBtn = document.getElementById('logoutBtn');
   const accountHeader = document.getElementById('accountheader');
   const accountAvatar = document.getElementById('accountavatar');
@@ -216,12 +219,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const uname = (user && (user.displayName || user.display_name || user.username)) || usernameInput.value || 'UserName';
         userName.textContent = uname;
         userNameProfile.textContent = uname;
+        userIDspan.textContent = user.id;
         saveProfileLocal({ displayName: uname });
       } else {
         const user = await loginUser(usernameInput.value, passwordInput.value);
         const uname = (user && (user.displayName || user.display_name || user.username)) || usernameInput.value || 'UserName';
         userName.textContent = uname;
         userNameProfile.textContent = uname;
+        userIDspan.textContent = user.id;
         saveProfileLocal({ displayName: uname });
       }
       hideModal();
@@ -243,6 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const uname = (user && (user.displayName || user.display_name || user.username)) || 'Invité';
       userName.textContent = uname;
       userNameProfile.textContent = uname;
+      userIDspan.textContent = user.id;
       saveProfileLocal({ displayName: uname });
       if (openLogin) openLogin.classList.add('hidden');
       if (openRegister) openRegister.classList.add('hidden');
@@ -268,6 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const saved = loadProfileLocal();
     userName.textContent = saved && saved.displayName ? saved.displayName : 'UserName';
     userNameProfile.textContent = saved && saved.displayName ? saved.displayName : 'UserName';
+    userIDspan.textContent = saved && saved.id ? saved.id : 'Connectez vous';
   });
 
   // Small helpers to persist simple profile prefs locally
@@ -286,6 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!profile) return;
     if (profile.displayName && userName) userName.textContent = profile.displayName;
     if (profile.displayName && userNameProfile) userNameProfile.textContent = profile.displayName;
+    if (profile.id && userIDspan) userIDspan.textContent = profile.id;
     if (profile.emoji && accountAvatar) accountAvatar.alt = profile.emoji;
   }
 

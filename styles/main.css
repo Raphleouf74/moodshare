@@ -1079,54 +1079,33 @@ nav .link {
     position: relative;
 }
 
-@media screen and (min-width:769px) {
-    nav:not(:hover) {
-        bottom: 5px;
-        right: 0;
-        width: 120px;
-        height: 4px;
-        background: rgba(255, 255, 255, 0.08);
-        border-radius: 15px;
-        transition: width .6s ease-in-out, height .4s ease-in-out;
+nav{
+    width: 90vw;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 20px;
+    bottom: 5px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+    height: 50px;
+}
+
+nav.scrolled {
+    height: 30px;
+    width: 400px;
+    background-color: rgb(255,255,255,0.4);
+}
+
+nav.scrolled .link svg {
+    color: white;
+}
+@media (min-width: 769px) {
+    nav {
+        width: 500px;
     }
-
-    nav:not(:hover) .link {
-        height: 12.5px;
-        width: 12.5px;
-        border-radius: 50%;
-        background-color: rgba(128, 128, 128, 0.3);
-        pointer-events: none;
-    }
-
-    nav:not(:hover) .link svg {
-        opacity: 0;
-        scale: .1;
-    }
-
-
-    nav:not(:hover) .link.active {
-        height: 15px;
-        width: 15px;
-        border-radius: 50%;
-        background-color: rgb(94, 94, 245);
-        box-shadow: 0 0 5px 5px rgba(94, 94, 245, 0.5);
-    }
-
 }
 
 
 
-
-
 @media (max-width: 769px) {
-    nav {
-        width: 90vw;
-        background-color: rgba(255, 255, 255, 0.7);
-        border-radius: 20px;
-        bottom: 5px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
-        height: 50px;
-    }
 
     .link p {
         display: none;
@@ -1228,6 +1207,11 @@ nav .link {
 }
 
 .link.active svg {
+    fill: black;
+    stroke: green;
+}
+
+.link.active svg {
     fill: rgba(0, 0, 0, 0.5);
     stroke: rgb(255, 255, 255);
 }
@@ -1293,26 +1277,34 @@ nav button:hover {
     color: rgb(255, 255, 255);
 }
 
-nav a#createTab:hover span {
+nav a#create nav a#create:hover span {
     transform: rotate(90deg) scale(1.5);
 }
 
+nav a#create {
+    background: #150668;
+}
+
 section#create {
+    margin-top: 0;
+    padding: 25px;
+    overflow-y: auto;
     width: 100vw;
     height: 100vh;
 }
 
-nav a#inboxTab:hover span {
+
+nav a#inbox:hover svg {
     animation: fire 0.5s forwards;
     font-weight: 300;
 }
 
-nav a#profileTab:hover span {
+nav a#more:hover svg {
     transform: scale(1.5) rotate(15deg);
     font-weight: 300;
 }
 
-nav a#postsTab:hover span {
+nav a#posts:hover svg {
     animation: scroll 0.5s forwards;
 }
 
@@ -3323,8 +3315,8 @@ section#create {
 
 .create-container {
     width: 100%;
-    max-width: 580px;
-    margin-top: -200px;
+    width: 580px;
+    margin-top: -50px;
     background: var(--menu-bg);
     border-radius: 20px;
     padding: 32px;
@@ -5787,7 +5779,8 @@ body.focus-mode .tab.active {
 }
 
 /* Bannière Mood du jour */
-.mood-today, .dc-link {
+.mood-today,
+#dc-link {
     display: flex;
     align-items: center;
     gap: 14px;
@@ -5801,7 +5794,40 @@ body.focus-mode .tab.active {
     overflow: hidden;
 }
 
-.mood-today::before, .dc-link::before {
+#dc-link {
+    justify-content: space-evenly;
+    border: none;
+    width: 60%;
+    margin-left: 20%;
+}
+
+#dc-link h2 {
+    font-size: 2.25rem;
+    color: #ebebeb;
+    margin: 0;
+}
+
+@media screen and (max-width: 769px) {
+    #dc-link {
+        width: 85%;
+        margin-left: 7.5%;
+        font-size: 0.85rem;
+    }
+
+    #dc-link #discordbtn {
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+    }
+
+    #dc-link h2 {
+        font-size: 1.5rem;
+    }
+
+}
+
+.mood-today::before,
+#dc-link::before {
     content: '';
     position: absolute;
     z-index: 1;
@@ -5854,7 +5880,8 @@ body.focus-mode .tab.active {
     background: rgba(255, 255, 255, 0.18);
 }
 
-.mood-today__close, .dc-link__close {
+.mood-today__close,
+.dc-link__close {
     background: transparent;
     border: none;
     color: #666;
@@ -5874,15 +5901,15 @@ body.focus-mode .tab.active {
     }
 
     .mood-today__emoji {
-        font-size: 4.5rem;
+        font-size: 3.5rem;
     }
 
     .mood-today__text {
-        font-size: 2.75rem;
+        font-size: 2rem;
     }
 
     .mood-today__share {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         padding: 10px 20px;
     }
 
@@ -5895,7 +5922,7 @@ body.focus-mode .tab.active {
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 2px solid rgba(255, 0, 0, 0.411);
+        border: 2px solid rgba(255, 0, 0, 0.311);
         width: 50px;
         height: 50px;
         color: red;
@@ -6487,4 +6514,30 @@ body.focus-mode .tab.active {
     fill: white;
     scale: 1.75;
     rotate: -7.5deg;
+}
+
+@media screen and (max-width: 769px) {
+    #discordbtn:hover {
+        background-position: 100% 100%;
+        box-shadow: 0 0px 25px #711ce0;
+        transform: scale(1.02);
+    }
+
+    #discordbtn:hover #discordlogo {
+        background-color: rgba(0, 0, 0, 0.5);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        scale: 1.15;
+        width: 175px;
+    }
+
+    #discordbtn h2 {
+        transform: translateX(25px);
+    }
+
+    #discordbtn:hover #discordlogo svg {
+        fill: white;
+        scale: 1.5;
+        rotate: -7.5deg;
+    }
+
 }
