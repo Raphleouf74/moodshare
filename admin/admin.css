@@ -240,8 +240,12 @@ body {
         transform 0.15s,
         box-shadow 0.2s;
     box-shadow: 0 0 24px rgba(0, 207, 235, 0.25);
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    text-decoration: none;
 }
-
+a {text-decoration: none;}
 .login-btn:hover {
     opacity: 0.9;
     transform: translateY(-1px);

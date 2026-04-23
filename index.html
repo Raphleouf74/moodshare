@@ -102,9 +102,37 @@
     <div id="squareback"></div>
     <div
       id="accountheader"
-      onclick="document.getElementById('authModal').style.display = 'block'"
+      
     >
-      <span id="userName">UserName</span>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-circle-user-round-icon lucide-circle-user-round"
+      >
+        <path d="M18 20a6 6 0 0 0-12 0" />
+        <circle cx="12" cy="10" r="4" />
+        <circle cx="12" cy="12" r="10" />
+      </svg>
+      
+      <div id="profilemenu">
+        <span id="userName">UserName</span>
+        <button onclick="document.getElementById('authModal').style.display = 'block'">Inscription / Connexion</button>
+        <button disabled style="color: red" onclick="logout()">Déconnexion</button>
+        <!-- <button><i>[Option 3 (Paramètres)]</i></button>
+        <button><i>[Option 4 (Support)]</i></button> -->
+        <a href="/admin/admin.html"><button>Portail admin</button></a>
+        <p>
+          v<span id="SiteVersion">...</span> |
+          <span id="BuildVersion">...</span>
+        </p>
+      </div>
     </div>
 
     <div id="authModal">
@@ -1066,10 +1094,7 @@
         </div>
       </div>
       <h3>Rejoignez le serveur Discord de Moodshare !</h3>
-      <a
-        id="discordbtn"
-        href="https://discord.gg/xvVnNAGNtP"
-      >
+      <a id="discordbtn" href="https://discord.gg/xvVnNAGNtP">
         <div id="discordlogo">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
             <path
@@ -1083,10 +1108,6 @@
         <p data-i18n="copyright">
           <b>Moodshare &copy; 2025-2026.</b> Toute reproduction partielle ou
           totale est strictement interdite.
-        </p>
-        <p>
-          v<span id="SiteVersion">...</span> |
-          <span id="BuildVersion">...</span>
         </p>
       </footer>
     </section>

@@ -166,7 +166,6 @@ function _injectSortBar() {
         <button class="sort-btn sort-btn--active" data-sort="recent">Récents</button>
         <button class="sort-btn" data-sort="popular">Populaires</button>
         <button class="sort-btn" data-sort="trending">Tendances</button>
-        <button class="sort-btn nav-icon explorerbtn">Explorer</button>
     `;
 
     wall.insertAdjacentElement('beforebegin', bar);

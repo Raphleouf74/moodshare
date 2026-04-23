@@ -33,7 +33,45 @@
           />
         </div>
 
-        <button id="attemptlogin" class="login-btn">Connexion →</button>
+        <button id="attemptlogin" class="login-btn">
+          Connexion
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-arrow-big-right-icon lucide-arrow-big-right"
+          >
+            <path
+              d="M11 9a1 1 0 0 0 1-1V5.061a1 1 0 0 1 1.811-.75l6.836 6.836a1.207 1.207 0 0 1 0 1.707l-6.836 6.835a1 1 0 0 1-1.811-.75V16a1 1 0 0 0-1-1H5a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1z"
+            />
+          </svg>
+        </button>
+        <a href="/index.html"
+          ><button class="login-btn">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-arrow-big-left-icon lucide-arrow-big-left"
+            >
+              <path
+                d="M13 9a1 1 0 0 1-1-1V5.061a1 1 0 0 0-1.811-.75l-6.835 6.836a1.207 1.207 0 0 0 0 1.707l6.835 6.835a1 1 0 0 0 1.811-.75V16a1 1 0 0 1 1-1h6a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1z"
+              /></svg
+            >Retour vers Moodshare
+          </button></a
+        >
         <div class="login-error" id="login-error">
           Identifiants invalides. Accès refusé.
         </div>
@@ -355,7 +393,9 @@
           <div class="page-header">
             <div>
               <div class="page-title">Liste des utilisateurs</div>
-              <div class="page-subtitle">Gérer les comptes présents sur MoodShare</div>
+              <div class="page-subtitle">
+                Gérer les comptes présents sur MoodShare
+              </div>
             </div>
             <button class="btn btn-ghost" onclick="renderUsers()">
               Actualiser

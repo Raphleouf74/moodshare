@@ -5,7 +5,6 @@ import { attachComments } from './comments.js';
 import { initCreatorExtras } from './creator-extras.js';
 import { initFeedExtras } from './feed-extras.js';
 import { initMoodCalendar } from './profile-calendar.js';
-import { initExplorer } from './explorer.js';
 
 // ─── initV2() : appelé UNE FOIS après chargement du feed ─────
 export async function initV2() {
@@ -16,8 +15,6 @@ export async function initV2() {
     // 2. Feed : tri, vue, mood du jour, infinite scroll
     initFeedExtras();
 
-    // 3. Explorateur
-    initExplorer();
 
     // 4. Calendrier profil (userId récupéré dynamiquement)
     _initCalendarOnProfileOpen();

@@ -132,23 +132,32 @@ const tabSections = document.querySelectorAll('section.tab');
 
 // Chaque section scrollable doit déclencher l'effet de scroll du header
 if (tabSections.length) {
+    
     tabSections.forEach(section => {
         section.addEventListener('scroll', () => {
+            const sortbar = document.getElementById('sort-bar');
+            const sortbtn = document.querySelectorAll('#sort-bar .sort-btn');
             const currentScroll = section.scrollTop;
             if (currentScroll > 50) {
                 header.classList.add('scrolled');
                 profileheader.classList.add('scrolled');
                 nav.classList.add('scrolled');
                 headerh1.classList.add('scrolled');
+                sortbar.classList.add('scrolled');
             } else {
                 header.classList.remove('scrolled');
                 profileheader.classList.remove('scrolled');
                 nav.classList.remove('scrolled');
                 headerh1.classList.remove('scrolled');
+                sortbar.classList.remove('scrolled');
             }
         });
     });
 }
+
+profileheader.addEventListener("click", () => {
+    document.getElementById("profilemenu").classList.toggle("show");
+})
 
 async function checkSiteVersion() {
 
@@ -1673,7 +1682,7 @@ async function addInboxNotification(
         notif.style.transform = "translateY(0)";
     }, 50);
 }
-addInboxNotification("info", "Découvrez MoodShare v2", "Découvrez une nouvelle version de MoodShare avec des fonctionnalités améliorées. Vous pouvez désormais: -Réagir aux posts des autres utilisateurs, - Un tout nouveau design de l'onglet Profil - Vous pouvez trier votre feed par catégorie, - Un onglet explorer pour voir de façon compréssé et rapide tous les posts - Les commentaires sont de retour !, - Des bannières journalières en haut du feed,  - Ajout du nombre de vues d'un post, - Nouvel écran de chargement, - Plus d'option pour la création de post, - La pagination des posts est enfin là afin de compléter le système de copie des liens de post, - Autres amélioration UI/UX pour mobile, - Modification et ajustement diverses", "check_circle", "../v2logo.png");
+addInboxNotification("info", "Découvrez MoodShare v2", "Découvrez une nouvelle version de MoodShare avec des fonctionnalités améliorées. Vous pouvez désormais: -Réagir aux posts des autres utilisateurs, - Un tout nouveau design de l'onglet Profil - Vous pouvez trier votre feed par catégorie, - Les commentaires sont de retour !, - Des bannières journalières en haut du feed,  - Ajout du nombre de vues d'un post, - Nouvel écran de chargement, - Plus d'option pour la création de post, - La pagination des posts est enfin là afin de compléter le système de copie des liens de post, - Autres amélioration UI/UX pour mobile, - Modification et ajustement diverses", "check_circle", "../v2logo.png");
 addInboxNotification("info", "Découvrez MoodShare v2.1", "Découvrez une nouvelle version de MoodShare basée sur la sécurité de ses utilisateurs ! Voici ce qu'il y a de nouveau: - Une toute nouvelle fonctionnalité de sécurité: l'encryption de vos message en utilisant le système de chiffrement de bout en bout (E2E), - Amélioration UI/UX pour mobile/PC, - Modification et ajustement diverses", "check_circle", "../v2_1logo.png");
 addInboxNotification("info", "Découvrez MoodShare v2.2", "Découvrez une nouvelle version de MoodShare basée sur la personnalisation de l'application ! Voici les nouveautés : -Ajout des thèmes, vous pouvez désormais changer le thème de l'application dans l'onglet \"Plus\", vous avez le choix parmi 15 thèmes tous peaufinés pour plus de choix !, - Modification et ajustement diverses", "check_circle", "../v2_2logo.png");
 
