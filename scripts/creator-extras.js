@@ -39,24 +39,19 @@ function _init() {
     _injectColorPresets();
     _initDraftAutosave();
     _initFocusMode();
-    _initAnonymousToggle();
     _initMentions();
     _restoreDraft();
 }
 
 // ─── 1. Palette couleurs ─────────────────────────────────────
 function _injectColorPresets() {
-    const colorInput = document.getElementById('moodColor');
+    const colorInput = document.getElementById('create-color-preset');
     if (!colorInput || document.getElementById('presets')) return;
 
     const container = document.createElement('div');
     container.id = 'presets';
     container.className = 'presets';
 
-    const label = document.createElement('p');
-    label.className = 'presets-label';
-    label.textContent = '✨ Dégradés prédéfinis';
-    container.appendChild(label);
 
     const grid = document.createElement('div');
     grid.className = 'presets-grid';
@@ -258,19 +253,7 @@ export function getAnonymousFlag() {
     return !!document.getElementById('anon-toggle')?.checked;
 }
 
-function _initAnonymousToggle() {
-    const submitBtn = document.getElementById('submitMood');
-    if (!submitBtn || document.getElementById('anon-toggle')) return;
 
-    const wrap = document.createElement('label');
-    wrap.className = 'anon-label';
-    wrap.innerHTML = `
-        <input type="checkbox" id="anon-toggle" class="anon-input" />
-        <span class="anon-track"></span>
-        <span class="anon-text">🎭 Publier anonymement</span>
-    `;
-    submitBtn.insertAdjacentElement('beforebegin', wrap);
-}
 
 // ─── 5. @Mentions ───────────────────────────────────────────
 const API = 'https://moodshare-7dd7.onrender.com/api';

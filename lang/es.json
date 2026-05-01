@@ -78,5 +78,7 @@
   "copyright": "Moodshare © 2025-2026. Queda estrictamente prohibida cualquier reproducción, total o parcial.",
   "message_warning": "¡Se guardan los últimos 50 mensajes!",
   "not-logged-in": "No estás conectado, por favor inicia sesión para discutir !",
-  "lp-warn": "Algunas partes del sitio aún no están traducidas."  
+  "lp-warn": "Algunas partes del sitio aún no están traducidas.",
+  "liked_post": "A {author} le gustó tu post ❤️",
+  "new_comment": "{author} comentó en tu post 💬"  
 }

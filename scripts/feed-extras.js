@@ -349,7 +349,7 @@ async function _showViewCount(postEl, postId) {
 
     const viewsEl = document.createElement('span');
     viewsEl.className = 'views';
-    viewsEl.textContent = ' · 👁 …';
+    viewsEl.textContent = ' · … vues';
     dateP.appendChild(viewsEl);
 
     try {
@@ -357,10 +357,10 @@ async function _showViewCount(postEl, postId) {
         if (res.ok) {
             const data = await res.json();
             const views = data.views || data.viewCount || 1;
-            viewsEl.textContent = ` · 👁 ${views}`;
+            viewsEl.textContent = ` · ${views} vues`;
         }
     } catch {
-        viewsEl.textContent = ' · 👁 1';
+        viewsEl.textContent = ' · 1 vue';
     }
 }
 

@@ -637,6 +637,17 @@ app.post("/api/posts/:id/like", async (req, res) => {
 
   post.likes++;
   await persistPost(post);
+  
+  // Envoyer notification SSE au propriétaire du post
+  if (post.userId) {
+    const currentUser = req.session?.user?.displayName || req.user?.displayName || 'Quelqu\'un';
+    sendSSE('new_like', { 
+      authorName: currentUser, 
+      postId: post.id,
+      userId: post.userId 
+    });
+  }
+  
   res.json(post);
 });
 
@@ -2080,14 +2091,24 @@ app.post('/api/posts/:id/comments', async (req, res) => {
     }
 
     // Notification au propriétaire du post si connu
-    if (mongoReady && post.userId && post.userId !== authorId) {
-      createNotification(
-        post.userId,
-        'comment',
-        author,
-        `a commenté : "${cleanText.substring(0, 60)}"`,
-        { postId, commentId: comment._id }
-      ).catch(() => { });
+    if (post.userId && post.userId !== authorId) {
+      // Envoyer SSE notification
+      sendSSE('new_comment', { 
+        authorName: author, 
+        postId: String(postId),
+        userId: post.userId 
+      });
+      
+      // Sauvegarder en base MongoDB
+      if (mongoReady) {
+        createNotification(
+          post.userId,
+          'comment',
+          author,
+          `a commenté : "${cleanText.substring(0, 60)}"`,
+          { postId, commentId: comment._id }
+        ).catch(() => { });
+      }
     }
 
     res.status(201).json({ comment });

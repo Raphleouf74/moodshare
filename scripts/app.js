@@ -58,6 +58,21 @@ try {
         } catch (err) { console.warn('Invalid stories_update event', err); }
     });
 
+    // --- Notifications: Likes et Commentaires ---
+    es.addEventListener('new_like', (e) => {
+        try {
+            const data = JSON.parse(e.data);
+            showNotification('success', 'liked_post', { author: data.authorName || 'Quelqu\'un' });
+        } catch (err) { console.warn('Invalid new_like event', err); }
+    });
+
+    es.addEventListener('new_comment', (e) => {
+        try {
+            const data = JSON.parse(e.data);
+            showNotification('info', 'new_comment', { author: data.authorName || 'Quelqu\'un' });
+        } catch (err) { console.warn('Invalid new_comment event', err); }
+    });
+
     es.addEventListener('connected', (e) => { /* connected */ });
 } catch (err) {
     console.warn('SSE not supported or failed to connect', err);
@@ -218,36 +233,27 @@ const wall = document.getElementById("moodWall");
 const modal = document.getElementById("postModal");
 const submitBtn = document.getElementById("submitMood");
 
-
-
 // Ajouter après les autres constantes
 const ephemeralToggle = document.getElementById('ephemeralToggle');
 const durationPicker = document.getElementById('durationPicker');
-const ephemeralpickdiv = document.querySelector('.ephemeral-options');
-const durationInputs = document.querySelectorAll('#durationPicker .duration-input');
+const durationInputs = document.querySelectorAll('#durationPicker input[type="number"]');
 const msgDeleteTime = document.getElementById('msgdeletetime');
+
+// ✅ Initialiser le durationPicker comme caché au démarrage
+if (durationPicker) {
+    durationPicker.style.display = 'none';
+}
 
 // Mise à jour du texte de suppression en fonction des inputs
 // Vérification et mise à jour du temps de suppression
 function updateMsgDeleteTime() {
 
 
-    const years = parseInt(document.getElementById('durationYear')?.value || 0);
-    const months = parseInt(document.getElementById('durationMonths')?.value || 0);
     const days = parseInt(document.getElementById('durationDays')?.value || 0);
     const hours = parseInt(document.getElementById('durationHours')?.value || 0);
     const minutes = parseInt(document.getElementById('durationMinutes')?.value || 0);
-    const seconds = parseInt(document.getElementById('durationSeconds')?.value || 0);
 
     // ✅ Vérification des valeurs invalides
-    if (years > 5) {
-        showFeedback("error", "fb_error_year");
-        document.getElementById('durationYear').value = 5;
-    }
-    if (months >= 12) {
-        showFeedback("error", "fb_error_month");
-        document.getElementById('durationMonths').value = 11;
-    }
     if (days >= 31) {
         showFeedback("error", "fb_error_day");
         document.getElementById('durationDays').value = 30;
@@ -260,17 +266,13 @@ function updateMsgDeleteTime() {
         showFeedback("error", "fb_error_minute");
         document.getElementById('durationMinutes').value = 59;
     }
-    if (seconds >= 60) {
-        showFeedback("error", "fb_error_seconds");
-        document.getElementById('durationSeconds').value = 59;
-    }
     if (!ephemeralToggle.checked) {
         msgDeleteTime.textContent = '---';
         return;
     }
     // Recalcul après correction
     const totalMs =
-        (((years * 365 + days) * 24 + hours) * 60 + minutes) * 60 * 1000 + (seconds * 1000);
+        (((days * 24 + hours) * 60 + minutes) * 60 * 1000);
 
     if (totalMs <= 0) {
         msgDeleteTime.textContent = '';
@@ -298,19 +300,9 @@ durationInputs.forEach(input => {
 // ✅ Réinitialiser quand on (dé)coche
 ephemeralToggle.addEventListener('change', updateMsgDeleteTime);
 
-
-
-
 // Mettre à jour quand on modifie une durée
 durationInputs.forEach(input => {
     input.addEventListener('input', updateMsgDeleteTime);
-    if (document.getElementById('durationYear') >= 5) {
-        showFeedback("warning", "fb_error_year");
-    }
-
-    if (document.getElementById('durationMonths') >= 12 || document.getElementById('durationDays') >= 31 || document.getElementById('durationHours') >= 24 || document.getElementById('durationMinutes') >= 60 || document.getElementById('durationSeconds') >= 60) {
-        showFeedback("warning", "fb_error_invalid_value");
-    }
 });
 
 // Réinitialiser quand on (dé)coche la case
@@ -327,11 +319,12 @@ durationInputs.forEach(input => {
 // Gestion du toggle
 ephemeralToggle.addEventListener('change', () => {
     durationInputs.forEach((input, index) => {
-        input.style.opacity = ephemeralToggle.checked ? '1' : '0';
+        input.style.opacity = ephemeralToggle.checked ? '1' : '0.5';
         input.style.transform = ephemeralToggle.checked ? 'translateY(0)' : 'translateY(15px)';
         input.style.transitionDelay = (index * 0.05) + 's';
+        input.disabled = !ephemeralToggle.checked;
     });
-    ephemeralpickdiv.style.height = ephemeralToggle.checked ? '175px' : '30px';
+    durationPicker.style.opacity = ephemeralToggle.checked ? '1' : '0.5';
 });
 
 
@@ -842,6 +835,74 @@ function showFeedback(type, messageKey, vars = {}) {
 
 
 
+// ============================================================
+// BOUTON "PLUS OPTIONS" — Afficher/masquer les options avancées
+// ============================================================
+const moreOptionsBtn = document.getElementById('moreOptionsBtn');
+const advancedOptions = document.getElementById('advancedOptions');
+
+if (moreOptionsBtn && advancedOptions && blurOverlay) {
+    moreOptionsBtn.addEventListener('click', () => {
+        const isHidden = advancedOptions.hasAttribute('hidden');
+        if (isHidden) {
+            // Afficher les options avancées et le flou
+            advancedOptions.removeAttribute('hidden');
+            moreOptionsBtn.classList.add('active');
+        } else {
+            closeAdvancedOptions();
+        }
+    });
+}
+
+function closeAdvancedOptions() {
+    if (advancedOptions && moreOptionsBtn) {
+        advancedOptions.setAttribute('hidden', '');
+        moreOptionsBtn.classList.remove('active');
+    }
+}
+const morePublishOptionsBtn = document.getElementById('publish-tools');
+const advancedPublishOptions = document.getElementById('publishOptionsDiv');
+
+function closeAdvancedPublishOptions() {
+    if (advancedPublishOptions && morePublishOptionsBtn ) {
+        advancedPublishOptions.setAttribute('hidden', '');
+        morePublishOptionsBtn.classList.remove('active');
+        
+    }
+}
+closeAdvancedPublishOptions();
+
+if (morePublishOptionsBtn && advancedPublishOptions && blurOverlay) {
+    morePublishOptionsBtn.addEventListener('click', () => {
+        const isHidden = advancedPublishOptions.hasAttribute('hidden');
+        if (isHidden) {
+            // Afficher les options avancées et le flou
+            advancedPublishOptions.removeAttribute('hidden');
+            morePublishOptionsBtn.classList.add('active');
+        } else {
+            closeAdvancedPublishOptions();
+        }
+    });
+}
+
+
+
+// ============================================================
+// DURATION PICKER — Afficher/masquer au toggle ephemeralToggle
+// ============================================================
+const _ephemeralToggle = document.getElementById('ephemeralToggle');
+const _durationPicker = document.getElementById('durationPicker');
+
+if (_ephemeralToggle && _durationPicker) {
+    _ephemeralToggle.addEventListener('change', () => {
+        if (_ephemeralToggle.checked) {
+            _durationPicker.style.display = 'block';
+        } else {
+            _durationPicker.style.display = 'none';
+        }
+    });
+}
+
 const addStoryBtn = document.getElementById('addStoryBtn');
 const storyModeToggle = document.getElementById('storyModeToggle');
 
@@ -902,16 +963,11 @@ if (submitBtn) {
                 // Calcul de l'expiration si ephemeral
                 let expiresAt = null;
                 if (ephemeralToggle.checked) {
-                    const years = parseInt(document.getElementById('durationYear')?.value || 0);
-                    const months = parseInt(document.getElementById('durationMonths')?.value || 0);
                     const days = parseInt(document.getElementById('durationDays')?.value || 0);
                     const hours = parseInt(document.getElementById('durationHours')?.value || 0);
                     const minutes = parseInt(document.getElementById('durationMinutes')?.value || 0);
-                    const seconds = parseInt(document.getElementById('durationSeconds')?.value || 0);
 
-                    const totalMs =
-                        ((((years * 365) + (months * 30) + days) * 24 + hours) * 60 + minutes) * 60 * 1000 +
-                        (seconds * 1000);
+                    const totalMs = (((days * 24 + hours) * 60 + minutes) * 60 * 1000);
 
                     if (totalMs > 0) {
                         expiresAt = new Date(Date.now() + totalMs).toISOString();
@@ -1339,19 +1395,30 @@ if (_customColor) {
 const _emojiToolBtn = document.getElementById('emojiToolBtn');
 const _emojiOverlay = document.getElementById('emojiPickerOverlay');
 const _emojiPicker = document.getElementById('emojiPicker');
+const _deleteEmojiBtn = document.getElementById('deleteCurrentEmoji');
 let _selectedEmoji = '👋';
 
 if (_emojiToolBtn && _emojiOverlay) {
     _emojiToolBtn.addEventListener('click', () => {
-        _emojiOverlay.style.display = 'flex';
+        _emojiOverlay.style.setProperty('display', 'flex', 'important');
     });
 
-    _emojiOverlay.querySelector('.create-picker-close').addEventListener('click', () => {
-        _emojiOverlay.style.display = 'none';
+    _emojiOverlay.querySelector('.create-picker-close-emoji').addEventListener('click', () => {
+        _emojiOverlay.style.setProperty('display', 'none', 'important');
     });
 
     _emojiOverlay.addEventListener('click', (e) => {
-        if (e.target === _emojiOverlay) _emojiOverlay.style.display = 'none';
+        if (e.target === _emojiOverlay) _emojiOverlay.style.setProperty('display', 'none', 'important');
+    });
+}
+
+// Delete emoji button
+if (_deleteEmojiBtn) {
+    _deleteEmojiBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        _selectedEmoji = '👋';
+        document.querySelector('.moodEmoji').value = _selectedEmoji;
+        _updatePreview();
     });
 }
 
@@ -1360,7 +1427,7 @@ if (_emojiPicker) {
         _selectedEmoji = e.detail.unicode;
         document.querySelector('.moodEmoji').value = _selectedEmoji;
         _updatePreview();
-        _emojiOverlay.style.display = 'none';
+        _emojiOverlay.style.setProperty('display', 'none', 'important');
     });
 }
 
@@ -1378,18 +1445,18 @@ const TENOR_V1_KEY = 'LIVDSRZULELA'; // Votre clé de l'exemple
 
 if (_stickerToolBtn && _stickerOverlay) {
     _stickerToolBtn.addEventListener('click', () => {
-        _stickerOverlay.style.display = 'flex';
+        _stickerOverlay.style.setProperty('display', 'flex', 'important');
         if (_stickerResults.children.length === 0) {
             _loadTrendingStickers(); // Trending au premier load
         }
     });
 
     _stickerOverlay.querySelector('.create-picker-close').addEventListener('click', () => {
-        _stickerOverlay.style.display = 'none';
+        _stickerOverlay.style.setProperty('display', 'none', 'important');
     });
 
     _stickerOverlay.addEventListener('click', (e) => {
-        if (e.target === _stickerOverlay) _stickerOverlay.style.display = 'none';
+        if (e.target === _stickerOverlay) _stickerOverlay.style.setProperty('display', 'none', 'important');
     });
 }
 
@@ -1541,8 +1608,7 @@ function _getBrightness(hex) {
 }
 
 // Ephemeral toggle
-const _ephemeralToggle = document.getElementById('ephemeralToggle');
-const _durationPicker = document.getElementById('durationPicker');
+
 if (_ephemeralToggle && _durationPicker) {
     _ephemeralToggle.addEventListener('change', () => {
         _durationPicker.style.display = _ephemeralToggle.checked ? 'block' : 'none';
@@ -1682,9 +1748,6 @@ async function addInboxNotification(
         notif.style.transform = "translateY(0)";
     }, 50);
 }
-addInboxNotification("info", "Découvrez MoodShare v2", "Découvrez une nouvelle version de MoodShare avec des fonctionnalités améliorées. Vous pouvez désormais: -Réagir aux posts des autres utilisateurs, - Un tout nouveau design de l'onglet Profil - Vous pouvez trier votre feed par catégorie, - Les commentaires sont de retour !, - Des bannières journalières en haut du feed,  - Ajout du nombre de vues d'un post, - Nouvel écran de chargement, - Plus d'option pour la création de post, - La pagination des posts est enfin là afin de compléter le système de copie des liens de post, - Autres amélioration UI/UX pour mobile, - Modification et ajustement diverses", "check_circle", "../v2logo.png");
-addInboxNotification("info", "Découvrez MoodShare v2.1", "Découvrez une nouvelle version de MoodShare basée sur la sécurité de ses utilisateurs ! Voici ce qu'il y a de nouveau: - Une toute nouvelle fonctionnalité de sécurité: l'encryption de vos message en utilisant le système de chiffrement de bout en bout (E2E), - Amélioration UI/UX pour mobile/PC, - Modification et ajustement diverses", "check_circle", "../v2_1logo.png");
-addInboxNotification("info", "Découvrez MoodShare v2.2", "Découvrez une nouvelle version de MoodShare basée sur la personnalisation de l'application ! Voici les nouveautés : -Ajout des thèmes, vous pouvez désormais changer le thème de l'application dans l'onglet \"Plus\", vous avez le choix parmi 15 thèmes tous peaufinés pour plus de choix !, - Modification et ajustement diverses", "check_circle", "../v2_2logo.png");
 
 function gradients() {
     return {

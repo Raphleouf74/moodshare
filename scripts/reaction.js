@@ -14,6 +14,8 @@ export const REACTIONS = [
     { type: 'sad', emoji: '😢', label: 'Triste' },
     { type: 'fire', emoji: '🔥', label: 'Feu' },
     { type: 'clap', emoji: '👏', label: 'Bravo' },
+
+
 ];
 
 // ─── Point d'entrée ──────────────────────────────────────────

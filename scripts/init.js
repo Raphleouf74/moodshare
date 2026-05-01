@@ -4,7 +4,6 @@ import { attachReactions } from './reaction.js';
 import { attachComments } from './comments.js';
 import { initCreatorExtras } from './creator-extras.js';
 import { initFeedExtras } from './feed-extras.js';
-import { initMoodCalendar } from './profile-calendar.js';
 
 // ─── initV2() : appelé UNE FOIS après chargement du feed ─────
 export async function initV2() {
@@ -14,10 +13,6 @@ export async function initV2() {
 
     // 2. Feed : tri, vue, mood du jour, infinite scroll
     initFeedExtras();
-
-
-    // 4. Calendrier profil (userId récupéré dynamiquement)
-    _initCalendarOnProfileOpen();
 
     // 5. Attacher réactions + commentaires à tous les posts existants
     document.querySelectorAll('.post[data-id]').forEach(postEl => {
@@ -59,22 +54,7 @@ function _observeNewPosts() {
     }).observe(wall, { childList: true, subtree: false });
 }
 
-// ─── Calendrier profil : init au clic sur l'onglet Profil ────
-function _initCalendarOnProfileOpen() {
-    // Chercher le bouton de navigation vers le profil
-    const profileNavBtn = document.getElementById('profileTab') ||
-        document.querySelector('nav a[href*="profile"]');
-    if (!profileNavBtn) return;
 
-    profileNavBtn.addEventListener('click', async () => {
-        // Laisser le tab s'ouvrir
-        await new Promise(r => setTimeout(r, 100));
-
-        // Récupérer l'userId courant
-        const userId = await _getCurrentUserId();
-        initMoodCalendar(userId);
-    }, { once: true }); // Une seule fois, le calendrier persiste ensuite
-}
 
 async function _getCurrentUserId() {
     try {

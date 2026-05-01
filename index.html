@@ -6,6 +6,17 @@
     <title>MoodShare</title>
     <link rel="icon" href="/assets/logo/logo_dark.jpg" />
     <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/create-section.css" />
+    <link
+      rel="stylesheet"
+      href="/styles/mobile.css"
+      media="screen and (max-width: 769px)"
+    />
+    <link
+      rel="stylesheet"
+      href="/styles/main.css"
+      media="screen and (min-width: 769px)"
+    />
     <script
       type="module"
       src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"
@@ -14,6 +25,8 @@
 
   <body>
     <div class="pull-refresh-indicator" id="pullRefreshIndicator"></div>
+    <!-- Overlay de flou pour les options avancées -->
+    <div id="blurOverlay"></div>
     <!-- Nouveau loader minimaliste -->
     <div id="loader" class="loader-active">
       <div class="loader-gradient"></div>
@@ -100,10 +113,7 @@
     </header>
     <div id="circleback"></div>
     <div id="squareback"></div>
-    <div
-      id="accountheader"
-      
-    >
+    <div id="accountheader">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -120,11 +130,17 @@
         <circle cx="12" cy="10" r="4" />
         <circle cx="12" cy="12" r="10" />
       </svg>
-      
+
       <div id="profilemenu">
         <span id="userName">UserName</span>
-        <button onclick="document.getElementById('authModal').style.display = 'block'">Inscription / Connexion</button>
-        <button disabled style="color: red" onclick="logout()">Déconnexion</button>
+        <button
+          onclick="document.getElementById('authModal').style.display = 'block'"
+        >
+          Inscription / Connexion
+        </button>
+        <button disabled style="color: red" onclick="logout()">
+          Déconnexion
+        </button>
         <!-- <button><i>[Option 3 (Paramètres)]</i></button>
         <button><i>[Option 4 (Support)]</i></button> -->
         <a href="/admin/admin.html"><button>Portail admin</button></a>
@@ -563,10 +579,7 @@
       <div class="create-container">
         <!-- Titre -->
         <div class="create-header">
-          <h2 data-i18n="create_title">Créer un post</h2>
-          <p class="create-subtitle" data-i18n="create_subtitle">
-            Exprime ce que tu ressens
-          </p>
+          <h1 data-i18n="create_title">Créer</h1>
         </div>
 
         <!-- Zone de saisie -->
@@ -592,20 +605,31 @@
             id="emojiToolBtn"
             title="Ajouter un emoji"
           >
-            <svg
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              viewBox="0 0 24 24"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-              <line x1="9" y1="9" x2="9.01" y2="9" />
-              <line x1="15" y1="9" x2="15.01" y2="9" />
-            </svg>
-            <span>Emoji</span>
+            <input
+              type="text"
+              class="moodEmoji"
+              id="chosenEmojiPreview"
+              readonly
+            />
+            <span><span id="emojiState">Ajouter un</span> Emoji</span>
+            <div id="deleteCurrentEmoji" class="emoji-preview">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-trash-icon lucide-trash"
+              >
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                <path d="M3 6h18" />
+                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              </svg>
+            </div>
           </button>
 
           <!-- Sticker picker button -->
@@ -632,6 +656,20 @@
 
           <!-- Color presets -->
           <div class="create-color-group">
+            <div id="moodColorDiv">
+              <input type="color" id="textColor" value="#000000" readonly />
+              <p>#<span id="chosenColorValue">FFFFFF</span></p>
+            </div>
+
+            <div id="MoodTextColor">
+              <div id="chosenColor"></div>
+              <p>#<span id="chosenColorValue">FFFFFF</span></p>
+            </div>
+          </div>
+        </div>
+        <div id="pickColorModal" hidden>
+          <div id="pickColorModalContent">
+            <h3>Couleur personnalisée</h3>
             <input
               type="color"
               id="moodColor"
@@ -639,22 +677,22 @@
               class="create-color-custom"
               title="Couleur personnalisée"
             />
-            <label for="moodColor" data-i18n="create_bg">-</label>
+            <h3>Couleurs prédéfinies</h3>
+            <div id="create-color-preset"></div>
           </div>
         </div>
-
         <!-- Emoji picker overlay (hidden by default) -->
         <div
           id="emojiPickerOverlay"
           class="create-picker-overlay"
-          style="display: none"
+          style="display: none !important"
         >
           <div class="create-picker-panel">
             <div class="create-picker-header">
               <span>Choisir un emoji</span>
               <button
                 type="button"
-                class="create-picker-close"
+                class="create-picker-close-emoji"
                 aria-label="Fermer"
               >
                 ×
@@ -668,7 +706,7 @@
         <div
           id="stickerPickerOverlay"
           class="create-picker-overlay"
-          style="display: none"
+          style="display: none !important"
         >
           <div class="create-picker-panel">
             <div class="create-picker-header">
@@ -725,117 +763,159 @@
             ></div>
           </div>
         </div>
-
-        <!-- Options avancées -->
-        <div class="create-advanced">
-          <!-- Story toggle -->
-          <label class="create-toggle">
-            <input type="checkbox" id="storyModeToggle" />
-            <span class="create-toggle-slider"></span>
-            <span class="create-toggle-label">
-              <svg
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 6v6l4 2" />
-              </svg>
-              <span data-i18n="create_story">Story 24h</span>
-            </span>
-          </label>
-
-          <!-- Ephemeral toggle -->
-          <label class="create-toggle">
-            <input type="checkbox" id="ephemeralToggle" />
-            <span class="create-toggle-slider"></span>
-            <span class="create-toggle-label">
-              <svg
-                width="16"
-                height="16"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                viewBox="0 0 24 24"
-              >
-                <polyline points="1 4 1 10 7 10" />
-                <polyline points="23 20 23 14 17 14" />
-                <path
-                  d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"
-                />
-              </svg>
-              <span data-i18n="create_ephemeral">Message éphémère</span>
-            </span>
-          </label>
-        </div>
-
-        <!-- Duration picker (shown when ephemeral is on) -->
-        <div id="durationPicker" class="create-duration" style="display: none">
-          <div class="create-duration-inputs">
-            <div class="create-duration-field">
-              <input
-                type="number"
-                id="durationDays"
-                min="0"
-                max="30"
-                placeholder="0"
-              />
-              <label data-i18n="days">jours</label>
-            </div>
-            <div class="create-duration-field">
-              <input
-                type="number"
-                id="durationHours"
-                min="0"
-                max="23"
-                placeholder="0"
-              />
-              <label data-i18n="hours">heures</label>
-            </div>
-            <div class="create-duration-field">
-              <input
-                type="number"
-                id="durationMinutes"
-                min="0"
-                max="59"
-                placeholder="0"
-              />
-              <label data-i18n="minutes">minutes</label>
-            </div>
-          </div>
-          <div class="create-duration-preview">
-            <span data-i18n="create_expire_at">Expire le :</span>
-            <strong id="msgdeletetime">—</strong>
-          </div>
-        </div>
-
-        <!-- Hidden inputs for compatibility -->
-        <input
-          type="color"
-          id="textColor"
-          value="#000000"
-          style="display: none"
-        />
-        <input type="text" class="moodEmoji" style="display: none" readonly />
-
-        <!-- Submit button -->
-        <button type="button" class="create-submit-btn" id="submitMood">
+        <div id="moreOptionsBtn">
           <svg
-            width="20"
-            height="20"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="2.5"
-            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-plus-icon lucide-plus"
           >
-            <path d="m22 2-7 20-4-9-9-4Z" />
-            <path d="M22 2 11 13" />
+            <path d="M5 12h14" />
+            <path d="M12 5v14" />
           </svg>
-          <span data-i18n="create_share">Partager</span>
-        </button>
+          <p>Options Supplémentaires</p>
+        </div>
+        <div id="advancedOptions" hidden>
+          <!-- Options avancées -->
+          <div class="create-advanced">
+            <!-- Story toggle -->
+            <label class="create-toggle">
+              <input type="checkbox" id="storyModeToggle" />
+              <span class="create-toggle-slider"></span>
+              <span class="create-toggle-label">
+                <svg
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 6v6l4 2" />
+                </svg>
+                <span data-i18n="create_story">Story 24h</span>
+              </span>
+            </label>
+
+            <!-- Ephemeral toggle -->
+            <label class="create-toggle">
+              <input type="checkbox" id="ephemeralToggle" />
+              <span class="create-toggle-slider"></span>
+              <span class="create-toggle-label">
+                <svg
+                  width="16"
+                  height="16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <polyline points="1 4 1 10 7 10" />
+                  <polyline points="23 20 23 14 17 14" />
+                  <path
+                    d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"
+                  />
+                </svg>
+                <span data-i18n="create_ephemeral">Message éphémère</span>
+              </span>
+            </label>
+          </div>
+
+          <!-- Duration picker (shown when ephemeral is on) -->
+          <div
+            id="durationPicker"
+            class="create-duration"
+            style="display: none"
+          >
+            <div class="create-duration-inputs">
+              <div class="create-duration-field">
+                <input
+                  type="number"
+                  id="durationDays"
+                  min="0"
+                  max="30"
+                  placeholder="0"
+                />
+                <label data-i18n="days">jours</label>
+              </div>
+              <div class="create-duration-field">
+                <input
+                  type="number"
+                  id="durationHours"
+                  min="0"
+                  max="23"
+                  placeholder="0"
+                />
+                <label data-i18n="hours">heures</label>
+              </div>
+              <div class="create-duration-field">
+                <input
+                  type="number"
+                  id="durationMinutes"
+                  min="0"
+                  max="59"
+                  placeholder="0"
+                />
+                <label data-i18n="minutes">minutes</label>
+              </div>
+            </div>
+            <div class="create-duration-preview">
+              <span data-i18n="create_expire_at">Expire le :</span>
+              <strong id="msgdeletetime">—</strong>
+            </div>
+          </div>
+        </div>
+
+        <div id="publishOptions">
+          <!-- Submit button -->
+          <button type="button" class="create-submit-btn" id="submitMood">
+            <svg
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              viewBox="0 0 24 24"
+            >
+              <path d="m22 2-7 20-4-9-9-4Z" />
+              <path d="M22 2 11 13" />
+            </svg>
+            <span data-i18n="create_share">Partager</span>
+          </button>
+          <button type="button" id="publish-tools">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-ellipsis-vertical-icon lucide-ellipsis-vertical"
+            >
+              <circle cx="12" cy="12" r="1" />
+              <circle cx="12" cy="5" r="1" />
+              <circle cx="12" cy="19" r="1" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div id="publishOptionsDiv">
+        <label class="anon-label">
+          <input type="checkbox" id="anon-toggle" class="anon-input" />
+          <span class="anon-track"></span>
+          <span class="anon-text">Publier anonymement</span>
+        </label>
+        <button id="deleteAll" data-i18n="delete_all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-icon lucide-trash"><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Tout supprimer</button>
       </div>
     </section>
 

@@ -78,5 +78,7 @@
   "copyright": "Moodshare © 2025-2026. Jegliche Vervielfältigung, auch auszugsweise, ist strengstens untersagt.",
   "message_warning": "Die letzten 50 Nachrichten werden gespeichert!",
   "not-logged-in": "Sie sind nicht eingeloggt, bitte loggen Sie sich ein, um zu diskutieren !",
-  "lp-warn": "Einige Teile der Seite sind noch nicht übersetzt."
+  "lp-warn": "Einige Teile der Seite sind noch nicht übersetzt.",
+  "liked_post": "{author} hat Ihren Beitrag gelikt ❤️",
+  "new_comment": "{author} hat Ihren Beitrag kommentiert 💬"
 }
